@@ -1,7 +1,0 @@
-{
-  "version": 1,
-  "cmd": {
-    "get": ["video-id^&"]
-  },
-  "help": {}
-}

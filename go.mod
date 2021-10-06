@@ -3,20 +3,18 @@ module yet
 go 1.17
 
 require (
-	github.com/boggydigital/clo v0.2.2-alpha
 	github.com/boggydigital/dolo v0.1.4-alpha
-	github.com/boggydigital/gost v0.1.0
 	github.com/boggydigital/nod v0.1.2
 	github.com/boggydigital/yt_urls v0.1.1
 )
 
 require (
+	github.com/boggydigital/gost v0.1.0 // indirect
 	github.com/boggydigital/match_node v0.1.1 // indirect
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
 )
 
 replace (
-	github.com/boggydigital/clo => ../clo
 	github.com/boggydigital/dolo => ../dolo
 	github.com/boggydigital/gost => ../gost
 	github.com/boggydigital/nod => ../nod
