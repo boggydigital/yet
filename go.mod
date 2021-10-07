@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/boggydigital/dolo v0.1.4-alpha
-	github.com/boggydigital/nod v0.1.2
+	github.com/boggydigital/nod v0.1.4
 	github.com/boggydigital/yt_urls v0.1.1
 )
 

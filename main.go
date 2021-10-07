@@ -1,28 +1,34 @@
 package main
 
 import (
-	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
+	"log"
 	"net/http"
 	"os"
-	"strings"
+)
+
+const (
+	getVideosTopic = "getting video(s):"
+)
+
+var (
+	streamingSources = []string{"best streaming quality", "good streaming quality", "available streaming quality"}
 )
 
 func main() {
 	nod.EnableStdOut()
 
 	if err := GetVideos(os.Args[1:]); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
 func GetVideos(urlsOrVideoIds []string) error {
-	//nod.Begin(getVideosTopic)
+	nod.Start(getVideosTopic)
 
-	dl := dolo.NewClient(http.DefaultClient, nil, dolo.Defaults())
+	dl := dolo.NewClient(http.DefaultClient, dolo.Defaults())
 
 	for _, urlOrVideoId := range urlsOrVideoIds {
 
@@ -31,7 +37,7 @@ func GetVideos(urlsOrVideoIds []string) error {
 			return err
 		}
 
-		//nod.Begin(getVideosTopic, videoId)
+		nod.Start(getVideosTopic, videoId)
 
 		title, vidUrls, err := yt_urls.TitleStreamingUrls(videoId)
 		if err != nil {
@@ -42,37 +48,41 @@ func GetVideos(urlsOrVideoIds []string) error {
 			continue
 		}
 
+		attempt := 0
 		for _, vidUrl := range vidUrls {
+
+			topics := []string{getVideosTopic, videoId, streamingSources[attempt]}
+			nod.Start(topics...)
 
 			if vidUrl == nil || len(vidUrl.String()) == 0 {
 				continue
 			}
 
-			filename := fmt.Sprintf("%s-%s", title, videoId)
-			if title == "" {
-				filename = fmt.Sprintf("%s", videoId)
-			}
+			tpw := nod.TotalProgress(topics...)
 
-			filename = strings.ReplaceAll(filename, "/", "")
-			filename = strings.ReplaceAll(filename, ":", "")
-			filename = strings.ReplaceAll(filename, ".", "")
+			_, err = dl.Download(vidUrl, "", saneFilename(title, videoId), tpw)
 
-			filename += ".mp4"
-
-			_, err = dl.Download(vidUrl, "./", filename)
 			if err != nil {
-				fmt.Println(err)
+				attempt++
+				if attempt > len(streamingSources)-1 {
+					attempt = len(streamingSources) - 1
+				}
+				nod.Error(err, topics...)
+				nod.End(topics...)
 				continue
 			}
 
+			nod.End(getVideosTopic, videoId, streamingSources[attempt])
+			nod.Success(true, topics...)
+
 			//yt_urls.StreamingUrls returns bitrate sorted video urls,
-			//so we can stop, if we've successfully got the best available one
+			//so we can stop, if we've successfully got the best streaming quality
 			break
 		}
 
-		//nod.End(getVideosTopic, videoId)
+		nod.End(getVideosTopic, videoId)
 	}
 
-	//nod.End(getVideosTopic)
+	nod.End(getVideosTopic)
 	return nil
 }
