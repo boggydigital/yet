@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const (
@@ -26,6 +28,11 @@ func main() {
 }
 
 func GetVideos(urlsOrVideoIds []string) error {
+
+	if len(urlsOrVideoIds) == 0 {
+		return fmt.Errorf("you need to specify at least 1 video-id or URL")
+	}
+
 	nod.Start(getVideosTopic)
 
 	dl := dolo.NewClient(http.DefaultClient, dolo.Defaults())
@@ -85,4 +92,19 @@ func GetVideos(urlsOrVideoIds []string) error {
 
 	nod.End(getVideosTopic)
 	return nil
+}
+
+func saneFilename(title, videoId string) string {
+	fn := fmt.Sprintf("%s-%s", title, videoId)
+	if title == "" {
+		fn = fmt.Sprintf("%s", videoId)
+	}
+
+	fn = strings.ReplaceAll(fn, "/", "")
+	fn = strings.ReplaceAll(fn, ":", "")
+	fn = strings.ReplaceAll(fn, ".", "")
+
+	fn += ".mp4"
+
+	return fn
 }
