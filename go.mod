@@ -9,14 +9,12 @@ require (
 )
 
 require (
-	github.com/boggydigital/gost v0.1.0 // indirect
 	github.com/boggydigital/match_node v0.1.1 // indirect
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
 )
 
 replace (
 	github.com/boggydigital/dolo => ../dolo
-	github.com/boggydigital/gost => ../gost
 	github.com/boggydigital/nod => ../nod
 	github.com/boggydigital/yt_urls => ../yt_urls
 )
