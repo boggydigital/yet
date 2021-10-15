@@ -1,0 +1,11 @@
+Support additional page types:
+	- User page: https://www.youtube.com/user/LastWeekTonight
+		- consider supporting as a playlist: https://www.youtube.com/user/LastWeekTonight/videos -> PLAY ALL: https://www.youtube.com/playlist?list=UU3XTzVzaHQEd30rQbuvCtTQ
+	- Channel page: https://www.youtube.com/c/Civvie11/videos
+		- consider supporting as a playlist: https://www.youtube.com/playlist?list=UU21uZkfXpT8rPY-gPgMiCwA
+		- however might need to support data extraction anyway: https://www.youtube.com/c/jcole/videos - doesn't map to playlist
+		
+Open questions:
+	- Change date created to reflect upload date for proper sorting?
+	- Should the bulk download be throttled to avoid remote server throttling?
+	- Optionally download subtitles?
