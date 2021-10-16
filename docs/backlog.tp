@@ -1,11 +1,24 @@
-Support additional page types:
-	- User page: https://www.youtube.com/user/LastWeekTonight
-		- consider supporting as a playlist: https://www.youtube.com/user/LastWeekTonight/videos -> PLAY ALL: https://www.youtube.com/playlist?list=UU3XTzVzaHQEd30rQbuvCtTQ
-	- Channel page: https://www.youtube.com/c/Civvie11/videos
-		- consider supporting as a playlist: https://www.youtube.com/playlist?list=UU21uZkfXpT8rPY-gPgMiCwA
-		- however might need to support data extraction anyway: https://www.youtube.com/c/jcole/videos - doesn't map to playlist
-		
-Open questions:
-	- Change date created to reflect upload date for proper sorting?
-	- Should the bulk download be throttled to avoid remote server throttling?
-	- Optionally download subtitles?
+Support passing browser session cookies for LOGIN_REQUIRED videos:
+	- Determine what cookies are needed
+	- document the process and add cookie supporting http client (similarly to vangogh)
+
+Support signatureCipher:
+	- 
+
+Known issues:
+	- Playlist UU3P6PrEBAVH1UaiPOzZ-u-w downloads all vides over and over (something to do with continuation data?)
+	- UU3P6PrEBAVH1UaiPOzZ doesn't show error - just hangs
+	- Support passing URLs as args, not just ids
+
+Archive:
+	Misc.: @done(2021-10-15)
+		- Should the bulk download be throttled to avoid remote server throttling? @done(2021-10-15)
+		- Optionally download subtitles? @done(2021-10-15)
+	Support additional page types: @done(2021-10-14)
+		- User page: https://www.youtube.com/user/LastWeekTonight @done(2021-10-14)
+			- consider supporting as a playlist: https://www.youtube.com/user/LastWeekTonight/videos -> PLAY ALL: https://www.youtube.com/playlist?list=UU3XTzVzaHQEd30rQbuvCtTQ @done(2021-10-14)
+		- Channel page: https://www.youtube.com/c/Civvie11/videos @done(2021-10-14)
+			- consider supporting as a playlist: https://www.youtube.com/playlist?list=UU21uZkfXpT8rPY-gPgMiCwA @done(2021-10-14)
+			- however might need to support data extraction anyway: https://www.youtube.com/c/jcole/videos - doesn't map to playlist @done(2021-10-14)
+			
+	- Change date created to reflect upload date for proper sorting? @done(2021-10-15) @project(Misc.)
