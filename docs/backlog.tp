@@ -6,11 +6,11 @@ Support signatureCipher:
 	- 
 
 Known issues:
-	- Playlist UU3P6PrEBAVH1UaiPOzZ-u-w downloads all vides over and over (something to do with continuation data?)
-	- UU3P6PrEBAVH1UaiPOzZ doesn't show error - just hangs
 	- Support passing URLs as args, not just ids
 
 Archive:
+	- Playlist UU3P6PrEBAVH1UaiPOzZ-u-w downloads all vides over and over (something to do with continuation data?) @done(2021-10-15) @project(Known issues)
+	- UU3P6PrEBAVH1UaiPOzZ doesn't show error - just hangs @done(2021-10-15) @project(Known issues)
 	Misc.: @done(2021-10-15)
 		- Should the bulk download be throttled to avoid remote server throttling? @done(2021-10-15)
 		- Optionally download subtitles? @done(2021-10-15)
