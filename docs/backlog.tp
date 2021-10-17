@@ -6,9 +6,13 @@ Support signatureCipher:
 	- 
 
 Known issues:
-	- Support passing URLs as args, not just ids
+No known issues at the moment
 
 Archive:
+	- Support passing URLs as args, not just ids @done(2021-10-17) @project(Known issues)
+	- Refactor GetPlaylistVideos to return []videoId and use DownloadVideo as a single place download code @done(2021-10-17) @project(Known issues)
+	- Only attempt to download missing videos from a playlist @done(2021-10-17) @project(Known issues)
+	- Stop downloading if the last videos are all avialable  @done(2021-10-17) @project(Known issues)
 	- Playlist UU3P6PrEBAVH1UaiPOzZ-u-w downloads all vides over and over (something to do with continuation data?) @done(2021-10-15) @project(Known issues)
 	- UU3P6PrEBAVH1UaiPOzZ doesn't show error - just hangs @done(2021-10-15) @project(Known issues)
 	Misc.: @done(2021-10-15)

@@ -8,22 +8,20 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
-func GetVideos(urlsOrVideoIds ...string) error {
+func DownloadVideos(videoIds ...string) error {
 
-	if len(urlsOrVideoIds) == 0 {
-		return fmt.Errorf("you need to specify at least one video-id or URL")
+	dv := nod.Start("downloading videos: " + strings.Join(videoIds, ", "))
+
+	if len(videoIds) == 0 {
+		return nod.Fatal(fmt.Errorf("you need to specify at least one video-id or URL"))
 	}
 
 	dl := dolo.NewClient(http.DefaultClient, dolo.Defaults())
 
-	for _, urlOrVideoId := range urlsOrVideoIds {
-
-		videoId, err := yt_urls.VideoId(urlOrVideoId)
-		if err != nil {
-			return err
-		}
+	for _, videoId := range videoIds {
 
 		videoIdTopic := "getting video-id: " + videoId
 		nod.Start(videoIdTopic)
@@ -90,6 +88,8 @@ func GetVideos(urlsOrVideoIds ...string) error {
 			break
 		}
 	}
+
+	dv.End()
 
 	return nil
 }
