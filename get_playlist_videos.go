@@ -15,11 +15,12 @@ import (
 //playlist - e.g. "PLAY ALL" link for a channel/user "Videos" page is a playlist URL.
 func GetPlaylistVideos(playlistId string) ([]string, error) {
 
-	dp := nod.Start("downloading playlist: " + playlistId)
+	dp := nod.Begin("itemizing videos for playlist " + playlistId)
+	defer dp.End()
 
 	playlist, err := yt_urls.GetPlaylistPage(playlistId)
 	if err != nil {
-		return nil, err
+		return nil, dp.EndWithError(err)
 	}
 
 	videoIds := make([]string, 0, len(playlist.Videos()))
@@ -41,14 +42,12 @@ func GetPlaylistVideos(playlistId string) ([]string, error) {
 		if playlist.HasContinuation() {
 			playlist, err = playlist.Continue()
 			if err != nil {
-				return videoIds, err
+				return videoIds, dp.EndWithError(err)
 			}
 		} else {
 			playlist = nil
 		}
 	}
-
-	dp.End()
 
 	return videoIds, nil
 }

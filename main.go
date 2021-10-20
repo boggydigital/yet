@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	nod.EnableStdOut()
+	nod.EnableStdOutPresenter()
 
 	videoIds, err := argsToVideoIds(os.Args[1:]...)
 	if err != nil {
