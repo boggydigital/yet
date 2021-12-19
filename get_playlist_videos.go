@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
 	"os"
@@ -15,8 +16,10 @@ import (
 //playlist - e.g. "PLAY ALL" link for a channel/user "Videos" page is a playlist URL.
 func GetPlaylistVideos(playlistId string) ([]string, error) {
 
-	dp := nod.Begin("itemizing videos for playlist " + playlistId)
+	dp := nod.Begin(fmt.Sprintf("itemizing playlist %s:", playlistId))
 	defer dp.End()
+
+	playlistHasVideos := false
 
 	playlist, err := yt_urls.GetPlaylistPage(playlistId)
 	if err != nil {
@@ -27,6 +30,7 @@ func GetPlaylistVideos(playlistId string) ([]string, error) {
 
 	for playlist != nil &&
 		len(playlist.Videos()) > 0 {
+		playlistHasVideos = true
 		for _, videoIdTitle := range playlist.Videos() {
 			//before attempting to download - filter out the videos that are already present
 			//locally, to download only updates to the playlist
@@ -47,6 +51,12 @@ func GetPlaylistVideos(playlistId string) ([]string, error) {
 		} else {
 			playlist = nil
 		}
+	}
+
+	if len(videoIds) > 0 {
+		dp.EndWithResult(fmt.Sprintf("got %d video(s)", len(videoIds)))
+	} else if playlistHasVideos {
+		dp.EndWithResult("no new videos to download")
 	}
 
 	return videoIds, nil

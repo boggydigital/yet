@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/boggydigital/cooja"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
@@ -12,15 +13,20 @@ import (
 
 func DownloadVideos(videoIds ...string) error {
 	if len(videoIds) == 0 {
-		return fmt.Errorf("you need to specify at least one video-id or URL")
+		return nil
 	}
 
-	dvtpw := nod.TotalProgress("downloading video(s)")
+	dvtpw := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
 	defer dvtpw.End()
 
 	dvtpw.Total(uint64(len(videoIds)))
 
-	dl := dolo.NewClient(http.DefaultClient, dolo.Defaults())
+	jar, err := cooja.NewJar([]string{"youtube.com"}, "")
+	if err != nil {
+		return dvtpw.EndWithError(err)
+	}
+
+	dl := dolo.NewClient(&http.Client{Jar: jar}, dolo.Defaults())
 
 	for _, videoId := range videoIds {
 
@@ -28,16 +34,16 @@ func DownloadVideos(videoIds ...string) error {
 
 		vp, err := yt_urls.GetVideoPage(videoId)
 		if err != nil {
-			gv.EndWithError(err)
-			dvtpw.Increment(1)
+			_ = gv.EndWithError(err)
+			dvtpw.Increment()
 			continue
 		}
 
 		title, vidUrls := vp.Title(), vp.StreamingFormats()
 
 		if len(vidUrls) == 0 {
-			gv.EndWithError(err)
-			dvtpw.Increment(1)
+			_ = gv.EndWithError(err)
+			dvtpw.Increment()
 			continue
 		}
 
@@ -48,18 +54,16 @@ func DownloadVideos(videoIds ...string) error {
 			}
 
 			fn := saneFilename(title, videoId)
-			tpw := nod.TotalProgress("title: " + title)
+			tpw := nod.NewProgress("title: " + title)
 
 			u, err := url.Parse(vidUrl.Url)
 			if err != nil {
-				tpw.EndWithError(err)
+				_ = tpw.EndWithError(err)
 				continue
 			}
 
-			_, err = dl.Download(u, "", fn, tpw)
-
-			if err != nil {
-				tpw.EndWithError(err)
+			if err := dl.Download(u, tpw, "", fn); err != nil {
+				_ = tpw.EndWithError(err)
 				continue
 			}
 
@@ -83,7 +87,7 @@ func DownloadVideos(videoIds ...string) error {
 		}
 
 		gv.End()
-		dvtpw.Increment(1)
+		dvtpw.Increment()
 	}
 
 	return nil

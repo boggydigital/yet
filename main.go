@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
-	"log"
 	"os"
 	"strings"
 )
@@ -12,13 +11,16 @@ import (
 func main() {
 	nod.EnableStdOutPresenter()
 
+	appSession := nod.Begin("yet will download YouTube videos/playlists you provided")
+	defer appSession.End()
+
 	videoIds, err := argsToVideoIds(os.Args[1:]...)
 	if err != nil {
-		log.Fatalln(err)
+		_ = appSession.EndWithError(err)
 	}
 
 	if err := DownloadVideos(videoIds...); err != nil {
-		log.Fatalln(err)
+		_ = appSession.EndWithError(err)
 	}
 }
 
