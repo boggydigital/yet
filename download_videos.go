@@ -53,7 +53,7 @@ func DownloadVideos(videoIds ...string) error {
 				continue
 			}
 
-			fn := saneFilename(title, videoId)
+			fn := localVideoFilename(title, videoId)
 			tpw := nod.NewProgress("title: " + title)
 
 			u, err := url.Parse(vidUrl.Url)

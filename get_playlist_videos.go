@@ -34,7 +34,7 @@ func GetPlaylistVideos(playlistId string) ([]string, error) {
 		for _, videoIdTitle := range playlist.Videos() {
 			//before attempting to download - filter out the videos that are already present
 			//locally, to download only updates to the playlist
-			fn := saneFilename(videoIdTitle.Title, videoIdTitle.VideoId)
+			fn := localVideoFilename(videoIdTitle.Title, videoIdTitle.VideoId)
 			if _, err := os.Stat(fn); err == nil {
 				//file for the title, videoId combination has been downloaded already
 				continue
