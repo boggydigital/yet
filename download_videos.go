@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/boggydigital/cooja"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
@@ -11,7 +10,7 @@ import (
 	"os"
 )
 
-func DownloadVideos(videoIds ...string) error {
+func DownloadVideos(httpClient *http.Client, videoIds ...string) error {
 	if len(videoIds) == 0 {
 		return nil
 	}
@@ -21,18 +20,13 @@ func DownloadVideos(videoIds ...string) error {
 
 	dvtpw.Total(uint64(len(videoIds)))
 
-	jar, err := cooja.NewJar([]string{"youtube.com"}, "")
-	if err != nil {
-		return dvtpw.EndWithError(err)
-	}
-
-	dl := dolo.NewClient(&http.Client{Jar: jar}, dolo.Defaults())
+	dl := dolo.NewClient(httpClient, dolo.Defaults())
 
 	for _, videoId := range videoIds {
 
 		gv := nod.Begin("video-id: " + videoId)
 
-		vp, err := yt_urls.GetVideoPage(videoId)
+		vp, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
 			_ = gv.EndWithError(err)
 			dvtpw.Increment()

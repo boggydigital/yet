@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
+	"net/http"
 	"os"
 )
 
@@ -14,14 +15,14 @@ import (
 //Note: GetPlaylistVideos can similarly enumerate videoIds for channels and users,
 //given that (almost all) channel and user videos can be expressed as a
 //playlist - e.g. "PLAY ALL" link for a channel/user "Videos" page is a playlist URL.
-func GetPlaylistVideos(playlistId string) ([]string, error) {
+func GetPlaylistVideos(httpClient *http.Client, playlistId string) ([]string, error) {
 
 	dp := nod.Begin(fmt.Sprintf("itemizing playlist %s:", playlistId))
 	defer dp.End()
 
 	playlistHasVideos := false
 
-	playlist, err := yt_urls.GetPlaylistPage(playlistId)
+	playlist, err := yt_urls.GetPlaylistPage(httpClient, playlistId)
 	if err != nil {
 		return nil, dp.EndWithError(err)
 	}
@@ -44,7 +45,7 @@ func GetPlaylistVideos(playlistId string) ([]string, error) {
 		}
 
 		if playlist.HasContinuation() {
-			playlist, err = playlist.Continue()
+			playlist, err = playlist.Continue(httpClient)
 			if err != nil {
 				return videoIds, dp.EndWithError(err)
 			}

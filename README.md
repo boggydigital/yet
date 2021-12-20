@@ -4,7 +4,7 @@ yet is a Minimalist YouTube video and channel downloader. Engineering design con
 ## Using yet
 
 ```shell
-yet [video-id, ...] | [playlist-id...]
+yet <video-id> [, <another-video-id>...] | <playlist-id> [, <another-playlist-id>...]
 ```
 
 yet supports individual video-ids or playlist-ids as args. Either one can be provided as a full `https://www.youtube.com/...` link.
