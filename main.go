@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/boggydigital/cooja"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pesco"
+	"github.com/boggydigital/yt_urls"
 	"os"
 )
 
@@ -12,18 +13,18 @@ func main() {
 	ya := nod.Begin("yetting requested videos/playlists")
 	defer ya.End()
 
-	jar, err := cooja.NewJar([]string{".youtube.com"}, "")
+	jar, err := pesco.NewJar([]string{yt_urls.YoutubeHost}, "")
 	if err != nil {
 		_ = ya.EndWithError(err)
 	}
 
-	defer func(jar cooja.PersistentCookieJar) {
-		if err := jar.Save(); err != nil {
+	defer func(jar pesco.PersistentCookieJar) {
+		if err := jar.Store(); err != nil {
 			_ = ya.EndWithError(err)
 		}
 	}(jar)
 
-	httpClient := jar.GetClient()
+	httpClient := jar.NewClient()
 
 	//internally yet operates on video-ids, so the first step to process user input
 	//is to expand all channel-ids into lists of video-ids and transparently return
