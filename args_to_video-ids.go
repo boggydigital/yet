@@ -10,7 +10,7 @@ import (
 //argsToVideoIds converts list of videoIds, playlistIds, video URLs,
 //playlist URLs (in any order and combination) to a list of videoIds.
 //Inputs in unsupported format will produce an error.
-func argsToVideoIds(httpClient *http.Client, args ...string) ([]string, error) {
+func argsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...string) ([]string, error) {
 	videoIds := make([]string, 0)
 	for _, urlOrId := range args {
 		if len(urlOrId) < 12 {
@@ -20,7 +20,7 @@ func argsToVideoIds(httpClient *http.Client, args ...string) ([]string, error) {
 		} else if !strings.Contains(urlOrId, "?") {
 			//currently, YouTube URLs would contain "?" query parameter separator,
 			//meaning non-URL longer than 11 characters will be playlistId
-			playlistVideoIds, err := GetPlaylistVideos(httpClient, urlOrId)
+			playlistVideoIds, err := GetPlaylistVideos(httpClient, urlOrId, newPlaylistVideos)
 			if err != nil {
 				return videoIds, err
 			}
@@ -39,7 +39,7 @@ func argsToVideoIds(httpClient *http.Client, args ...string) ([]string, error) {
 			if err != nil {
 				return videoIds, err
 			}
-			playlistVideoIds, err := GetPlaylistVideos(httpClient, playlistId)
+			playlistVideoIds, err := GetPlaylistVideos(httpClient, playlistId, newPlaylistVideos)
 			if err != nil {
 				return videoIds, err
 			}

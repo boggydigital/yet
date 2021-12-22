@@ -15,7 +15,7 @@ import (
 //Note: GetPlaylistVideos can similarly enumerate videoIds for channels and users,
 //given that (almost all) channel and user videos can be expressed as a
 //playlist - e.g. "PLAY ALL" link for a channel/user "Videos" page is a playlist URL.
-func GetPlaylistVideos(httpClient *http.Client, playlistId string) ([]string, error) {
+func GetPlaylistVideos(httpClient *http.Client, playlistId string, newVideos bool) ([]string, error) {
 
 	dp := nod.Begin(fmt.Sprintf("itemizing playlist %s:", playlistId))
 	defer dp.End()
@@ -38,7 +38,16 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string) ([]string, er
 			fn := localVideoFilename(videoIdTitle.Title, videoIdTitle.VideoId)
 			if _, err := os.Stat(fn); err == nil {
 				//file for the title, videoId combination has been downloaded already
-				continue
+				if newVideos {
+					if len(videoIds) == 0 {
+						dp.EndWithResult("no new videos")
+					} else {
+						dp.EndWithResult("found %d new video(s)", len(videoIds))
+					}
+					return videoIds, nil
+				} else {
+					continue
+				}
 			}
 
 			videoIds = append(videoIds, videoIdTitle.VideoId)
@@ -55,7 +64,7 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string) ([]string, er
 	}
 
 	if len(videoIds) > 0 {
-		dp.EndWithResult(fmt.Sprintf("got %d video(s)", len(videoIds)))
+		dp.EndWithResult("got %d video(s)", len(videoIds))
 	} else if playlistHasVideos {
 		dp.EndWithResult("no new videos to download")
 	}
