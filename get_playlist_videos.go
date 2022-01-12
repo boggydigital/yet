@@ -38,6 +38,7 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string, newVideos boo
 			fn := localVideoFilename(videoIdTitle.Title, videoIdTitle.VideoId)
 			if _, err := os.Stat(fn); err == nil {
 				//file for the title, videoId combination has been downloaded already
+				//TODO: change from returning on first existing video to return on no new videos in playlist page
 				if newVideos {
 					if len(videoIds) == 0 {
 						dp.EndWithResult("no new videos")
