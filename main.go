@@ -13,9 +13,17 @@ func main() {
 	ya := nod.Begin("yet is getting requested videos/playlists")
 	defer ya.End()
 
-	jar, err := coost.NewJar([]string{yt_urls.YoutubeHost}, "")
+	cookieReader, err := os.Open("cookies.txt")
+	defer cookieReader.Close()
+	if err != nil && !os.IsNotExist(err) {
+		_ = ya.EndWithError(err)
+		os.Exit(1)
+	}
+
+	jar, err := coost.NewJar(cookieReader, yt_urls.YoutubeHost)
 	if err != nil {
 		_ = ya.EndWithError(err)
+		os.Exit(1)
 	}
 
 	httpClient := jar.NewHttpClient()
