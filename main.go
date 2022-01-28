@@ -13,20 +13,11 @@ func main() {
 	ya := nod.Begin("yet is getting requested videos/playlists")
 	defer ya.End()
 
-	cookieReader, err := os.Open("cookies.txt")
-	defer cookieReader.Close()
-	if err != nil && !os.IsNotExist(err) {
-		_ = ya.EndWithError(err)
-		os.Exit(1)
-	}
-
-	jar, err := coost.NewJar(cookieReader, yt_urls.YoutubeHost)
+	httpClient, err := coost.NewHttpClientFromFile("cookies.txt", yt_urls.YoutubeHost)
 	if err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
 	}
-
-	httpClient := jar.NewHttpClient()
 
 	if len(os.Args) > 1 {
 		//internally yet operates on video-ids, so the first step to process user input
