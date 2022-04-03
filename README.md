@@ -21,7 +21,7 @@ Video-id is YouTube's video identifier. You can get it from a video URL : `https
 
 Playlist-id is YouTube's videos list identifier. You can get it from a list URL: `https://www.youtube.com/watch?v=video-id&list=playlist-id`. Similarly to video-id, yet supports URL containing playlist-id, so you can use a full URL. Please note: URL can contain playlist-id and video-id at the same time and in that case playlist-id will be prioritized over video-id. If that's not desired - make sure to use either URL with just video-id or video-id itself.
 
-## Advanced Scenarios
+## Advanced scenarios
 
 Despite supporting only video-ids and playlist-ids, yet also (implicitly) supports channel and user videos, when they can be expressed as playlists. In addition to video-ids and playlist-ids used as arguments, yet supports `yet-list.txt` file that can be used to specify multiple sources and directories they should be downloaded. 
 
@@ -39,17 +39,9 @@ yet uses coost to persist session cookies and it's possible to reuse existing Yo
 
 Please refer to [the coost README](https://github.com/boggydigital/coost#copying-session-cookies-from-an-existing-browser-session) for the step by step guide on copying YouTube session cookies.
 
-For yet you need to create or edit `cookies.json` file in the yet working directory and add `youtube.com` host sessions cookies. It should look like this:
+For yet you need to create or edit `cookies.txt` file in the yet working directory and add `youtube.com` host sessions cookies. It should look like this:
 
-```json
-{
-  "youtube.com": {
-    "cookie-header": "<paste-youtube-session-cookie-header-here>"
-  }
-}
+```text
+youtube.com
+  cookie-header=<paste-youtube-session-cookie-header-here>
 ```
-
-### Using yet-list.txt to update multiple playlists
-
-When run with no arguments, yet will check if the process working directory contains `yet-list.txt` file and use the instructions in the file to update multiple playlists (channels, videos, etc.).
-
