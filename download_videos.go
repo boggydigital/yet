@@ -13,6 +13,11 @@ import (
 	"strings"
 )
 
+const (
+	videoSuffix = " (video)"
+	audioSuffix = " (audio)"
+)
+
 func DownloadVideos(httpClient *http.Client, ffmpegCmd string, videoIds ...string) error {
 	if len(videoIds) == 0 {
 		return nil
@@ -76,6 +81,7 @@ func downloadVideo(dl *dolo.Client, videoId string, ffmpegCmd string, videoPage 
 		}
 	}
 
+	//set file modification time to video publish date to allow OS sorting based on mod time
 	if _, err := os.Stat(fn); err == nil {
 		if err := os.Chtimes(fn, videoPage.PublishDate(), videoPage.PublishDate()); err != nil {
 			return err
@@ -121,11 +127,6 @@ func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_ur
 	return nil
 }
 
-const (
-	videoSuffix = " (video)"
-	audioSuffix = " (audio)"
-)
-
 func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename string, videoFormats, audioFormats yt_urls.Formats) error {
 
 	ext := filepath.Ext(filename)
@@ -145,8 +146,10 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename s
 		return err
 	}
 
-	//merge formats
-	//ffmpeg -i video.mp4 -i audio.wav -c copy output.mkv
+	//merge streams into a single file
+	//since yt_urls filters to mp4 formats only, we don't need to do any transcoding
+	//and can quickly merge by copying streams:
+	//ffmpeg -i video.mp4 -i audio.wav -c copy output.mp4
 	ma := nod.Begin("merging streams: %s...", title)
 	args := []string{"-i", videoFilename, "-i", audioFilename, "-c", "copy", filename}
 	cmd := exec.Command(ffmpegCmd, args...)

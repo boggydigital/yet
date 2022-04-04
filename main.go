@@ -16,7 +16,7 @@ func main() {
 	ya := nod.Begin("yet is getting requested videos/playlists")
 	defer ya.End()
 
-	//get
+	//get ffmpeg binary location from user specified env or elsewhere on the system
 	ffmpegCmd := os.Getenv(ffmpegCmdEnv)
 	if ffmpegCmd == "" {
 		if path, err := exec.LookPath("ffmpeg"); err == nil {

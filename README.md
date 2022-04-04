@@ -45,3 +45,6 @@ For yet you need to create or edit `cookies.txt` file in the yet working directo
 youtube.com
   cookie-header=<paste-youtube-session-cookie-header-here>
 ```
+### Specifying ffmpeg location to get the best quality video/audio
+
+yet will attempt to locate `ffmpeg` binary on the system. If you'd prefer to specify it yourself, set `YET_FFMPEG_CMD` environment variable to the full path of `ffmpeg` binary (e.g. `/opt/homebrew/bin/ffmpeg` for Homebrew installation on macOS)
