@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/boggydigital/yt_urls"
 	"path/filepath"
 	"strings"
 )
@@ -32,5 +33,5 @@ func localVideoFilename(title, videoId string) string {
 		fn = strings.ReplaceAll(fn, ch, "")
 	}
 
-	return fn + mp4Ext
+	return fn + yt_urls.DefaultExt
 }

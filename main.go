@@ -5,13 +5,24 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
 	"os"
+	"os/exec"
 )
+
+const ffmpegCmdEnv = "YET_FFMPEG_CMD"
 
 func main() {
 	nod.EnableStdOutPresenter()
 
 	ya := nod.Begin("yet is getting requested videos/playlists")
 	defer ya.End()
+
+	//get
+	ffmpegCmd := os.Getenv(ffmpegCmdEnv)
+	if ffmpegCmd == "" {
+		if path, err := exec.LookPath("ffmpeg"); err == nil {
+			ffmpegCmd = path
+		}
+	}
 
 	httpClient, err := coost.NewHttpClientFromFile("cookies.txt", yt_urls.YoutubeHost)
 	if err != nil {
@@ -29,12 +40,13 @@ func main() {
 		}
 
 		//having a list of video-ids, the only remaining thing is to download it one by one
-		if err := DownloadVideos(httpClient, videoIds...); err != nil {
+		if err := DownloadVideos(httpClient, ffmpegCmd, videoIds...); err != nil {
 			_ = ya.EndWithError(err)
 		}
-	} else {
-		ya.EndWithResult("...or not:")
-		ha := nod.Begin("No arguments specified, expected: yet <video-id>[, ...] <channel-id>[, ...] ")
-		ha.End()
+
+		return
 	}
+
+	ya.EndWithResult("...or not:")
+	nod.ErrorStr("No arguments specified, expected: yet <video-id>[, ...] <channel-id>[, ...] ")
 }
