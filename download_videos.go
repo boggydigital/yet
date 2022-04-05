@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
@@ -18,9 +19,15 @@ const (
 	audioSuffix = " (audio)"
 )
 
-func DownloadVideos(httpClient *http.Client, ffmpegCmd string, videoIds ...string) error {
+type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
+
+func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, ffmpegCmd string, videoIds ...string) error {
 	if len(videoIds) == 0 {
 		return nil
+	}
+
+	if filenameDelegate == nil {
+		return errors.New("filename delegate is nil")
 	}
 
 	dvtpw := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
@@ -41,7 +48,9 @@ func DownloadVideos(httpClient *http.Client, ffmpegCmd string, videoIds ...strin
 			continue
 		}
 
-		if err := downloadVideo(dl, videoId, ffmpegCmd, videoPage); err != nil {
+		fn := filenameDelegate(videoId, videoPage)
+
+		if err := downloadVideo(dl, fn, ffmpegCmd, videoPage); err != nil {
 			gv.Error(err)
 		}
 
@@ -52,11 +61,7 @@ func DownloadVideos(httpClient *http.Client, ffmpegCmd string, videoIds ...strin
 	return nil
 }
 
-func downloadVideo(dl *dolo.Client, videoId string, ffmpegCmd string, videoPage *yt_urls.InitialPlayerResponse) error {
-
-	title := videoPage.Title()
-
-	fn := localVideoFilename(title, videoId)
+func downloadVideo(dl *dolo.Client, fn string, ffmpegCmd string, videoPage *yt_urls.InitialPlayerResponse) error {
 
 	if _, err := os.Stat(fn); err == nil {
 		//local file already exists - won't attempt to download again

@@ -40,7 +40,7 @@ func main() {
 		}
 
 		//having a list of video-ids, the only remaining thing is to download it one by one
-		if err := DownloadVideos(httpClient, ffmpegCmd, videoIds...); err != nil {
+		if err := DownloadVideos(httpClient, localVideoFilename, ffmpegCmd, videoIds...); err != nil {
 			_ = ya.EndWithError(err)
 		}
 

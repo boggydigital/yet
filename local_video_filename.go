@@ -14,7 +14,12 @@ const mp4Ext = ".mp4"
 //"title-video-id.mp4". If the title is not available, the filename would be
 //"video-id.mp4". In either case, the resulting filename is sanitized to remove
 //characters not suitable for file names.
-func localVideoFilename(title, videoId string) string {
+func localVideoFilename(videoId string, videoPage *yt_urls.InitialPlayerResponse) string {
+
+	title := ""
+	if videoPage != nil {
+		title = videoPage.Title()
+	}
 
 	var fn string
 	if title != "" {
