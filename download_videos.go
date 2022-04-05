@@ -157,6 +157,14 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename s
 		return ma.EndWithError(err)
 	}
 
+	//cleanup separate streams after successful merge
+	if err := os.Remove(videoFilename); err != nil {
+		return ma.EndWithError(err)
+	}
+	if err := os.Remove(audioFilename); err != nil {
+		return ma.EndWithError(err)
+	}
+
 	ma.EndWithResult("done")
 	return nil
 }
