@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/boggydigita/yet/yet"
 	"github.com/boggydigital/coost"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
 	"os"
 	"os/exec"
@@ -35,13 +35,13 @@ func main() {
 		//internally yet operates on video-ids, so the first step to process user input
 		//is to expand all channel-ids into lists of video-ids and transparently return
 		//any video-ids in the input stream
-		videoIds, err := yet.ArgsToVideoIds(httpClient, false, os.Args[1:]...)
+		videoIds, err := yeti.ArgsToVideoIds(httpClient, false, os.Args[1:]...)
 		if err != nil {
 			_ = ya.EndWithError(err)
 		}
 
 		//having a list of video-ids, the only remaining thing is to download it one by one
-		if err := yet.DownloadVideos(httpClient, yet.DefaultFilenameDelegate, ffmpegCmd, videoIds...); err != nil {
+		if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, ffmpegCmd, videoIds...); err != nil {
 			_ = ya.EndWithError(err)
 		}
 

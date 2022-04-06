@@ -1,4 +1,4 @@
-package yet
+package yeti
 
 import (
 	"errors"
