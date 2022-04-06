@@ -1,4 +1,4 @@
-package main
+package yet
 
 import (
 	"fmt"
@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-//argsToVideoIds converts list of videoIds, playlistIds, video URLs,
+//ArgsToVideoIds converts list of videoIds, playlistIds, video URLs,
 //playlist URLs (in any order and combination) to a list of videoIds.
 //Inputs in unsupported format will produce an error.
-func argsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...string) ([]string, error) {
+func ArgsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...string) ([]string, error) {
 	videoIds := make([]string, 0)
 	for _, urlOrId := range args {
 		if len(urlOrId) < 12 {

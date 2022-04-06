@@ -1,4 +1,4 @@
-package main
+package yet
 
 import (
 	"fmt"
@@ -9,12 +9,7 @@ import (
 
 const mp4Ext = ".mp4"
 
-//localVideoFilename constructs a filename based on video-id and
-//optional video title. If the title is available, the filename would be
-//"title-video-id.mp4". If the title is not available, the filename would be
-//"video-id.mp4". In either case, the resulting filename is sanitized to remove
-//characters not suitable for file names.
-func filenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerResponse) string {
+func DefaultFilenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerResponse) string {
 
 	title := ""
 	if videoPage != nil {
@@ -25,6 +20,11 @@ func filenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerResponse) 
 
 }
 
+//titleVideoIdFilename constructs a filename based on video-id and
+//optional video title. If the title is available, the filename would be
+//"title-video-id.mp4". If the title is not available, the filename would be
+//"video-id.mp4". In either case, the resulting filename is sanitized to remove
+//characters not suitable for file names.
 func titleVideoIdFilename(title, videoId string) string {
 	var fn string
 	if title != "" {
