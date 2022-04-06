@@ -1,4 +1,4 @@
-module github.com/boggydigita/yet
+module github.com/boggydigital/yet
 
 go 1.17
 
