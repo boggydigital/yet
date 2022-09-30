@@ -20,11 +20,11 @@ func DefaultFilenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerRes
 
 }
 
-//titleVideoIdFilename constructs a filename based on video-id and
-//optional video title. If the title is available, the filename would be
-//"title-video-id.mp4". If the title is not available, the filename would be
-//"video-id.mp4". In either case, the resulting filename is sanitized to remove
-//characters not suitable for file names.
+// titleVideoIdFilename constructs a filename based on video-id and
+// optional video title. If the title is available, the filename would be
+// "title-video-id.mp4". If the title is not available, the filename would be
+// "video-id.mp4". In either case, the resulting filename is sanitized to remove
+// characters not suitable for file names.
 func titleVideoIdFilename(title, videoId string) string {
 	var fn string
 	if title != "" {
@@ -43,5 +43,5 @@ func titleVideoIdFilename(title, videoId string) string {
 		fn = strings.ReplaceAll(fn, ch, "")
 	}
 
-	return fn + yt_urls.DefaultExt
+	return fn + yt_urls.DefaultVideoExt
 }
