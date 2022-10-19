@@ -11,11 +11,11 @@ yet supports individual video-ids or playlist-ids as args. Either one can be pro
 
 Internally yet downloads videos using a list of video-ids, so any channel-ids are expanded into video-ids for download.
 
-At the moment, there are no other (explicit) parameters that yet supports. When called without any arguments, yet can use `yet-list.txt` to update multiple playlists or if that file doesn't exist - will print help information.
+At the moment, there are no other (explicit) parameters that yet supports. When called without any arguments yet will print help information.
 
 ### What is video-id?
 
-Video-id is YouTube's video identifier. You can get it from a video URL : `https://www.youtube.com/watch?v=video-id`. yet can extract video-id from a URL, so you can use either video-id or `https://www.youtube.com/watch?v=video-id`.
+Video-id is YouTube's video identifier. You can get it from a video URL : `https://www.youtube.com/watch?v=video-id`. yet can extract video-id from a URL, so you can use either video-id or the full URL `https://www.youtube.com/watch?v=video-id`.
 
 ### What is playlist-id?
 
@@ -23,7 +23,7 @@ Playlist-id is YouTube's videos list identifier. You can get it from a list URL:
 
 ## Advanced scenarios
 
-Despite supporting only video-ids and playlist-ids, yet also (implicitly) supports channel and user videos, when they can be expressed as playlists. In addition to video-ids and playlist-ids used as arguments, yet supports `yet-list.txt` file that can be used to specify multiple sources and directories they should be downloaded. 
+Despite supporting only video-ids and playlist-ids, yet also (implicitly) supports channel and user videos, when they can be expressed as playlists. 
 
 All advanced scenarios are detailed below. 
 
@@ -33,7 +33,7 @@ Most channels and user pages contain playlist links to all uploads. For example:
 
 ### Downloading videos that require authentication
 
-Some YouTube videos require users to sign in - e.g. members-only video that user is supporting.
+Some YouTube videos require users to sign in - e.g. members-only videos.
 
 yet uses coost to persist session cookies and it's possible to reuse existing YouTube cookies to get access to videos that require authentication. 
 
