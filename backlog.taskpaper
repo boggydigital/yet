@@ -1,0 +1,4 @@
+Create a yet service:
+	- Simple http frontend to queue videos/channels/etc
+	- Figure out how to track watched status / track progress
+	- Figure out channel download settings
