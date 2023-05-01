@@ -33,9 +33,9 @@ Most channels and user pages contain playlist links to all uploads. For example:
 
 ### Downloading videos that require authentication
 
-Some YouTube videos require users to sign in - e.g. members-only videos.
+Some YouTube videos require users to sign in - e.g. paid membership only videos.
 
-yet uses coost to persist session cookies and it's possible to reuse existing YouTube cookies to get access to videos that require authentication. 
+yet uses coost to persist session cookies and it's possible to reuse existing browser YouTube cookies to get access to videos that require authentication. 
 
 Please refer to [the coost README](https://github.com/boggydigital/coost#copying-session-cookies-from-an-existing-browser-session) for the step by step guide on copying YouTube session cookies.
 
@@ -43,8 +43,20 @@ For yet you need to create or edit `cookies.txt` file in the yet working directo
 
 ```text
 youtube.com
-  cookie-header=<paste-youtube-session-cookie-header-here>
+  cookie-header=<paste-youtube-session-cookie-header-from-your-browser-here>
 ```
 ### Specifying ffmpeg location to get the best quality video/audio
 
-yet will attempt to locate `ffmpeg` binary on the system. If you'd prefer to specify it yourself, set `YET_FFMPEG_CMD` environment variable to the full path of `ffmpeg` binary (e.g. `/opt/homebrew/bin/ffmpeg` for Homebrew installation on macOS)
+Please note that `ffmpeg` is NOT required for yet to function - yet was designed to function without any external dependencies out of the box. When yet cannot locate a working `ffmpeg` binary, it'll download a mobile version of the video that'll contain video and audio in one file. Typically that means 720p videos / medium quality sound and is a YouTube limitation, not yet.
+
+However, if an external dependency is not a problem for your use-case - you can progressively enhance yet with `ffmpeg`. By default, yet will attempt to locate `ffmpeg` binary on the system. In most cases that's sufficient and assuming you have `ffmpeg` installed - you don't need to do anything special to get better quality video/audio.
+
+If you'd prefer to specify `ffmpeg` binary location manually, set `YET_FFMPEG_CMD` environment variable to the full path of `ffmpeg` binary (e.g. `/opt/homebrew/bin/ffmpeg` for Homebrew installation on macOS).
+
+## Privacy
+
+yet doesn't collect any data whatsoever. Whatever you do with yet stays on your machine. 
+
+Your Internet connection is only used to download YouTube metadata and videos and nothing is ever uploaded anywhere. 
+
+If you've provided any `youtube.com` cookies - they're transmitted as part of requests to get YouTube data, exactly the same way your browser would send them. You can delete `cookies.txt` that you've created at any point with no impact to ability to download publicly available videos (you won't be able to download any YouTube videos that require authorization). 
