@@ -53,6 +53,14 @@ However, if an external dependency is not a problem for your use-case - you can 
 
 If you'd prefer to specify `ffmpeg` binary location manually, set `YET_FFMPEG_CMD` environment variable to the full path of `ffmpeg` binary (e.g. `/opt/homebrew/bin/ffmpeg` for Homebrew installation on macOS).
 
+## Building for another OS
+
+Go allows you to build binary for another OS like this (using Linux and AMD64 as an example):
+
+```shell
+env GOOS=linux GOARCH=amd64 go build -o yet
+```
+
 ## Privacy
 
 yet doesn't collect any data whatsoever. Whatever you do with yet stays on your machine. 
