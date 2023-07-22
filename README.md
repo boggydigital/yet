@@ -1,5 +1,5 @@
 # yet
-yet is a minimalist YouTube video and channel downloader. Engineering design contraints lead to a simple application and code base. yet is built on top of `github.com/boggydigital/yt_urls`, similarly opinionated module, that provides low-level helpers to get and rationalize YouTube data.
+yet is a minimalist YouTube video and channel downloader. Engineering design constraints lead to a simple application and code base. yet is built on top of `github.com/boggydigital/yt_urls`, similarly opinionated module, that provides low-level helpers to get and work with YouTube data.
 
 ## Using yet
 

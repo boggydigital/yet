@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-//ArgsToVideoIds converts list of videoIds, playlistIds, video URLs,
-//playlist URLs (in any order and combination) to a list of videoIds.
-//Inputs in unsupported format will produce an error.
+// ArgsToVideoIds converts list of videoIds, playlistIds, video URLs,
+// playlist URLs (in any order and combination) to a list of videoIds.
+// Inputs in unsupported format will produce an error.
 func ArgsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...string) ([]string, error) {
 	videoIds := make([]string, 0)
 	for _, urlOrId := range args {
@@ -17,6 +17,12 @@ func ArgsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...str
 			//currently, YouTube videoIds are exactly 11 characters,
 			//meaning any URL containing videoId would be longer than 11 characters.
 			videoIds = append(videoIds, urlOrId)
+		} else if strings.Contains(urlOrId, "youtu.be/") {
+			//currently, YouTube own short URLs are formatted as
+			//youtu.be/videoId
+			if _, videoId, ok := strings.Cut(urlOrId, "youtu.be/"); ok {
+				videoIds = append(videoIds, videoId)
+			}
 		} else if !strings.Contains(urlOrId, "?") {
 			//currently, YouTube URLs would contain "?" query parameter separator,
 			//meaning non-URL longer than 11 characters will be playlistId
