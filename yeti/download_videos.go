@@ -15,8 +15,10 @@ import (
 )
 
 const (
-	videoSuffix = " (video)"
-	audioSuffix = " (audio)"
+	videoExt = ".video"
+	videoSfx = " (video)"
+	audioExt = ".audio"
+	audioSfx = " (audio)"
 )
 
 type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
@@ -138,15 +140,15 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename s
 	fse := strings.TrimSuffix(filename, ext)
 
 	//download video format
-	videoTitle := title + videoSuffix
-	videoFilename := fse + videoSuffix + ext
+	videoTitle := title + videoSfx
+	videoFilename := fse + videoExt
 	if err := downloadSingleFormat(dl, videoTitle, videoFilename, videoFormats); err != nil {
 		return err
 	}
 
 	//download audio format
-	audioTitle := title + audioSuffix
-	audioFilename := fse + audioSuffix + ext
+	audioTitle := title + audioSfx
+	audioFilename := fse + audioExt
 	if err := downloadSingleFormat(dl, audioTitle, audioFilename, audioFormats); err != nil {
 		return err
 	}
