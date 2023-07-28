@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -88,7 +89,12 @@ func requestDecodedParam(hc *http.Client, n, playerPath string) (string, error) 
 		return "", err
 	}
 
-	dnpa := nod.Begin("please open %s and paste the answer:", decoderFilename)
+	afn, err := filepath.Abs(decoderFilename)
+	if err != nil {
+		return "", err
+	}
+
+	dnpa := nod.Begin("please open file://%s and paste the answer:", afn)
 	defer dnpa.End()
 
 	dn := ""
@@ -99,6 +105,10 @@ func requestDecodedParam(hc *http.Client, n, playerPath string) (string, error) 
 	}
 
 	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	if err := os.Remove(decoderFilename); err != nil {
 		return "", err
 	}
 
