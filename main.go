@@ -9,7 +9,9 @@ import (
 	"os/exec"
 )
 
-const ffmpegCmdEnv = "YET_FFMPEG_CMD"
+const (
+	ffmpegCmdEnv = "YET_FFMPEG_CMD"
+)
 
 func main() {
 	nod.EnableStdOutPresenter()

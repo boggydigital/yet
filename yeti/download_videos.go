@@ -19,6 +19,9 @@ const (
 	videoSfx = " (video)"
 	audioExt = ".audio"
 	audioSfx = " (audio)"
+
+	fast            = "YET_FAST"
+	decoderFilename = "decoder.html"
 )
 
 type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
@@ -43,7 +46,7 @@ func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, 
 
 		gv := nod.Begin("video-id: " + videoId)
 
-		videoPage, err := yt_urls.GetVideoPage(httpClient, videoId)
+		videoPage, playerUrl, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
 			_ = gv.EndWithError(err)
 			dvtpw.Increment()
@@ -52,7 +55,7 @@ func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, 
 
 		fn := filenameDelegate(videoId, videoPage)
 
-		if err := downloadVideo(dl, fn, ffmpegCmd, videoPage); err != nil {
+		if err := downloadVideo(dl, fn, ffmpegCmd, videoPage, playerUrl); err != nil {
 			gv.Error(err)
 		}
 
@@ -63,7 +66,12 @@ func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, 
 	return nil
 }
 
-func downloadVideo(dl *dolo.Client, fn string, ffmpegCmd string, videoPage *yt_urls.InitialPlayerResponse) error {
+func downloadVideo(
+	dl *dolo.Client,
+	fn string,
+	ffmpegCmd string,
+	videoPage *yt_urls.InitialPlayerResponse,
+	playerUrl string) error {
 
 	if _, err := os.Stat(fn); err == nil {
 		//local file already exists - won't attempt to download again
@@ -73,7 +81,7 @@ func downloadVideo(dl *dolo.Client, fn string, ffmpegCmd string, videoPage *yt_u
 	vt := videoPage.Title()
 
 	if ffmpegCmd == "" {
-		if err := downloadSingleFormat(dl, vt, fn, videoPage.Formats()); err != nil {
+		if err := downloadSingleFormat(dl, vt, fn, videoPage.Formats(), playerUrl); err != nil {
 			return err
 		}
 	} else {
@@ -83,7 +91,8 @@ func downloadVideo(dl *dolo.Client, fn string, ffmpegCmd string, videoPage *yt_u
 			vt,
 			fn,
 			videoPage.AdaptiveVideoFormats(),
-			videoPage.AdaptiveAudioFormats()); err != nil {
+			videoPage.AdaptiveAudioFormats(),
+			playerUrl); err != nil {
 			return err
 		}
 	}
@@ -103,7 +112,7 @@ func downloadVideo(dl *dolo.Client, fn string, ffmpegCmd string, videoPage *yt_u
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_urls.Formats) error {
+func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_urls.Formats, playerUrl string) error {
 
 	for _, format := range formats {
 
@@ -117,6 +126,17 @@ func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_ur
 		if err != nil {
 			_ = tpw.EndWithError(err)
 			continue
+		}
+
+		if os.Getenv(fast) != "" {
+			q := u.Query()
+			np := q.Get("n")
+			if np, err = requestDecodedParam(http.DefaultClient, np, playerUrl); err != nil {
+				return tpw.EndWithError(err)
+			} else {
+				q.Set("n", np)
+				u.RawQuery = q.Encode()
+			}
 		}
 
 		if err := dl.Download(u, tpw, filename); err != nil {
@@ -134,7 +154,7 @@ func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_ur
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename string, videoFormats, audioFormats yt_urls.Formats) error {
+func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
 
 	ext := filepath.Ext(filename)
 	fse := strings.TrimSuffix(filename, ext)
@@ -142,14 +162,14 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename s
 	//download video format
 	videoTitle := title + videoSfx
 	videoFilename := fse + videoExt
-	if err := downloadSingleFormat(dl, videoTitle, videoFilename, videoFormats); err != nil {
+	if err := downloadSingleFormat(dl, videoTitle, videoFilename, videoFormats, playerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
 	audioTitle := title + audioSfx
 	audioFilename := fse + audioExt
-	if err := downloadSingleFormat(dl, audioTitle, audioFilename, audioFormats); err != nil {
+	if err := downloadSingleFormat(dl, audioTitle, audioFilename, audioFormats, playerUrl); err != nil {
 		return err
 	}
 
