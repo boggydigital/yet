@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 const (
@@ -57,11 +58,15 @@ func DownloadVideos(
 
 		fn := filenameDelegate(videoId, videoPage)
 
+		start := time.Now()
+
 		if err := downloadVideo(dl, fn, ffmpegCmd, nodeCmd, videoPage, playerUrl); err != nil {
 			gv.Error(err)
 		}
 
-		gv.End()
+		elapsed := time.Since(start)
+
+		gv.EndWithResult("done in %.1fs", elapsed.Seconds())
 		dvtpw.Increment()
 	}
 
@@ -134,10 +139,10 @@ func downloadSingleFormat(dl *dolo.Client, nodeCmd string, title, filename strin
 		if nodeCmd != "" {
 			q := u.Query()
 			np := q.Get("n")
-			if np, err = decodeParam(http.DefaultClient, nodeCmd, np, playerUrl); err != nil {
+			if dnp, err := decodeParam(http.DefaultClient, nodeCmd, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
-				q.Set("n", np)
+				q.Set("n", dnp)
 				u.RawQuery = q.Encode()
 			}
 		}

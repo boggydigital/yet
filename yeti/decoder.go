@@ -18,12 +18,18 @@ const (
 	decoderFilename = "decoder.js"
 )
 
+var memoizer = make(map[string]string)
+
 func decodeParam(hc *http.Client, nodeCmd, n, playerPath string) (string, error) {
 
-	// process `n` parameter:
-	// 1) generate a solution file for the user
-	// 2) request input from the user (they'll need to open solution file in a browser)
-	// 3) return the decoded parameter to unlock fast YouTube downloads
+	if dn, ok := memoizer[n+playerPath]; ok {
+		return dn, nil
+	}
+
+	// transform `n` parameter:
+	// 1) generate a file containing player specific transform function
+	// 2) run it with the Node.js and capture output (transformed n)
+	// 3) use the transformed parameter to unlock faster YouTube downloads
 
 	dpa := nod.Begin("decoding n=%s...", n)
 	defer dpa.End()
@@ -83,6 +89,7 @@ func decodeParam(hc *http.Client, nodeCmd, n, playerPath string) (string, error)
 	}
 
 	dn := sb.String()
+	memoizer[n+playerPath] = dn
 
 	if err := os.Remove(decoderFilename); err != nil {
 		return "", dpa.EndWithError(err)
