@@ -11,6 +11,7 @@ import (
 
 const (
 	ffmpegCmdEnv = "YET_FFMPEG_CMD"
+	nodeCmdEnv   = "YET_NODE_CMD"
 )
 
 func main() {
@@ -24,6 +25,14 @@ func main() {
 	if ffmpegCmd == "" {
 		if path, err := exec.LookPath("ffmpeg"); err == nil {
 			ffmpegCmd = path
+		}
+	}
+
+	//get Node.js binary location from user specified env of elsewhere on the system
+	nodeCmd := os.Getenv(nodeCmdEnv)
+	if nodeCmd == "" {
+		if path, err := exec.LookPath("node"); err == nil {
+			nodeCmd = path
 		}
 	}
 
@@ -43,7 +52,7 @@ func main() {
 		}
 
 		//having a list of video-ids, the only remaining thing is to download it one by one
-		if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, ffmpegCmd, videoIds...); err != nil {
+		if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, ffmpegCmd, nodeCmd, videoIds...); err != nil {
 			_ = ya.EndWithError(err)
 		}
 

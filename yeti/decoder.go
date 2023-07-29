@@ -2,32 +2,37 @@ package yeti
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yt_urls"
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
+	"os/exec"
 	"strings"
 )
 
 const (
-	decoderStart = "function(a){var b=a.split(\"\"),"
-	decoderEnd   = "return b.join(\"\")};"
+	decoderStart    = "function(a){var b=a.split(\"\"),"
+	decoderEnd      = "return b.join(\"\")};"
+	decoderFilename = "decoder.js"
 )
 
-func requestDecodedParam(hc *http.Client, n, playerPath string) (string, error) {
+func decodeParam(hc *http.Client, nodeCmd, n, playerPath string) (string, error) {
 
 	// process `n` parameter:
 	// 1) generate a solution file for the user
 	// 2) request input from the user (they'll need to open solution file in a browser)
 	// 3) return the decoded parameter to unlock fast YouTube downloads
 
+	dpa := nod.Begin("decoding n=%s...", n)
+	defer dpa.End()
+
 	pu := yt_urls.PlayerUrl(playerPath)
 
 	resp, err := hc.Get(pu.String())
 	if err != nil {
-		return "", err
+		return "", dpa.EndWithError(err)
 	}
 
 	defer resp.Body.Close()
@@ -54,63 +59,36 @@ func requestDecodedParam(hc *http.Client, n, playerPath string) (string, error) 
 	}
 
 	if err := scanner.Err(); err != nil {
-		return "", err
+		return "", dpa.EndWithError(err)
 	}
 
 	decoderFile, err := os.Create(decoderFilename)
 	if err != nil {
-		return "", err
+		return "", dpa.EndWithError(err)
 	}
 
 	defer decoderFile.Close()
 
-	if _, err := io.WriteString(decoderFile, "<html>"+
-		"<head>"+
-		"<meta name=\"color-scheme\" content=\"light dark\">"+
-		"</head>"+
-		"<body style='padding:1em'>"); err != nil {
-		return "", err
-	}
-	if _, err := io.WriteString(decoderFile,
-		"<output style='font-family:sans-serif;font-size:2em'>"+
-			"</output>"); err != nil {
-		return "", err
-	}
-	if _, err := io.WriteString(decoderFile, "<script>"+sb.String()+"</script>"); err != nil {
-		return "", err
-	}
-	if _, err := io.WriteString(decoderFile,
-		"<script>"+
-			"document.getElementsByTagName('output')[0].textContent = "+dfn+"('"+n+"')"+
-			"</script>"); err != nil {
-		return "", err
-	}
-	if _, err := io.WriteString(decoderFile, "</body></html>"); err != nil {
-		return "", err
+	if _, err := io.WriteString(decoderFile, sb.String()+"\n"+
+		fmt.Sprintf("console.log(%s('%s'));", dfn, n)); err != nil {
+		return "", dpa.EndWithError(err)
 	}
 
-	afn, err := filepath.Abs(decoderFilename)
-	if err != nil {
-		return "", err
+	sb.Reset()
+
+	cmd := exec.Command(nodeCmd, decoderFilename)
+	cmd.Stdout = sb
+	if err := cmd.Run(); err != nil {
+		return "", dpa.EndWithError(err)
 	}
 
-	dnpa := nod.Begin("please open file://%s and paste the answer:", afn)
-	defer dnpa.End()
-
-	dn := ""
-	scanner = bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		dn = scanner.Text()
-		break
-	}
-
-	if err := scanner.Err(); err != nil {
-		return "", err
-	}
+	dn := sb.String()
 
 	if err := os.Remove(decoderFilename); err != nil {
-		return "", err
+		return "", dpa.EndWithError(err)
 	}
+
+	dpa.EndWithResult("done, new n=%s", dn)
 
 	return dn, nil
 }

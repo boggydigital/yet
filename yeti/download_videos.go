@@ -19,14 +19,16 @@ const (
 	videoSfx = " (video)"
 	audioExt = ".audio"
 	audioSfx = " (audio)"
-
-	fast            = "YET_FAST"
-	decoderFilename = "decoder.html"
 )
 
 type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
 
-func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, ffmpegCmd string, videoIds ...string) error {
+func DownloadVideos(
+	httpClient *http.Client,
+	filenameDelegate FilenameDelegate,
+	ffmpegCmd, nodeCmd string,
+	videoIds ...string) error {
+
 	if len(videoIds) == 0 {
 		return nil
 	}
@@ -55,7 +57,7 @@ func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, 
 
 		fn := filenameDelegate(videoId, videoPage)
 
-		if err := downloadVideo(dl, fn, ffmpegCmd, videoPage, playerUrl); err != nil {
+		if err := downloadVideo(dl, fn, ffmpegCmd, nodeCmd, videoPage, playerUrl); err != nil {
 			gv.Error(err)
 		}
 
@@ -69,7 +71,7 @@ func DownloadVideos(httpClient *http.Client, filenameDelegate FilenameDelegate, 
 func downloadVideo(
 	dl *dolo.Client,
 	fn string,
-	ffmpegCmd string,
+	ffmpegCmd, nodeCmd string,
 	videoPage *yt_urls.InitialPlayerResponse,
 	playerUrl string) error {
 
@@ -81,13 +83,14 @@ func downloadVideo(
 	vt := videoPage.Title()
 
 	if ffmpegCmd == "" {
-		if err := downloadSingleFormat(dl, vt, fn, videoPage.Formats(), playerUrl); err != nil {
+		if err := downloadSingleFormat(dl, nodeCmd, vt, fn, videoPage.Formats(), playerUrl); err != nil {
 			return err
 		}
 	} else {
 		if err := downloadAdaptiveFormat(
 			dl,
 			ffmpegCmd,
+			nodeCmd,
 			vt,
 			fn,
 			videoPage.AdaptiveVideoFormats(),
@@ -112,7 +115,7 @@ func downloadVideo(
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_urls.Formats, playerUrl string) error {
+func downloadSingleFormat(dl *dolo.Client, nodeCmd string, title, filename string, formats yt_urls.Formats, playerUrl string) error {
 
 	for _, format := range formats {
 
@@ -128,10 +131,10 @@ func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_ur
 			continue
 		}
 
-		if os.Getenv(fast) != "" {
+		if nodeCmd != "" {
 			q := u.Query()
 			np := q.Get("n")
-			if np, err = requestDecodedParam(http.DefaultClient, np, playerUrl); err != nil {
+			if np, err = decodeParam(http.DefaultClient, nodeCmd, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
 				q.Set("n", np)
@@ -154,7 +157,7 @@ func downloadSingleFormat(dl *dolo.Client, title, filename string, formats yt_ur
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
+func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd, nodeCmd string, title, filename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
 
 	ext := filepath.Ext(filename)
 	fse := strings.TrimSuffix(filename, ext)
@@ -162,14 +165,14 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd string, title, filename s
 	//download video format
 	videoTitle := title + videoSfx
 	videoFilename := fse + videoExt
-	if err := downloadSingleFormat(dl, videoTitle, videoFilename, videoFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, nodeCmd, videoTitle, videoFilename, videoFormats, playerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
 	audioTitle := title + audioSfx
 	audioFilename := fse + audioExt
-	if err := downloadSingleFormat(dl, audioTitle, audioFilename, audioFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, nodeCmd, audioTitle, audioFilename, audioFormats, playerUrl); err != nil {
 		return err
 	}
 
