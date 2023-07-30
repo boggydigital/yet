@@ -12,6 +12,7 @@ import (
 const (
 	ffmpegCmdEnv = "YET_FFMPEG_CMD"
 	nodeCmdEnv   = "YET_NODE_CMD"
+	fastEnv      = "YET_FAST"
 )
 
 func main() {

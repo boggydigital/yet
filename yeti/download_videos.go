@@ -136,7 +136,9 @@ func downloadSingleFormat(dl *dolo.Client, nodeCmd string, title, filename strin
 			continue
 		}
 
-		if nodeCmd != "" {
+		fast := os.Getenv("YET_FAST") != ""
+
+		if nodeCmd != "" || fast {
 			q := u.Query()
 			np := q.Get("n")
 			if dnp, err := decodeParam(http.DefaultClient, nodeCmd, np, playerUrl); err != nil {
