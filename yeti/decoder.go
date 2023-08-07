@@ -23,10 +23,14 @@ const (
 
 var memoizer = make(map[string]string)
 
-func decodeParam(hc *http.Client, nodeCmd, n, playerPath string) (string, error) {
+func decodeParam(hc *http.Client, nodeCmd, n, playerUrl string) (string, error) {
 
-	if dn, ok := memoizer[n+playerPath]; ok {
+	if dn, ok := memoizer[n+playerUrl]; ok {
 		return dn, nil
+	}
+
+	if playerUrl == "" {
+		return "", errors.New("player url is empty")
 	}
 
 	// transform `n` parameter:
@@ -37,7 +41,7 @@ func decodeParam(hc *http.Client, nodeCmd, n, playerPath string) (string, error)
 	dpa := nod.Begin("decoding n=%s...", n)
 	defer dpa.End()
 
-	pu := yt_urls.PlayerUrl(playerPath)
+	pu := yt_urls.PlayerUrl(playerUrl)
 
 	resp, err := hc.Get(pu.String())
 	if err != nil {
@@ -89,7 +93,7 @@ func decodeParam(hc *http.Client, nodeCmd, n, playerPath string) (string, error)
 
 	dn = strings.TrimSuffix(dn, "\n")
 
-	memoizer[n+playerPath] = dn
+	memoizer[n+playerUrl] = dn
 
 	if err := os.Remove(filename); err != nil {
 		return "", dpa.EndWithError(err)
