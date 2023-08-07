@@ -52,9 +52,16 @@ func main() {
 			_ = ya.EndWithError(err)
 		}
 
-		//having a list of video-ids, the only remaining thing is to download it one by one
-		if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, ffmpegCmd, nodeCmd, videoIds...); err != nil {
-			_ = ya.EndWithError(err)
+		if len(videoIds) > 0 {
+			//having a list of video-ids, the only remaining thing is to download it one by one
+			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, ffmpegCmd, nodeCmd, videoIds...); err != nil {
+				_ = ya.EndWithError(err)
+			}
+		} else {
+			//argument has not been determined to be a video-id, attempt direct URL download
+			if err := yeti.DownloadUrls(httpClient, os.Args[1:]...); err != nil {
+				_ = ya.EndWithError(err)
+			}
 		}
 
 		return

@@ -1,7 +1,6 @@
 package yeti
 
 import (
-	"fmt"
 	"github.com/boggydigital/yt_urls"
 	"net/http"
 	"strings"
@@ -31,7 +30,7 @@ func ArgsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...str
 				return videoIds, err
 			}
 			videoIds = append(videoIds, playlistVideoIds...)
-		} else if !strings.Contains(urlOrId, "list=") {
+		} else if !strings.Contains(urlOrId, "list=") && strings.Contains(urlOrId, "v=") {
 			//currently, YouTube playlist URLs identify lists with a "list" parameter,
 			//meaning that a URL (supported by yet) without it would be a video URL (/watch?v=videoId).
 			videoId, err := yt_urls.VideoId(urlOrId)
@@ -56,7 +55,9 @@ func ArgsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...str
 			//-playlistId: >=12 characters long and doesn't contain query parameters separator
 			//-playlist URL: URL containing query parameters separator and a "list" parameter
 			//-video URL: URL containing query parameters separator and a "v" parameter (and doesn't contain "list" parameter)
-			return videoIds, fmt.Errorf("unknown id or URL format: %s", urlOrId)
+			//
+			//don't return error as 0-length videoIds will be handled later
+			return videoIds, nil
 		}
 	}
 	return videoIds, nil
