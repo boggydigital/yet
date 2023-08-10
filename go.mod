@@ -6,7 +6,7 @@ require (
 	github.com/boggydigital/coost v0.3.8
 	github.com/boggydigital/dolo v0.2.12
 	github.com/boggydigital/nod v0.1.21
-	github.com/boggydigital/yt_urls v0.1.24
+	github.com/boggydigital/yt_urls v0.1.25
 )
 
 require (
