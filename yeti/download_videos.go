@@ -20,6 +20,7 @@ const (
 	videoSfx = " (video)"
 	audioExt = ".audio"
 	audioSfx = " (audio)"
+	fastEnv  = "YET_FAST"
 )
 
 type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
@@ -27,7 +28,7 @@ type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerRespo
 func DownloadVideos(
 	httpClient *http.Client,
 	filenameDelegate FilenameDelegate,
-	ffmpegCmd, nodeCmd string,
+	binaries *Binaries,
 	videoIds ...string) error {
 
 	if len(videoIds) == 0 {
@@ -60,7 +61,7 @@ func DownloadVideos(
 
 		start := time.Now()
 
-		if err := downloadVideo(dl, fn, ffmpegCmd, nodeCmd, videoPage, playerUrl); err != nil {
+		if err := downloadVideo(dl, fn, binaries, videoPage, playerUrl); err != nil {
 			gv.Error(err)
 		}
 
@@ -76,7 +77,7 @@ func DownloadVideos(
 func downloadVideo(
 	dl *dolo.Client,
 	fn string,
-	ffmpegCmd, nodeCmd string,
+	binaries *Binaries,
 	videoPage *yt_urls.InitialPlayerResponse,
 	playerUrl string) error {
 
@@ -87,15 +88,14 @@ func downloadVideo(
 
 	vt := videoPage.Title()
 
-	if ffmpegCmd == "" {
-		if err := downloadSingleFormat(dl, nodeCmd, vt, fn, videoPage.Formats(), playerUrl); err != nil {
+	if binaries.FFMpeg == "" {
+		if err := downloadSingleFormat(dl, binaries, vt, fn, videoPage.Formats(), playerUrl); err != nil {
 			return err
 		}
 	} else {
 		if err := downloadAdaptiveFormat(
 			dl,
-			ffmpegCmd,
-			nodeCmd,
+			binaries,
 			vt,
 			fn,
 			videoPage.AdaptiveVideoFormats(),
@@ -120,7 +120,7 @@ func downloadVideo(
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, nodeCmd string, title, filename string, formats yt_urls.Formats, playerUrl string) error {
+func downloadSingleFormat(dl *dolo.Client, binaries *Binaries, title, filename string, formats yt_urls.Formats, playerUrl string) error {
 
 	for _, format := range formats {
 
@@ -136,12 +136,12 @@ func downloadSingleFormat(dl *dolo.Client, nodeCmd string, title, filename strin
 			continue
 		}
 
-		fast := os.Getenv("YET_FAST") != ""
+		fast := os.Getenv(fastEnv) != ""
 
-		if nodeCmd != "" || fast {
+		if binaries.NodeJS != "" || binaries.Deno != "" || fast {
 			q := u.Query()
 			np := q.Get("n")
-			if dnp, err := decodeParam(http.DefaultClient, nodeCmd, np, playerUrl); err != nil {
+			if dnp, err := decodeParam(http.DefaultClient, binaries, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
 				q.Set("n", dnp)
@@ -164,7 +164,7 @@ func downloadSingleFormat(dl *dolo.Client, nodeCmd string, title, filename strin
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd, nodeCmd string, title, filename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
+func downloadAdaptiveFormat(dl *dolo.Client, binaries *Binaries, title, filename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
 
 	ext := filepath.Ext(filename)
 	fse := strings.TrimSuffix(filename, ext)
@@ -172,14 +172,14 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd, nodeCmd string, title, f
 	//download video format
 	videoTitle := title + videoSfx
 	videoFilename := fse + videoExt
-	if err := downloadSingleFormat(dl, nodeCmd, videoTitle, videoFilename, videoFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, binaries, videoTitle, videoFilename, videoFormats, playerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
 	audioTitle := title + audioSfx
 	audioFilename := fse + audioExt
-	if err := downloadSingleFormat(dl, nodeCmd, audioTitle, audioFilename, audioFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, binaries, audioTitle, audioFilename, audioFormats, playerUrl); err != nil {
 		return err
 	}
 
@@ -189,7 +189,7 @@ func downloadAdaptiveFormat(dl *dolo.Client, ffmpegCmd, nodeCmd string, title, f
 	//ffmpeg -i video.mp4 -i audio.wav -c copy output.mp4
 	ma := nod.Begin("merging streams: %s...", title)
 	args := []string{"-i", videoFilename, "-i", audioFilename, "-c", "copy", filename}
-	cmd := exec.Command(ffmpegCmd, args...)
+	cmd := exec.Command(binaries.FFMpeg, args...)
 	if err := cmd.Run(); err != nil {
 		return ma.EndWithError(err)
 	}

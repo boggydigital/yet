@@ -17,13 +17,13 @@ import (
 const (
 	decoderStart           = "function(a){var b=a.split(\"\"),"
 	decoderEnd             = "return b.join(\"\")};"
-	decoderNodeFilename    = "decoder.js"
+	decoderScriptFilename  = "decoder.js"
 	decoderBrowserFilename = "decoder.html"
 )
 
 var memoizer = make(map[string]string)
 
-func decodeParam(hc *http.Client, nodeCmd, n, playerUrl string) (string, error) {
+func decodeParam(hc *http.Client, binaries *Binaries, n, playerUrl string) (string, error) {
 
 	if dn, ok := memoizer[n+playerUrl]; ok {
 		return dn, nil
@@ -55,8 +55,8 @@ func decodeParam(hc *http.Client, nodeCmd, n, playerUrl string) (string, error) 
 		return "", dpa.EndWithError(err)
 	}
 
-	filename := decoderNodeFilename
-	if nodeCmd == "" {
+	filename := decoderScriptFilename
+	if binaries.NodeJS == "" && binaries.Deno == "" {
 		filename = decoderBrowserFilename
 	}
 
@@ -69,7 +69,7 @@ func decodeParam(hc *http.Client, nodeCmd, n, playerUrl string) (string, error) 
 
 	var createFile func(io.Writer, string, string, string) error
 	switch filename {
-	case decoderNodeFilename:
+	case decoderScriptFilename:
 		createFile = createNodeFile
 	case decoderBrowserFilename:
 		createFile = createBrowserFile
@@ -80,13 +80,18 @@ func decodeParam(hc *http.Client, nodeCmd, n, playerUrl string) (string, error) 
 	}
 
 	var decoder func(string, string) (string, error)
-	if nodeCmd != "" {
+	jsEngineCmd := ""
+	if binaries.NodeJS != "" {
 		decoder = decodeWithNode
+		jsEngineCmd = binaries.NodeJS
+	} else if binaries.Deno != "" {
+		decoder = decodeWithDeno
+		jsEngineCmd = binaries.Deno
 	} else {
 		decoder = decodeWithBrowser
 	}
 
-	dn, err := decoder(filename, nodeCmd)
+	dn, err := decoder(filename, jsEngineCmd)
 	if err != nil {
 		return "", dpa.EndWithError(err)
 	}
@@ -139,7 +144,7 @@ func getDecodeFuncBodyName(r io.Reader) (string, string, error) {
 }
 
 func createNodeFile(w io.Writer, decodeFuncBody, decodeFuncName, n string) error {
-	if _, err := io.WriteString(w, decodeFuncBody+"\n"+
+	if _, err := io.WriteString(w, "let "+decodeFuncBody+"\n"+
 		fmt.Sprintf("console.log(%s('%s'));", decodeFuncName, n)); err != nil {
 		return err
 	}
@@ -179,6 +184,18 @@ func decodeWithNode(filename, nodeCmd string) (string, error) {
 	sb := &strings.Builder{}
 
 	cmd := exec.Command(nodeCmd, filename)
+	cmd.Stdout = sb
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+
+	return sb.String(), nil
+}
+
+func decodeWithDeno(filename, denoCmd string) (string, error) {
+	sb := &strings.Builder{}
+
+	cmd := exec.Command(denoCmd, "run", filename)
 	cmd.Stdout = sb
 	if err := cmd.Run(); err != nil {
 		return "", err

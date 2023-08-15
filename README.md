@@ -72,13 +72,13 @@ Upon encountering an encoded parameter, yet will download decoding code and crea
 
 You will need to perform that for every individual video, even if you're downloading a playlist.
 
-#### Using Node.js to run decoding code
+#### Using Node.js or Deno to run decoding code
 
-If an external dependency is not a problem for your use-case or you already have Node.js installed - you can progressively enhance yet with `node`. By default, yet will attempt to locate `node` binary on the system. In most cases that's sufficient and assuming you have Node.js installed - you don't need to do anything special to unlock faster download speed. 
+If an external dependency is not a problem for your use-case or you already have Node.js installed - you can progressively enhance yet with `node` or `deno`. By default, yet will attempt to locate `node` and `deno` binaries on the system. In most cases that's sufficient and assuming you have Node.js or Deno installed - you don't need to do anything special to unlock faster download speed. 
 
-If you'd prefer to specify `node` binary location manually, set `YET_NODE_CMD` environment variable to the full path of `node` binary (e.g. `/usr/local/bin/node` for default installation on macOS).
+If you'd prefer to specify `node` or `deno` binary location manually, set `YET_NODE_CMD` environment variable for `node` or `YET_DENO_CMD` for `deno` to the full path of the binary (e.g. `/usr/local/bin/node` for default Node.js installation on macOS).
 
-However you specify location of the `node` binary - upon encountering an encoded parameter, yet will download decoding code and create `decoder.js` file in the working directory and use `node` to run it and get the decoded value - this is completely automatic and doesn't require user input.
+However you specify location of the `node` or `deno` binary - upon encountering an encoded parameter, yet will download decoding code and create `decoder.js` file in the working directory and use an available JavaScript runtime binary to run it and get the decoded value - this is completely automatic and doesn't require user input.
 
 ## Building for another OS
 

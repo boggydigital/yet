@@ -6,13 +6,6 @@ import (
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
 	"os"
-	"os/exec"
-)
-
-const (
-	ffmpegCmdEnv = "YET_FFMPEG_CMD"
-	nodeCmdEnv   = "YET_NODE_CMD"
-	fastEnv      = "YET_FAST"
 )
 
 func main() {
@@ -21,21 +14,7 @@ func main() {
 	ya := nod.Begin("yet is getting requested videos/playlists")
 	defer ya.End()
 
-	//get ffmpeg binary location from user specified env or elsewhere on the system
-	ffmpegCmd := os.Getenv(ffmpegCmdEnv)
-	if ffmpegCmd == "" {
-		if path, err := exec.LookPath("ffmpeg"); err == nil {
-			ffmpegCmd = path
-		}
-	}
-
-	//get Node.js binary location from user specified env of elsewhere on the system
-	nodeCmd := os.Getenv(nodeCmdEnv)
-	if nodeCmd == "" {
-		if path, err := exec.LookPath("node"); err == nil {
-			nodeCmd = path
-		}
-	}
+	bins := yeti.NewBinaries()
 
 	httpClient, err := coost.NewHttpClientFromFile("cookies.txt", yt_urls.YoutubeHost)
 	if err != nil {
@@ -54,7 +33,7 @@ func main() {
 
 		if len(videoIds) > 0 {
 			//having a list of video-ids, the only remaining thing is to download it one by one
-			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, ffmpegCmd, nodeCmd, videoIds...); err != nil {
+			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, bins, videoIds...); err != nil {
 				_ = ya.EndWithError(err)
 			}
 		} else {
