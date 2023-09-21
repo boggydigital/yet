@@ -3,6 +3,7 @@ package yeti
 import (
 	"github.com/boggydigital/yt_urls"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -22,6 +23,18 @@ func ArgsToVideoIds(httpClient *http.Client, newPlaylistVideos bool, args ...str
 			if _, videoId, ok := strings.Cut(urlOrId, "youtu.be/"); ok {
 				videoIds = append(videoIds, videoId)
 			}
+		} else if strings.Contains(urlOrId, "/playlist") {
+			//currently, YouTube playlist URLs would contain "/playlist" endpoint
+			u, err := url.Parse(urlOrId)
+			if err != nil {
+				return nil, err
+			}
+			listId := u.Query().Get("list")
+			playlistVideoIds, err := GetPlaylistVideos(httpClient, listId, newPlaylistVideos)
+			if err != nil {
+				return videoIds, err
+			}
+			videoIds = append(videoIds, playlistVideoIds...)
 		} else if !strings.Contains(urlOrId, "?") {
 			//currently, YouTube URLs would contain "?" query parameter separator,
 			//meaning non-URL longer than 11 characters will be playlistId
