@@ -4,7 +4,6 @@ import (
 	"github.com/boggydigital/coost"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
 	"os"
 )
 
@@ -16,7 +15,7 @@ func main() {
 
 	bins := yeti.NewBinaries()
 
-	httpClient, err := coost.NewHttpClientFromFile("cookies.txt", yt_urls.YoutubeHost)
+	httpClient, err := coost.NewHttpClientFromFile("cookies.txt")
 	if err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
