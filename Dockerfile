@@ -5,11 +5,12 @@ WORKDIR /go/src/app
 RUN go get ./...
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -tags timetzdata -o yet main.go
 
+# starting with deno runtime
 FROM denoland/deno:alpine
-RUN apk update
-RUN apk add
-RUN apk add ffmpeg
+# adding ffmpeg
+RUN apk update && apk add && apk add ffmpeg
+# adding yet
 COPY --from=build /go/src/app/yet /usr/bin/yet
 
 #temporary directory
-VOLUME /var/tmp
+VOLUME /usr/share/yet
