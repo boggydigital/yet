@@ -1,50 +1,83 @@
 package main
 
 import (
-	"github.com/boggydigital/coost"
+	"bytes"
+	_ "embed"
+	"github.com/boggydigital/clo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/yet/yeti"
+	"github.com/boggydigital/wits"
+	"github.com/boggydigital/yet/cli"
+	"github.com/boggydigital/yet/paths"
 	"os"
+)
+
+var (
+	//go:embed "cli-commands.txt"
+	cliCommands []byte
+	//go:embed "cli-help.txt"
+	cliHelp []byte
+)
+
+const (
+	userDirsFilename = "directories.txt"
 )
 
 func main() {
 	nod.EnableStdOutPresenter()
 
-	ya := nod.Begin("yet is getting requested videos/playlists")
+	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.End()
 
-	bins := yeti.NewBinaries()
+	if err := chRoot(userDirsFilename, paths.DefaultDirs); err != nil {
+		_ = ya.EndWithError(err)
+		os.Exit(1)
+	}
 
-	httpClient, err := coost.NewHttpClientFromFile("cookies.txt")
+	defs, err := clo.Load(
+		bytes.NewBuffer(cliCommands),
+		bytes.NewBuffer(cliHelp),
+		nil)
 	if err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
 	}
 
-	if len(os.Args) > 1 {
-		//internally yet operates on video-ids, so the first step to process user input
-		//is to expand all channel-ids into lists of video-ids and transparently return
-		//any video-ids in the input stream
-		videoIds, err := yeti.ArgsToVideoIds(httpClient, false, os.Args[1:]...)
-		if err != nil {
-			_ = ya.EndWithError(err)
-		}
+	clo.HandleFuncs(map[string]clo.Handler{
+		//"serve":   cli.ServeHandler,
+		"download": cli.DownloadHandler,
+		"version":  cli.VersionHandler,
+	})
 
-		if len(videoIds) > 0 {
-			//having a list of video-ids, the only remaining thing is to download it one by one
-			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, bins, videoIds...); err != nil {
-				_ = ya.EndWithError(err)
-			}
-		} else {
-			//argument has not been determined to be a video-id, attempt direct URL download
-			if err := yeti.DownloadUrls(httpClient, os.Args[1:]...); err != nil {
-				_ = ya.EndWithError(err)
-			}
-		}
-
-		return
+	if err := defs.AssertCommandsHaveHandlers(); err != nil {
+		_ = ya.EndWithError(err)
+		os.Exit(1)
 	}
 
-	ya.EndWithResult("...or not:")
-	nod.ErrorStr("No arguments specified, expected: yet <video-id>[, ...] <channel-id>[, ...] ")
+	if err := defs.Serve(os.Args[1:]); err != nil {
+		_ = ya.EndWithError(err)
+		os.Exit(1)
+	}
+}
+
+func chRoot(userDirsFilename string, defaultDirs map[string]string) error {
+
+	var userDirs map[string]string
+
+	if _, err := os.Stat(userDirsFilename); err == nil {
+		udFile, err := os.Open(userDirsFilename)
+		if err != nil {
+			return err
+		}
+
+		userDirs, err = wits.ReadKeyValue(udFile)
+		if err != nil {
+			return err
+		}
+	} else if os.IsNotExist(err) {
+		userDirs = defaultDirs
+	} else {
+		return err
+	}
+
+	return paths.SetAbsDirs(userDirs)
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yt_urls"
 	"net/http"
 	"net/url"
@@ -149,7 +150,12 @@ func downloadSingleFormat(dl *dolo.Client, binaries *Binaries, title, filename s
 			}
 		}
 
-		if err := dl.Download(u, tpw, filename); err != nil {
+		absVideosDir, err := paths.GetAbsDir(paths.Videos)
+		if err != nil {
+			return tpw.EndWithError(err)
+		}
+
+		if err := dl.Download(u, tpw, absVideosDir, filename); err != nil {
 			_ = tpw.EndWithError(err)
 			continue
 		}

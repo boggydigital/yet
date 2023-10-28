@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/yet/paths"
 	"net/http"
 	"net/url"
 	"time"
@@ -33,7 +34,12 @@ func DownloadUrls(httpClient *http.Client, urls ...string) error {
 
 		start := time.Now()
 
-		if err := dl.Download(u, gv); err != nil {
+		absVideosDir, err := paths.GetAbsDir(paths.Videos)
+		if err != nil {
+			return dftpw.EndWithError(err)
+		}
+
+		if err := dl.Download(u, gv, absVideosDir); err != nil {
 			return dftpw.EndWithError(err)
 		}
 

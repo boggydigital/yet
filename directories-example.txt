@@ -1,0 +1,9 @@
+backups
+    /usr/share/yet/backups
+input
+    # cookies.txt, skiplist.txt
+    /usr/share/yet
+metadata
+    /usr/share/yet/metadata
+videos
+    /usr/share/yet/videos
