@@ -20,8 +20,6 @@ func Download(ids []string) error {
 	da := nod.Begin("downloading videos...")
 	defer da.End()
 
-	bins := yeti.NewBinaries()
-
 	cookiesPath, err := paths.AbsCookiesPath()
 	if err != nil {
 		return da.EndWithError(err)
@@ -43,7 +41,7 @@ func Download(ids []string) error {
 
 		if len(videoIds) > 0 {
 			//having a list of video-ids, the only remaining thing is to download it one by one
-			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, bins, videoIds...); err != nil {
+			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, videoIds...); err != nil {
 				return da.EndWithError(err)
 			}
 		} else {

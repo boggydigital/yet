@@ -9,4 +9,6 @@
 download
     ids&^
 
+test-dependencies
+
 version

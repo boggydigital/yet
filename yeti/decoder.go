@@ -23,7 +23,7 @@ const (
 
 var memoizer = make(map[string]string)
 
-func decodeParam(hc *http.Client, binaries *Binaries, n, playerUrl string) (string, error) {
+func decodeParam(hc *http.Client, n, playerUrl string) (string, error) {
 
 	if dn, ok := memoizer[n+playerUrl]; ok {
 		return dn, nil
@@ -56,7 +56,7 @@ func decodeParam(hc *http.Client, binaries *Binaries, n, playerUrl string) (stri
 	}
 
 	filename := decoderScriptFilename
-	if binaries.NodeJS == "" && binaries.Deno == "" {
+	if !IsJSBinaryAvailable() {
 		filename = decoderBrowserFilename
 	}
 
@@ -81,12 +81,12 @@ func decodeParam(hc *http.Client, binaries *Binaries, n, playerUrl string) (stri
 
 	var decoder func(string, string) (string, error)
 	jsEngineCmd := ""
-	if binaries.NodeJS != "" {
+	if nb := GetBinary(NodeBin); nb != "" {
 		decoder = decodeWithNode
-		jsEngineCmd = binaries.NodeJS
-	} else if binaries.Deno != "" {
+		jsEngineCmd = nb
+	} else if db := GetBinary(DenoBin); db != "" {
 		decoder = decodeWithDeno
-		jsEngineCmd = binaries.Deno
+		jsEngineCmd = db
 	} else {
 		decoder = decodeWithBrowser
 	}

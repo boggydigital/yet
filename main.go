@@ -44,8 +44,9 @@ func main() {
 
 	clo.HandleFuncs(map[string]clo.Handler{
 		//"serve":   cli.ServeHandler,
-		"download": cli.DownloadHandler,
-		"version":  cli.VersionHandler,
+		"download":          cli.DownloadHandler,
+		"test-dependencies": cli.TestDependenciesHandler,
+		"version":           cli.VersionHandler,
 	})
 
 	if err := defs.AssertCommandsHaveHandlers(); err != nil {

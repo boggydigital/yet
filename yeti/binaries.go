@@ -1,47 +1,42 @@
 package yeti
 
 import (
+	"golang.org/x/exp/maps"
 	"os"
 	"os/exec"
 )
 
+type Binary string
+
 const (
-	ffmpegCmdEnv = "YET_FFMPEG_CMD"
-	nodeCmdEnv   = "YET_NODE_CMD"
-	denoCmdEnv   = "YET_DENO_CMD"
+	FFMpegBin Binary = "ffmpeg"
+	NodeBin   Binary = "node"
+	DenoBin   Binary = "deno"
 )
 
-type Binaries struct {
-	FFMpeg string
-	NodeJS string
-	Deno   string
+var cmdEnv = map[Binary]string{
+	FFMpegBin: "YET_FFMPEG_CMD",
+	NodeBin:   "YET_NODE_CMD",
+	DenoBin:   "YET_DENO_CMD",
 }
 
-func NewBinaries() *Binaries {
+func AllBinaries() []Binary {
+	return maps.Keys(cmdEnv)
+}
 
-	bins := &Binaries{
-		FFMpeg: os.Getenv(ffmpegCmdEnv),
-		NodeJS: os.Getenv(nodeCmdEnv),
-		Deno:   os.Getenv(denoCmdEnv),
-	}
+func GetBinary(name Binary) string {
 
-	if bins.FFMpeg == "" {
-		if path, err := exec.LookPath("ffmpeg"); err == nil {
-			bins.FFMpeg = path
+	if bin := os.Getenv(cmdEnv[name]); bin != "" {
+		return bin
+	} else {
+		if path, err := exec.LookPath(string(name)); err == nil {
+			return path
 		}
 	}
 
-	if bins.NodeJS == "" {
-		if path, err := exec.LookPath("node"); err == nil {
-			bins.NodeJS = path
-		}
-	}
+	return ""
+}
 
-	if bins.Deno == "" {
-		if path, err := exec.LookPath("deno"); err == nil {
-			bins.Deno = path
-		}
-	}
-
-	return bins
+func IsJSBinaryAvailable() bool {
+	return GetBinary(NodeBin) != "" || GetBinary(DenoBin) != ""
 }

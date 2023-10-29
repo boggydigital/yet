@@ -10,18 +10,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 )
 
 const (
-	videoExt = ".video"
-	videoSfx = " (video)"
-	audioExt = ".audio"
-	audioSfx = " (audio)"
-	fastEnv  = "YET_FAST"
+	fastEnv = "YET_FAST"
 )
 
 type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
@@ -29,7 +23,6 @@ type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerRespo
 func DownloadVideos(
 	httpClient *http.Client,
 	filenameDelegate FilenameDelegate,
-	binaries *Binaries,
 	videoIds ...string) error {
 
 	if len(videoIds) == 0 {
@@ -62,7 +55,7 @@ func DownloadVideos(
 
 		start := time.Now()
 
-		if err := downloadVideo(dl, relFilename, binaries, videoPage, playerUrl); err != nil {
+		if err := downloadVideo(dl, relFilename, videoPage, playerUrl); err != nil {
 			gv.Error(err)
 		}
 
@@ -78,7 +71,6 @@ func DownloadVideos(
 func downloadVideo(
 	dl *dolo.Client,
 	relFilename string,
-	binaries *Binaries,
 	videoPage *yt_urls.InitialPlayerResponse,
 	playerUrl string) error {
 
@@ -94,17 +86,13 @@ func downloadVideo(
 		return nil
 	}
 
-	vt := videoPage.Title()
-
-	if binaries.FFMpeg == "" {
-		if err := downloadSingleFormat(dl, binaries, vt, relFilename, videoPage.Formats(), playerUrl); err != nil {
+	if GetBinary(FFMpegBin) == "" {
+		if err := downloadSingleFormat(dl, relFilename, videoPage.Formats(), playerUrl); err != nil {
 			return err
 		}
 	} else {
 		if err := downloadAdaptiveFormat(
 			dl,
-			binaries,
-			vt,
 			relFilename,
 			videoPage.AdaptiveVideoFormats(),
 			videoPage.AdaptiveAudioFormats(),
@@ -128,7 +116,7 @@ func downloadVideo(
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, binaries *Binaries, title, relFilename string, formats yt_urls.Formats, playerUrl string) error {
+func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.Formats, playerUrl string) error {
 
 	for _, format := range formats {
 
@@ -136,7 +124,7 @@ func downloadSingleFormat(dl *dolo.Client, binaries *Binaries, title, relFilenam
 			continue
 		}
 
-		tpw := nod.NewProgress("title: " + title)
+		tpw := nod.NewProgress("file: " + relFilename)
 
 		u, err := url.Parse(format.Url)
 		if err != nil {
@@ -146,10 +134,10 @@ func downloadSingleFormat(dl *dolo.Client, binaries *Binaries, title, relFilenam
 
 		fast := os.Getenv(fastEnv) != ""
 
-		if binaries.NodeJS != "" || binaries.Deno != "" || fast {
+		if IsJSBinaryAvailable() || fast {
 			q := u.Query()
 			np := q.Get("n")
-			if dnp, err := decodeParam(http.DefaultClient, binaries, np, playerUrl); err != nil {
+			if dnp, err := decodeParam(http.DefaultClient, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
 				q.Set("n", dnp)
@@ -177,53 +165,23 @@ func downloadSingleFormat(dl *dolo.Client, binaries *Binaries, title, relFilenam
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, binaries *Binaries, title, relFilename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
+func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
 
-	ext := filepath.Ext(relFilename)
-	fse := strings.TrimSuffix(relFilename, ext)
+	relVideoFilename, relAudioFilename := videoAudioFilenames(relFilename)
 
 	//download video format
-	videoTitle := title + videoSfx
-	relVideoFilename := fse + videoExt
-	if err := downloadSingleFormat(dl, binaries, videoTitle, relVideoFilename, videoFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, relVideoFilename, videoFormats, playerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
-	audioTitle := title + audioSfx
-	relAudioFilename := fse + audioExt
-	if err := downloadSingleFormat(dl, binaries, audioTitle, relAudioFilename, audioFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, relAudioFilename, audioFormats, playerUrl); err != nil {
 		return err
 	}
 
-	absVideosDir, err := paths.GetAbsDir(paths.Videos)
-	if err != nil {
+	if err := mergeStreams(relFilename); err != nil {
 		return err
 	}
 
-	absVideoFilename := filepath.Join(absVideosDir, relVideoFilename)
-	absAudioFilename := filepath.Join(absVideosDir, relAudioFilename)
-	absFilename := filepath.Join(absVideosDir, relFilename)
-
-	//merge streams into a single file
-	//since yt_urls filters to mp4 formats only, we don't need to do any transcoding
-	//and can quickly merge by copying streams:
-	//ffmpeg -i video.mp4 -i audio.wav -c copy output.mp4
-	ma := nod.Begin("merging streams: %s...", title)
-	args := []string{"-i", absVideoFilename, "-i", absAudioFilename, "-c", "copy", absFilename}
-	cmd := exec.Command(binaries.FFMpeg, args...)
-	if err := cmd.Run(); err != nil {
-		return ma.EndWithError(err)
-	}
-
-	//cleanup separate streams after successful merge
-	if err := os.Remove(absVideoFilename); err != nil {
-		return ma.EndWithError(err)
-	}
-	if err := os.Remove(absAudioFilename); err != nil {
-		return ma.EndWithError(err)
-	}
-
-	ma.EndWithResult("done")
 	return nil
 }
