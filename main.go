@@ -45,6 +45,7 @@ func main() {
 	clo.HandleFuncs(map[string]clo.Handler{
 		//"serve":   cli.ServeHandler,
 		"download":          cli.DownloadHandler,
+		"serve":             cli.ServeHandler,
 		"test-dependencies": cli.TestDependenciesHandler,
 		"version":           cli.VersionHandler,
 	})

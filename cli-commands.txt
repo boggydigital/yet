@@ -9,6 +9,10 @@
 download
     ids&^
 
+serve
+    port$*
+    stderr$
+
 test-dependencies
 
 version

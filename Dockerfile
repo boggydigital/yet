@@ -16,6 +16,8 @@ RUN apk update && apk add && apk add ffmpeg
 # adding yet
 COPY --from=build /go/src/app/yet /usr/bin/yet
 
+EXPOSE 2005
+
 # backups
 VOLUME /usr/share/yet/backups
 # input
@@ -24,3 +26,7 @@ VOLUME /usr/share/yet/input
 VOLUME /usr/share/yet/metadata
 # videos
 VOLUME /usr/share/yet/videos
+
+ENTRYPOINT ["/usr/bin/yet"]
+CMD ["serve","-port", "2005", "-stderr"]
+
