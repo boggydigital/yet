@@ -137,7 +137,7 @@ func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.F
 		if IsJSBinaryAvailable() || fast {
 			q := u.Query()
 			np := q.Get("n")
-			if dnp, err := decodeParam(http.DefaultClient, np, playerUrl); err != nil {
+			if dnp, err := DecodeParam(http.DefaultClient, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
 				q.Set("n", dnp)
