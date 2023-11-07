@@ -1,7 +1,6 @@
 package yeti
 
 import (
-	"errors"
 	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
@@ -18,19 +17,12 @@ const (
 	fastEnv = "YET_FAST"
 )
 
-type FilenameDelegate func(videoId string, videoPage *yt_urls.InitialPlayerResponse) string
-
 func DownloadVideos(
 	httpClient *http.Client,
-	filenameDelegate FilenameDelegate,
 	videoIds ...string) error {
 
 	if len(videoIds) == 0 {
 		return nil
-	}
-
-	if filenameDelegate == nil {
-		return errors.New("filename delegate is nil")
 	}
 
 	dvtpw := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
@@ -51,7 +43,7 @@ func DownloadVideos(
 			continue
 		}
 
-		relFilename := filenameDelegate(videoId, videoPage)
+		relFilename := DefaultFilenameDelegate(videoId, videoPage)
 
 		start := time.Now()
 

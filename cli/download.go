@@ -41,7 +41,7 @@ func Download(ids []string) error {
 
 		if len(videoIds) > 0 {
 			//having a list of video-ids, the only remaining thing is to download it one by one
-			if err := yeti.DownloadVideos(httpClient, yeti.DefaultFilenameDelegate, videoIds...); err != nil {
+			if err := yeti.DownloadVideos(httpClient, videoIds...); err != nil {
 				return da.EndWithError(err)
 			}
 		} else {

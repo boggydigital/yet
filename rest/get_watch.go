@@ -57,7 +57,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<source src='" + vu.String() + "' type='" + f.MIMEType + "' />")
 	sb.WriteString("</video>")
 
-	sb.WriteString("<div class='videoTitle'>" + videoPage.Title() + "</div>")
+	sb.WriteString("<div class='videoTitle'>" + videoPage.Microformat.PlayerMicroformatRenderer.Title.SimpleText + "</div>")
+	sb.WriteString("<div class='viewCount'>" + videoPage.Microformat.PlayerMicroformatRenderer.ViewCount + "</div>")
 
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
