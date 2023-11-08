@@ -7,7 +7,8 @@ func HandleFuncs() {
 	patternHandlers := map[string]http.Handler{
 		"/local_video": http.HandlerFunc(GetLocalVideo),
 		"/watch":       http.HandlerFunc(GetWatch),
-		"/":            http.RedirectHandler("/watch", http.StatusPermanentRedirect),
+		"/list":        http.HandlerFunc(GetList),
+		"/":            http.RedirectHandler("/list", http.StatusPermanentRedirect),
 	}
 
 	for p, h := range patternHandlers {
