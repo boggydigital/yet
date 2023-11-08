@@ -94,9 +94,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<!doctype html>")
 	sb.WriteString("<html>")
 	sb.WriteString("<head><style>" +
-		"body {background: black; color: white;font-family:sans-serif} " +
+		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; object-fit: cover} " +
-		".videoTitle {font-size: 2rem; margin: 0.5rem;}" +
+		"summary.videoTitle {font-size: 2rem; margin: 0.5rem;cursor:pointer}" +
+		".videoDescription {margin: 1rem; line-height: 1.2;}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -104,8 +105,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<source src='" + videoUrl + "' />")
 	sb.WriteString("</video>")
 
-	sb.WriteString("<div class='videoTitle'>" + videoTitle + "</div>")
+	sb.WriteString("<details>")
+	sb.WriteString("<summary class='videoTitle'>" + videoTitle + "</summary>")
 	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
+	sb.WriteString("</details>")
 
 	sb.WriteString("<script>" +
 		"let video = document.getElementsByTagName('video')[0];" +
