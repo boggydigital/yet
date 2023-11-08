@@ -35,6 +35,11 @@ func DownloadVideos(
 		return dvtpw.EndWithError(err)
 	}
 
+	videosDir, err := paths.GetAbsDir(paths.Videos)
+	if err != nil {
+		return dvtpw.EndWithError(err)
+	}
+
 	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return dvtpw.EndWithError(err)
@@ -47,6 +52,16 @@ func DownloadVideos(
 	for _, videoId := range videoIds {
 
 		gv := nod.Begin("video-id: " + videoId)
+
+		// check if the video file matching videoId is already available locally
+		if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
+			relVideoFilename := TitleVideoIdFilename(title, videoId)
+			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
+			if _, err := os.Stat(absVideoFilename); err == nil {
+				dvtpw.Increment()
+				continue
+			}
+		}
 
 		videoPage, playerUrl, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
