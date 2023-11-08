@@ -18,7 +18,19 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	// GET /watch?videoId
 
-	videoId := r.URL.Query().Get("v")
+	v := r.URL.Query().Get("v")
+
+	videoIds, err := yeti.ArgsToVideoIds(http.DefaultClient, false, v)
+	if err != nil {
+		http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
+		return
+	}
+
+	videoId := ""
+	if len(videoIds) > 0 {
+		videoId = videoIds[0]
+	}
+
 	if videoId == "" {
 		http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
 		return
