@@ -1,45 +1,80 @@
 package rest
 
 import (
+	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
 
-	// GET /watch?v
+	// GET /watch?videoId
 
-	v := r.URL.Query().Get("v")
-	if v == "" {
-		http.Error(w, "missing video-id (v)", http.StatusBadRequest)
+	videoId := r.URL.Query().Get("v")
+	if videoId == "" {
+		http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
 		return
 	}
 
-	videoPage, playerUrl, err := yt_urls.GetVideoPage(http.DefaultClient, v)
+	videoUrl, videoTitle, videoDescription := "", "", ""
+
+	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fs := videoPage.Formats()
-	var f yt_urls.Format
-	for _, ff := range fs {
-		if ff.Quality == "hd720" {
-			f = ff
+	rxa, err := kvas.ConnectReduxAssets(absMetadataDir, data.AllProperties()...)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
+		localVideoFilename := yeti.TitleVideoIdFilename(title, videoId)
+		if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
+			absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
+			if _, err := os.Stat(absLocalVideoFilename); err == nil {
+				videoUrl = "/local_video?file=" + url.PathEscape(localVideoFilename)
+				videoTitle = title
+				videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
+			}
 		}
 	}
 
-	vu, err := decode(f.Url, playerUrl)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	if videoUrl == "" || videoTitle == "" {
+		videoPage, playerUrl, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	posterUrl := yt_urls.ThumbnailUrl(v, yt_urls.ThumbnailQualityHQ).String()
+		fs := videoPage.Formats()
+		var f yt_urls.Format
+		for _, ff := range fs {
+			if ff.Quality == "hd720" {
+				f = ff
+			}
+		}
+
+		vu, err := decode(f.Url, playerUrl)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		videoUrl = vu.String()
+		videoTitle = videoPage.VideoDetails.Title
+		videoDescription = videoPage.VideoDetails.ShortDescription
+	}
 
 	w.Header().Set("Content-Type", "text/html")
 
@@ -53,12 +88,19 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<video id='video" + v + "' controls='controls' poster='" + posterUrl + "' preload='metadata'>")
-	sb.WriteString("<source src='" + vu.String() + "' type='" + f.MIMEType + "' />")
+	sb.WriteString("<video controls='controls' preload='metadata'>")
+	sb.WriteString("<source src='" + videoUrl + "' />")
 	sb.WriteString("</video>")
 
-	sb.WriteString("<div class='videoTitle'>" + videoPage.Microformat.PlayerMicroformatRenderer.Title.SimpleText + "</div>")
-	sb.WriteString("<div class='viewCount'>" + videoPage.Microformat.PlayerMicroformatRenderer.ViewCount + "</div>")
+	sb.WriteString("<div class='videoTitle'>" + videoTitle + "</div>")
+	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
+
+	sb.WriteString("<script>" +
+		"let video = document.getElementsByTagName('video')[0];" +
+		"video.addEventListener('timeupdate', (e) => {" +
+		"console.log(video.currentTime)" +
+		"});" +
+		"</script>")
 
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")

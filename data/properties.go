@@ -13,6 +13,8 @@ const (
 	VideoPublishDateProperty       = "video-publish-date"
 	VideoUploadDateProperty        = "video-upload-date"
 	VideoDownloadedDateProperty    = "video-downloaded-date"
+	VideoWatchingProgressProperty  = "video-watching-progress"
+	VideoWatchedProperty           = "video-watched"
 )
 
 func AllProperties() []string {
@@ -29,5 +31,7 @@ func AllProperties() []string {
 		VideoPublishDateProperty,
 		VideoUploadDateProperty,
 		VideoDownloadedDateProperty,
+		VideoWatchingProgressProperty,
+		VideoWatchedProperty,
 	}
 }
