@@ -55,7 +55,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
 			absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
 			if _, err := os.Stat(absLocalVideoFilename); err == nil {
-				videoUrl = "/local_video?file=" + url.PathEscape(localVideoFilename)
+				videoUrl = "/local_video?file=" + url.QueryEscape(localVideoFilename)
 				videoTitle = title
 				videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
 			}
