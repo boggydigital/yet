@@ -7,6 +7,7 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"time"
 )
 
@@ -30,7 +31,9 @@ func DownloadUrls(httpClient *http.Client, urls ...string) error {
 			return dftpw.EndWithError(err)
 		}
 
-		gv := nod.NewProgress("file: " + u.Path)
+		_, filename := filepath.Split(u.Path)
+
+		gv := nod.NewProgress("file: " + filename)
 
 		start := time.Now()
 
@@ -39,7 +42,7 @@ func DownloadUrls(httpClient *http.Client, urls ...string) error {
 			return dftpw.EndWithError(err)
 		}
 
-		if err := dl.Download(u, gv, absVideosDir); err != nil {
+		if err := dl.Download(u, gv, absVideosDir, filename); err != nil {
 			return dftpw.EndWithError(err)
 		}
 
