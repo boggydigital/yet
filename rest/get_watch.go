@@ -20,6 +20,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	v := r.URL.Query().Get("v")
 
+	// iOS insists on inserting a space on paste
+	v = strings.TrimSpace(v)
+
 	videoIds, err := yeti.ArgsToVideoIds(http.DefaultClient, false, v)
 	if err != nil {
 		http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
@@ -55,7 +58,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
 			absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
 			if _, err := os.Stat(absLocalVideoFilename); err == nil {
-				videoUrl = "/local_video?file=" + url.QueryEscape(localVideoFilename)
+				videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
 				videoTitle = title
 				videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
 			}
