@@ -7,7 +7,10 @@
 # {^} - placeholder values, first value is default
 
 download
-    ids&^
+    id&^
+
+get-poster
+    id&^
 
 serve
     port$*

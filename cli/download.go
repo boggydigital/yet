@@ -11,7 +11,7 @@ import (
 
 func DownloadHandler(u *url.URL) error {
 
-	ids := strings.Split(u.Query().Get("ids"), " ")
+	ids := strings.Split(u.Query().Get("id"), ",")
 	return Download(ids)
 }
 

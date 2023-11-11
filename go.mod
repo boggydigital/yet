@@ -3,7 +3,7 @@ module github.com/boggydigital/yet
 go 1.21
 
 require (
-	github.com/boggydigital/clo v0.3.6
+	github.com/boggydigital/clo v1.0.4
 	github.com/boggydigital/coost v0.3.9
 	github.com/boggydigital/dolo v0.2.13
 	github.com/boggydigital/nod v0.1.21
