@@ -12,6 +12,7 @@ const (
 	Input
 	Metadata
 	Videos
+	Posters
 )
 
 var absDirsStrings = map[AbsDir]string{
@@ -19,6 +20,7 @@ var absDirsStrings = map[AbsDir]string{
 	Input:    "input",
 	Metadata: "metadata",
 	Videos:   "videos",
+	Posters:  "posters",
 }
 
 var absDirsPaths = map[AbsDir]string{}

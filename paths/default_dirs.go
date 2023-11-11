@@ -9,4 +9,5 @@ var DefaultDirs = map[string]string{
 	"input":    defaultRootDir + "/input",
 	"metadata": defaultRootDir + "/metadata",
 	"videos":   defaultRootDir + "/videos",
+	"posters":  defaultRootDir + "/posters",
 }
