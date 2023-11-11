@@ -10,14 +10,16 @@ var (
 	GetOnly  = middleware.GetMethodOnly
 	PostOnly = middleware.PostMethodOnly
 	Log      = nod.RequestLog
+	BrGzip   = middleware.BrGzip
 )
 
 func HandleFuncs() {
 
 	patternHandlers := map[string]http.Handler{
 		"/video": GetOnly(Log(http.HandlerFunc(GetVideo))),
-		"/watch": GetOnly(Log(http.HandlerFunc(GetWatch))),
-		"/list":  GetOnly(Log(http.HandlerFunc(GetList))),
+
+		"/watch": BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
+		"/list":  BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
 
 		"/progress": PostOnly(Log(http.HandlerFunc(PostProgress))),
 		"/ended":    PostOnly(Log(http.HandlerFunc(PostEnded))),
