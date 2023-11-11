@@ -26,8 +26,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request) {
 		if _, err := os.Stat(absFilepath); err == nil {
 			http.ServeFile(w, r, absFilepath)
 		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			http.NotFound(w, r)
 		}
 	} else {
 		http.Error(w, "file is not local to server videos dir", http.StatusBadRequest)

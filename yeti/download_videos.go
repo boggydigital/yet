@@ -53,7 +53,7 @@ func DownloadVideos(
 
 		gv := nod.Begin("video-id: " + videoId)
 
-		// check if the video file matching videoId is already available locally
+		//check if the video file matching videoId is already available locally
 		if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
 			relVideoFilename := TitleVideoIdFilename(title, videoId)
 			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
@@ -74,6 +74,10 @@ func DownloadVideos(
 			if err := rxa.ReplaceValues(p, videoId, v...); err != nil {
 				return dvtpw.EndWithError(err)
 			}
+		}
+
+		if err := GetThumbnails(dl, videoId, videoPage.VideoDetails.Thumbnail.Thumbnails); err != nil {
+			return dvtpw.EndWithError(err)
 		}
 
 		relFilename := DefaultFilenameDelegate(videoId, videoPage)

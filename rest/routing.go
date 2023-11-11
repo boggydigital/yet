@@ -16,7 +16,8 @@ var (
 func HandleFuncs() {
 
 	patternHandlers := map[string]http.Handler{
-		"/video": GetOnly(Log(http.HandlerFunc(GetVideo))),
+		"/video":  GetOnly(Log(http.HandlerFunc(GetVideo))),
+		"/poster": GetOnly(Log(http.HandlerFunc(GetPoster))),
 
 		"/watch": BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
 		"/list":  BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),

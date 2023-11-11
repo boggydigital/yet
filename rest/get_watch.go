@@ -39,7 +39,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	videoUrl, videoTitle, videoDescription := "", "", ""
+	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
 
 	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
@@ -59,6 +59,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
 			if _, err := os.Stat(absLocalVideoFilename); err == nil {
 				videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
+				videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
 				videoTitle = title
 				videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
 			}
@@ -87,6 +88,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 
 		videoUrl = vu.String()
+		if len(videoPage.Microformat.PlayerMicroformatRenderer.Thumbnail.Thumbnails) > 0 {
+			videoPoster = videoPage.Microformat.PlayerMicroformatRenderer.Thumbnail.Thumbnails[0].Url
+		}
 		videoTitle = videoPage.VideoDetails.Title
 		videoDescription = videoPage.VideoDetails.ShortDescription
 	}
@@ -104,7 +108,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<video controls='controls' preload='metadata'>")
+	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
 	sb.WriteString("<source src='" + videoUrl + "' />")
 	sb.WriteString("</video>")
 
