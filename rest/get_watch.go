@@ -116,6 +116,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"video {width: 100%; height: 100%; object-fit: cover} " +
 		"summary.videoTitle {font-size: 2rem; margin: 0.5rem;cursor:pointer}" +
 		".videoDescription {margin: 1rem; line-height: 1.2;}" +
+		".lastEnded {margin: 0.5rem; font-size: 75%;}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -125,8 +126,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	if lastEndedTime != "" {
 		if lt, err := time.Parse(http.TimeFormat, lastEndedTime); err == nil {
-			sb.WriteString("<div><span>Last completed: ")
-			sb.WriteString("<time>" + lt.String() + "</time></div>")
+			sb.WriteString("<div class='lastEnded'><span>Last ended: ")
+			sb.WriteString("<time>" + lt.Local().Format(time.RFC1123) + "</time></div>")
 		}
 	}
 
