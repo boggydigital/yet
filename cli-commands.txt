@@ -6,6 +6,12 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
+clear-ended
+    id&^
+
+clear-progress
+    id&^
+
 download
     id&^
 
@@ -15,6 +21,9 @@ get-poster
 serve
     port$*
     stderr$
+
+set-ended
+    id&^
 
 test-dependencies
 

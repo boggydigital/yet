@@ -43,9 +43,12 @@ func main() {
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
+		"clear-ended":       cli.ClearEndedHandler,
+		"clear-progress":    cli.ClearProgressHandler,
 		"download":          cli.DownloadHandler,
 		"get-poster":        cli.GetPosterHandler,
 		"serve":             cli.ServeHandler,
+		"set-ended":         cli.SetEndedHandler,
 		"test-dependencies": cli.TestDependenciesHandler,
 		"version":           cli.VersionHandler,
 	})

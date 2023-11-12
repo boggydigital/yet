@@ -11,7 +11,6 @@ import (
 )
 
 func GetPosterHandler(u *url.URL) error {
-
 	ids := strings.Split(u.Query().Get("id"), ",")
 	return GetPoster(ids)
 }
