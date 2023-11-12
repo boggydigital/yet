@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"github.com/boggydigital/yet/data"
 	"net/http"
 	"time"
 )
@@ -24,7 +25,7 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	}
 
 	currentTime := time.Now().Format(http.TimeFormat)
-	if err := endedRdx.ReplaceValues(er.VideoId, currentTime); err != nil {
+	if err := epRxa.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

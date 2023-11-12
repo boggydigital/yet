@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"github.com/boggydigital/yet/data"
 	"net/http"
 )
 
@@ -23,7 +24,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := progressRdx.ReplaceValues(pr.VideoId, pr.CurrentTime); err != nil {
+	if err := epRxa.ReplaceValues(data.VideoProgressProperty, pr.VideoId, pr.CurrentTime); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -7,8 +7,7 @@ import (
 )
 
 var (
-	endedRdx    kvas.ReduxValues
-	progressRdx kvas.ReduxValues
+	epRxa kvas.ReduxAssets
 )
 
 func Init() error {
@@ -18,11 +17,7 @@ func Init() error {
 		return err
 	}
 
-	if progressRdx, err = kvas.ConnectRedux(metadataDir, data.VideoProgressProperty); err != nil {
-		return err
-	}
-
-	if endedRdx, err = kvas.ConnectRedux(metadataDir, data.VideoEndedProperty); err != nil {
+	if epRxa, err = kvas.ConnectReduxAssets(metadataDir, data.VideoEndedProperty, data.VideoProgressProperty); err != nil {
 		return err
 	}
 
