@@ -66,6 +66,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	currentTime := ""
+	if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, videoId); ok && ct != "" {
+		currentTime = ct
+	}
+
 	if videoUrl == "" || videoTitle == "" {
 		videoPage, playerUrl, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
@@ -117,10 +122,37 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
 	sb.WriteString("</details>")
 
+	if currentTime != "" {
+		sb.WriteString("<script>" +
+			"let video = document.getElementsByTagName('video')[0];" +
+			"video.currentTime = " + currentTime + ";" +
+			"</script>")
+	}
+
 	sb.WriteString("<script>" +
+		"let lastProgressUpdate = new Date();" +
 		"let video = document.getElementsByTagName('video')[0];" +
 		"video.addEventListener('timeupdate', (e) => {" +
-		"console.log(video.currentTime)" +
+		"	let now = new Date();" +
+		"	let elapsed = now - lastProgressUpdate;" +
+		"	if (elapsed > 5000) {" +
+		"		fetch('/progress', " +
+		"			{" +
+		"				method: 'post'," +
+		"				headers: {" +
+		"					'Accept': 'application/json'," +
+		"					'Content-Type': 'application/json'}," +
+		"				body: JSON.stringify({" +
+		"					videoId: '" + videoId + "'," +
+		"					currentTime: video.currentTime.toString()})" +
+		"			}).then( " +
+		"				(resp) => { console.log(resp)}" +
+		"		);" +
+		"		lastProgressUpdate = now;" +
+		"	}" +
+		"});" +
+		"video.addEventListener('ended', (e) => {" +
+		"console.log('ended')" +
 		"});" +
 		"</script>")
 

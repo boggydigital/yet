@@ -30,5 +30,9 @@ func Serve(port int, stderr bool) error {
 
 	rest.HandleFuncs()
 
+	if err := rest.Init(); err != nil {
+		return err
+	}
+
 	return http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
