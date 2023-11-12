@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
@@ -71,6 +72,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		currentTime = ct
 	}
 
+	lastEndedTime := ""
+	if et, ok := rxa.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
+		lastEndedTime = et
+	}
+
 	if videoUrl == "" || videoTitle == "" {
 		videoPage, playerUrl, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
@@ -117,6 +123,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<source src='" + videoUrl + "' />")
 	sb.WriteString("</video>")
 
+	if lastEndedTime != "" {
+		if lt, err := time.Parse(http.TimeFormat, lastEndedTime); err == nil {
+			sb.WriteString("<div><span>Last completed: ")
+			sb.WriteString("<time>" + lt.String() + "</time></div>")
+		}
+	}
+
 	sb.WriteString("<details>")
 	sb.WriteString("<summary class='videoTitle'>" + videoTitle + "</summary>")
 	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
@@ -148,13 +161,33 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"					videoId: '" + videoId + "'," +
 		"					currentTime: video.currentTime.toString()})" +
 		"			}).then( " +
-		"				(resp) => { console.log(resp)}" +
-		"		);" +
+		"				(resp) => { if (resp && !resp.ok) {" +
+		"					console.log(resp)}" +
+		"			});" +
 		"		lastProgressUpdate = now;" +
 		"	}" +
 		"});" +
+		"</script>")
+
+	sb.WriteString("<script>" +
+		"let lastEndedUpdate = new Date();" +
 		"video.addEventListener('ended', (e) => {" +
-		"console.log('ended')" +
+		"	let now = new Date();" +
+		"	let elapsed = now - lastEndedUpdate;" +
+		"	if (elapsed > 10000) {" +
+		"		fetch('/ended', " +
+		"			{" +
+		"				method: 'post'," +
+		"				headers: {" +
+		"					'Accept': 'application/json'," +
+		"					'Content-Type': 'application/json'}," +
+		"				body: JSON.stringify({videoId: '" + videoId + "')" +
+		"			}).then( " +
+		"				(resp) => { if (resp && !resp.ok) {" +
+		"					console.log(resp)}" +
+		"			});" +
+		"		lastEndedUpdate = now;" +
+		"	}" +
 		"});" +
 		"</script>")
 

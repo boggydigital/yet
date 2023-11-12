@@ -6,7 +6,10 @@ import (
 	"github.com/boggydigital/yet/paths"
 )
 
-var progressRdx kvas.ReduxValues
+var (
+	endedRdx    kvas.ReduxValues
+	progressRdx kvas.ReduxValues
+)
 
 func Init() error {
 
@@ -15,7 +18,13 @@ func Init() error {
 		return err
 	}
 
-	progressRdx, err = kvas.ConnectRedux(metadataDir, data.VideoProgressProperty)
+	if progressRdx, err = kvas.ConnectRedux(metadataDir, data.VideoProgressProperty); err != nil {
+		return err
+	}
+
+	if endedRdx, err = kvas.ConnectRedux(metadataDir, data.VideoEndedProperty); err != nil {
+		return err
+	}
 
 	return err
 }

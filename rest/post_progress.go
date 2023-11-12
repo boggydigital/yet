@@ -19,7 +19,8 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	var pr ProgressRequest
 	err := decoder.Decode(&pr)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	if err := progressRdx.ReplaceValues(pr.VideoId, pr.CurrentTime); err != nil {
