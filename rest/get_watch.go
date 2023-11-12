@@ -160,8 +160,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"				body: JSON.stringify({" +
 		"					videoId: '" + videoId + "'," +
 		"					currentTime: video.currentTime.toString()})" +
-		"			}).then( " +
-		"				(resp) => { if (resp && !resp.ok) {" +
+		"			}).then((resp) => { if (resp && !resp.ok) {" +
 		"					console.log(resp)}" +
 		"			});" +
 		"		lastProgressUpdate = now;" +
@@ -181,9 +180,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"				headers: {" +
 		"					'Accept': 'application/json'," +
 		"					'Content-Type': 'application/json'}," +
-		"				body: JSON.stringify({videoId: '" + videoId + "')" +
-		"			}).then( " +
-		"				(resp) => { if (resp && !resp.ok) {" +
+		"				body: JSON.stringify({videoId: '" + videoId + "'})" +
+		"			}).then((resp) => { if (resp && !resp.ok) {" +
 		"					console.log(resp)}" +
 		"			});" +
 		"		lastEndedUpdate = now;" +
