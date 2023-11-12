@@ -122,16 +122,18 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
 	sb.WriteString("</details>")
 
+	sb.WriteString("<script>" +
+		"let video = document.getElementsByTagName('video')[0];" +
+		"</script>")
+
 	if currentTime != "" {
 		sb.WriteString("<script>" +
-			"let video = document.getElementsByTagName('video')[0];" +
 			"video.currentTime = " + currentTime + ";" +
 			"</script>")
 	}
 
 	sb.WriteString("<script>" +
 		"let lastProgressUpdate = new Date();" +
-		"let video = document.getElementsByTagName('video')[0];" +
 		"video.addEventListener('timeupdate', (e) => {" +
 		"	let now = new Date();" +
 		"	let elapsed = now - lastProgressUpdate;" +
