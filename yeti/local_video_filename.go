@@ -10,20 +10,22 @@ import (
 const mp4Ext = ".mp4"
 
 func DefaultFilenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerResponse) string {
-	title := ""
+	channel, title := "", ""
 	if videoPage != nil {
-		title = videoPage.Microformat.PlayerMicroformatRenderer.Title.SimpleText
+		title = videoPage.VideoDetails.Title
+		channel = videoPage.VideoDetails.Author
 	}
 
-	return TitleVideoIdFilename(title, videoId)
+	return ChannelTitleVideoIdFilename(channel, title, videoId)
 }
 
-// TitleVideoIdFilename constructs a filename based on video-id and
-// optional video title. If the title is available, the filename would be
-// "title-video-id.mp4". If the title is not available, the filename would be
+// ChannelTitleVideoIdFilename constructs a filename based on video-id and
+// optional channel and video title.
+// If the channel or video title are available, the filename would be
+// "channel/title-video-id.mp4". If the channel, title are not available, the filename would be
 // "video-id.mp4". In either case, the resulting filename is sanitized to remove
 // characters not suitable for file names.
-func TitleVideoIdFilename(title, videoId string) string {
+func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
 	var fn string
 	if title != "" {
 		fn = fmt.Sprintf("%s-%s", title, videoId)
@@ -31,15 +33,20 @@ func TitleVideoIdFilename(title, videoId string) string {
 		fn = fmt.Sprintf("%s", videoId)
 	}
 
+	// channel, video titles might contain characters that would be problematic for
+	// modern operating system filesystems - removing those
+	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|"} {
+		fn = strings.ReplaceAll(fn, ch, "")
+		channel = strings.ReplaceAll(channel, ch, "")
+	}
+
+	if channel != "" {
+		fn = filepath.Join(channel, fn)
+	}
+
 	//while unlikely, it's possible for videos to be titled like
 	//relative file paths (e.g. "../../title"), cleaning that up
 	fn = filepath.Clean(fn)
-
-	//video titles commonly contain characters that would be problematic for
-	//modern operating system filesystems - removing those
-	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|"} {
-		fn = strings.ReplaceAll(fn, ch, "")
-	}
 
 	return fn + yt_urls.DefaultVideoExt
 }

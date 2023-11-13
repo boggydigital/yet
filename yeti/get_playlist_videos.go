@@ -32,10 +32,10 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string, newVideos boo
 	for playlist != nil &&
 		len(playlist.Videos()) > 0 {
 		playlistHasVideos = true
-		for _, videoIdTitle := range playlist.Videos() {
+		for _, vtc := range playlist.Videos() {
 			//before attempting to download - filter out the videos that are already present
 			//locally, to download only updates to the playlist
-			fn := TitleVideoIdFilename(videoIdTitle.Title, videoIdTitle.VideoId)
+			fn := ChannelTitleVideoIdFilename(vtc.Channel, vtc.Title, vtc.VideoId)
 			if _, err := os.Stat(fn); err == nil {
 				//file for the title, videoId combination has been downloaded already
 				//TODO: change from returning on first existing video to return on no new videos in playlist page
@@ -51,7 +51,7 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string, newVideos boo
 				}
 			}
 
-			videoIds = append(videoIds, videoIdTitle.VideoId)
+			videoIds = append(videoIds, vtc.VideoId)
 		}
 
 		if playlist.HasContinuation() {

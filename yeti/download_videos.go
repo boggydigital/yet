@@ -55,11 +55,13 @@ func DownloadVideos(
 
 		//check if the video file matching videoId is already available locally
 		if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
-			relVideoFilename := TitleVideoIdFilename(title, videoId)
-			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
-			if _, err := os.Stat(absVideoFilename); err == nil {
-				dvtpw.Increment()
-				continue
+			if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
+				relVideoFilename := ChannelTitleVideoIdFilename(channel, title, videoId)
+				absVideoFilename := filepath.Join(videosDir, relVideoFilename)
+				if _, err := os.Stat(absVideoFilename); err == nil {
+					dvtpw.Increment()
+					continue
+				}
 			}
 		}
 

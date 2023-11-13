@@ -55,14 +55,16 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		localVideoFilename := yeti.TitleVideoIdFilename(title, videoId)
-		if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
-			absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
-			if _, err := os.Stat(absLocalVideoFilename); err == nil {
-				videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
-				videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
-				videoTitle = title
-				videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
+		if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
+			localVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
+			if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
+				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
+				if _, err := os.Stat(absLocalVideoFilename); err == nil {
+					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
+					videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
+					videoTitle = title
+					videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
+				}
 			}
 		}
 	}
