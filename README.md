@@ -50,6 +50,8 @@ services:
       - /docker/yet/metadata:/usr/share/yet/metadata
       # videos
       - /docker/yet/videos:/usr/share/yet/videos
+      # sharing timezone from the host
+      - /etc/localtime:/etc/localtime:ro 
 ```
 - (move it to location of your choice, e.g. /docker/yet or remote server or anywhere else)
 - while in the directory with that config - pull the image with `docker compose pull`

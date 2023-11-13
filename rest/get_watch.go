@@ -140,10 +140,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"let video = document.getElementsByTagName('video')[0];" +
 		"</script>")
 
-	if currentTime != "" {
-		sb.WriteString("<script>" +
-			"video.currentTime = " + currentTime + ";" +
-			"</script>")
+	// only continue the videos that have not been watched
+	if currentTime != "" && lastEndedTime == "" {
+		sb.WriteString("<script>video.currentTime = " + currentTime + ";</script>")
 	}
 
 	sb.WriteString("<script>" +
@@ -152,42 +151,30 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"	let now = new Date();" +
 		"	let elapsed = now - lastProgressUpdate;" +
 		"	if (elapsed > 5000) {" +
-		"		fetch('/progress', " +
-		"			{" +
-		"				method: 'post'," +
-		"				headers: {" +
-		"					'Accept': 'application/json'," +
-		"					'Content-Type': 'application/json'}," +
-		"				body: JSON.stringify({" +
-		"					videoId: '" + videoId + "'," +
-		"					currentTime: video.currentTime.toString()})" +
-		"			}).then((resp) => { if (resp && !resp.ok) {" +
-		"					console.log(resp)}" +
-		"			});" +
+		"		fetch('/progress', {" +
+		"			method: 'post'," +
+		"			headers: {" +
+		"				'Content-Type': 'application/json'}," +
+		"			body: JSON.stringify({" +
+		"				videoId: '" + videoId + "'," +
+		"				currentTime: video.currentTime.toString()})" +
+		"		}).then((resp) => { if (resp && !resp.ok) {" +
+		"			console.log(resp)}" +
+		"		});" +
 		"		lastProgressUpdate = now;" +
-		"	}" +
-		"});" +
+		"	}});" +
 		"</script>")
 
 	sb.WriteString("<script>" +
-		"let lastEndedUpdate = new Date();" +
 		"video.addEventListener('ended', (e) => {" +
-		"	let now = new Date();" +
-		"	let elapsed = now - lastEndedUpdate;" +
-		"	if (elapsed > 10000) {" +
-		"		fetch('/ended', " +
-		"			{" +
-		"				method: 'post'," +
-		"				headers: {" +
-		"					'Accept': 'application/json'," +
-		"					'Content-Type': 'application/json'}," +
-		"				body: JSON.stringify({videoId: '" + videoId + "'})" +
-		"			}).then((resp) => { if (resp && !resp.ok) {" +
-		"					console.log(resp)}" +
-		"			});" +
-		"		lastEndedUpdate = now;" +
-		"	}" +
-		"});" +
+		"fetch('/ended', {" +
+		"		method: 'post'," +
+		"		headers: {" +
+		"			'Content-Type': 'application/json'}," +
+		"		body: JSON.stringify({videoId: '" + videoId + "'})" +
+		"	}).then((resp) => { if (resp && !resp.ok) {" +
+		"		console.log(resp)}" +
+		"	});});" +
 		"</script>")
 
 	sb.WriteString("</body>")
