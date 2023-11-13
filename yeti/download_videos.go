@@ -53,7 +53,14 @@ func DownloadVideos(
 
 		gv := nod.Begin("video-id: " + videoId)
 
-		//check if the video file matching videoId is already available locally
+		// check known errors before doing anything else
+		if knownError, ok := rxa.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
+			gv.EndWithResult(knownError)
+			dvtpw.Increment()
+			continue
+		}
+
+		// check if the video file matching videoId is already available locally
 		if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
 			if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
 				relVideoFilename := ChannelTitleVideoIdFilename(channel, title, videoId)
@@ -68,6 +75,9 @@ func DownloadVideos(
 
 		videoPage, playerUrl, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
+			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
+				return dvtpw.EndWithError(rerr)
+			}
 			_ = gv.EndWithError(err)
 			dvtpw.Increment()
 			continue
