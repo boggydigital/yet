@@ -59,6 +59,7 @@ func DownloadVideos(
 				relVideoFilename := ChannelTitleVideoIdFilename(channel, title, videoId)
 				absVideoFilename := filepath.Join(videosDir, relVideoFilename)
 				if _, err := os.Stat(absVideoFilename); err == nil {
+					gv.EndWithResult("already exists")
 					dvtpw.Increment()
 					continue
 				}
@@ -74,12 +75,12 @@ func DownloadVideos(
 
 		for p, v := range videoPageMetadata(videoPage) {
 			if err := rxa.ReplaceValues(p, videoId, v...); err != nil {
-				return dvtpw.EndWithError(err)
+				return gv.EndWithError(err)
 			}
 		}
 
 		if err := GetThumbnails(dl, videoId, videoPage.VideoDetails.Thumbnail.Thumbnails); err != nil {
-			return dvtpw.EndWithError(err)
+			return gv.EndWithError(err)
 		}
 
 		relFilename := DefaultFilenameDelegate(videoId, videoPage)
