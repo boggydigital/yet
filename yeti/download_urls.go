@@ -25,7 +25,9 @@ func DownloadUrls(
 	dftpw := nod.NewProgress(fmt.Sprintf("downloading %d file(s)", len(urls)))
 	defer dftpw.End()
 
-	if err := rxa.IsSupported(data.UrlsDownloadQueueProperty); err != nil {
+	if err := rxa.IsSupported(
+		data.UrlsDownloadQueueProperty,
+		data.UrlsWatchlistProperty); err != nil {
 		return dftpw.EndWithError(err)
 	}
 
@@ -57,6 +59,11 @@ func DownloadUrls(
 
 		// clear from the queue upon successful download
 		if err := rxa.CutVal(data.UrlsDownloadQueueProperty, rawUrl, data.TrueValue); err != nil {
+			return dftpw.EndWithError(err)
+		}
+
+		// add to the watchlist upon successful download
+		if err := rxa.AddValues(data.UrlsWatchlistProperty, rawUrl, data.TrueValue); err != nil {
 			return dftpw.EndWithError(err)
 		}
 

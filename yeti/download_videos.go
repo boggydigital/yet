@@ -35,7 +35,8 @@ func DownloadVideos(
 		data.VideoErrorsProperty,
 		data.VideoTitleProperty,
 		data.VideoOwnerChannelNameProperty,
-		data.VideosDownloadQueueProperty); err != nil {
+		data.VideosDownloadQueueProperty,
+		data.VideosWatchlistProperty); err != nil {
 		return dvtpw.EndWithError(err)
 	}
 
@@ -99,6 +100,11 @@ func DownloadVideos(
 
 		// remove from the queue upon successful download
 		if err := rxa.CutVal(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
+			return gv.EndWithError(err)
+		}
+
+		// add to watchlist upon successful download
+		if err := rxa.AddValues(data.VideosWatchlistProperty, videoId, data.TrueValue); err != nil {
 			return gv.EndWithError(err)
 		}
 

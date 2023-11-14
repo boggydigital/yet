@@ -18,8 +18,10 @@ const (
 	VideoErrorsProperty            = "video-errors"
 
 	VideosDownloadQueueProperty = "videos-download-queue"
-	UrlsDownloadQueueProperty   = "urls-download-queue"
 	VideosWatchlistProperty     = "videos-watchlist"
+
+	UrlsDownloadQueueProperty = "urls-download-queue"
+	UrlsWatchlistProperty     = "urls-watchlist"
 )
 
 func AllProperties() []string {
