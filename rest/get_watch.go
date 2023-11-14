@@ -113,7 +113,12 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb := &strings.Builder{}
 	sb.WriteString("<!doctype html>")
 	sb.WriteString("<html>")
-	sb.WriteString("<head><style>" +
+	sb.WriteString("<head>" +
+		"<meta charset='UTF-8'>" +
+		"<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>' type='image/svg+xml'/>" +
+		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+		"<meta name='color-scheme' content='dark light'>" +
+		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; object-fit: cover} " +
 		"summary.videoTitle {font-size: 2rem; margin: 0.5rem;cursor:pointer}" +
