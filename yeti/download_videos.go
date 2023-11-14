@@ -81,7 +81,7 @@ func DownloadVideos(
 		}
 
 		for p, v := range videoPageMetadata(videoPage) {
-			if err := rxa.ReplaceValues(p, videoId, v...); err != nil {
+			if err := rxa.AddValues(p, videoId, v...); err != nil {
 				return gv.EndWithError(err)
 			}
 		}
