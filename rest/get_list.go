@@ -36,11 +36,25 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	for _, videoId := range rxa.Keys(data.VideoTitleProperty) {
+	// continue watching
+	// videos watchlist
+	// videos download queue
 
-		if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
-			sb.WriteString("<a href='/watch?v=" + videoId + "'>" + title + "</a>")
+	sb.WriteString("<h1>Continue watching</h1>")
+	for _, id := range rxa.Keys(data.VideoProgressProperty) {
+		if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
+			writeVideo(id, rxa, sb)
 		}
+	}
+
+	sb.WriteString("<h1>Watchlist</h1>")
+	for _, id := range rxa.Keys(data.VideosWatchlistProperty) {
+		writeVideo(id, rxa, sb)
+	}
+
+	sb.WriteString("<h1>Download queue</h1>")
+	for _, id := range rxa.Keys(data.VideosDownloadQueueProperty) {
+		writeVideo(id, rxa, sb)
 	}
 
 	sb.WriteString("</body>")
@@ -49,5 +63,16 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	if _, err := io.WriteString(w, sb.String()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+}
+
+func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
+
+	videoTitle := videoId
+	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
+		videoTitle = title
+	}
+
+	sb.WriteString("<a href='/watch?v=" + videoId + "'>" + videoTitle + "</a>")
 
 }

@@ -51,6 +51,8 @@ func main() {
 		"set-ended":         cli.SetEndedHandler,
 		"test-dependencies": cli.TestDependenciesHandler,
 		"version":           cli.VersionHandler,
+		"watchlist-add":     cli.WatchlistAddHandler,
+		"watchlist-remove":  cli.WatchlistRemoveHandler,
 	})
 
 	if err := defs.AssertCommandsHaveHandlers(); err != nil {

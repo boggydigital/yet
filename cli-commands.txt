@@ -29,3 +29,9 @@ set-ended
 test-dependencies
 
 version
+
+watchlist-add
+    id&^
+
+watchlist-remove
+    id&^
