@@ -16,6 +16,10 @@ const (
 	VideoProgressProperty          = "video-progress"
 	VideoEndedProperty             = "video-ended"
 	VideoErrorsProperty            = "video-errors"
+
+	VideosDownloadQueueProperty = "videos-download-queue"
+	UrlsDownloadQueueProperty   = "urls-download-queue"
+	VideosWatchlistProperty     = "videos-watchlist"
 )
 
 func AllProperties() []string {
@@ -35,5 +39,7 @@ func AllProperties() []string {
 		VideoProgressProperty,
 		VideoEndedProperty,
 		VideoErrorsProperty,
+		VideosDownloadQueueProperty,
+		VideosWatchlistProperty,
 	}
 }

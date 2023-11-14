@@ -3,7 +3,9 @@ package yeti
 import (
 	"fmt"
 	"github.com/boggydigital/dolo"
+	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/http"
 	"net/url"
@@ -11,7 +13,10 @@ import (
 	"time"
 )
 
-func DownloadUrls(httpClient *http.Client, urls ...string) error {
+func DownloadUrls(
+	httpClient *http.Client,
+	rxa kvas.ReduxAssets,
+	urls ...string) error {
 
 	if len(urls) == 0 {
 		return nil
@@ -19,6 +24,10 @@ func DownloadUrls(httpClient *http.Client, urls ...string) error {
 
 	dftpw := nod.NewProgress(fmt.Sprintf("downloading %d file(s)", len(urls)))
 	defer dftpw.End()
+
+	if err := rxa.IsSupported(data.UrlsDownloadQueueProperty); err != nil {
+		return dftpw.EndWithError(err)
+	}
 
 	dftpw.Total(uint64(len(urls)))
 
@@ -43,6 +52,11 @@ func DownloadUrls(httpClient *http.Client, urls ...string) error {
 		}
 
 		if err := dl.Download(u, gv, absVideosDir, filename); err != nil {
+			return dftpw.EndWithError(err)
+		}
+
+		// clear from the queue upon successful download
+		if err := rxa.CutVal(data.UrlsDownloadQueueProperty, rawUrl, data.TrueValue); err != nil {
 			return dftpw.EndWithError(err)
 		}
 

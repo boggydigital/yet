@@ -21,6 +21,7 @@ const (
 
 func DownloadVideos(
 	httpClient *http.Client,
+	rxa kvas.ReduxAssets,
 	videoIds ...string) error {
 
 	if len(videoIds) == 0 {
@@ -30,17 +31,15 @@ func DownloadVideos(
 	dvtpw := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
 	defer dvtpw.End()
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
-	if err != nil {
+	if err := rxa.IsSupported(
+		data.VideoErrorsProperty,
+		data.VideoTitleProperty,
+		data.VideoOwnerChannelNameProperty,
+		data.VideosDownloadQueueProperty); err != nil {
 		return dvtpw.EndWithError(err)
 	}
 
 	videosDir, err := paths.GetAbsDir(paths.Videos)
-	if err != nil {
-		return dvtpw.EndWithError(err)
-	}
-
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return dvtpw.EndWithError(err)
 	}
@@ -55,22 +54,18 @@ func DownloadVideos(
 
 		// check known errors before doing anything else
 		if knownError, ok := rxa.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
-			gv.EndWithResult(knownError)
-			dvtpw.Increment()
+			if err := completeVideo(rxa, videoId, dvtpw, gv, knownError); err != nil {
+				return dvtpw.EndWithError(err)
+			}
 			continue
 		}
 
 		// check if the video file matching videoId is already available locally
-		if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
-			if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
-				relVideoFilename := ChannelTitleVideoIdFilename(channel, title, videoId)
-				absVideoFilename := filepath.Join(videosDir, relVideoFilename)
-				if _, err := os.Stat(absVideoFilename); err == nil {
-					gv.EndWithResult("already exists")
-					dvtpw.Increment()
-					continue
-				}
+		if videoExistsLocally(rxa, videosDir, videoId) {
+			if err := completeVideo(rxa, videoId, dvtpw, gv, "already exists"); err != nil {
+				return dvtpw.EndWithError(err)
 			}
+			continue
 		}
 
 		videoPage, playerUrl, err := yt_urls.GetVideoPage(httpClient, videoId)
@@ -78,8 +73,9 @@ func DownloadVideos(
 			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
 				return dvtpw.EndWithError(rerr)
 			}
-			_ = gv.EndWithError(err)
-			dvtpw.Increment()
+			if err := completeVideo(rxa, videoId, dvtpw, gv, err.Error()); err != nil {
+				return dvtpw.EndWithError(err)
+			}
 			continue
 		}
 
@@ -99,6 +95,11 @@ func DownloadVideos(
 
 		if err := downloadVideo(dl, relFilename, videoPage, playerUrl); err != nil {
 			gv.Error(err)
+		}
+
+		// remove from the queue upon successful download
+		if err := rxa.CutVal(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
+			return gv.EndWithError(err)
 		}
 
 		elapsed := time.Since(start)
@@ -248,4 +249,24 @@ func videoPageMetadata(ipr *yt_urls.InitialPlayerResponse) map[string][]string {
 	vpm[data.VideoUploadDateProperty] = []string{ipr.Microformat.PlayerMicroformatRenderer.UploadDate}
 
 	return vpm
+}
+
+func videoExistsLocally(rxa kvas.ReduxAssets, videosDir, videoId string) bool {
+	// check if the video file matching videoId is already available locally
+	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
+		if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
+			relVideoFilename := ChannelTitleVideoIdFilename(channel, title, videoId)
+			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
+			if _, err := os.Stat(absVideoFilename); err == nil {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func completeVideo(rxa kvas.ReduxAssets, videoId string, cmd nod.TotalProgressWriter, video nod.ActCloser, result string) error {
+	video.EndWithResult(result)
+	cmd.Increment()
+	return rxa.CutVal(data.VideosDownloadQueueProperty, videoId, data.TrueValue)
 }
