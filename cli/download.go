@@ -14,11 +14,12 @@ import (
 func DownloadHandler(u *url.URL) error {
 
 	ids := strings.Split(u.Query().Get("id"), ",")
+	force := u.Query().Has("force")
 	later := u.Query().Has("later")
-	return Download(ids, later)
+	return Download(ids, force, later)
 }
 
-func Download(ids []string, later bool) error {
+func Download(ids []string, force, later bool) error {
 
 	da := nod.Begin("downloading videos...")
 	defer da.End()
@@ -70,7 +71,7 @@ func Download(ids []string, later bool) error {
 
 		if len(videoIds) > 0 {
 			//having a list of video-ids, the only remaining thing is to download it one by one
-			if err := yeti.DownloadVideos(httpClient, rxa, videoIds...); err != nil {
+			if err := yeti.DownloadVideos(httpClient, rxa, force, videoIds...); err != nil {
 				return da.EndWithError(err)
 			}
 		} else {

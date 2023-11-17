@@ -22,6 +22,7 @@ const (
 func DownloadVideos(
 	httpClient *http.Client,
 	rxa kvas.ReduxAssets,
+	force bool,
 	videoIds ...string) error {
 
 	if len(videoIds) == 0 {
@@ -54,16 +55,17 @@ func DownloadVideos(
 		gv := nod.Begin("video-id: " + videoId)
 
 		// check known errors before doing anything else
-		if knownError, ok := rxa.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
-			if err := completeVideo(rxa, videoId, dvtpw, gv, knownError); err != nil {
-				return dvtpw.EndWithError(err)
+		if !force {
+			if knownError, ok := rxa.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
+				if err := completeVideo(rxa, videoId, dvtpw, gv, knownError); err != nil {
+					return dvtpw.EndWithError(err)
+				}
+				continue
 			}
-			continue
-
 		}
 
 		// check if the video file matching videoId is already available locally
-		if videoExistsLocally(rxa, videosDir, videoId) {
+		if !force && videoExistsLocally(rxa, videosDir, videoId) {
 			if err := completeVideo(rxa, videoId, dvtpw, gv, "already exists"); err != nil {
 				return dvtpw.EndWithError(err)
 			}
