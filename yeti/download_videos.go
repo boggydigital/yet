@@ -59,6 +59,7 @@ func DownloadVideos(
 				return dvtpw.EndWithError(err)
 			}
 			continue
+
 		}
 
 		// check if the video file matching videoId is already available locally

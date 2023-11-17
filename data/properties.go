@@ -43,5 +43,7 @@ func AllProperties() []string {
 		VideoErrorsProperty,
 		VideosDownloadQueueProperty,
 		VideosWatchlistProperty,
+		UrlsDownloadQueueProperty,
+		UrlsWatchlistProperty,
 	}
 }

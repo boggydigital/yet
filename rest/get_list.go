@@ -54,6 +54,14 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	sb.WriteString("<h1>Watchlist</h1>")
 	for _, id := range rxa.Keys(data.VideosWatchlistProperty) {
+		if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
+			continue
+		}
+		writeVideo(id, rxa, sb)
+	}
+
+	sb.WriteString("<h1>URL Watchlist</h1>")
+	for _, id := range rxa.Keys(data.UrlsWatchlistProperty) {
 		writeVideo(id, rxa, sb)
 	}
 
