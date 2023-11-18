@@ -1,10 +1,20 @@
 package rest
 
 import (
+	"bytes"
+	_ "embed"
 	"github.com/boggydigital/yet/paths"
+	"io"
 	"net/http"
 	"os"
+	"time"
 )
+
+//go:embed "posters/yet_maxresdefault.png"
+var yetPosterMaxResDefault []byte
+
+//go:embed "posters/yet_hqdefault.png"
+var yetPosterHQDefault []byte
 
 func GetPoster(w http.ResponseWriter, r *http.Request) {
 
@@ -22,7 +32,25 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(absPosterFilename); err == nil {
 		http.ServeFile(w, r, absPosterFilename)
 	} else {
-		http.NotFound(w, r)
+
+		var br io.ReadSeeker
+		filename := ""
+
+		switch quality {
+		case "maxresdefault":
+			filename = "yet_maxresdefault.png"
+			br = bytes.NewReader(yetPosterMaxResDefault)
+		case "hqdefault":
+			filename = "yet_hqdefault.png"
+			br = bytes.NewReader(yetPosterHQDefault)
+		}
+
+		if br != nil {
+			http.ServeContent(w, r, filename, time.Unix(0, 0), br)
+		} else {
+			http.NotFound(w, r)
+		}
+
 		return
 	}
 

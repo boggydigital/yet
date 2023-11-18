@@ -45,6 +45,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	if videoId == "" {
 		videoId = v
 		videoUrl = "/video?file=" + v
+		videoPoster = "/poster?v=" + v + "&q=maxresdefault"
 		videoTitle = v
 	}
 
