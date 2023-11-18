@@ -74,6 +74,9 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	sb.WriteString("<br/>")
+	sb.WriteString("<a href='/new'>Something else</a>")
+
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
 

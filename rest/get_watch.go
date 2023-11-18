@@ -21,12 +21,17 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	v := r.URL.Query().Get("v")
 
+	if v == "" {
+		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)
+		return
+	}
+
 	// iOS insists on inserting a space on paste
 	v = strings.TrimSpace(v)
 
 	videoIds, err := yeti.ArgsToVideoIds(http.DefaultClient, false, v)
 	if err != nil {
-		http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
+		http.Error(w, "error extracting videoId", http.StatusBadRequest)
 		return
 	}
 
@@ -34,11 +39,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	if len(videoIds) > 0 {
 		videoId = videoIds[0]
 	}
-
-	//if videoId == "" {
-	//	http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
-	//	return
-	//}
 
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
 

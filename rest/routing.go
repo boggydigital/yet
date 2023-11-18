@@ -21,6 +21,7 @@ func HandleFuncs() {
 
 		"/watch": BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
 		"/list":  BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
+		"/new":   BrGzip(GetOnly(Log(http.HandlerFunc(GetNew)))),
 
 		"/progress": PostOnly(Log(http.HandlerFunc(PostProgress))),
 		"/ended":    PostOnly(Log(http.HandlerFunc(PostEnded))),
