@@ -38,6 +38,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"a {display:block;color:lightblue;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem}" +
+		"a.highlight {color:gold}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -75,7 +76,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sb.WriteString("<br/>")
-	sb.WriteString("<a href='/new'>Something else</a>")
+	sb.WriteString("<a class='highlight' href='/new'>Something else</a>")
 
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
