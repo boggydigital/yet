@@ -184,6 +184,28 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"	});});" +
 		"</script>")
 
+	sb.WriteString("<script>" +
+		"document.body.addEventListener('keydown', (e) => {" +
+		"	switch (e.keyCode) {" +
+		// ArrowRight
+		"		case 39:" +
+		"		e.preventDefault();" +
+		"		video.currentTime += 15;" +
+		"		break;" +
+		// ArrowLeft
+		"		case 37:" +
+		"		e.preventDefault();" +
+		"		video.currentTime -= 15;" +
+		"		break;" +
+		// Space
+		"		case 32:" +
+		"		e.preventDefault();" +
+		"		video.paused ? video.play() : video.pause();" +
+		"		break;" +
+		"	};" +
+		"	});" +
+		"</script>")
+
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
 
