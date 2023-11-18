@@ -45,24 +45,33 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	// videos watchlist
 	// videos download queue
 
-	sb.WriteString("<h1>Continue watching</h1>")
-	for _, id := range rxa.Keys(data.VideoProgressProperty) {
-		if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
+	cwKeys := rxa.Keys(data.VideoProgressProperty)
+	if len(cwKeys) > 0 {
+		sb.WriteString("<h1>Continue watching</h1>")
+		for _, id := range cwKeys {
+			if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
+				writeVideo(id, rxa, sb)
+			}
+		}
+	}
+
+	wlKeys := rxa.Keys(data.VideosWatchlistProperty)
+	if len(wlKeys) > 0 {
+		sb.WriteString("<h1>Watchlist</h1>")
+		for _, id := range wlKeys {
+			if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
+				continue
+			}
 			writeVideo(id, rxa, sb)
 		}
 	}
 
-	sb.WriteString("<h1>Watchlist</h1>")
-	for _, id := range rxa.Keys(data.VideosWatchlistProperty) {
-		if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
-			continue
+	dqKeys := rxa.Keys(data.VideosDownloadQueueProperty)
+	if len(dqKeys) > 0 {
+		sb.WriteString("<h1>Download queue</h1>")
+		for _, id := range dqKeys {
+			writeVideo(id, rxa, sb)
 		}
-		writeVideo(id, rxa, sb)
-	}
-
-	sb.WriteString("<h1>Download queue</h1>")
-	for _, id := range rxa.Keys(data.VideosDownloadQueueProperty) {
-		writeVideo(id, rxa, sb)
 	}
 
 	sb.WriteString("</body>")
