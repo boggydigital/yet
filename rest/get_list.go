@@ -38,11 +38,13 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
-		"a.video img {border-radius:1rem;width:200px}" +
+		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video span {font-size:1rem}" +
-		"a.highlight {color:gold}" +
+		"a.highlight {color:gold; margin-block:2rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
+
+	sb.WriteString("<a class='video highlight' href='/new'>Something else</a>")
 
 	// continue watching
 	// videos watchlist
@@ -77,7 +79,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sb.WriteString("<br/>")
 	sb.WriteString("<a class='video highlight' href='/new'>Something else</a>")
 
 	sb.WriteString("</body>")
