@@ -37,7 +37,9 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
-		"a {display:block;color:lightblue;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem}" +
+		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"a.video img {border-radius:1rem;width:200px}" +
+		"a.video span {font-size:1rem}" +
 		"a.highlight {color:gold}" +
 		"</style></head>")
 	sb.WriteString("<body>")
@@ -76,7 +78,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sb.WriteString("<br/>")
-	sb.WriteString("<a class='highlight' href='/new'>Something else</a>")
+	sb.WriteString("<a class='video highlight' href='/new'>Something else</a>")
 
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
@@ -94,6 +96,10 @@ func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
 		videoTitle = title
 	}
 
-	sb.WriteString("<a href='/watch?v=" + videoId + "'>" + videoTitle + "</a>")
+	sb.WriteString("<a class='video' href='/watch?v=" + videoId + "'>" +
+		"<img src='/poster?v=" + videoId + "&q=hqdefault' />" +
+		"<br/>" +
+		"<span>" + videoTitle + "</span>" +
+		"</a>")
 
 }
