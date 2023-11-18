@@ -72,6 +72,11 @@ func DownloadVideos(
 			continue
 		}
 
+		// adding to the queue before attempting to download
+		if err := rxa.AddValues(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
+			return gv.EndWithError(err)
+		}
+
 		videoPage, playerUrl, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
 			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {

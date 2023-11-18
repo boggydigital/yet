@@ -15,11 +15,10 @@ func DownloadHandler(u *url.URL) error {
 
 	ids := strings.Split(u.Query().Get("id"), ",")
 	force := u.Query().Has("force")
-	later := u.Query().Has("later")
-	return Download(ids, force, later)
+	return Download(ids, force)
 }
 
-func Download(ids []string, force, later bool) error {
+func Download(ids []string, force bool) error {
 
 	da := nod.Begin("downloading videos...")
 	defer da.End()
@@ -51,22 +50,6 @@ func Download(ids []string, force, later bool) error {
 		videoIds, err := yeti.ArgsToVideoIds(httpClient, false, ids...)
 		if err != nil {
 			return da.EndWithError(err)
-		}
-
-		// start by adding to download queue
-		items, queueProperty := videoIds, data.VideosDownloadQueueProperty
-		if len(videoIds) == 0 {
-			items = ids
-			queueProperty = data.UrlsDownloadQueueProperty
-		}
-		for _, item := range items {
-			if err := rxa.AddValues(queueProperty, item, data.TrueValue); err != nil {
-				return da.EndWithError(err)
-			}
-		}
-
-		if later {
-			return nil
 		}
 
 		if len(videoIds) > 0 {

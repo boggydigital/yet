@@ -60,11 +60,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		writeVideo(id, rxa, sb)
 	}
 
-	sb.WriteString("<h1>URL Watchlist</h1>")
-	for _, id := range rxa.Keys(data.UrlsWatchlistProperty) {
-		writeVideo(id, rxa, sb)
-	}
-
 	sb.WriteString("<h1>Download queue</h1>")
 	for _, id := range rxa.Keys(data.VideosDownloadQueueProperty) {
 		writeVideo(id, rxa, sb)

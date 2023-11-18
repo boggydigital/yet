@@ -26,8 +26,8 @@ func DownloadUrls(
 	defer dftpw.End()
 
 	if err := rxa.IsSupported(
-		data.UrlsDownloadQueueProperty,
-		data.UrlsWatchlistProperty); err != nil {
+		data.VideosDownloadQueueProperty,
+		data.VideosWatchlistProperty); err != nil {
 		return dftpw.EndWithError(err)
 	}
 
@@ -48,6 +48,11 @@ func DownloadUrls(
 
 		start := time.Now()
 
+		// add to the download queue
+		if err := rxa.AddValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
+			return dftpw.EndWithError(err)
+		}
+
 		absVideosDir, err := paths.GetAbsDir(paths.Videos)
 		if err != nil {
 			return dftpw.EndWithError(err)
@@ -58,12 +63,12 @@ func DownloadUrls(
 		}
 
 		// clear from the queue upon successful download
-		if err := rxa.CutVal(data.UrlsDownloadQueueProperty, rawUrl, data.TrueValue); err != nil {
+		if err := rxa.CutVal(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
 			return dftpw.EndWithError(err)
 		}
 
 		// add to the watchlist upon successful download
-		if err := rxa.AddValues(data.UrlsWatchlistProperty, rawUrl, data.TrueValue); err != nil {
+		if err := rxa.AddValues(data.VideosWatchlistProperty, filename, data.TrueValue); err != nil {
 			return dftpw.EndWithError(err)
 		}
 

@@ -35,12 +35,18 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		videoId = videoIds[0]
 	}
 
-	if videoId == "" {
-		http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
-		return
-	}
+	//if videoId == "" {
+	//	http.Error(w, "missing video-id (videoId)", http.StatusBadRequest)
+	//	return
+	//}
 
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
+
+	if videoId == "" {
+		videoId = v
+		videoUrl = "/video?file=" + v
+		videoTitle = v
+	}
 
 	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
