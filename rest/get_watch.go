@@ -41,8 +41,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
+	playbackType := "streaming"
 
 	if videoId == "" {
+		playbackType = "local"
 		videoId = v
 		videoUrl = "/video?file=" + v
 		videoPoster = "/poster?v=" + v + "&q=maxresdefault"
@@ -67,6 +69,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
 				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
+					playbackType = "local"
 					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
 					videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
 					videoTitle = title
@@ -131,12 +134,18 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"summary.videoTitle {font-size: 2rem; margin: 0.5rem;cursor:pointer}" +
 		".videoDescription {margin: 1rem; line-height: 1.2;}" +
 		".lastEnded {margin: 0.5rem; font-size: 75%;}" +
+		".playbackType {opacity:25%;font-size:75%}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
 	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
 	sb.WriteString("<source src='" + videoUrl + "' />")
 	sb.WriteString("</video>")
+
+	sb.WriteString("<details>")
+	sb.WriteString("<summary class='videoTitle'>" + videoTitle + "</summary>")
+	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
+	sb.WriteString("</details>")
 
 	if lastEndedTime != "" {
 		if lt, err := time.Parse(http.TimeFormat, lastEndedTime); err == nil {
@@ -145,10 +154,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sb.WriteString("<details>")
-	sb.WriteString("<summary class='videoTitle'>" + videoTitle + "</summary>")
-	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
-	sb.WriteString("</details>")
+	sb.WriteString("<span class='playbackType'>Video source: " + playbackType + "</span>")
 
 	sb.WriteString("<script>" +
 		"let video = document.getElementsByTagName('video')[0];" +
