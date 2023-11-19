@@ -42,7 +42,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
-	//var videoCaptionTracks []yt_urls.CaptionTrack
+	var videoCaptionTracks []yt_urls.CaptionTrack
 	playbackType := "streaming"
 
 	if videoId == "" {
@@ -76,6 +76,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 					videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
 					videoTitle = title
 					videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
+
+					if vct, err := getLocalCaptionTracks(videoId, rxa); err == nil {
+						videoCaptionTracks = vct
+					}
 				}
 			}
 		}
@@ -135,13 +139,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
 	sb.WriteString("<source src='" + videoUrl + "' />")
-	//for _, vct := range videoCaptionTracks {
-	//	sb.WriteString("<track default " +
-	//		"kind='" + vct.Kind + "' " +
-	//		"label='" + vct.TrackName + "' " +
-	//		"srclang='" + vct.LanguageCode + "' " +
-	//		"src='" + vct.BaseUrl + "'/>")
-	//}
+	for _, vct := range videoCaptionTracks {
+		sb.WriteString("<track " +
+			"kind='" + vct.Kind + "' " +
+			"label='" + vct.TrackName + "' " +
+			"srclang='" + vct.LanguageCode + "' " +
+			"src='" + vct.BaseUrl + "'/>")
+	}
 	sb.WriteString("</video>")
 
 	sb.WriteString("<details>")
@@ -246,4 +250,40 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 		u.RawQuery = q.Encode()
 		return u, nil
 	}
+}
+
+func getLocalCaptionTracks(videoId string, rxa kvas.ReduxAssets) ([]yt_urls.CaptionTrack, error) {
+
+	if err := rxa.IsSupported(
+		data.VideoCaptionsNames,
+		data.VideoCaptionsKinds,
+		data.VideoCaptionsLanguages); err != nil {
+		return nil, err
+	}
+
+	captionsNames, _ := rxa.GetAllValues(data.VideoCaptionsNames, videoId)
+	captionsKinds, _ := rxa.GetAllValues(data.VideoCaptionsKinds, videoId)
+	captionsLanguages, _ := rxa.GetAllValues(data.VideoCaptionsLanguages, videoId)
+
+	cts := make([]yt_urls.CaptionTrack, 0, len(captionsLanguages))
+	for i := 0; i < len(captionsLanguages); i++ {
+
+		cn, ck, cl := "", "", captionsLanguages[i]
+		if len(captionsNames) >= i {
+			cn = captionsNames[i]
+		}
+		if len(captionsKinds) >= i {
+			ck = captionsKinds[i]
+		}
+
+		ct := yt_urls.CaptionTrack{
+			BaseUrl:      "/poster?v=" + videoId + "&l=" + cl,
+			LanguageCode: cl,
+			Kind:         ck,
+			TrackName:    cn,
+		}
+		cts = append(cts, ct)
+	}
+
+	return cts, nil
 }
