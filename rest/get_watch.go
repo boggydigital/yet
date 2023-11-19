@@ -42,6 +42,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
+	//var videoCaptionTracks []yt_urls.CaptionTrack
 	playbackType := "streaming"
 
 	if videoId == "" {
@@ -127,15 +128,20 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-		"summary.videoTitle {font-size: 2rem; margin: 0.5rem;cursor:pointer}" +
-		".videoDescription {margin: 1rem; line-height: 1.2;}" +
-		".lastEnded {margin: 0.5rem; font-size: 75%;}" +
-		".playbackType {opacity:25%;font-size:75%}" +
+		"details {margin: 0.5rem}" +
+		"details summary {font-size: 1.5rem; margin: 1rem; line-height: 1.2;cursor:pointer}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
 	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
 	sb.WriteString("<source src='" + videoUrl + "' />")
+	//for _, vct := range videoCaptionTracks {
+	//	sb.WriteString("<track default " +
+	//		"kind='" + vct.Kind + "' " +
+	//		"label='" + vct.TrackName + "' " +
+	//		"srclang='" + vct.LanguageCode + "' " +
+	//		"src='" + vct.BaseUrl + "'/>")
+	//}
 	sb.WriteString("</video>")
 
 	sb.WriteString("<details>")
@@ -143,14 +149,16 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
 	sb.WriteString("</details>")
 
+	sb.WriteString("<details>")
+	sb.WriteString("<summary>Tools</summary>")
 	if lastEndedTime != "" {
 		if lt, err := time.Parse(http.TimeFormat, lastEndedTime); err == nil {
-			sb.WriteString("<div class='lastEnded'><span>Last ended: ")
+			sb.WriteString("<div class='lastEnded'><span>Last watched: ")
 			sb.WriteString("<time>" + lt.Local().Format(time.RFC1123) + "</time></div>")
 		}
 	}
-
 	sb.WriteString("<span class='playbackType'>Video source: " + playbackType + "</span>")
+	sb.WriteString("</details>")
 
 	sb.WriteString("<script>" +
 		"let video = document.getElementsByTagName('video')[0];" +

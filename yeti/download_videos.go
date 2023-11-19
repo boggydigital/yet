@@ -94,7 +94,13 @@ func DownloadVideos(
 			}
 		}
 
-		if err := GetThumbnails(dl, videoId, videoPage.VideoDetails.Thumbnail.Thumbnails); err != nil {
+		thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
+		if err := GetThumbnails(dl, videoId, thumbnails); err != nil {
+			return gv.EndWithError(err)
+		}
+
+		captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
+		if err := GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
 			return gv.EndWithError(err)
 		}
 

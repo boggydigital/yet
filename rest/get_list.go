@@ -41,6 +41,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video span {font-size:1rem}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
+		"summary h1 {display: inline}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -79,6 +80,15 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		for _, id := range dqKeys {
 			writeVideo(id, "", rxa, sb)
 		}
+	}
+
+	whKeys := rxa.Keys(data.VideoEndedProperty)
+	if len(whKeys) > 0 {
+		sb.WriteString("<details><summary><h1>Watch history</h1></summary>")
+		for _, id := range whKeys {
+			writeVideo(id, "", rxa, sb)
+		}
+		sb.WriteString("</details>")
 	}
 
 	sb.WriteString("<a class='video highlight' href='/new'>Something else</a>")

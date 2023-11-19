@@ -46,6 +46,7 @@ func main() {
 		"clear-ended":       cli.ClearEndedHandler,
 		"clear-progress":    cli.ClearProgressHandler,
 		"download":          cli.DownloadHandler,
+		"get-captions":      cli.GetCaptionsHandler,
 		"get-poster":        cli.GetPosterHandler,
 		"serve":             cli.ServeHandler,
 		"set-ended":         cli.SetEndedHandler,

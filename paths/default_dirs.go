@@ -10,4 +10,5 @@ var DefaultDirs = map[string]string{
 	"metadata": defaultRootDir + "/metadata",
 	"videos":   defaultRootDir + "/videos",
 	"posters":  defaultRootDir + "/posters",
+	"captions": defaultRootDir + "/captions",
 }
