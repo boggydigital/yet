@@ -127,7 +127,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
-		"video {width: 100%; height: 100%; object-fit: cover} " +
+		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
 		"summary.videoTitle {font-size: 2rem; margin: 0.5rem;cursor:pointer}" +
 		".videoDescription {margin: 1rem; line-height: 1.2;}" +
 		".lastEnded {margin: 0.5rem; font-size: 75%;}" +
