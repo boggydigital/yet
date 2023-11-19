@@ -6,11 +6,11 @@ import (
 )
 
 const (
-	cookiesFilename    = "cookies.txt"
-	defaultPosterExt   = ".jpg"
-	defaultCaptionsExt = ".vtt"
-	PosterQualityMax   = "maxresdefault"
-	PosterQualityHigh  = "hqdefault"
+	cookiesFilename      = "cookies.txt"
+	defaultPosterExt     = ".jpg"
+	defaultYTCaptionsExt = ".ytt"
+	PosterQualityMax     = "maxresdefault"
+	PosterQualityHigh    = "hqdefault"
 )
 
 func AbsCookiesPath() (string, error) {
@@ -25,5 +25,5 @@ func AbsPosterPath(videoId, quality string) (string, error) {
 
 func AbsCaptionsTrackPath(videoId, lang string) (string, error) {
 	cdp, err := GetAbsDir(Captions)
-	return filepath.Join(cdp, fmt.Sprintf("%s_%s%s", videoId, lang, defaultCaptionsExt)), err
+	return filepath.Join(cdp, fmt.Sprintf("%s_%s%s", videoId, lang, defaultYTCaptionsExt)), err
 }

@@ -42,7 +42,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
-	var videoCaptionTracks []yt_urls.CaptionTrack
+	//var videoCaptionTracks []yt_urls.CaptionTrack
 	playbackType := "streaming"
 
 	if videoId == "" {
@@ -77,9 +77,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 					videoTitle = title
 					videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
 
-					if vct, err := getLocalCaptionTracks(videoId, rxa); err == nil {
-						videoCaptionTracks = vct
-					}
+					//if vct, err := getLocalCaptionTracks(videoId, rxa); err == nil {
+					//	videoCaptionTracks = vct
+					//}
 				}
 			}
 		}
@@ -139,13 +139,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
 	sb.WriteString("<source src='" + videoUrl + "' />")
-	for _, vct := range videoCaptionTracks {
-		sb.WriteString("<track " +
-			"kind='" + vct.Kind + "' " +
-			"label='" + vct.TrackName + "' " +
-			"srclang='" + vct.LanguageCode + "' " +
-			"src='" + vct.BaseUrl + "'/>")
-	}
+	//for _, vct := range videoCaptionTracks {
+	//	sb.WriteString("<track " +
+	//		"kind='" + vct.Kind + "' " +
+	//		"label='" + vct.TrackName + "' " +
+	//		"srclang='" + vct.LanguageCode + "' " +
+	//		"src='" + vct.BaseUrl + "'/>")
+	//}
 	sb.WriteString("</video>")
 
 	sb.WriteString("<details>")
@@ -277,11 +277,16 @@ func getLocalCaptionTracks(videoId string, rxa kvas.ReduxAssets) ([]yt_urls.Capt
 		}
 
 		ct := yt_urls.CaptionTrack{
-			BaseUrl:      "/poster?v=" + videoId + "&l=" + cl,
+			BaseUrl:      "/captions?v=" + videoId + "&l=" + cl,
 			LanguageCode: cl,
 			Kind:         ck,
 			TrackName:    cn,
 		}
+
+		if ct.Kind == "asr" {
+			ct.Kind = "subtitles"
+		}
+
 		cts = append(cts, ct)
 	}
 
