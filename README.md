@@ -50,6 +50,10 @@ services:
       - /docker/yet/metadata:/usr/share/yet/metadata
       # videos
       - /docker/yet/videos:/usr/share/yet/videos
+      # posters
+      - /docker/yet/posters:/usr/share/yet/posters
+      # captions
+      - /docker/yet/captions:/usr/share/yet/captions
       # sharing timezone from the host
       - /etc/localtime:/etc/localtime:ro 
 ```
