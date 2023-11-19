@@ -8,13 +8,13 @@ import (
 )
 
 type EndedRequest struct {
-	VideoId string `json:"videoId"`
+	VideoId string `json:"v"`
 }
 
 func PostEnded(w http.ResponseWriter, r *http.Request) {
 
 	// POST /ended
-	// {videoId}
+	// {v}
 
 	decoder := json.NewDecoder(r.Body)
 	var er EndedRequest

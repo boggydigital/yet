@@ -20,6 +20,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	// GET /watch?videoId
 
 	v := r.URL.Query().Get("v")
+	t := r.URL.Query().Get("t")
 
 	if v == "" {
 		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)
@@ -77,11 +78,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-	}
-
-	currentTime := ""
-	if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, videoId); ok && ct != "" {
-		currentTime = ct
 	}
 
 	lastEndedTime := ""
@@ -161,8 +157,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"</script>")
 
 	// only continue the videos that have not been watched
-	if currentTime != "" && lastEndedTime == "" {
-		sb.WriteString("<script>video.currentTime = " + currentTime + ";</script>")
+	if t != "" && lastEndedTime == "" {
+		sb.WriteString("<script>video.currentTime = " + t + ";</script>")
 	}
 
 	sb.WriteString("<script>" +
@@ -176,8 +172,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"			headers: {" +
 		"				'Content-Type': 'application/json'}," +
 		"			body: JSON.stringify({" +
-		"				videoId: '" + videoId + "'," +
-		"				currentTime: video.currentTime.toString()})" +
+		"				v: '" + videoId + "'," +
+		"				t: video.currentTime.toString()})" +
 		"		}).then((resp) => { if (resp && !resp.ok) {" +
 		"			console.log(resp)}" +
 		"		});" +
@@ -191,7 +187,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"		method: 'post'," +
 		"		headers: {" +
 		"			'Content-Type': 'application/json'}," +
-		"		body: JSON.stringify({videoId: '" + videoId + "'})" +
+		"		body: JSON.stringify({v: '" + videoId + "'})" +
 		"	}).then((resp) => { if (resp && !resp.ok) {" +
 		"		console.log(resp)}" +
 		"	});});" +

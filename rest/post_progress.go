@@ -4,17 +4,25 @@ import (
 	"encoding/json"
 	"github.com/boggydigital/yet/data"
 	"net/http"
+	"strings"
 )
 
 type ProgressRequest struct {
-	VideoId     string `json:"videoId"`
-	CurrentTime string `json:"currentTime"`
+	VideoId     string `json:"v"`
+	CurrentTime string `json:"t"`
+}
+
+func (pr ProgressRequest) TrimTime() string {
+	if tt, _, ok := strings.Cut(pr.CurrentTime, "."); ok {
+		return tt
+	}
+	return pr.CurrentTime
 }
 
 func PostProgress(w http.ResponseWriter, r *http.Request) {
 
 	// POST /progress
-	// {videoId, currentTime}
+	// {v, t}
 
 	decoder := json.NewDecoder(r.Body)
 	var pr ProgressRequest
@@ -24,7 +32,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := epRxa.ReplaceValues(data.VideoProgressProperty, pr.VideoId, pr.CurrentTime); err != nil {
+	if err := epRxa.ReplaceValues(data.VideoProgressProperty, pr.VideoId, pr.TrimTime()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
