@@ -33,7 +33,7 @@ func GetPoster(ids []string) error {
 			continue
 		}
 
-		if err := yeti.GetThumbnails(dl, videoId, videoPage.VideoDetails.Thumbnail.Thumbnails); err != nil {
+		if err := yeti.GetPosters(dl, videoId, videoPage.VideoDetails.Thumbnail.Thumbnails); err != nil {
 			gpa.Error(err)
 		}
 

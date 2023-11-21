@@ -95,7 +95,7 @@ func DownloadVideos(
 		}
 
 		thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
-		if err := GetThumbnails(dl, videoId, thumbnails); err != nil {
+		if err := GetPosters(dl, videoId, thumbnails); err != nil {
 			return gv.EndWithError(err)
 		}
 

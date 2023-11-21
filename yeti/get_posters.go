@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func GetThumbnails(dl *dolo.Client, videoId string, thumbnails []yt_urls.Thumbnail) error {
+func GetPosters(dl *dolo.Client, videoId string, thumbnails []yt_urls.Thumbnail) error {
 
 	remains := map[string]bool{
 		paths.PosterQualityMax:  true,
