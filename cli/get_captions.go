@@ -42,7 +42,7 @@ func GetCaptions(ids []string) error {
 
 	for _, videoId := range ids {
 
-		videoPage, _, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
 			gca.Error(err)
 			gca.Increment()

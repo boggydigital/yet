@@ -8,7 +8,7 @@ require (
 	github.com/boggydigital/dolo v0.2.13
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/wits v0.2.3
-	github.com/boggydigital/yt_urls v0.1.30
+	github.com/boggydigital/yt_urls v0.1.31
 )
 
 require (

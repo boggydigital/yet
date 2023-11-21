@@ -91,7 +91,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if videoUrl == "" || videoTitle == "" {
-		videoPage, playerUrl, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -105,7 +105,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		vu, err := decode(f.Url, playerUrl)
+		vu, err := decode(f.Url, videoPage.PlayerUrl)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

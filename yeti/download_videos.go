@@ -77,7 +77,7 @@ func DownloadVideos(
 			return gv.EndWithError(err)
 		}
 
-		videoPage, playerUrl, err := yt_urls.GetVideoPage(httpClient, videoId)
+		videoPage, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
 			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
 				return dvtpw.EndWithError(rerr)
@@ -88,7 +88,7 @@ func DownloadVideos(
 			continue
 		}
 
-		for p, v := range videoPageMetadata(videoPage) {
+		for p, v := range ExtractMetadata(videoPage) {
 			if err := rxa.AddValues(p, videoId, v...); err != nil {
 				return gv.EndWithError(err)
 			}
@@ -108,7 +108,7 @@ func DownloadVideos(
 
 		start := time.Now()
 
-		if err := downloadVideo(dl, relFilename, videoPage, playerUrl); err != nil {
+		if err := downloadVideo(dl, relFilename, videoPage); err != nil {
 			gv.Error(err)
 		}
 
@@ -134,8 +134,7 @@ func DownloadVideos(
 func downloadVideo(
 	dl *dolo.Client,
 	relFilename string,
-	videoPage *yt_urls.InitialPlayerResponse,
-	playerUrl string) error {
+	videoPage *yt_urls.InitialPlayerResponse) error {
 
 	absVideosDir, err := paths.GetAbsDir(paths.Videos)
 	if err != nil {
@@ -150,16 +149,11 @@ func downloadVideo(
 	}
 
 	if GetBinary(FFMpegBin) == "" {
-		if err := downloadSingleFormat(dl, relFilename, videoPage.Formats(), playerUrl); err != nil {
+		if err := downloadSingleFormat(dl, relFilename, videoPage.Formats(), videoPage.PlayerUrl); err != nil {
 			return err
 		}
 	} else {
-		if err := downloadAdaptiveFormat(
-			dl,
-			relFilename,
-			videoPage.AdaptiveVideoFormats(),
-			videoPage.AdaptiveAudioFormats(),
-			playerUrl); err != nil {
+		if err := downloadAdaptiveFormat(dl, relFilename, videoPage); err != nil {
 			return err
 		}
 	}
@@ -228,17 +222,17 @@ func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.F
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoFormats, audioFormats yt_urls.Formats, playerUrl string) error {
+func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoPage *yt_urls.InitialPlayerResponse) error {
 
 	relVideoFilename, relAudioFilename := videoAudioFilenames(relFilename)
 
 	//download video format
-	if err := downloadSingleFormat(dl, relVideoFilename, videoFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, relVideoFilename, videoPage.AdaptiveVideoFormats(), videoPage.PlayerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
-	if err := downloadSingleFormat(dl, relAudioFilename, audioFormats, playerUrl); err != nil {
+	if err := downloadSingleFormat(dl, relAudioFilename, videoPage.AdaptiveAudioFormats(), videoPage.PlayerUrl); err != nil {
 		return err
 	}
 
@@ -247,28 +241,6 @@ func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoFormats, a
 	}
 
 	return nil
-}
-
-func videoPageMetadata(ipr *yt_urls.InitialPlayerResponse) map[string][]string {
-	vpm := make(map[string][]string)
-
-	vpm[data.VideoTitleProperty] = []string{ipr.VideoDetails.Title}
-	vpm[data.VideoThumbnailUrlsProperty] = make([]string, 0, len(ipr.VideoDetails.Thumbnail.Thumbnails))
-	for _, t := range ipr.VideoDetails.Thumbnail.Thumbnails {
-		vpm[data.VideoThumbnailUrlsProperty] = append(vpm[data.VideoThumbnailUrlsProperty], t.Url)
-	}
-	vpm[data.VideoExternalChannelIdProperty] = []string{ipr.VideoDetails.ChannelId}
-	vpm[data.VideoShortDescriptionProperty] = []string{ipr.VideoDetails.ShortDescription}
-	vpm[data.VideoViewCountProperty] = []string{ipr.VideoDetails.ViewCount}
-	vpm[data.VideoKeywordsProperty] = ipr.VideoDetails.Keywords
-
-	vpm[data.VideoOwnerChannelNameProperty] = []string{ipr.Microformat.PlayerMicroformatRenderer.OwnerChannelName}
-	vpm[data.VideoOwnerProfileUrlProperty] = []string{ipr.Microformat.PlayerMicroformatRenderer.OwnerProfileUrl}
-	vpm[data.VideoCategoryProperty] = []string{ipr.Microformat.PlayerMicroformatRenderer.Category}
-	vpm[data.VideoPublishDateProperty] = []string{ipr.Microformat.PlayerMicroformatRenderer.PublishDate}
-	vpm[data.VideoUploadDateProperty] = []string{ipr.Microformat.PlayerMicroformatRenderer.UploadDate}
-
-	return vpm
 }
 
 func videoExistsLocally(rxa kvas.ReduxAssets, videosDir, videoId string) bool {
