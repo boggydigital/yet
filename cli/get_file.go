@@ -1,4 +1,4 @@
-package yeti
+package cli
 
 import (
 	"fmt"
@@ -7,39 +7,45 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
-	"net/http"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
-func DownloadUrls(
-	httpClient *http.Client,
-	rxa kvas.ReduxAssets,
-	urls ...string) error {
+func GetFileHandler(u *url.URL) error {
+	urls := strings.Split(u.Query().Get("url"), ",")
+	return GetFile(urls...)
+}
+
+func GetFile(urls ...string) error {
 
 	if len(urls) == 0 {
 		return nil
 	}
 
-	dftpw := nod.NewProgress(fmt.Sprintf("downloading %d file(s)", len(urls)))
-	defer dftpw.End()
+	gfa := nod.NewProgress(fmt.Sprintf("downloading %d file(s)", len(urls)))
+	defer gfa.End()
 
-	if err := rxa.IsSupported(
-		data.VideosDownloadQueueProperty,
-		data.VideosWatchlistProperty); err != nil {
-		return dftpw.EndWithError(err)
+	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	if err != nil {
+		return gfa.EndWithError(err)
 	}
 
-	dftpw.Total(uint64(len(urls)))
+	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	if err != nil {
+		return gfa.EndWithError(err)
+	}
 
-	dl := dolo.NewClient(httpClient, dolo.Defaults())
+	gfa.Total(uint64(len(urls)))
+
+	dl := dolo.DefaultClient
 
 	for _, rawUrl := range urls {
 
 		u, err := url.Parse(rawUrl)
 		if err != nil {
-			return dftpw.EndWithError(err)
+			return gfa.EndWithError(err)
 		}
 
 		_, filename := filepath.Split(u.Path)
@@ -50,32 +56,32 @@ func DownloadUrls(
 
 		// add to the download queue
 		if err := rxa.AddValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
-			return dftpw.EndWithError(err)
+			return gfa.EndWithError(err)
 		}
 
 		absVideosDir, err := paths.GetAbsDir(paths.Videos)
 		if err != nil {
-			return dftpw.EndWithError(err)
+			return gfa.EndWithError(err)
 		}
 
 		if err := dl.Download(u, gv, absVideosDir, filename); err != nil {
-			return dftpw.EndWithError(err)
+			return gfa.EndWithError(err)
 		}
 
 		// clear from the queue upon successful download
 		if err := rxa.CutVal(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
-			return dftpw.EndWithError(err)
+			return gfa.EndWithError(err)
 		}
 
 		// add to the watchlist upon successful download
 		if err := rxa.AddValues(data.VideosWatchlistProperty, filename, data.TrueValue); err != nil {
-			return dftpw.EndWithError(err)
+			return gfa.EndWithError(err)
 		}
 
 		elapsed := time.Since(start)
 
 		gv.EndWithResult("done in %.1fs", elapsed.Seconds())
-		dftpw.Increment()
+		gfa.Increment()
 	}
 
 	return nil

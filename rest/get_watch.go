@@ -30,7 +30,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	// iOS insists on inserting a space on paste
 	v = strings.TrimSpace(v)
 
-	videoIds, err := yeti.ArgsToVideoIds(http.DefaultClient, false, v)
+	videoIds, err := yeti.ParseVideoIds(v)
 	if err != nil {
 		http.Error(w, "error extracting videoId", http.StatusBadRequest)
 		return

@@ -10,7 +10,7 @@ const (
 	audioExt = ".audio"
 )
 
-func videoAudioFilenames(relFilename string) (string, string) {
+func VideoAudioFilenames(relFilename string) (string, string) {
 	ext := filepath.Ext(relFilename)
 	fse := strings.TrimSuffix(relFilename, ext)
 

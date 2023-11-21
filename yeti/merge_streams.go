@@ -9,13 +9,13 @@ import (
 	"path/filepath"
 )
 
-func mergeStreams(relFilename string) error {
+func MergeStreams(relFilename string) error {
 	absVideosDir, err := paths.GetAbsDir(paths.Videos)
 	if err != nil {
 		return err
 	}
 
-	relVideoFilename, relAudioFilename := videoAudioFilenames(relFilename)
+	relVideoFilename, relAudioFilename := VideoAudioFilenames(relFilename)
 
 	absVideoFilename := filepath.Join(absVideosDir, relVideoFilename)
 	absAudioFilename := filepath.Join(absVideosDir, relAudioFilename)

@@ -19,11 +19,18 @@ download
 get-captions
     id&^
 
+get-file
+    url&^
+
 get-metadata
     id&^
 
 get-poster
     id&^
+
+get-video
+    id&^
+    force
 
 serve
     port$*

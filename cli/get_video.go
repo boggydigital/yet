@@ -1,4 +1,4 @@
-package yeti
+package cli
 
 import (
 	"fmt"
@@ -7,11 +7,13 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -19,34 +21,39 @@ const (
 	fastEnv = "YET_FAST"
 )
 
-func DownloadVideos(
-	httpClient *http.Client,
-	rxa kvas.ReduxAssets,
-	force bool,
-	videoIds ...string) error {
+func GetVideoHandler(u *url.URL) error {
+	ids := strings.Split(u.Query().Get("id"), ",")
+	force := u.Query().Has("force")
+	return GetVideo(force, ids...)
+}
+
+func GetVideo(force bool, videoIds ...string) error {
 
 	if len(videoIds) == 0 {
 		return nil
 	}
 
-	dvtpw := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
-	defer dvtpw.End()
+	gva := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
+	defer gva.End()
 
-	if err := rxa.IsSupported(
-		data.VideoErrorsProperty,
-		data.VideoTitleProperty,
-		data.VideoOwnerChannelNameProperty,
-		data.VideosDownloadQueueProperty,
-		data.VideosWatchlistProperty); err != nil {
-		return dvtpw.EndWithError(err)
+	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	if err != nil {
+		return gva.EndWithError(err)
+	}
+
+	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	if err != nil {
+		return gva.EndWithError(err)
 	}
 
 	videosDir, err := paths.GetAbsDir(paths.Videos)
 	if err != nil {
-		return dvtpw.EndWithError(err)
+		return gva.EndWithError(err)
 	}
 
-	dvtpw.Total(uint64(len(videoIds)))
+	gva.Total(uint64(len(videoIds)))
+
+	httpClient := http.DefaultClient
 
 	dl := dolo.NewClient(httpClient, dolo.Defaults())
 
@@ -57,8 +64,8 @@ func DownloadVideos(
 		// check known errors before doing anything else
 		if !force {
 			if knownError, ok := rxa.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
-				if err := completeVideo(rxa, videoId, dvtpw, gv, knownError); err != nil {
-					return dvtpw.EndWithError(err)
+				if err := completeVideo(rxa, videoId, gva, gv, knownError); err != nil {
+					return gva.EndWithError(err)
 				}
 				continue
 			}
@@ -66,8 +73,8 @@ func DownloadVideos(
 
 		// check if the video file matching videoId is already available locally
 		if !force && videoExistsLocally(rxa, videosDir, videoId) {
-			if err := completeVideo(rxa, videoId, dvtpw, gv, "already exists"); err != nil {
-				return dvtpw.EndWithError(err)
+			if err := completeVideo(rxa, videoId, gva, gv, "already exists"); err != nil {
+				return gva.EndWithError(err)
 			}
 			continue
 		}
@@ -80,31 +87,31 @@ func DownloadVideos(
 		videoPage, err := yt_urls.GetVideoPage(httpClient, videoId)
 		if err != nil {
 			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
-				return dvtpw.EndWithError(rerr)
+				return gva.EndWithError(rerr)
 			}
-			if err := completeVideo(rxa, videoId, dvtpw, gv, err.Error()); err != nil {
-				return dvtpw.EndWithError(err)
+			if err := completeVideo(rxa, videoId, gva, gv, err.Error()); err != nil {
+				return gva.EndWithError(err)
 			}
 			continue
 		}
 
-		for p, v := range ExtractMetadata(videoPage) {
+		for p, v := range yeti.ExtractMetadata(videoPage) {
 			if err := rxa.AddValues(p, videoId, v...); err != nil {
 				return gv.EndWithError(err)
 			}
 		}
 
 		thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
-		if err := GetPosters(dl, videoId, thumbnails); err != nil {
+		if err := yeti.GetPosters(dl, videoId, thumbnails); err != nil {
 			return gv.EndWithError(err)
 		}
 
 		captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
-		if err := GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
+		if err := yeti.GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
 			return gv.EndWithError(err)
 		}
 
-		relFilename := DefaultFilenameDelegate(videoId, videoPage)
+		relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
 		start := time.Now()
 
@@ -125,7 +132,7 @@ func DownloadVideos(
 		elapsed := time.Since(start)
 
 		gv.EndWithResult("done in %.1fs", elapsed.Seconds())
-		dvtpw.Increment()
+		gva.Increment()
 	}
 
 	return nil
@@ -148,7 +155,7 @@ func downloadVideo(
 		return nil
 	}
 
-	if GetBinary(FFMpegBin) == "" {
+	if yeti.GetBinary(yeti.FFMpegBin) == "" {
 		if err := downloadSingleFormat(dl, relFilename, videoPage.Formats(), videoPage.PlayerUrl); err != nil {
 			return err
 		}
@@ -191,10 +198,10 @@ func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.F
 
 		fast := os.Getenv(fastEnv) != ""
 
-		if IsJSBinaryAvailable() || fast {
+		if yeti.IsJSBinaryAvailable() || fast {
 			q := u.Query()
 			np := q.Get("n")
-			if dnp, err := DecodeParam(http.DefaultClient, np, playerUrl); err != nil {
+			if dnp, err := yeti.DecodeParam(http.DefaultClient, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
 				q.Set("n", dnp)
@@ -224,7 +231,7 @@ func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.F
 
 func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoPage *yt_urls.InitialPlayerResponse) error {
 
-	relVideoFilename, relAudioFilename := videoAudioFilenames(relFilename)
+	relVideoFilename, relAudioFilename := yeti.VideoAudioFilenames(relFilename)
 
 	//download video format
 	if err := downloadSingleFormat(dl, relVideoFilename, videoPage.AdaptiveVideoFormats(), videoPage.PlayerUrl); err != nil {
@@ -236,7 +243,7 @@ func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoPage *yt_u
 		return err
 	}
 
-	if err := mergeStreams(relFilename); err != nil {
+	if err := yeti.MergeStreams(relFilename); err != nil {
 		return err
 	}
 
@@ -247,7 +254,7 @@ func videoExistsLocally(rxa kvas.ReduxAssets, videosDir, videoId string) bool {
 	// check if the video file matching videoId is already available locally
 	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
 		if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
-			relVideoFilename := ChannelTitleVideoIdFilename(channel, title, videoId)
+			relVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
 			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
 			if _, err := os.Stat(absVideoFilename); err == nil {
 				return true
