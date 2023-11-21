@@ -1,12 +1,12 @@
 package cli
 
 import (
-	"github.com/boggydigital/coost"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -23,15 +23,16 @@ func Download(ids []string, force bool) error {
 	da := nod.Begin("downloading videos...")
 	defer da.End()
 
-	cookiesPath, err := paths.AbsCookiesPath()
-	if err != nil {
-		return da.EndWithError(err)
-	}
+	//cookiesPath, err := paths.AbsCookiesPath()
+	//if err != nil {
+	//	return da.EndWithError(err)
+	//}
 
-	httpClient, err := coost.NewHttpClientFromFile(cookiesPath)
-	if err != nil {
-		return da.EndWithError(err)
-	}
+	//httpClient, err := coost.NewHttpClientFromFile(cookiesPath)
+	//if err != nil {
+	//	return da.EndWithError(err)
+	//}
+	httpClient := http.DefaultClient
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {

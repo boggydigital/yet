@@ -19,6 +19,9 @@ download
 get-captions
     id&^
 
+get-metadata
+    id&^
+
 get-poster
     id&^
 
