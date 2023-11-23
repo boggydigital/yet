@@ -56,9 +56,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<h1>Continue watching</h1>")
 		for _, id := range cwKeys {
 			if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
-				if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, id); ok {
-					writeVideo(id, ct, rxa, sb)
-				}
+				writeVideo(id, rxa, sb)
+
 			}
 		}
 	}
@@ -70,7 +69,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
 				continue
 			}
-			writeVideo(id, "", rxa, sb)
+			writeVideo(id, rxa, sb)
 		}
 	}
 
@@ -78,7 +77,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	if len(dqKeys) > 0 {
 		sb.WriteString("<h1>Download queue</h1>")
 		for _, id := range dqKeys {
-			writeVideo(id, "", rxa, sb)
+			writeVideo(id, rxa, sb)
 		}
 	}
 
@@ -86,7 +85,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	if len(whKeys) > 0 {
 		sb.WriteString("<details><summary><h1>Watch history</h1></summary>")
 		for _, id := range whKeys {
-			writeVideo(id, "", rxa, sb)
+			writeVideo(id, rxa, sb)
 		}
 		sb.WriteString("</details>")
 	}
@@ -102,7 +101,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func writeVideo(videoId, currentTime string, rxa kvas.ReduxAssets, sb *strings.Builder) {
+func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
 
 	videoTitle := videoId
 	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
@@ -112,9 +111,6 @@ func writeVideo(videoId, currentTime string, rxa kvas.ReduxAssets, sb *strings.B
 	videoUrl := "/watch?"
 	if videoId != "" {
 		videoUrl += "v=" + videoId
-	}
-	if currentTime != "" {
-		videoUrl += "&t=" + currentTime
 	}
 
 	sb.WriteString("<a class='video' href='" + videoUrl + "'>" +

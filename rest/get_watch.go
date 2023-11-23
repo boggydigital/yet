@@ -38,6 +38,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	if videoIds, err := yeti.ParseVideoIds(v); err == nil && len(videoIds) > 0 {
 		videoId = videoIds[0]
 	} else {
+		// TODO: check if that local file exists first
 		playbackType = "local"
 		videoId = v
 		videoUrl = "/video?file=" + v
@@ -55,6 +56,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// if current time is not specified with a query parameter - read it from metadata
+	if t == "" {
+		if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, videoId); ok {
+			t = ct
+		}
 	}
 
 	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
