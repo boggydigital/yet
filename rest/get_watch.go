@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
@@ -93,6 +94,19 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	if videoUrl == "" || videoTitle == "" {
 		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		for p, v := range yeti.ExtractMetadata(videoPage) {
+			if err := rxa.AddValues(p, videoId, v...); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
+		if err := yeti.GetPosters(dolo.DefaultClient, videoId, thumbnails); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

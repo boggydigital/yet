@@ -101,11 +101,6 @@ func GetVideo(force bool, videoIds ...string) error {
 			}
 		}
 
-		thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
-		if err := yeti.GetPosters(dl, videoId, thumbnails); err != nil {
-			return gv.EndWithError(err)
-		}
-
 		captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
 		if err := yeti.GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
 			return gv.EndWithError(err)
