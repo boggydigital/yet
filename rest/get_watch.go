@@ -30,22 +30,14 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	// iOS insists on inserting a space on paste
 	v = strings.TrimSpace(v)
 
-	videoIds, err := yeti.ParseVideoIds(v)
-	if err != nil {
-		http.Error(w, "error extracting videoId", http.StatusBadRequest)
-		return
-	}
-
 	videoId := ""
-	if len(videoIds) > 0 {
-		videoId = videoIds[0]
-	}
-
 	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
 	//var videoCaptionTracks []yt_urls.CaptionTrack
 	playbackType := "streaming"
 
-	if videoId == "" {
+	if videoIds, err := yeti.ParseVideoIds(v); err == nil && len(videoIds) > 0 {
+		videoId = videoIds[0]
+	} else {
 		playbackType = "local"
 		videoId = v
 		videoUrl = "/video?file=" + v
