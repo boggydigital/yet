@@ -27,6 +27,7 @@ get-metadata
 
 get-poster
     id&^
+    for-id
 
 get-video
     id&^
