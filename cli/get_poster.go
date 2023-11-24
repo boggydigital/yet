@@ -23,11 +23,16 @@ func GetPoster(ids []string, forId string) error {
 	gpa := nod.NewProgress("getting poster(s)...")
 	defer gpa.End()
 
+	videoIds, err := yeti.ParseVideoIds(ids...)
+	if err != nil {
+		return gpa.EndWithError(err)
+	}
+
 	gpa.TotalInt(len(ids))
 
 	dl := dolo.DefaultClient
 
-	for _, videoId := range ids {
+	for _, videoId := range videoIds {
 
 		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
