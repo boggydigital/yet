@@ -59,7 +59,16 @@ func addPropertyValues(rxa kvas.ReduxAssets, property string, values ...string) 
 	apva := nod.Begin(" %s", property)
 	defer apva.End()
 
-	return rxa.BatchAddValues(property, trueValues(values...))
+	if err := rxa.BatchAddValues(property, trueValues(values...)); err != nil {
+		return apva.EndWithError(err)
+	}
+
+	result := "done "
+	if len(values) > 0 {
+		result += strings.Join(values, ",")
+	}
+	apva.EndWithResult(result)
+	return nil
 }
 
 func trueValues(ids ...string) map[string][]string {

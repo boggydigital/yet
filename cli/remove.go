@@ -62,5 +62,14 @@ func removePropertyValues(rxa kvas.ReduxAssets, property string, values ...strin
 	rpva := nod.Begin(" %s", property)
 	defer rpva.End()
 
-	return rxa.BatchCutValues(property, trueValues(values...))
+	if err := rxa.BatchCutValues(property, trueValues(values...)); err != nil {
+		return rpva.EndWithError(err)
+	}
+
+	result := "done "
+	if len(values) > 0 {
+		result += strings.Join(values, ",")
+	}
+	rpva.EndWithResult(result)
+	return nil
 }
