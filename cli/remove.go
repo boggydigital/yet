@@ -35,7 +35,11 @@ func Remove(propertyValues map[string][]string) error {
 		return wlra.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.VideosWatchlistProperty)
+	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+		data.VideosDownloadQueueProperty,
+		data.VideosWatchlistProperty,
+		data.VideoProgressProperty,
+		data.VideoEndedProperty)
 	if err != nil {
 		return wlra.EndWithError(err)
 	}
