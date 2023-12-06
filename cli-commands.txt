@@ -10,6 +10,7 @@ add
     download-queue&
     watchlist&
     ended&
+    raw
 
 download
     id&^
@@ -37,6 +38,7 @@ remove
     watchlist&
     progress&
     ended&
+    raw
 
 serve
     port$*
