@@ -43,20 +43,17 @@ func main() {
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
-		"clear-ended":       cli.ClearEndedHandler,
-		"clear-progress":    cli.ClearProgressHandler,
+		"add":               cli.AddHandler,
 		"download":          cli.DownloadHandler,
 		"get-captions":      cli.GetCaptionsHandler,
 		"get-file":          cli.GetFileHandler,
 		"get-metadata":      cli.GetMetadataHandler,
 		"get-poster":        cli.GetPosterHandler,
 		"get-video":         cli.GetVideoHandler,
+		"remove":            cli.RemoveHandler,
 		"serve":             cli.ServeHandler,
-		"set-ended":         cli.SetEndedHandler,
 		"test-dependencies": cli.TestDependenciesHandler,
 		"version":           cli.VersionHandler,
-		"watchlist-add":     cli.WatchlistAddHandler,
-		"watchlist-remove":  cli.WatchlistRemoveHandler,
 	})
 
 	if err := defs.AssertCommandsHaveHandlers(); err != nil {

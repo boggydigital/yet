@@ -6,11 +6,10 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
-clear-ended
-    id&^
-
-clear-progress
-    id&^
+add
+    download-queue&
+    watchlist&
+    ended&
 
 download
     id&^
@@ -33,19 +32,16 @@ get-video
     id&^
     force
 
+remove
+    download-queue&
+    watchlist&
+    progress&
+    ended&
+
 serve
     port$*
     stderr$
 
-set-ended
-    id&^
-
 test-dependencies
 
 version
-
-watchlist-add
-    id&^
-
-watchlist-remove
-    id&^

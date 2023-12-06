@@ -14,7 +14,7 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.6 // indirect
 	github.com/boggydigital/issa v0.1.10 // indirect
-	github.com/boggydigital/kvas v0.3.32 // indirect
+	github.com/boggydigital/kvas v0.3.34 // indirect
 	github.com/boggydigital/match_node v0.1.16 // indirect
 	github.com/boggydigital/middleware v0.1.11 // indirect
 	github.com/boggydigital/stencil v0.2.20 // indirect
