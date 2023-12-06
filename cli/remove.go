@@ -17,7 +17,7 @@ func RemoveHandler(u *url.URL) error {
 	progress := strings.Split(q.Get("progress"), ",")
 	ended := strings.Split(q.Get("ended"), ",")
 
-	return Add(map[string][]string{
+	return Remove(map[string][]string{
 		data.VideosDownloadQueueProperty: downloadQueue,
 		data.VideosWatchlistProperty:     watchlist,
 		data.VideoProgressProperty:       progress,
