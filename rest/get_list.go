@@ -57,7 +57,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		for _, id := range cwKeys {
 			if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
 				writeVideo(id, rxa, sb)
-
 			}
 		}
 	}
@@ -67,6 +66,9 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<h1>Watchlist</h1>")
 		for _, id := range wlKeys {
 			if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
+				continue
+			}
+			if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
 				continue
 			}
 			writeVideo(id, rxa, sb)
