@@ -56,18 +56,23 @@ func GetCaptions(ids []string) error {
 
 func getVideoPageCaptions(videoPage *yt_urls.InitialPlayerResponse, videoId string, rxa kvas.ReduxAssets, dl *dolo.Client) error {
 
+	gca := nod.Begin(" captions for %s", videoId)
+	defer gca.End()
+
 	var err error
 	if videoPage == nil {
 		videoPage, err = yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
-			return err
+			return gca.EndWithError(err)
 		}
 	}
 
 	captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
 	if err := yeti.GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
-		return err
+		return gca.EndWithError(err)
 	}
+
+	gca.EndWithResult("done")
 
 	return nil
 }

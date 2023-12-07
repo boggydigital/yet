@@ -49,19 +49,24 @@ func GetMetadata(ids ...string) error {
 
 func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId string, rxa kvas.ReduxAssets) error {
 
+	gma := nod.Begin(" metadata for %s", videoId)
+	defer gma.End()
+
 	var err error
 	if videoPage == nil {
 		videoPage, err = yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
-			return err
+			return gma.EndWithError(err)
 		}
 	}
 
 	for p, v := range yeti.ExtractMetadata(videoPage) {
 		if err := rxa.AddValues(p, videoId, v...); err != nil {
-			return err
+			return gma.EndWithError(err)
 		}
 	}
+
+	gma.EndWithResult("done")
 
 	return nil
 }

@@ -105,8 +105,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
-		if err := yeti.GetPosters(dolo.DefaultClient, videoId, thumbnails); err != nil {
+		if err := yeti.GetPosters(videoPage, dolo.DefaultClient); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

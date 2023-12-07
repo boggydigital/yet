@@ -30,8 +30,6 @@ func GetPoster(ids []string, forId string) error {
 
 	gpa.TotalInt(len(ids))
 
-	dl := dolo.DefaultClient
-
 	for _, videoId := range videoIds {
 
 		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
@@ -41,7 +39,7 @@ func GetPoster(ids []string, forId string) error {
 			continue
 		}
 
-		if err := yeti.GetPosters(dl, videoId, videoPage.VideoDetails.Thumbnail.Thumbnails); err != nil {
+		if err := yeti.GetPosters(videoPage, dolo.DefaultClient); err != nil {
 			gpa.Error(err)
 		} else {
 			if err := renamePosters(videoId, forId); err != nil {

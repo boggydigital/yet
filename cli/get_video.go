@@ -33,7 +33,7 @@ func GetVideo(force bool, videoIds ...string) error {
 		return nil
 	}
 
-	gva := nod.NewProgress(fmt.Sprintf("downloading %d video(s)", len(videoIds)))
+	gva := nod.NewProgress(fmt.Sprintf("getting %d video(s)", len(videoIds)))
 	defer gva.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
@@ -52,10 +52,6 @@ func GetVideo(force bool, videoIds ...string) error {
 	}
 
 	gva.Total(uint64(len(videoIds)))
-
-	httpClient := http.DefaultClient
-
-	dl := dolo.NewClient(httpClient, dolo.Defaults())
 
 	for _, videoId := range videoIds {
 
@@ -84,7 +80,7 @@ func GetVideo(force bool, videoIds ...string) error {
 			return gv.EndWithError(err)
 		}
 
-		videoPage, err := yt_urls.GetVideoPage(httpClient, videoId)
+		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
 			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
 				return gva.EndWithError(rerr)
@@ -95,22 +91,11 @@ func GetVideo(force bool, videoIds ...string) error {
 			continue
 		}
 
-		for p, v := range yeti.ExtractMetadata(videoPage) {
-			if err := rxa.AddValues(p, videoId, v...); err != nil {
-				return gv.EndWithError(err)
-			}
-		}
-
-		captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
-		if err := yeti.GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
-			return gv.EndWithError(err)
-		}
-
 		relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
 		start := time.Now()
 
-		if err := downloadVideo(dl, relFilename, videoPage); err != nil {
+		if err := downloadVideo(dolo.DefaultClient, relFilename, videoPage); err != nil {
 			gv.Error(err)
 		}
 

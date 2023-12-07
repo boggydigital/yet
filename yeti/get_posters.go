@@ -2,6 +2,7 @@ package yeti
 
 import (
 	"github.com/boggydigital/dolo"
+	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yt_urls"
 	"net/url"
@@ -9,7 +10,13 @@ import (
 	"strings"
 )
 
-func GetPosters(dl *dolo.Client, videoId string, thumbnails []yt_urls.Thumbnail) error {
+func GetPosters(videoPage *yt_urls.InitialPlayerResponse, dl *dolo.Client) error {
+
+	videoId := videoPage.VideoDetails.VideoId
+	thumbnails := videoPage.VideoDetails.Thumbnail.Thumbnails
+
+	gpa := nod.Begin(" posters for %s", videoId)
+	defer gpa.End()
 
 	remains := map[string]bool{
 		paths.PosterQualityMax:  true,
@@ -22,7 +29,7 @@ func GetPosters(dl *dolo.Client, videoId string, thumbnails []yt_urls.Thumbnail)
 
 		u, err := url.Parse(thumbnail.Url)
 		if err != nil {
-			return err
+			return gpa.EndWithError(err)
 		}
 
 		_, fnse := filepath.Split(u.Path)
@@ -30,7 +37,7 @@ func GetPosters(dl *dolo.Client, videoId string, thumbnails []yt_urls.Thumbnail)
 
 		if absFilename, err := paths.AbsPosterPath(videoId, fnse); err == nil {
 			if err := dl.Download(u, nil, absFilename); err != nil {
-				return err
+				return gpa.EndWithError(err)
 			} else {
 				remains[fnse] = false
 				moreDownloadsRemain := false
@@ -42,9 +49,11 @@ func GetPosters(dl *dolo.Client, videoId string, thumbnails []yt_urls.Thumbnail)
 				}
 			}
 		} else {
-			return err
+			return gpa.EndWithError(err)
 		}
 	}
+
+	gpa.EndWithResult("done")
 
 	return nil
 }

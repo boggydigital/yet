@@ -1,8 +1,14 @@
 package cli
 
 import (
+	"github.com/boggydigital/dolo"
+	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
+	"github.com/boggydigital/yt_urls"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -24,12 +30,40 @@ func Download(ids []string, force bool) error {
 		return da.EndWithError(err)
 	}
 
-	if err := GetVideo(force, videoIds...); err != nil {
+	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	if err != nil {
 		return da.EndWithError(err)
 	}
 
-	if err := GetPoster(videoIds, ""); err != nil {
+	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	if err != nil {
 		return da.EndWithError(err)
+	}
+
+	for _, videoId := range videoIds {
+
+		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		if err != nil {
+			return da.EndWithError(err)
+		}
+
+		relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
+
+		if err := downloadVideo(dolo.DefaultClient, relFilename, videoPage); err != nil {
+			return da.EndWithError(err)
+		}
+
+		if err := getVideoPageMetadata(videoPage, videoId, rxa); err != nil {
+			return da.EndWithError(err)
+		}
+
+		if err := yeti.GetPosters(videoPage, dolo.DefaultClient); err != nil {
+			return da.EndWithError(err)
+		}
+
+		if err := getVideoPageCaptions(videoPage, videoId, rxa, dolo.DefaultClient); err != nil {
+			return da.EndWithError(err)
+		}
 	}
 
 	da.EndWithResult("done")
