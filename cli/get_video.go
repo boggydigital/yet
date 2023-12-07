@@ -75,11 +75,6 @@ func GetVideo(force bool, videoIds ...string) error {
 			continue
 		}
 
-		// adding to the queue before attempting to download
-		if err := rxa.AddValues(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
-			return gv.EndWithError(err)
-		}
-
 		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
 			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
@@ -97,16 +92,6 @@ func GetVideo(force bool, videoIds ...string) error {
 
 		if err := downloadVideo(dolo.DefaultClient, relFilename, videoPage); err != nil {
 			gv.Error(err)
-		}
-
-		// remove from the queue upon successful download
-		if err := rxa.CutVal(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
-			return gv.EndWithError(err)
-		}
-
-		// add to watchlist upon successful download
-		if err := rxa.AddValues(data.VideosWatchlistProperty, videoId, data.TrueValue); err != nil {
-			return gv.EndWithError(err)
 		}
 
 		elapsed := time.Since(start)
