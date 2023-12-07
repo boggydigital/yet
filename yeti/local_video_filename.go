@@ -35,7 +35,7 @@ func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
 
 	// channel, video titles might contain characters that would be problematic for
 	// modern operating system filesystems - removing those
-	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|"} {
+	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|", "\""} {
 		fn = strings.ReplaceAll(fn, ch, "")
 		channel = strings.ReplaceAll(channel, ch, "")
 	}
