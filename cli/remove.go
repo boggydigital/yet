@@ -71,7 +71,7 @@ func removePropertyValues(rxa kvas.ReduxAssets, raw bool, property string, value
 		}
 	}
 
-	if err := rxa.BatchCutValues(property, trueValues(values...)); err != nil {
+	if err := rxa.BatchCutKeys(property, values); err != nil {
 		return rpva.EndWithError(err)
 	}
 
