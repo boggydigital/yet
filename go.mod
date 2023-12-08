@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/boggydigital/clo v1.0.4
 	github.com/boggydigital/dolo v0.2.13
-	github.com/boggydigital/kvas v0.3.36
+	github.com/boggydigital/kvas v0.3.37
 	github.com/boggydigital/middleware v0.1.11
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/wits v0.2.3
