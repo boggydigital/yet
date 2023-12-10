@@ -16,7 +16,9 @@ const (
 func ParseVideoIds(args ...string) ([]string, error) {
 	videoIds := make([]string, 0)
 	for _, urlOrId := range args {
-		if len(urlOrId) < 12 {
+		if urlOrId == "" {
+			continue
+		} else if len(urlOrId) < 12 {
 			//currently, YouTube videoIds are exactly 11 characters,
 			//meaning any URL containing videoId would be longer than 11 characters.
 			videoIds = append(videoIds, urlOrId)

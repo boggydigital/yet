@@ -83,6 +83,9 @@ func addPropertyValues(rxa kvas.ReduxAssets, raw bool, property string, values .
 func trueValues(ids ...string) map[string][]string {
 	tv := make(map[string][]string)
 	for _, id := range ids {
+		if id == "" {
+			continue
+		}
 		tv[id] = []string{data.TrueValue}
 	}
 	return tv
