@@ -16,19 +16,15 @@ import (
 func DownloadHandler(u *url.URL) error {
 
 	ids := strings.Split(u.Query().Get("id"), ",")
+	queue := u.Query().Has("queue")
 	force := u.Query().Has("force")
-	return Download(ids, force)
+	return Download(ids, queue, force)
 }
 
-func Download(ids []string, force bool) error {
+func Download(ids []string, queue, force bool) error {
 
 	da := nod.Begin("downloading videos...")
 	defer da.End()
-
-	videoIds, err := yeti.ParseVideoIds(ids...)
-	if err != nil {
-		return da.EndWithError(err)
-	}
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
@@ -36,6 +32,15 @@ func Download(ids []string, force bool) error {
 	}
 
 	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	if err != nil {
+		return da.EndWithError(err)
+	}
+
+	if queue {
+		ids = append(ids, rxa.Keys(data.VideosDownloadQueueProperty)...)
+	}
+
+	videoIds, err := yeti.ParseVideoIds(ids...)
 	if err != nil {
 		return da.EndWithError(err)
 	}

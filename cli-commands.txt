@@ -15,6 +15,7 @@ add
 download
     id&^
     force
+    queue
 
 get-captions
     id&^
