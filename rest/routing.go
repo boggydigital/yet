@@ -27,6 +27,8 @@ func HandleFuncs() {
 		"/progress": PostOnly(Log(http.HandlerFunc(PostProgress))),
 		"/ended":    PostOnly(Log(http.HandlerFunc(PostEnded))),
 
+		"/playlist": BrGzip(GetOnly(Log(http.HandlerFunc(GetPlaylist)))),
+
 		"/": GetOnly(Log(http.RedirectHandler("/list", http.StatusPermanentRedirect))),
 	}
 

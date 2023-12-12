@@ -42,6 +42,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video span {font-size:1rem}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
 		"summary h1 {display: inline}" +
+		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -73,6 +74,20 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			}
 			writeVideo(id, rxa, sb)
 		}
+	}
+
+	plKeys := rxa.Keys(data.PlaylistWatchlistProperty)
+	if len(plKeys) > 0 {
+		sb.WriteString("<h1>Playlists</h1>")
+		sb.WriteString("<ul>")
+		for _, id := range plKeys {
+			if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, id); ok && plt != "" {
+				sb.WriteString("<li><a class='playlist' href='/playlist?id=" + id + "'>" +
+					plt +
+					"</a></li>")
+			}
+		}
+		sb.WriteString("</ul>")
 	}
 
 	dqKeys := rxa.Keys(data.VideosDownloadQueueProperty)

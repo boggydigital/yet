@@ -18,7 +18,7 @@ import (
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
 
-	// GET /watch?videoId
+	// GET /watch?v&t
 
 	v := r.URL.Query().Get("v")
 	t := r.URL.Query().Get("t")

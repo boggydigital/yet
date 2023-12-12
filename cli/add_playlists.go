@@ -17,7 +17,7 @@ func AddPlaylistsHandler(u *url.URL) error {
 	allVideos := q.Has("all-videos")
 
 	return AddPlaylists(allVideos, map[string][]string{
-		data.VideosWatchlistProperty: watchlist,
+		data.PlaylistWatchlistProperty: watchlist,
 	})
 }
 
