@@ -6,6 +6,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
+	"golang.org/x/exp/maps"
 	"net/url"
 	"strings"
 )
@@ -50,6 +51,20 @@ func Add(propertyValues map[string][]string, raw bool) error {
 			return wlaa.EndWithError(err)
 		}
 		wlaa.Increment()
+	}
+
+	if !raw {
+		// get metadata for the videos upon adding them
+		unique := make(map[string]interface{})
+		for _, values := range propertyValues {
+			for _, v := range values {
+				unique[v] = nil
+			}
+		}
+
+		if err := GetMetadata(false, maps.Keys(unique)...); err != nil {
+			return wlaa.EndWithError(err)
+		}
 	}
 
 	wlaa.EndWithResult("done")

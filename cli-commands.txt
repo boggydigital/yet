@@ -25,6 +25,7 @@ get-file
 
 get-metadata
     id&^
+    force
 
 get-poster
     id&^

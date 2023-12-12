@@ -23,7 +23,7 @@ func DownloadHandler(u *url.URL) error {
 
 func Download(ids []string, queue, force bool) error {
 
-	da := nod.Begin("downloading videos...")
+	da := nod.NewProgress("downloading videos...")
 	defer da.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
@@ -44,6 +44,8 @@ func Download(ids []string, queue, force bool) error {
 	if err != nil {
 		return da.EndWithError(err)
 	}
+
+	da.TotalInt(len(videoIds))
 
 	// adding to the queue before attempting to download
 	if err := rxa.BatchAddValues(data.VideosDownloadQueueProperty, trueValues(videoIds...)); err != nil {
@@ -85,6 +87,7 @@ func Download(ids []string, queue, force bool) error {
 			return da.EndWithError(err)
 		}
 
+		da.Increment()
 	}
 
 	da.EndWithResult("done")

@@ -13,11 +13,13 @@ import (
 )
 
 func GetMetadataHandler(u *url.URL) error {
-	ids := strings.Split(u.Query().Get("id"), ",")
-	return GetMetadata(ids...)
+	q := u.Query()
+	ids := strings.Split(q.Get("id"), ",")
+	force := q.Has("force")
+	return GetMetadata(force, ids...)
 }
 
-func GetMetadata(ids ...string) error {
+func GetMetadata(force bool, ids ...string) error {
 	gma := nod.NewProgress("getting metadata...")
 	defer gma.End()
 
@@ -34,6 +36,10 @@ func GetMetadata(ids ...string) error {
 	}
 
 	for _, videoId := range ids {
+
+		if rxa.HasKey(data.VideoTitleProperty, videoId) && !force {
+			continue
+		}
 
 		if err := getVideoPageMetadata(nil, videoId, rxa); err != nil {
 			gma.Error(err)
