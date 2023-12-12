@@ -33,9 +33,9 @@ func GetCaptions(ids []string) error {
 	}
 
 	rxa, err := kvas.ConnectReduxAssets(metadataDir,
-		data.VideoCaptionsNames,
-		data.VideoCaptionsKinds,
-		data.VideoCaptionsLanguages)
+		data.VideoCaptionsNamesProperty,
+		data.VideoCaptionsKindsProperty,
+		data.VideoCaptionsLanguagesProperty)
 	if err != nil {
 		return gca.EndWithError(err)
 	}

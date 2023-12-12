@@ -12,9 +12,9 @@ import (
 func GetCaptions(dl *dolo.Client, rxa kvas.ReduxAssets, videoId string, captionTracks []yt_urls.CaptionTrack) error {
 
 	properties := []string{
-		data.VideoCaptionsNames,
-		data.VideoCaptionsKinds,
-		data.VideoCaptionsLanguages}
+		data.VideoCaptionsNamesProperty,
+		data.VideoCaptionsKindsProperty,
+		data.VideoCaptionsLanguagesProperty}
 
 	if err := rxa.IsSupported(properties...); err != nil {
 		return err
@@ -26,11 +26,11 @@ func GetCaptions(dl *dolo.Client, rxa kvas.ReduxAssets, videoId string, captionT
 		for _, ct := range captionTracks {
 			value := ""
 			switch p {
-			case data.VideoCaptionsNames:
+			case data.VideoCaptionsNamesProperty:
 				value = ct.TrackName
-			case data.VideoCaptionsKinds:
+			case data.VideoCaptionsKindsProperty:
 				value = ct.Kind
-			case data.VideoCaptionsLanguages:
+			case data.VideoCaptionsLanguagesProperty:
 				value = ct.LanguageCode
 			}
 			captionsData[p] = append(captionsData[p], value)

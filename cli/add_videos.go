@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func AddHandler(u *url.URL) error {
+func AddVideosHandler(u *url.URL) error {
 	q := u.Query()
 
 	downloadQueue := strings.Split(q.Get("download-queue"), ",")
@@ -19,14 +19,14 @@ func AddHandler(u *url.URL) error {
 	ended := strings.Split(q.Get("ended"), ",")
 	raw := q.Has("raw")
 
-	return Add(map[string][]string{
+	return AddVideos(map[string][]string{
 		data.VideosDownloadQueueProperty: downloadQueue,
 		data.VideosWatchlistProperty:     watchlist,
 		data.VideoEndedProperty:          ended,
 	}, raw)
 }
 
-func Add(propertyValues map[string][]string, raw bool) error {
+func AddVideos(propertyValues map[string][]string, raw bool) error {
 
 	wlaa := nod.NewProgress("adding...")
 	defer wlaa.End()
@@ -54,16 +54,27 @@ func Add(propertyValues map[string][]string, raw bool) error {
 	}
 
 	if !raw {
-		// get metadata for the videos upon adding them
-		unique := make(map[string]interface{})
-		for _, values := range propertyValues {
+		// get metadata for the videos, playlists upon adding them
+		uniqueVideos := make(map[string]interface{})
+		uniquePlaylists := make(map[string]interface{})
+
+		var unique map[string]interface{}
+		for property, values := range propertyValues {
+			switch property {
+			case data.PlaylistWatchlistProperty:
+				unique = uniquePlaylists
+			default:
+				unique = uniqueVideos
+			}
 			for _, v := range values {
 				unique[v] = nil
 			}
 		}
 
-		if err := GetMetadata(false, maps.Keys(unique)...); err != nil {
-			return wlaa.EndWithError(err)
+		if len(uniqueVideos) > 0 {
+			if err := GetVideoMetadata(false, maps.Keys(uniqueVideos)...); err != nil {
+				return wlaa.EndWithError(err)
+			}
 		}
 	}
 

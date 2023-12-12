@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func RemoveHandler(u *url.URL) error {
+func RemoveVideosHandler(u *url.URL) error {
 	q := u.Query()
 
 	downloadQueue := strings.Split(q.Get("download-queue"), ",")
@@ -19,7 +19,7 @@ func RemoveHandler(u *url.URL) error {
 	ended := strings.Split(q.Get("ended"), ",")
 	raw := q.Has("raw")
 
-	return Remove(map[string][]string{
+	return RemoveVideos(map[string][]string{
 		data.VideosDownloadQueueProperty: downloadQueue,
 		data.VideosWatchlistProperty:     watchlist,
 		data.VideoProgressProperty:       progress,
@@ -27,9 +27,9 @@ func RemoveHandler(u *url.URL) error {
 	}, raw)
 }
 
-func Remove(propertyValues map[string][]string, raw bool) error {
+func RemoveVideos(propertyValues map[string][]string, raw bool) error {
 
-	wlra := nod.NewProgress("removing...")
+	wlra := nod.NewProgress("removing videos...")
 	defer wlra.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)

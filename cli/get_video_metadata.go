@@ -12,14 +12,14 @@ import (
 	"strings"
 )
 
-func GetMetadataHandler(u *url.URL) error {
+func GetVideoMetadataHandler(u *url.URL) error {
 	q := u.Query()
 	ids := strings.Split(q.Get("id"), ",")
 	force := q.Has("force")
-	return GetMetadata(force, ids...)
+	return GetVideoMetadata(force, ids...)
 }
 
-func GetMetadata(force bool, ids ...string) error {
+func GetVideoMetadata(force bool, ids ...string) error {
 	gma := nod.NewProgress("getting metadata...")
 	defer gma.End()
 

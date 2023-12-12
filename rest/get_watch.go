@@ -268,15 +268,15 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 func getLocalCaptionTracks(videoId string, rxa kvas.ReduxAssets) ([]yt_urls.CaptionTrack, error) {
 
 	if err := rxa.IsSupported(
-		data.VideoCaptionsNames,
-		data.VideoCaptionsKinds,
-		data.VideoCaptionsLanguages); err != nil {
+		data.VideoCaptionsNamesProperty,
+		data.VideoCaptionsKindsProperty,
+		data.VideoCaptionsLanguagesProperty); err != nil {
 		return nil, err
 	}
 
-	captionsNames, _ := rxa.GetAllValues(data.VideoCaptionsNames, videoId)
-	captionsKinds, _ := rxa.GetAllValues(data.VideoCaptionsKinds, videoId)
-	captionsLanguages, _ := rxa.GetAllValues(data.VideoCaptionsLanguages, videoId)
+	captionsNames, _ := rxa.GetAllValues(data.VideoCaptionsNamesProperty, videoId)
+	captionsKinds, _ := rxa.GetAllValues(data.VideoCaptionsKindsProperty, videoId)
+	captionsLanguages, _ := rxa.GetAllValues(data.VideoCaptionsLanguagesProperty, videoId)
 
 	cts := make([]yt_urls.CaptionTrack, 0, len(captionsLanguages))
 	for i := 0; i < len(captionsLanguages); i++ {

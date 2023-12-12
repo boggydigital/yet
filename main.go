@@ -43,17 +43,18 @@ func main() {
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
-		"add":               cli.AddHandler,
-		"download":          cli.DownloadHandler,
-		"get-captions":      cli.GetCaptionsHandler,
-		"get-file":          cli.GetFileHandler,
-		"get-metadata":      cli.GetMetadataHandler,
-		"get-poster":        cli.GetPosterHandler,
-		"get-video":         cli.GetVideoHandler,
-		"remove":            cli.RemoveHandler,
-		"serve":             cli.ServeHandler,
-		"test-dependencies": cli.TestDependenciesHandler,
-		"version":           cli.VersionHandler,
+		"add-videos":            cli.AddVideosHandler,
+		"download":              cli.DownloadHandler,
+		"get-captions":          cli.GetCaptionsHandler,
+		"get-file":              cli.GetFileHandler,
+		"get-playlist-metadata": cli.GetPlaylistMetadataHandler,
+		"get-video-metadata":    cli.GetVideoMetadataHandler,
+		"get-poster":            cli.GetPosterHandler,
+		"get-video":             cli.GetVideoHandler,
+		"remove-videos":         cli.RemoveVideosHandler,
+		"serve":                 cli.ServeHandler,
+		"test-dependencies":     cli.TestDependenciesHandler,
+		"version":               cli.VersionHandler,
 	})
 
 	if err := defs.AssertCommandsHaveHandlers(); err != nil {

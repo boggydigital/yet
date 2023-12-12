@@ -6,10 +6,11 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
-add
+add-videos
     download-queue&
     watchlist&
     ended&
+    playlist-watchlist&
     raw
 
 download
@@ -23,7 +24,11 @@ get-captions
 get-file
     url&^
 
-get-metadata
+get-playlist-metadata
+    id&^
+    force
+
+get-video-metadata
     id&^
     force
 
@@ -35,11 +40,12 @@ get-video
     id&^
     force
 
-remove
+remove-videos
     download-queue&
     watchlist&
     progress&
     ended&
+    playlist-watchlist&
     raw
 
 serve
