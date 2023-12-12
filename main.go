@@ -43,6 +43,7 @@ func main() {
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
+		"add-playlists":         cli.AddPlaylistsHandler,
 		"add-videos":            cli.AddVideosHandler,
 		"download":              cli.DownloadHandler,
 		"get-captions":          cli.GetCaptionsHandler,
@@ -51,6 +52,7 @@ func main() {
 		"get-video-metadata":    cli.GetVideoMetadataHandler,
 		"get-poster":            cli.GetPosterHandler,
 		"get-video":             cli.GetVideoHandler,
+		"remove-playlists":      cli.RemovePlaylistsHandler,
 		"remove-videos":         cli.RemoveVideosHandler,
 		"serve":                 cli.ServeHandler,
 		"test-dependencies":     cli.TestDependenciesHandler,

@@ -28,7 +28,7 @@ func AddVideosHandler(u *url.URL) error {
 
 func AddVideos(propertyValues map[string][]string, raw bool) error {
 
-	wlaa := nod.NewProgress("adding...")
+	wlaa := nod.NewProgress("adding videos...")
 	defer wlaa.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
