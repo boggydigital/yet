@@ -29,12 +29,12 @@ func RemoveVideosHandler(u *url.URL) error {
 
 func RemoveVideos(propertyValues map[string][]string, raw bool) error {
 
-	wlra := nod.NewProgress("removing videos...")
-	defer wlra.End()
+	rva := nod.NewProgress("removing videos...")
+	defer rva.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
-		return wlra.EndWithError(err)
+		return rva.EndWithError(err)
 	}
 
 	rxa, err := kvas.ConnectReduxAssets(metadataDir,
@@ -43,19 +43,19 @@ func RemoveVideos(propertyValues map[string][]string, raw bool) error {
 		data.VideoProgressProperty,
 		data.VideoEndedProperty)
 	if err != nil {
-		return wlra.EndWithError(err)
+		return rva.EndWithError(err)
 	}
 
-	wlra.TotalInt(len(propertyValues))
+	rva.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
 		if err := removePropertyValues(rxa, raw, property, values...); err != nil {
-			return wlra.EndWithError(err)
+			return rva.EndWithError(err)
 		}
-		wlra.Increment()
+		rva.Increment()
 	}
 
-	wlra.EndWithResult("done")
+	rva.EndWithResult("done")
 
 	return nil
 }

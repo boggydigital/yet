@@ -28,12 +28,12 @@ func AddVideosHandler(u *url.URL) error {
 
 func AddVideos(propertyValues map[string][]string, raw bool) error {
 
-	wlaa := nod.NewProgress("adding videos...")
-	defer wlaa.End()
+	ava := nod.NewProgress("adding videos...")
+	defer ava.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
-		return wlaa.EndWithError(err)
+		return ava.EndWithError(err)
 	}
 
 	rxa, err := kvas.ConnectReduxAssets(metadataDir,
@@ -41,44 +41,36 @@ func AddVideos(propertyValues map[string][]string, raw bool) error {
 		data.VideosWatchlistProperty,
 		data.VideoEndedProperty)
 	if err != nil {
-		return wlaa.EndWithError(err)
+		return ava.EndWithError(err)
 	}
 
-	wlaa.TotalInt(len(propertyValues))
+	ava.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
 		if err := addPropertyValues(rxa, raw, property, values...); err != nil {
-			return wlaa.EndWithError(err)
+			return ava.EndWithError(err)
 		}
-		wlaa.Increment()
+		ava.Increment()
 	}
 
 	if !raw {
-		// get metadata for the videos, playlists upon adding them
+		// get metadata for the videos when adding them
 		uniqueVideos := make(map[string]interface{})
-		uniquePlaylists := make(map[string]interface{})
 
-		var unique map[string]interface{}
-		for property, values := range propertyValues {
-			switch property {
-			case data.PlaylistWatchlistProperty:
-				unique = uniquePlaylists
-			default:
-				unique = uniqueVideos
-			}
+		for _, values := range propertyValues {
 			for _, v := range values {
-				unique[v] = nil
+				uniqueVideos[v] = nil
 			}
 		}
 
 		if len(uniqueVideos) > 0 {
 			if err := GetVideoMetadata(false, maps.Keys(uniqueVideos)...); err != nil {
-				return wlaa.EndWithError(err)
+				return ava.EndWithError(err)
 			}
 		}
 	}
 
-	wlaa.EndWithResult("done")
+	ava.EndWithResult("done")
 
 	return nil
 }

@@ -8,6 +8,7 @@
 
 add-playlists
     watchlist&
+    all-videos
 
 add-videos
     download-queue&
@@ -29,16 +30,17 @@ get-file
 get-playlist-metadata
     id&^
     force
-
-get-video-metadata
-    id&^
-    force
+    all-videos
 
 get-poster
     id&^
     for-id
 
-get-video
+get-video-file
+    id&^
+    force
+
+get-video-metadata
     id&^
     force
 

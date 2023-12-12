@@ -53,5 +53,6 @@ func AllProperties() []string {
 		VideoCaptionsNamesProperty,
 		PlaylistWatchlistProperty,
 		PlaylistTitleProperty,
+		PlaylistVideosProperty,
 	}
 }

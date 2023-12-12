@@ -21,13 +21,13 @@ const (
 	fastEnv = "YET_FAST"
 )
 
-func GetVideoHandler(u *url.URL) error {
+func GetVideoFileHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
 	force := u.Query().Has("force")
-	return GetVideo(force, ids...)
+	return GetVideoFile(force, ids...)
 }
 
-func GetVideo(force bool, videoIds ...string) error {
+func GetVideoFile(force bool, videoIds ...string) error {
 
 	if len(videoIds) == 0 {
 		return nil

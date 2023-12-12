@@ -20,19 +20,19 @@ func GetVideoMetadataHandler(u *url.URL) error {
 }
 
 func GetVideoMetadata(force bool, ids ...string) error {
-	gma := nod.NewProgress("getting metadata...")
-	defer gma.End()
+	gvma := nod.NewProgress("getting video metadata...")
+	defer gvma.End()
 
-	gma.TotalInt(len(ids))
+	gvma.TotalInt(len(ids))
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
-		return gma.EndWithError(err)
+		return gvma.EndWithError(err)
 	}
 
 	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
 	if err != nil {
-		return gma.EndWithError(err)
+		return gvma.EndWithError(err)
 	}
 
 	for _, videoId := range ids {
@@ -42,37 +42,37 @@ func GetVideoMetadata(force bool, ids ...string) error {
 		}
 
 		if err := getVideoPageMetadata(nil, videoId, rxa); err != nil {
-			gma.Error(err)
+			gvma.Error(err)
 		}
 
-		gma.Increment()
+		gvma.Increment()
 	}
 
-	gma.EndWithResult("done")
+	gvma.EndWithResult("done")
 
 	return nil
 }
 
 func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId string, rxa kvas.ReduxAssets) error {
 
-	gma := nod.Begin(" metadata for %s", videoId)
-	defer gma.End()
+	gvpma := nod.Begin(" metadata for %s", videoId)
+	defer gvpma.End()
 
 	var err error
 	if videoPage == nil {
 		videoPage, err = yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
-			return gma.EndWithError(err)
+			return gvpma.EndWithError(err)
 		}
 	}
 
 	for p, v := range yeti.ExtractMetadata(videoPage) {
 		if err := rxa.AddValues(p, videoId, v...); err != nil {
-			return gma.EndWithError(err)
+			return gvpma.EndWithError(err)
 		}
 	}
 
-	gma.EndWithResult("done")
+	gvpma.EndWithResult("done")
 
 	return nil
 }
