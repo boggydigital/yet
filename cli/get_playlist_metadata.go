@@ -66,7 +66,12 @@ func getPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistI
 		}
 	}
 
-	if err := rxa.ReplaceValues(data.PlaylistTitleProperty, playlistId, playlistPage.Playlist.Header.Title.SimpleText); err != nil {
+	ph := playlistPage.Playlist.PlaylistHeader()
+	if err := rxa.ReplaceValues(data.PlaylistTitleProperty, playlistId, ph.Title.SimpleText); err != nil {
+		return gppma.EndWithError(err)
+	}
+
+	if err := rxa.ReplaceValues(data.PlaylistChannelProperty, playlistId, playlistPage.Playlist.PlaylistOwner()); err != nil {
 		return gppma.EndWithError(err)
 	}
 
@@ -85,8 +90,7 @@ func getPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistI
 		}
 
 		if allVideos && playlistPage.HasContinuation() {
-			playlistPage, err = playlistPage.Continue(http.DefaultClient)
-			if err != nil {
+			if err = playlistPage.Continue(http.DefaultClient); err != nil {
 				return gppma.EndWithError(err)
 			}
 		} else {

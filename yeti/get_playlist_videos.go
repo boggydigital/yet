@@ -55,8 +55,7 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string, newVideos boo
 		}
 
 		if playlist.HasContinuation() {
-			playlist, err = playlist.Continue(httpClient)
-			if err != nil {
+			if err = playlist.Continue(httpClient); err != nil {
 				return videoIds, dp.EndWithError(err)
 			}
 		} else {

@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
@@ -82,6 +83,11 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 			if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, id); ok && plt != "" {
+
+				if plc, ok := rxa.GetFirstVal(data.PlaylistChannelProperty, id); ok && plc != "" && !strings.Contains(plt, plc) {
+					plt = fmt.Sprintf("%s - %s", plc, plt)
+				}
+
 				sb.WriteString("<li><a class='playlist' href='/playlist?id=" + id + "'>" +
 					plt +
 					"</a></li>")
