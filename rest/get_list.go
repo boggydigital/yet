@@ -41,6 +41,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video span {font-size:1rem}" +
+		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
 		"details {margin-block:0.5rem; content-visibility: auto}" +
 		"summary h1 {display: inline; cursor: pointer}" +
@@ -151,11 +152,13 @@ func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
 		videoUrl += "v=" + videoId
 	}
 
+	class := "video"
 	if ended {
 		videoTitle = "☑️ " + videoTitle
+		class += " ended"
 	}
 
-	sb.WriteString("<a class='video' href='" + videoUrl + "'>" +
+	sb.WriteString("<a class='" + class + "' href='" + videoUrl + "'>" +
 		"<img src='/poster?v=" + videoId + "&q=hqdefault' />" +
 		"<br/>" +
 		"<span>" + videoTitle + "</span>" +
