@@ -42,7 +42,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video span {font-size:1rem}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
-		"summary h1 {display: inline}" +
+		"details {margin-block:0.5rem}" +
+		"summary h1 {display: inline; cursor: pointer}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
@@ -55,17 +56,18 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	cwKeys := rxa.Keys(data.VideoProgressProperty)
 	if len(cwKeys) > 0 {
-		sb.WriteString("<h1>Continue watching</h1>")
+		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
 			if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
 				writeVideo(id, rxa, sb)
 			}
 		}
+		sb.WriteString("</details>")
 	}
 
 	wlKeys := rxa.Keys(data.VideosWatchlistProperty)
 	if len(wlKeys) > 0 {
-		sb.WriteString("<h1>Watchlist</h1>")
+		sb.WriteString("<details><summary><h1>Watchlist</h1></summary>")
 		for _, id := range wlKeys {
 			if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
 				continue
@@ -75,11 +77,12 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			}
 			writeVideo(id, rxa, sb)
 		}
+		sb.WriteString("</details>")
 	}
 
 	plKeys := rxa.Keys(data.PlaylistWatchlistProperty)
 	if len(plKeys) > 0 {
-		sb.WriteString("<h1>Playlists</h1>")
+		sb.WriteString("<details open><summary><h1>Playlists</h1></summary>")
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 			if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, id); ok && plt != "" {
@@ -94,14 +97,16 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		sb.WriteString("</ul>")
+		sb.WriteString("</details>")
 	}
 
 	dqKeys := rxa.Keys(data.VideosDownloadQueueProperty)
 	if len(dqKeys) > 0 {
-		sb.WriteString("<h1>Download queue</h1>")
+		sb.WriteString("<details><summary><h1>Download queue</h1></summary>")
 		for _, id := range dqKeys {
 			writeVideo(id, rxa, sb)
 		}
+		sb.WriteString("</details>")
 	}
 
 	whKeys := rxa.Keys(data.VideoEndedProperty)
