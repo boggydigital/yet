@@ -43,9 +43,11 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
-		"details {margin-block:0.5rem; content-visibility: auto}" +
+		"details {margin-block:1rem; content-visibility: auto}" +
+		"summary {margin-block-end: 1rem}" +
 		"summary h1 {display: inline; cursor: pointer}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"ul {list-style:none; padding-inline-start: 1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -86,16 +88,11 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<details open><summary><h1>Playlists</h1></summary>")
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
-			if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, id); ok && plt != "" {
 
-				if plc, ok := rxa.GetFirstVal(data.PlaylistChannelProperty, id); ok && plc != "" && !strings.Contains(plt, plc) {
-					plt = fmt.Sprintf("%s - %s", plc, plt)
-				}
+			sb.WriteString("<li><a class='playlist' href='/playlist?id=" + id + "'>" +
+				playlistTitle(id, rxa) +
+				"</a></li>")
 
-				sb.WriteString("<li><a class='playlist' href='/playlist?id=" + id + "'>" +
-					plt +
-					"</a></li>")
-			}
 		}
 		sb.WriteString("</ul>")
 		sb.WriteString("</details>")
@@ -103,7 +100,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	dqKeys := rxa.Keys(data.VideosDownloadQueueProperty)
 	if len(dqKeys) > 0 {
-		sb.WriteString("<details><summary><h1>Download queue</h1></summary>")
+		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
 			writeVideo(id, rxa, sb)
 		}
@@ -112,7 +109,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	whKeys := rxa.Keys(data.VideoEndedProperty)
 	if len(whKeys) > 0 {
-		sb.WriteString("<details><summary><h1>Watch history</h1></summary>")
+		sb.WriteString("<details><summary><h1>History</h1></summary>")
 		for _, id := range whKeys {
 			writeVideo(id, rxa, sb)
 		}
@@ -164,4 +161,17 @@ func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
 		"<span>" + videoTitle + "</span>" +
 		"</a>")
 
+}
+
+func playlistTitle(playlistId string, rxa kvas.ReduxAssets) string {
+	if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+
+		if plc, ok := rxa.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
+			return fmt.Sprintf("%s - %s", plc, plt)
+		}
+
+		return plt
+	}
+
+	return playlistId
 }

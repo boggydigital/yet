@@ -51,9 +51,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, id); ok && plt != "" {
-		sb.WriteString("<h1>" + plt + "</h1>")
-	}
+	sb.WriteString("<h1>" + playlistTitle(id, rxa) + "</h1>")
 
 	if videoIds, ok := rxa.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for _, videoId := range videoIds {
