@@ -6,6 +6,11 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
+add-urls
+    download-queue&
+    watchlist&
+    ended&
+
 add-playlists
     watchlist&
     all-videos
@@ -14,7 +19,6 @@ add-videos
     download-queue&
     watchlist&
     ended&
-    raw
 
 download
     id&^
@@ -24,7 +28,7 @@ download
 get-captions
     id&^
 
-get-file
+get-url
     url&^
 
 get-playlist-metadata
@@ -52,7 +56,12 @@ remove-videos
     watchlist&
     progress&
     ended&
-    raw
+
+remove-urls
+    download-queue&
+    watchlist&
+    progress&
+    ended&
 
 serve
     port$*

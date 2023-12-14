@@ -5,6 +5,7 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/yeti"
 	"net/url"
 	"strings"
 )
@@ -37,7 +38,7 @@ func RemovePlaylists(propertyValues map[string][]string) error {
 	rpa.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := removePropertyValues(rxa, true, property, values...); err != nil {
+		if err := removePropertyValues(rxa, yeti.ParsePlaylistIds, property, values...); err != nil {
 			return rpa.EndWithError(err)
 		}
 		rpa.Increment()

@@ -5,6 +5,7 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/yeti"
 	"golang.org/x/exp/maps"
 	"net/url"
 	"strings"
@@ -40,7 +41,7 @@ func AddPlaylists(allVideos bool, propertyValues map[string][]string) error {
 	apa.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := addPropertyValues(rxa, true, property, values...); err != nil {
+		if err := addPropertyValues(rxa, yeti.ParsePlaylistIds, property, values...); err != nil {
 			return apa.EndWithError(err)
 		}
 		apa.Increment()

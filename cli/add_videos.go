@@ -17,16 +17,15 @@ func AddVideosHandler(u *url.URL) error {
 	downloadQueue := strings.Split(q.Get("download-queue"), ",")
 	watchlist := strings.Split(q.Get("watchlist"), ",")
 	ended := strings.Split(q.Get("ended"), ",")
-	raw := q.Has("raw")
 
 	return AddVideos(map[string][]string{
 		data.VideosDownloadQueueProperty: downloadQueue,
 		data.VideosWatchlistProperty:     watchlist,
 		data.VideoEndedProperty:          ended,
-	}, raw)
+	})
 }
 
-func AddVideos(propertyValues map[string][]string, raw bool) error {
+func AddVideos(propertyValues map[string][]string) error {
 
 	ava := nod.NewProgress("adding videos...")
 	defer ava.End()
@@ -47,26 +46,24 @@ func AddVideos(propertyValues map[string][]string, raw bool) error {
 	ava.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := addPropertyValues(rxa, raw, property, values...); err != nil {
+		if err := addPropertyValues(rxa, yeti.ParseVideoIds, property, values...); err != nil {
 			return ava.EndWithError(err)
 		}
 		ava.Increment()
 	}
 
-	if !raw {
-		// get metadata for the videos when adding them
-		uniqueVideos := make(map[string]interface{})
+	// get metadata for the videos when adding them
+	uniqueVideos := make(map[string]interface{})
 
-		for _, values := range propertyValues {
-			for _, v := range values {
-				uniqueVideos[v] = nil
-			}
+	for _, values := range propertyValues {
+		for _, v := range values {
+			uniqueVideos[v] = nil
 		}
+	}
 
-		if len(uniqueVideos) > 0 {
-			if err := GetVideoMetadata(false, maps.Keys(uniqueVideos)...); err != nil {
-				return ava.EndWithError(err)
-			}
+	if len(uniqueVideos) > 0 {
+		if err := GetVideoMetadata(false, maps.Keys(uniqueVideos)...); err != nil {
+			return ava.EndWithError(err)
 		}
 	}
 
@@ -75,15 +72,13 @@ func AddVideos(propertyValues map[string][]string, raw bool) error {
 	return nil
 }
 
-func addPropertyValues(rxa kvas.ReduxAssets, raw bool, property string, values ...string) error {
+func addPropertyValues(rxa kvas.ReduxAssets, parseDelegate func(...string) ([]string, error), property string, values ...string) error {
 	apva := nod.Begin(" %s", property)
 	defer apva.End()
 
-	if !raw {
-		var err error
-		if values, err = yeti.ParseVideoIds(values...); err != nil {
-			return apva.EndWithError(err)
-		}
+	var err error
+	if values, err = parseDelegate(values...); err != nil {
+		return apva.EndWithError(err)
 	}
 
 	if err := rxa.BatchAddValues(property, trueValues(values...)); err != nil {
