@@ -144,7 +144,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-		"h1 {font-size:1.5rem;display: inline;cursor:pointer}" +
+		"details {margin:1rem; margin-block-end: 4rem}" +
+		"h1 {display:inline;cursor:pointer}" +
+		".videoDescription {margin:1rem;margin-block:2rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
