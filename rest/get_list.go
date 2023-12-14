@@ -42,7 +42,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video span {font-size:1rem}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
-		"details {margin-block:0.5rem}" +
+		"details {margin-block:0.5rem; content-visibility: auto}" +
 		"summary h1 {display: inline; cursor: pointer}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"</style></head>")
