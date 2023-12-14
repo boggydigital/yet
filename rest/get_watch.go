@@ -145,8 +145,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-		"details {margin: 0.5rem}" +
-		"details summary {font-size: 1.5rem; margin: 1rem; line-height: 1.2;cursor:pointer}" +
+		"h1 {font-size:1.5rem;display: inline-block;margin:1rem;cursor:pointer}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -161,13 +160,17 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	//}
 	sb.WriteString("</video>")
 
-	sb.WriteString("<details>")
-	sb.WriteString("<summary class='videoTitle'>" + videoTitle + "</summary>")
-	sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
-	sb.WriteString("</details>")
+	if videoDescription != "" {
+		sb.WriteString("<details>")
+		sb.WriteString("<summary class='videoTitle'><h1>" + videoTitle + "</h1></summary>")
+		sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
+		sb.WriteString("</details>")
+	} else {
+		sb.WriteString("<h1 class='videoTitle'>" + videoTitle + "</h1>")
+	}
 
 	sb.WriteString("<details>")
-	sb.WriteString("<summary>Tools</summary>")
+	sb.WriteString("<summary><h1>Tools</h1></summary>")
 	if lastEndedTime != "" {
 		if lt, err := time.Parse(http.TimeFormat, lastEndedTime); err == nil {
 			sb.WriteString("<div class='lastEnded'><span>Last watched: ")
