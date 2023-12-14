@@ -43,9 +43,9 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
-		"details {margin-block:1rem; content-visibility: auto}" +
-		"summary {margin-block-end: 1rem}" +
-		"summary h1 {display: inline; cursor: pointer}" +
+		"details {margin-block:2rem; content-visibility: auto}" +
+		"summary {margin-block-end: 2rem}" +
+		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"ul {list-style:none; padding-inline-start: 1rem}" +
 		"</style></head>")
