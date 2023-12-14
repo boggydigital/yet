@@ -48,7 +48,7 @@ func main() {
 		"add-urls":              cli.AddUrlsHandler,
 		"download":              cli.DownloadHandler,
 		"get-captions":          cli.GetCaptionsHandler,
-		"get-file":              cli.GetUrlHandler,
+		"get-url":               cli.GetUrlHandler,
 		"get-playlist-metadata": cli.GetPlaylistMetadataHandler,
 		"get-poster":            cli.GetPosterHandler,
 		"get-video-metadata":    cli.GetVideoMetadataHandler,

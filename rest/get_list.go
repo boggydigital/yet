@@ -136,9 +136,23 @@ func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
 		videoTitle = title
 	}
 
+	ended := false
+	if et, ok := rxa.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
+		ended = true
+	}
+
+	//progress := false
+	//if pt, ok := rxa.GetFirstVal(data.VideoProgressProperty, videoId); ok && pt != "" {
+	//	progress = true
+	//}
+
 	videoUrl := "/watch?"
 	if videoId != "" {
 		videoUrl += "v=" + videoId
+	}
+
+	if ended {
+		videoTitle = "☑️ " + videoTitle
 	}
 
 	sb.WriteString("<a class='video' href='" + videoUrl + "'>" +
