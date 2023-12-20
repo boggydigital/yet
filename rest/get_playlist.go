@@ -48,10 +48,13 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
+		"a.video.refresh {color: aqua; margin-block: 2.5rem;}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
 	sb.WriteString("<h1>" + playlistTitle(id, rdx) + "</h1>")
+
+	sb.WriteString("<a class='video refresh' href='/refresh?id=" + id + "'>Refresh playlist</a>")
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for _, videoId := range videoIds {
