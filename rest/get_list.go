@@ -45,7 +45,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<a class='video highlight' href='/new'>Something else</a>")
+	sb.WriteString("<a class='video highlight' href='/new'>Watch something new</a>")
 
 	// continue watching
 	// videos watchlist
@@ -134,7 +134,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
-	sb.WriteString("<a class='video highlight' href='/new'>Something else</a>")
+	sb.WriteString("<a class='video highlight' href='/new'>Watch something new</a>")
 
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
