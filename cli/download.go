@@ -31,13 +31,13 @@ func Download(ids []string, queue, force bool) error {
 		return da.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return da.EndWithError(err)
 	}
 
 	if queue {
-		ids = append(ids, rxa.Keys(data.VideosDownloadQueueProperty)...)
+		ids = append(ids, rdx.Keys(data.VideosDownloadQueueProperty)...)
 	}
 
 	videoIds, err := yeti.ParseVideoIds(ids...)
@@ -48,7 +48,7 @@ func Download(ids []string, queue, force bool) error {
 	da.TotalInt(len(videoIds))
 
 	// adding to the queue before attempting to download
-	if err := rxa.BatchAddValues(data.VideosDownloadQueueProperty, trueValues(videoIds...)); err != nil {
+	if err := rdx.BatchAddValues(data.VideosDownloadQueueProperty, trueValues(videoIds...)); err != nil {
 		return da.EndWithError(err)
 	}
 
@@ -65,7 +65,7 @@ func Download(ids []string, queue, force bool) error {
 			return da.EndWithError(err)
 		}
 
-		if err := getVideoPageMetadata(videoPage, videoId, rxa); err != nil {
+		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
 			return da.EndWithError(err)
 		}
 
@@ -73,17 +73,17 @@ func Download(ids []string, queue, force bool) error {
 			return da.EndWithError(err)
 		}
 
-		if err := getVideoPageCaptions(videoPage, videoId, rxa, dolo.DefaultClient); err != nil {
+		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient); err != nil {
 			return da.EndWithError(err)
 		}
 
 		// remove from the queue upon successful download
-		if err := rxa.CutVal(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
+		if err := rdx.CutValues(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
 			return da.EndWithError(err)
 		}
 
 		// add to watchlist upon successful download
-		if err := rxa.AddValues(data.VideosWatchlistProperty, videoId, data.TrueValue); err != nil {
+		if err := rdx.AddValues(data.VideosWatchlistProperty, videoId, data.TrueValue); err != nil {
 			return da.EndWithError(err)
 		}
 

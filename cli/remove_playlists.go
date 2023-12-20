@@ -29,7 +29,7 @@ func RemovePlaylists(propertyValues map[string][]string) error {
 		return rpa.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.PlaylistWatchlistProperty)
 	if err != nil {
 		return rpa.EndWithError(err)
@@ -38,7 +38,7 @@ func RemovePlaylists(propertyValues map[string][]string) error {
 	rpa.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := removePropertyValues(rxa, yeti.ParsePlaylistIds, property, values...); err != nil {
+		if err := removePropertyValues(rdx, yeti.ParsePlaylistIds, property, values...); err != nil {
 			return rpa.EndWithError(err)
 		}
 		rpa.Increment()

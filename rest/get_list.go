@@ -20,7 +20,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(absMetadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxReader(absMetadataDir, data.AllProperties()...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -45,7 +45,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.highlight {color:gold; margin-block:2rem}" +
 		"details {margin-block:2rem; content-visibility: auto}" +
 		"summary {margin-block-end: 2rem}" +
-		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem}" +
+		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem;color:turquoise}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"ul {list-style:none; padding-inline-start: 1rem}" +
 		"</style></head>")
@@ -57,40 +57,40 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	// videos watchlist
 	// videos download queue
 
-	cwKeys := rxa.Keys(data.VideoProgressProperty)
+	cwKeys := rdx.Keys(data.VideoProgressProperty)
 	if len(cwKeys) > 0 {
 		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
-			if ended, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
-				writeVideo(id, rxa, sb)
+			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
+				writeVideo(id, rdx, sb)
 			}
 		}
 		sb.WriteString("</details>")
 	}
 
-	wlKeys := rxa.Keys(data.VideosWatchlistProperty)
+	wlKeys := rdx.Keys(data.VideosWatchlistProperty)
 	if len(wlKeys) > 0 {
 		sb.WriteString("<details><summary><h1>Watchlist</h1></summary>")
 		for _, id := range wlKeys {
-			if le, ok := rxa.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
+			if le, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
 				continue
 			}
-			if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
+			if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
 				continue
 			}
-			writeVideo(id, rxa, sb)
+			writeVideo(id, rdx, sb)
 		}
 		sb.WriteString("</details>")
 	}
 
-	plKeys := rxa.Keys(data.PlaylistWatchlistProperty)
+	plKeys := rdx.Keys(data.PlaylistWatchlistProperty)
 	if len(plKeys) > 0 {
 		sb.WriteString("<details open><summary><h1>Playlists</h1></summary>")
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 
 			sb.WriteString("<li><a class='playlist' href='/playlist?id=" + id + "'>" +
-				playlistTitle(id, rxa) +
+				playlistTitle(id, rdx) +
 				"</a></li>")
 
 		}
@@ -98,20 +98,20 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
-	dqKeys := rxa.Keys(data.VideosDownloadQueueProperty)
+	dqKeys := rdx.Keys(data.VideosDownloadQueueProperty)
 	if len(dqKeys) > 0 {
 		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
-			writeVideo(id, rxa, sb)
+			writeVideo(id, rdx, sb)
 		}
 		sb.WriteString("</details>")
 	}
 
-	whKeys := rxa.Keys(data.VideoEndedProperty)
+	whKeys := rdx.Keys(data.VideoEndedProperty)
 	if len(whKeys) > 0 {
 		sb.WriteString("<details><summary><h1>History</h1></summary>")
 		for _, id := range whKeys {
-			writeVideo(id, rxa, sb)
+			writeVideo(id, rdx, sb)
 		}
 		sb.WriteString("</details>")
 	}
@@ -127,20 +127,20 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
+func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder) {
 
 	videoTitle := videoId
-	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
+	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
 		videoTitle = title
 	}
 
 	ended := false
-	if et, ok := rxa.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
+	if et, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
 		ended = true
 	}
 
 	//progress := false
-	//if pt, ok := rxa.GetFirstVal(data.VideoProgressProperty, videoId); ok && pt != "" {
+	//if pt, ok := rdx.GetFirstVal(data.VideoProgressProperty, videoId); ok && pt != "" {
 	//	progress = true
 	//}
 
@@ -163,10 +163,10 @@ func writeVideo(videoId string, rxa kvas.ReduxAssets, sb *strings.Builder) {
 
 }
 
-func playlistTitle(playlistId string, rxa kvas.ReduxAssets) string {
-	if plt, ok := rxa.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+func playlistTitle(playlistId string, rdx kvas.ReadableRedux) string {
+	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 
-		if plc, ok := rxa.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
+		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
 			return fmt.Sprintf("%s - %s", plc, plt)
 		}
 

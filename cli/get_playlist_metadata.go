@@ -30,18 +30,18 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 		return gpma.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gpma.EndWithError(err)
 	}
 
 	for _, playlistId := range ids {
 
-		if rxa.HasKey(data.PlaylistTitleProperty, playlistId) && !force {
+		if rdx.HasKey(data.PlaylistTitleProperty, playlistId) && !force {
 			continue
 		}
 
-		if err := getPlaylistPageMetadata(nil, playlistId, allVideos, rxa); err != nil {
+		if err := getPlaylistPageMetadata(nil, playlistId, allVideos, rdx); err != nil {
 			gpma.Error(err)
 		}
 
@@ -53,7 +53,7 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 	return nil
 }
 
-func getPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistId string, allVideos bool, rxa kvas.ReduxAssets) error {
+func getPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
 	defer gppma.End()
@@ -67,11 +67,11 @@ func getPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistI
 	}
 
 	ph := playlistPage.Playlist.PlaylistHeader()
-	if err := rxa.ReplaceValues(data.PlaylistTitleProperty, playlistId, ph.Title.SimpleText); err != nil {
+	if err := rdx.ReplaceValues(data.PlaylistTitleProperty, playlistId, ph.Title.SimpleText); err != nil {
 		return gppma.EndWithError(err)
 	}
 
-	if err := rxa.ReplaceValues(data.PlaylistChannelProperty, playlistId, playlistPage.Playlist.PlaylistOwner()); err != nil {
+	if err := rdx.ReplaceValues(data.PlaylistChannelProperty, playlistId, playlistPage.Playlist.PlaylistOwner()); err != nil {
 		return gppma.EndWithError(err)
 	}
 
@@ -98,15 +98,15 @@ func getPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistI
 		}
 	}
 
-	if err := rxa.ReplaceValues(data.PlaylistVideosProperty, playlistId, playlistVideos...); err != nil {
+	if err := rdx.ReplaceValues(data.PlaylistVideosProperty, playlistId, playlistVideos...); err != nil {
 		return gppma.EndWithError(err)
 	}
 
-	if err := rxa.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
+	if err := rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
 		return gppma.EndWithError(err)
 	}
 
-	if err := rxa.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
+	if err := rdx.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
 		return gppma.EndWithError(err)
 	}
 

@@ -41,7 +41,7 @@ func GetVideoFile(force bool, videoIds ...string) error {
 		return gva.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gva.EndWithError(err)
 	}
@@ -59,8 +59,8 @@ func GetVideoFile(force bool, videoIds ...string) error {
 
 		// check known errors before doing anything else
 		if !force {
-			if knownError, ok := rxa.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
-				if err := completeVideo(rxa, videoId, gva, gv, knownError); err != nil {
+			if knownError, ok := rdx.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
+				if err := completeVideo(rdx, videoId, gva, gv, knownError); err != nil {
 					return gva.EndWithError(err)
 				}
 				continue
@@ -68,8 +68,8 @@ func GetVideoFile(force bool, videoIds ...string) error {
 		}
 
 		// check if the video file matching videoId is already available locally
-		if !force && videoExistsLocally(rxa, videosDir, videoId) {
-			if err := completeVideo(rxa, videoId, gva, gv, "already exists"); err != nil {
+		if !force && videoExistsLocally(rdx, videosDir, videoId) {
+			if err := completeVideo(rdx, videoId, gva, gv, "already exists"); err != nil {
 				return gva.EndWithError(err)
 			}
 			continue
@@ -77,10 +77,10 @@ func GetVideoFile(force bool, videoIds ...string) error {
 
 		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 		if err != nil {
-			if rerr := rxa.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
+			if rerr := rdx.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
 				return gva.EndWithError(rerr)
 			}
-			if err := completeVideo(rxa, videoId, gva, gv, err.Error()); err != nil {
+			if err := completeVideo(rdx, videoId, gva, gv, err.Error()); err != nil {
 				return gva.EndWithError(err)
 			}
 			continue
@@ -215,10 +215,10 @@ func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoPage *yt_u
 	return nil
 }
 
-func videoExistsLocally(rxa kvas.ReduxAssets, videosDir, videoId string) bool {
+func videoExistsLocally(rdx kvas.ReadableRedux, videosDir, videoId string) bool {
 	// check if the video file matching videoId is already available locally
-	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok {
-		if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
+	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok {
+		if channel, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
 			relVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
 			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
 			if _, err := os.Stat(absVideoFilename); err == nil {
@@ -229,8 +229,8 @@ func videoExistsLocally(rxa kvas.ReduxAssets, videosDir, videoId string) bool {
 	return false
 }
 
-func completeVideo(rxa kvas.ReduxAssets, videoId string, cmd nod.TotalProgressWriter, video nod.ActCloser, result string) error {
+func completeVideo(rdx kvas.WriteableRedux, videoId string, cmd nod.TotalProgressWriter, video nod.ActCloser, result string) error {
 	video.EndWithResult(result)
 	cmd.Increment()
-	return rxa.CutVal(data.VideosDownloadQueueProperty, videoId, data.TrueValue)
+	return rdx.CutValues(data.VideosDownloadQueueProperty, videoId, data.TrueValue)
 }

@@ -33,7 +33,7 @@ func AddUrls(propertyValues map[string][]string) error {
 		return aua.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoEndedProperty)
@@ -44,7 +44,7 @@ func AddUrls(propertyValues map[string][]string) error {
 	aua.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := addPropertyValues(rxa, passthroughUrls, property, values...); err != nil {
+		if err := addPropertyValues(rdx, passthroughUrls, property, values...); err != nil {
 			return aua.EndWithError(err)
 		}
 		aua.Increment()

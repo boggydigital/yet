@@ -37,7 +37,7 @@ func RemoveVideos(propertyValues map[string][]string, raw bool) error {
 		return rva.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoProgressProperty,
@@ -49,7 +49,7 @@ func RemoveVideos(propertyValues map[string][]string, raw bool) error {
 	rva.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := removePropertyValues(rxa, yeti.ParseVideoIds, property, values...); err != nil {
+		if err := removePropertyValues(rdx, yeti.ParseVideoIds, property, values...); err != nil {
 			return rva.EndWithError(err)
 		}
 		rva.Increment()
@@ -60,7 +60,7 @@ func RemoveVideos(propertyValues map[string][]string, raw bool) error {
 	return nil
 }
 
-func removePropertyValues(rxa kvas.ReduxAssets, parseDelegate func(...string) ([]string, error), property string, values ...string) error {
+func removePropertyValues(rdx kvas.WriteableRedux, parseDelegate func(...string) ([]string, error), property string, values ...string) error {
 	rpva := nod.Begin(" %s", property)
 	defer rpva.End()
 
@@ -69,7 +69,7 @@ func removePropertyValues(rxa kvas.ReduxAssets, parseDelegate func(...string) ([
 		return rpva.EndWithError(err)
 	}
 
-	if err := rxa.BatchCutKeys(property, values); err != nil {
+	if err := rdx.BatchCutKeys(property, values); err != nil {
 		return rpva.EndWithError(err)
 	}
 

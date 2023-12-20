@@ -32,7 +32,7 @@ func AddPlaylists(allVideos bool, propertyValues map[string][]string) error {
 		return apa.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.PlaylistWatchlistProperty)
 	if err != nil {
 		return apa.EndWithError(err)
@@ -41,7 +41,7 @@ func AddPlaylists(allVideos bool, propertyValues map[string][]string) error {
 	apa.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := addPropertyValues(rxa, yeti.ParsePlaylistIds, property, values...); err != nil {
+		if err := addPropertyValues(rdx, yeti.ParsePlaylistIds, property, values...); err != nil {
 			return apa.EndWithError(err)
 		}
 		apa.Increment()

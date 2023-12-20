@@ -35,7 +35,7 @@ func AddVideos(propertyValues map[string][]string) error {
 		return ava.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoEndedProperty)
@@ -46,7 +46,7 @@ func AddVideos(propertyValues map[string][]string) error {
 	ava.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := addPropertyValues(rxa, yeti.ParseVideoIds, property, values...); err != nil {
+		if err := addPropertyValues(rdx, yeti.ParseVideoIds, property, values...); err != nil {
 			return ava.EndWithError(err)
 		}
 		ava.Increment()
@@ -72,7 +72,7 @@ func AddVideos(propertyValues map[string][]string) error {
 	return nil
 }
 
-func addPropertyValues(rxa kvas.ReduxAssets, parseDelegate func(...string) ([]string, error), property string, values ...string) error {
+func addPropertyValues(rdx kvas.WriteableRedux, parseDelegate func(...string) ([]string, error), property string, values ...string) error {
 	apva := nod.Begin(" %s", property)
 	defer apva.End()
 
@@ -81,7 +81,7 @@ func addPropertyValues(rxa kvas.ReduxAssets, parseDelegate func(...string) ([]st
 		return apva.EndWithError(err)
 	}
 
-	if err := rxa.BatchAddValues(property, trueValues(values...)); err != nil {
+	if err := rdx.BatchAddValues(property, trueValues(values...)); err != nil {
 		return apva.EndWithError(err)
 	}
 

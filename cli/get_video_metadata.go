@@ -30,18 +30,18 @@ func GetVideoMetadata(force bool, ids ...string) error {
 		return gvma.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gvma.EndWithError(err)
 	}
 
 	for _, videoId := range ids {
 
-		if rxa.HasKey(data.VideoTitleProperty, videoId) && !force {
+		if rdx.HasKey(data.VideoTitleProperty, videoId) && !force {
 			continue
 		}
 
-		if err := getVideoPageMetadata(nil, videoId, rxa); err != nil {
+		if err := getVideoPageMetadata(nil, videoId, rdx); err != nil {
 			gvma.Error(err)
 		}
 
@@ -53,7 +53,7 @@ func GetVideoMetadata(force bool, ids ...string) error {
 	return nil
 }
 
-func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId string, rxa kvas.ReduxAssets) error {
+func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId string, rdx kvas.WriteableRedux) error {
 
 	gvpma := nod.Begin(" metadata for %s", videoId)
 	defer gvpma.End()
@@ -67,7 +67,7 @@ func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId stri
 	}
 
 	for p, v := range yeti.ExtractMetadata(videoPage) {
-		if err := rxa.AddValues(p, videoId, v...); err != nil {
+		if err := rdx.AddValues(p, videoId, v...); err != nil {
 			return gvpma.EndWithError(err)
 		}
 	}

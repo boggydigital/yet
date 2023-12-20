@@ -25,7 +25,7 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	}
 
 	currentTime := time.Now().Format(http.TimeFormat)
-	if err := epRxa.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
+	if err := eprdx.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

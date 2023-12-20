@@ -9,14 +9,14 @@ import (
 	"net/url"
 )
 
-func GetCaptions(dl *dolo.Client, rxa kvas.ReduxAssets, videoId string, captionTracks []yt_urls.CaptionTrack) error {
+func GetCaptions(dl *dolo.Client, rdx kvas.WriteableRedux, videoId string, captionTracks []yt_urls.CaptionTrack) error {
 
 	properties := []string{
 		data.VideoCaptionsNamesProperty,
 		data.VideoCaptionsKindsProperty,
 		data.VideoCaptionsLanguagesProperty}
 
-	if err := rxa.IsSupported(properties...); err != nil {
+	if err := rdx.MustHave(properties...); err != nil {
 		return err
 	}
 
@@ -35,7 +35,7 @@ func GetCaptions(dl *dolo.Client, rxa kvas.ReduxAssets, videoId string, captionT
 			}
 			captionsData[p] = append(captionsData[p], value)
 		}
-		if err := rxa.ReplaceValues(p, videoId, captionsData[p]...); err != nil {
+		if err := rdx.ReplaceValues(p, videoId, captionsData[p]...); err != nil {
 			return err
 		}
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	epRxa kvas.ReduxAssets
+	eprdx kvas.WriteableRedux
 )
 
 func Init() error {
@@ -17,7 +17,7 @@ func Init() error {
 		return err
 	}
 
-	if epRxa, err = kvas.ConnectReduxAssets(metadataDir, data.VideoEndedProperty, data.VideoProgressProperty); err != nil {
+	if eprdx, err = kvas.ReduxWriter(metadataDir, data.VideoEndedProperty, data.VideoProgressProperty); err != nil {
 		return err
 	}
 

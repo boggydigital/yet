@@ -52,7 +52,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(absMetadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxWriter(absMetadataDir, data.AllProperties()...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -60,13 +60,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	// if current time is not specified with a query parameter - read it from metadata
 	if t == "" {
-		if ct, ok := rxa.GetFirstVal(data.VideoProgressProperty, videoId); ok {
+		if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, videoId); ok {
 			t = ct
 		}
 	}
 
-	if title, ok := rxa.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		if channel, ok := rxa.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
+	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
+		if channel, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
 			localVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
 			if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
 				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
@@ -75,9 +75,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
 					videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
 					videoTitle = title
-					videoDescription, _ = rxa.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
+					videoDescription, _ = rdx.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
 
-					//if vct, err := getLocalCaptionTracks(videoId, rxa); err == nil {
+					//if vct, err := getLocalCaptionTracks(videoId, rdx); err == nil {
 					//	videoCaptionTracks = vct
 					//}
 				}
@@ -86,7 +86,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	lastEndedTime := ""
-	if et, ok := rxa.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
+	if et, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
 		lastEndedTime = et
 	}
 
@@ -98,7 +98,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for p, v := range yeti.ExtractMetadata(videoPage) {
-			if err := rxa.AddValues(p, videoId, v...); err != nil {
+			if err := rdx.AddValues(p, videoId, v...); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -273,18 +273,18 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 	}
 }
 
-func getLocalCaptionTracks(videoId string, rxa kvas.ReduxAssets) ([]yt_urls.CaptionTrack, error) {
+func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]yt_urls.CaptionTrack, error) {
 
-	if err := rxa.IsSupported(
+	if err := rdx.MustHave(
 		data.VideoCaptionsNamesProperty,
 		data.VideoCaptionsKindsProperty,
 		data.VideoCaptionsLanguagesProperty); err != nil {
 		return nil, err
 	}
 
-	captionsNames, _ := rxa.GetAllValues(data.VideoCaptionsNamesProperty, videoId)
-	captionsKinds, _ := rxa.GetAllValues(data.VideoCaptionsKindsProperty, videoId)
-	captionsLanguages, _ := rxa.GetAllValues(data.VideoCaptionsLanguagesProperty, videoId)
+	captionsNames, _ := rdx.GetAllValues(data.VideoCaptionsNamesProperty, videoId)
+	captionsKinds, _ := rdx.GetAllValues(data.VideoCaptionsKindsProperty, videoId)
+	captionsLanguages, _ := rdx.GetAllValues(data.VideoCaptionsLanguagesProperty, videoId)
 
 	cts := make([]yt_urls.CaptionTrack, 0, len(captionsLanguages))
 	for i := 0; i < len(captionsLanguages); i++ {

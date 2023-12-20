@@ -32,7 +32,7 @@ func GetUrl(urls ...string) error {
 		return gfa.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gfa.EndWithError(err)
 	}
@@ -55,7 +55,7 @@ func GetUrl(urls ...string) error {
 		start := time.Now()
 
 		// add to the download queue
-		if err := rxa.AddValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
+		if err := rdx.AddValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
 			return gfa.EndWithError(err)
 		}
 
@@ -69,12 +69,12 @@ func GetUrl(urls ...string) error {
 		}
 
 		// clear from the queue upon successful download
-		if err := rxa.CutVal(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
+		if err := rdx.CutValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
 			return gfa.EndWithError(err)
 		}
 
 		// add to the watchlist upon successful download
-		if err := rxa.AddValues(data.VideosWatchlistProperty, filename, data.TrueValue); err != nil {
+		if err := rdx.AddValues(data.VideosWatchlistProperty, filename, data.TrueValue); err != nil {
 			return gfa.EndWithError(err)
 		}
 

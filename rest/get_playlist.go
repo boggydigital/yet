@@ -26,7 +26,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(absMetadataDir, data.AllProperties()...)
+	rdx, err := kvas.ReduxReader(absMetadataDir, data.AllProperties()...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,11 +51,11 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<h1>" + playlistTitle(id, rxa) + "</h1>")
+	sb.WriteString("<h1>" + playlistTitle(id, rdx) + "</h1>")
 
-	if videoIds, ok := rxa.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
+	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for _, videoId := range videoIds {
-			writeVideo(videoId, rxa, sb)
+			writeVideo(videoId, rdx, sb)
 		}
 	}
 

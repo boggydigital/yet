@@ -36,7 +36,7 @@ func RemoveUrls(propertyValues map[string][]string, raw bool) error {
 		return rva.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoProgressProperty,
@@ -48,7 +48,7 @@ func RemoveUrls(propertyValues map[string][]string, raw bool) error {
 	rva.TotalInt(len(propertyValues))
 
 	for property, values := range propertyValues {
-		if err := removePropertyValues(rxa, passthroughUrls, property, values...); err != nil {
+		if err := removePropertyValues(rdx, passthroughUrls, property, values...); err != nil {
 			return rva.EndWithError(err)
 		}
 		rva.Increment()

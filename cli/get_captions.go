@@ -32,7 +32,7 @@ func GetCaptions(ids []string) error {
 		return gca.EndWithError(err)
 	}
 
-	rxa, err := kvas.ConnectReduxAssets(metadataDir,
+	rdx, err := kvas.ReduxWriter(metadataDir,
 		data.VideoCaptionsNamesProperty,
 		data.VideoCaptionsKindsProperty,
 		data.VideoCaptionsLanguagesProperty)
@@ -42,7 +42,7 @@ func GetCaptions(ids []string) error {
 
 	for _, videoId := range ids {
 
-		if err := getVideoPageCaptions(nil, videoId, rxa, dl); err != nil {
+		if err := getVideoPageCaptions(nil, videoId, rdx, dl); err != nil {
 			gca.Error(err)
 		}
 
@@ -54,7 +54,7 @@ func GetCaptions(ids []string) error {
 	return nil
 }
 
-func getVideoPageCaptions(videoPage *yt_urls.InitialPlayerResponse, videoId string, rxa kvas.ReduxAssets, dl *dolo.Client) error {
+func getVideoPageCaptions(videoPage *yt_urls.InitialPlayerResponse, videoId string, rdx kvas.WriteableRedux, dl *dolo.Client) error {
 
 	gca := nod.Begin(" captions for %s", videoId)
 	defer gca.End()
@@ -68,7 +68,7 @@ func getVideoPageCaptions(videoPage *yt_urls.InitialPlayerResponse, videoId stri
 	}
 
 	captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
-	if err := yeti.GetCaptions(dl, rxa, videoId, captionTracks); err != nil {
+	if err := yeti.GetCaptions(dl, rdx, videoId, captionTracks); err != nil {
 		return gca.EndWithError(err)
 	}
 
