@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"io"
 	"net/http"
 	"strings"
@@ -13,18 +12,6 @@ import (
 func GetList(w http.ResponseWriter, r *http.Request) {
 
 	// GET /list
-
-	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	rdx, err := kvas.ReduxReader(absMetadataDir, data.AllProperties()...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	w.Header().Set("Content-Type", "text/html")
 
@@ -56,9 +43,15 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	// continue watching
 	// videos watchlist
 	// videos download queue
+	var err error
 
 	cwKeys := rdx.Keys(data.VideoProgressProperty)
 	if len(cwKeys) > 0 {
+		cwKeys, err = rdx.Sort(cwKeys, false, data.VideoTitleProperty)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
 			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
@@ -70,6 +63,13 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	wlKeys := rdx.Keys(data.VideosWatchlistProperty)
 	if len(wlKeys) > 0 {
+
+		wlKeys, err = rdx.Sort(wlKeys, false, data.VideoTitleProperty)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		sb.WriteString("<details><summary><h1>Watchlist</h1></summary>")
 		for _, id := range wlKeys {
 			if le, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
@@ -85,6 +85,13 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	plKeys := rdx.Keys(data.PlaylistWatchlistProperty)
 	if len(plKeys) > 0 {
+
+		plKeys, err = rdx.Sort(plKeys, false, data.PlaylistTitleProperty, data.PlaylistChannelProperty)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		sb.WriteString("<details open><summary><h1>Playlists</h1></summary>")
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
@@ -100,6 +107,13 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	dqKeys := rdx.Keys(data.VideosDownloadQueueProperty)
 	if len(dqKeys) > 0 {
+
+		dqKeys, err = rdx.Sort(dqKeys, false, data.VideoTitleProperty)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
 			writeVideo(id, rdx, sb)
@@ -109,6 +123,13 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	whKeys := rdx.Keys(data.VideoEndedProperty)
 	if len(whKeys) > 0 {
+
+		whKeys, err = rdx.Sort(whKeys, false, data.VideoTitleProperty)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		sb.WriteString("<details><summary><h1>History</h1></summary>")
 		for _, id := range whKeys {
 			writeVideo(id, rdx, sb)
@@ -123,6 +144,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := io.WriteString(w, sb.String()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 }
