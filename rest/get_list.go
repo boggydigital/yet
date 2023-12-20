@@ -13,6 +13,13 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	// GET /list
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html")
 
 	sb := &strings.Builder{}
@@ -43,7 +50,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	// continue watching
 	// videos watchlist
 	// videos download queue
-	var err error
 
 	cwKeys := rdx.Keys(data.VideoProgressProperty)
 	if len(cwKeys) > 0 {
@@ -123,17 +129,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	whKeys := rdx.Keys(data.VideoEndedProperty)
 	if len(whKeys) > 0 {
-
-		whKeys, err = rdx.Sort(whKeys, false, data.VideoTitleProperty)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		sb.WriteString("<details><summary><h1>History</h1></summary>")
-		for _, id := range whKeys {
-			writeVideo(id, rdx, sb)
-		}
+		sb.WriteString("<a class='video' href='/history'>See all watch history</a>")
 		sb.WriteString("</details>")
 	}
 
