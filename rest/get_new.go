@@ -23,8 +23,12 @@ func GetNew(w http.ResponseWriter, r *http.Request) {
 		"input[type='text'] {width:90%}" +
 		"input {font-size:1.25rem;display:block;}" +
 		"input[type='submit'] {margin-block: 1rem;}" +
+		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"a.highlight {color:gold; margin-block:2rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
+
+	sb.WriteString("<a class='video highlight' href='/list'>Watch list</a>")
 
 	sb.WriteString("<form method='get' action='/watch'>")
 	sb.WriteString("<input id='v' name='v' type='text' placeholder='Paste or enter YouTube link or video-id' />")
