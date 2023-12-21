@@ -31,7 +31,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	videoId := ""
 	videoUrl, videoTitle, videoDescription := "", "", ""
-	videoPoster := "/poster?v=" + videoId + "&q=maxresdefault"
 	//var videoCaptionTracks []yt_urls.CaptionTrack
 	playbackType := "streaming"
 
@@ -44,6 +43,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		videoUrl = "/video?file=" + v
 		videoTitle = v
 	}
+
+	videoPoster := "/poster?v=" + videoId + "&q=maxresdefault"
 
 	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
