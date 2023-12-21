@@ -69,7 +69,7 @@ func Download(ids []string, queue, force bool) error {
 			return da.EndWithError(err)
 		}
 
-		if err := yeti.GetPosters(videoPage, dolo.DefaultClient); err != nil {
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, yt_urls.AllThumbnailQualities()...); err != nil {
 			return da.EndWithError(err)
 		}
 

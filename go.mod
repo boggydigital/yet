@@ -9,7 +9,7 @@ require (
 	github.com/boggydigital/middleware v0.1.11
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/wits v0.2.3
-	github.com/boggydigital/yt_urls v0.1.32
+	github.com/boggydigital/yt_urls v0.1.35
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
 )
 

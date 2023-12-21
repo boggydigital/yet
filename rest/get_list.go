@@ -180,7 +180,7 @@ func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder) {
 	}
 
 	sb.WriteString("<a class='" + class + "' href='" + videoUrl + "'>" +
-		"<img src='/poster?v=" + videoId + "&q=hqdefault' />" +
+		"<img src='/poster?v=" + videoId + "&q=mqdefault' loading='lazy'/>" +
 		"<br/>" +
 		"<span>" + videoTitle + "</span>" +
 		"</a>")

@@ -3,16 +3,14 @@ package paths
 import (
 	"errors"
 	"fmt"
+	"github.com/boggydigital/yt_urls"
 	"os"
 	"path/filepath"
 )
 
 const (
 	cookiesFilename      = "cookies.txt"
-	defaultPosterExt     = ".jpg"
 	defaultYTCaptionsExt = ".ytt"
-	PosterQualityMax     = "maxresdefault"
-	PosterQualityHigh    = "hqdefault"
 )
 
 func AbsCookiesPath() (string, error) {
@@ -21,9 +19,10 @@ func AbsCookiesPath() (string, error) {
 }
 
 // AbsPosterPath constructs poster path using poster directory,
-// first and second letters of video-id to product something like
-// /path/to/posters/f/s/fs_quality.jpg
-func AbsPosterPath(videoId, quality string) (string, error) {
+// first and second letters of video-id, video-id itself
+// and finally poster quality to get something like:
+// /path/to/posters/v/i/videoId/quality.jpg
+func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, error) {
 
 	pdp, err := GetAbsDir(Posters)
 	if err != nil {
@@ -35,7 +34,7 @@ func AbsPosterPath(videoId, quality string) (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(spdp, fmt.Sprintf("%s_%s%s", videoId, quality, defaultPosterExt)), nil
+	return filepath.Join(spdp, quality.String()+yt_urls.DefaultThumbnailExt), nil
 }
 
 // AbsCaptionsTrackPath constructs caption track path using captions directory,
@@ -71,6 +70,14 @@ func mkdirAllVideoIdDirs(path, videoId string) (string, error) {
 
 	// add the second video-id letter to the sub-path
 	subPath = filepath.Join(subPath, videoId[1:2])
+	if _, err := os.Stat(subPath); os.IsNotExist(err) {
+		if err := os.Mkdir(subPath, 777); err != nil {
+			return "", err
+		}
+	}
+
+	// finally, add videoId as the final path component
+	subPath = filepath.Join(subPath, videoId)
 	if _, err := os.Stat(subPath); os.IsNotExist(err) {
 		if err := os.Mkdir(subPath, 777); err != nil {
 			return "", err
