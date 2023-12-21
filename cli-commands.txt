@@ -49,7 +49,10 @@ get-video-metadata
     id&^
     force
 
+queue-playlists-new-videos
+
 remove-playlists
+    download-queue&
     watchlist&
 
 remove-videos
@@ -67,6 +70,8 @@ remove-urls
 serve
     port$*
     stderr$
+
+sync
 
 test-dependencies
 
