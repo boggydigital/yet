@@ -6,6 +6,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -42,6 +43,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"summary {margin-block-end: 2rem}" +
 		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem;color:turquoise}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"a.playlist.watched {color:dimgray}" +
 		"ul {list-style:none; padding-inline-start: 1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
@@ -108,9 +110,23 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 
-			sb.WriteString("<li><a class='playlist' href='/playlist?id=" + id + "'>" +
-				playlistTitle(id, rdx) +
-				"</a></li>")
+			nvc := 0
+
+			if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, id); ok {
+				nvc = len(nv)
+			}
+
+			pt := playlistTitle(id, rdx)
+			if nvc > 0 {
+				pt += " (" + strconv.Itoa(nvc) + " new)"
+			}
+
+			pc := "playlist"
+			if nvc == 0 {
+				pc += " watched"
+			}
+
+			sb.WriteString("<li><a class='" + pc + "' href='/playlist?id=" + id + "'>" + pt + "</a></li>")
 
 		}
 		sb.WriteString("</ul>")

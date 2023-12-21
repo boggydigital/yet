@@ -24,10 +24,12 @@ const (
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
 	VideoCaptionsNamesProperty     = "video-captions-names"
 
-	PlaylistWatchlistProperty = "playlist-watchlist"
-	PlaylistChannelProperty   = "playlist-channel"
-	PlaylistTitleProperty     = "playlist-title"
-	PlaylistVideosProperty    = "playlist-videos"
+	PlaylistWatchlistProperty     = "playlist-watchlist"
+	PlaylistDownloadQueueProperty = "playlist-download-queue"
+	PlaylistNewVideosProperty     = "playlist-new-videos"
+	PlaylistChannelProperty       = "playlist-channel"
+	PlaylistTitleProperty         = "playlist-title"
+	PlaylistVideosProperty        = "playlist-videos"
 )
 
 func AllProperties() []string {
@@ -53,6 +55,8 @@ func AllProperties() []string {
 		VideoCaptionsKindsProperty,
 		VideoCaptionsNamesProperty,
 		PlaylistWatchlistProperty,
+		PlaylistDownloadQueueProperty,
+		PlaylistNewVideosProperty,
 		PlaylistChannelProperty,
 		PlaylistTitleProperty,
 		PlaylistVideosProperty,

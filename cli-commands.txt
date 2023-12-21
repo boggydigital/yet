@@ -12,6 +12,7 @@ add-urls
     ended&
 
 add-playlists
+    download-queue&
     watchlist&
     all-videos
 
@@ -68,5 +69,9 @@ serve
     stderr$
 
 test-dependencies
+
+update-playlists-metadata
+
+update-playlists-new-videos
 
 version

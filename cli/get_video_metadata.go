@@ -23,7 +23,12 @@ func GetVideoMetadata(force bool, ids ...string) error {
 	gvma := nod.NewProgress("getting video metadata...")
 	defer gvma.End()
 
-	gvma.TotalInt(len(ids))
+	videoIds, err := yeti.ParseVideoIds(ids...)
+	if err != nil {
+		return gvma.EndWithError(err)
+	}
+
+	gvma.TotalInt(len(videoIds))
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
@@ -35,7 +40,7 @@ func GetVideoMetadata(force bool, ids ...string) error {
 		return gvma.EndWithError(err)
 	}
 
-	for _, videoId := range ids {
+	for _, videoId := range videoIds {
 
 		if rdx.HasKey(data.VideoTitleProperty, videoId) && !force {
 			continue
