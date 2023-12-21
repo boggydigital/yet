@@ -29,6 +29,10 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 
 	quality := yt_urls.ParseThumbnailQuality(tq)
 
+	if videoId == "" {
+		return
+	}
+
 	absPosterFilename, err := paths.AbsPosterPath(videoId, quality)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
