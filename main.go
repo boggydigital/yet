@@ -46,6 +46,7 @@ func main() {
 		"add-playlists":               cli.AddPlaylistsHandler,
 		"add-videos":                  cli.AddVideosHandler,
 		"add-urls":                    cli.AddUrlsHandler,
+		"cleanup-ended":               cli.CleanupEndedHandler,
 		"download":                    cli.DownloadHandler,
 		"get-captions":                cli.GetCaptionsHandler,
 		"get-url":                     cli.GetUrlHandler,

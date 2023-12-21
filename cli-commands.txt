@@ -21,6 +21,8 @@ add-videos
     watchlist&
     ended&
 
+cleanup-ended
+
 download
     id&^
     force
