@@ -45,7 +45,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<a class='video highlight' href='/new'>Watch something new</a>")
+	sb.WriteString("<a class='video highlight' href='/new'>Watch new</a>")
 
 	// continue watching
 	// videos watchlist
@@ -98,7 +98,12 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sb.WriteString("<details open><summary><h1>Playlists</h1></summary>")
+		openOrClose := ""
+		if len(plKeys) < 7 {
+			openOrClose = "open"
+		}
+
+		sb.WriteString("<details " + openOrClose + "><summary><h1>Playlists</h1></summary>")
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 
@@ -134,7 +139,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
-	sb.WriteString("<a class='video highlight' href='/new'>Watch something new</a>")
+	sb.WriteString("<a class='video highlight' href='/new'>Watch new</a>")
 
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
