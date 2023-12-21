@@ -6,8 +6,13 @@ import (
 	"github.com/boggydigital/yet/data"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
+)
+
+const (
+	maxPlaylistVideosWatchlist = 3
 )
 
 func GetList(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +48,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"summary {margin-block-end: 2rem}" +
 		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem;color:turquoise}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
-		"a.playlist.watched {color:dimgray}" +
+		"a.playlist.ended {color:dimgray}" +
+		"div.subtle {color: dimgray}" +
 		"ul {list-style:none; padding-inline-start: 1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
@@ -70,6 +76,15 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
+	plnv := rdx.Keys(data.PlaylistNewVideosProperty)
+	newPlaylistVideos := make([]string, 0, len(plnv))
+
+	for _, pl := range plnv {
+		if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, pl); ok {
+			newPlaylistVideos = append(newPlaylistVideos, nv...)
+		}
+	}
+
 	wlKeys := rdx.Keys(data.VideosWatchlistProperty)
 	if len(wlKeys) > 0 {
 
@@ -80,7 +95,11 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		sb.WriteString("<details><summary><h1>Watchlist</h1></summary>")
+
 		for _, id := range wlKeys {
+			if slices.Contains(newPlaylistVideos, id) {
+				continue
+			}
 			if le, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
 				continue
 			}
@@ -89,6 +108,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			}
 			writeVideo(id, true, rdx, sb)
 		}
+
 		sb.WriteString("</details>")
 	}
 
@@ -123,7 +143,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 			pc := "playlist"
 			if nvc == 0 {
-				pc += " watched"
+				pc += " ended"
 			}
 
 			sb.WriteString("<li><a class='" + pc + "' href='/playlist?list=" + id + "'>" + pt + "</a></li>")
