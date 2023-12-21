@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
@@ -44,7 +45,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		videoTitle = v
 	}
 
-	videoPoster := "/poster?v=" + videoId + "&q=maxresdefault"
+	videoPoster := fmt.Sprintf("/poster?v=%s&q=%s", videoId, yt_urls.ThumbnailQualityMaxRes)
 
 	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {
@@ -135,9 +136,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-		"details {margin:1rem; margin-block-end: 4rem}" +
-		"h1 {display:inline;cursor:pointer}" +
-		".videoDescription {margin:1rem;margin-block:2rem}" +
+		"h1 {margin: 1rem; margin-block: 2rem}" +
+		".videoDescription {margin:1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -153,16 +153,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("</video>")
 
 	if playbackType == "local" {
-		videoTitle += " 🔻"
+		videoTitle = "🔻 " + videoTitle
 	}
 
+	sb.WriteString("<h1 class='videoTitle'>" + videoTitle + "</h1>")
+
 	if videoDescription != "" {
-		sb.WriteString("<details>")
-		sb.WriteString("<summary class='videoTitle'><h1>" + videoTitle + "</h1></summary>")
 		sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
-		sb.WriteString("</details>")
-	} else {
-		sb.WriteString("<h1 class='videoTitle'>" + videoTitle + "</h1>")
 	}
 
 	//sb.WriteString("<details>")
