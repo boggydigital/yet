@@ -133,6 +133,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
 		"h1 {margin: 1rem; margin-block: 2rem}" +
+		"details {margin: 1rem}" +
+		"details summary {cursor:pointer}" +
+		"h2 {display: inline}" +
 		".videoDescription {margin:1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
@@ -155,7 +158,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<h1 class='videoTitle'>" + videoTitle + "</h1>")
 
 	if videoDescription != "" {
+		sb.WriteString("<details>")
+		sb.WriteString("<summary><h2>Description</h2></summary>")
 		sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
+		sb.WriteString("</details>")
 	}
 
 	//sb.WriteString("<details>")
