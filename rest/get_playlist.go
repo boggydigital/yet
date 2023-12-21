@@ -22,7 +22,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := r.URL.Query().Get("id")
+	id := r.URL.Query().Get("list")
 
 	if id == "" {
 		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)

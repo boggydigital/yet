@@ -126,7 +126,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 				pc += " watched"
 			}
 
-			sb.WriteString("<li><a class='" + pc + "' href='/playlist?id=" + id + "'>" + pt + "</a></li>")
+			sb.WriteString("<li><a class='" + pc + "' href='/playlist?list=" + id + "'>" + pt + "</a></li>")
 
 		}
 		sb.WriteString("</ul>")
