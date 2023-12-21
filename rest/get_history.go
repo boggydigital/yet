@@ -49,7 +49,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, id := range whKeys {
-			writeVideo(id, rdx, sb)
+			writeVideo(id, false, rdx, sb)
 		}
 	}
 

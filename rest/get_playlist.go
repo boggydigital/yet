@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const (
+	showImagesLimit = 20
+)
+
 func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// GET /playlist?id
@@ -58,8 +62,9 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<a class='video refresh' href='/refresh?id=" + id + "'>Refresh playlist</a>")
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
-		for _, videoId := range videoIds {
-			writeVideo(videoId, rdx, sb)
+		for i, videoId := range videoIds {
+			showImage := i+1 < showImagesLimit
+			writeVideo(videoId, showImage, rdx, sb)
 		}
 	}
 

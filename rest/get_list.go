@@ -64,7 +64,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
 			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
-				writeVideo(id, rdx, sb)
+				writeVideo(id, true, rdx, sb)
 			}
 		}
 		sb.WriteString("</details>")
@@ -87,7 +87,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
 				continue
 			}
-			writeVideo(id, rdx, sb)
+			writeVideo(id, true, rdx, sb)
 		}
 		sb.WriteString("</details>")
 	}
@@ -144,7 +144,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
-			writeVideo(id, rdx, sb)
+			writeVideo(id, true, rdx, sb)
 		}
 		sb.WriteString("</details>")
 	}
@@ -156,8 +156,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
-	sb.WriteString("<a class='video highlight' href='/new'>Watch new</a>")
-
 	sb.WriteString("</body>")
 	sb.WriteString("</html>")
 
@@ -168,7 +166,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder) {
+func writeVideo(videoId string, showImage bool, rdx kvas.ReadableRedux, sb *strings.Builder) {
 
 	videoTitle := videoId
 	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
@@ -196,8 +194,13 @@ func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder) {
 		class += " ended"
 	}
 
+	imageContent := ""
+	if showImage {
+		imageContent = "<img src='/poster?v=" + videoId + "&q=mqdefault' loading='lazy'/>"
+	}
+
 	sb.WriteString("<a class='" + class + "' href='" + videoUrl + "'>" +
-		"<img src='/poster?v=" + videoId + "&q=mqdefault' loading='lazy'/>" +
+		imageContent +
 		"<br/>" +
 		"<span>" + videoTitle + "</span>" +
 		"</a>")
