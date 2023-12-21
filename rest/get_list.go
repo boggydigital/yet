@@ -109,6 +109,10 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			writeVideo(id, true, rdx, sb)
 		}
 
+		if len(newPlaylistVideos) > 0 {
+			sb.WriteString("<div class='subtle'>Looking for more? New videos are available in the Playlists</div>")
+		}
+
 		sb.WriteString("</details>")
 	}
 
