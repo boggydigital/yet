@@ -45,7 +45,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
-		"a.video img {border-radius:0.25rem;width:200px}" +
+		"a.video img {border-radius:0.25rem;width:200px;aspect-ratio:16/9;background:dimgray}" +
 		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.video.refresh {color: aqua; margin-block: 2.5rem;}" +

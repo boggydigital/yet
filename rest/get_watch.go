@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
@@ -31,7 +30,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	v = strings.TrimSpace(v)
 
 	videoId := ""
-	videoUrl, videoPoster, videoTitle, videoDescription := "", "", "", ""
+	videoUrl, videoTitle, videoDescription := "", "", ""
+	videoPoster := "/poster?v=" + videoId + "&q=maxresdefault"
 	//var videoCaptionTracks []yt_urls.CaptionTrack
 	playbackType := "streaming"
 
@@ -42,7 +42,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		playbackType = "local"
 		videoId = v
 		videoUrl = "/video?file=" + v
-		videoPoster = "/poster?v=" + v + "&q=maxresdefault"
 		videoTitle = v
 	}
 
@@ -73,7 +72,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
 					playbackType = "local"
 					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
-					videoPoster = "/poster?v=" + videoId + "&q=maxresdefault"
 					videoTitle = title
 					videoDescription, _ = rdx.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
 
@@ -104,11 +102,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, yt_urls.AllThumbnailQualities()...); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		fs := videoPage.Formats()
 		var f yt_urls.Format
 		for _, ff := range fs {
@@ -124,9 +117,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 
 		videoUrl = vu.String()
-		if len(videoPage.Microformat.PlayerMicroformatRenderer.Thumbnail.Thumbnails) > 0 {
-			videoPoster = videoPage.Microformat.PlayerMicroformatRenderer.Thumbnail.Thumbnails[0].Url
-		}
 		videoTitle = videoPage.VideoDetails.Title
 		videoDescription = videoPage.VideoDetails.ShortDescription
 	}
