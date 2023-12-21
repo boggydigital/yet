@@ -32,8 +32,7 @@ func AddPlaylists(allVideos bool, propertyValues map[string][]string) error {
 		return apa.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir,
-		data.PlaylistWatchlistProperty)
+	rdx, err := kvas.ReduxWriter(metadataDir, maps.Keys(propertyValues)...)
 	if err != nil {
 		return apa.EndWithError(err)
 	}

@@ -22,6 +22,11 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 	gpma := nod.NewProgress("getting playlist metadata...")
 	defer gpma.End()
 
+	playlistIds, err := yeti.ParsePlaylistIds(ids...)
+	if err != nil {
+		return gpma.EndWithError(err)
+	}
+
 	gpma.TotalInt(len(ids))
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
@@ -34,7 +39,7 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 		return gpma.EndWithError(err)
 	}
 
-	for _, playlistId := range ids {
+	for _, playlistId := range playlistIds {
 
 		if rdx.HasKey(data.PlaylistTitleProperty, playlistId) && !force {
 			continue
