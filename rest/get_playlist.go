@@ -1,9 +1,7 @@
 package rest
 
 import (
-	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"io"
 	"net/http"
 	"strings"
@@ -13,6 +11,13 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// GET /playlist?id
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	id := r.URL.Query().Get("id")
 
 	if id == "" {
@@ -20,17 +25,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	rdx, err := kvas.ReduxReader(absMetadataDir, data.AllProperties()...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	pt := playlistTitle(id, rdx)
 
 	w.Header().Set("Content-Type", "text/html")
 
@@ -42,6 +37,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>' type='image/svg+xml'/>" +
 		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 		"<meta name='color-scheme' content='dark light'>" +
+		"<title>🔻 " + pt + "</title>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
@@ -52,7 +48,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<h1>" + playlistTitle(id, rdx) + "</h1>")
+	sb.WriteString("<h1>" + pt + "</h1>")
 
 	sb.WriteString("<a class='video refresh' href='/refresh?id=" + id + "'>Refresh playlist</a>")
 

@@ -19,6 +19,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		"<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>' type='image/svg+xml'/>" +
 		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 		"<meta name='color-scheme' content='dark light'>" +
+		"<title>🔻 History</title>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +

@@ -19,6 +19,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	// GET /watch?v&t
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	v := r.URL.Query().Get("v")
 	t := r.URL.Query().Get("t")
 
@@ -46,18 +53,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	videoPoster := fmt.Sprintf("/poster?v=%s&q=%s", videoId, yt_urls.ThumbnailQualityMaxRes)
-
-	absMetadataDir, err := paths.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	rdx, err := kvas.ReduxWriter(absMetadataDir, data.AllProperties()...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	// if current time is not specified with a query parameter - read it from metadata
 	if t == "" {
@@ -133,6 +128,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>' type='image/svg+xml'/>" +
 		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 		"<meta name='color-scheme' content='dark light'>" +
+		"<title>🔻 " + videoTitle + "</title>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
