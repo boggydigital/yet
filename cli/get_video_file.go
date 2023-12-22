@@ -27,13 +27,13 @@ func GetVideoFileHandler(u *url.URL) error {
 	return GetVideoFile(force, ids...)
 }
 
-func GetVideoFile(force bool, videoIds ...string) error {
+func GetVideoFile(force bool, ids ...string) error {
 
-	if len(videoIds) == 0 {
+	if len(ids) == 0 {
 		return nil
 	}
 
-	gva := nod.NewProgress(fmt.Sprintf("getting %d video(s)", len(videoIds)))
+	gva := nod.NewProgress(fmt.Sprintf("getting %d video(s)", len(ids)))
 	defer gva.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
@@ -51,7 +51,12 @@ func GetVideoFile(force bool, videoIds ...string) error {
 		return gva.EndWithError(err)
 	}
 
-	gva.Total(uint64(len(videoIds)))
+	videoIds, err := yeti.ParseVideoIds(ids...)
+	if err != nil {
+		return gva.EndWithError(err)
+	}
+
+	gva.Total(uint64(len(ids)))
 
 	for _, videoId := range videoIds {
 
