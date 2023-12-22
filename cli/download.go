@@ -79,9 +79,7 @@ func Download(ids []string, queue, force bool) error {
 			return da.EndWithError(err)
 		}
 
-		relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
-
-		if err := downloadVideo(dolo.DefaultClient, relFilename, videoPage); err != nil {
+		if err := downloadVideo(dolo.DefaultClient, videoId, videoPage); err != nil {
 			return da.EndWithError(err)
 		}
 

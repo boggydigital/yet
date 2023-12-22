@@ -110,8 +110,10 @@ func GetVideoFile(force bool, ids ...string) error {
 
 func downloadVideo(
 	dl *dolo.Client,
-	relFilename string,
+	videoId string,
 	videoPage *yt_urls.InitialPlayerResponse) error {
+
+	relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
 	absVideosDir, err := paths.GetAbsDir(paths.Videos)
 	if err != nil {
@@ -126,11 +128,11 @@ func downloadVideo(
 	}
 
 	if yeti.GetBinary(yeti.FFMpegBin) == "" {
-		if err := downloadSingleFormat(dl, relFilename, videoPage.Formats(), videoPage.PlayerUrl); err != nil {
+		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.Formats(), videoPage.PlayerUrl); err != nil {
 			return err
 		}
 	} else {
-		if err := downloadAdaptiveFormat(dl, relFilename, videoPage); err != nil {
+		if err := downloadAdaptiveFormat(dl, videoId, relFilename, videoPage); err != nil {
 			return err
 		}
 	}
@@ -150,7 +152,7 @@ func downloadVideo(
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.Formats, playerUrl string) error {
+func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, formats yt_urls.Formats, playerUrl string) error {
 
 	for _, format := range formats {
 
@@ -171,7 +173,7 @@ func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.F
 		if yeti.IsJSBinaryAvailable() || fast {
 			q := u.Query()
 			np := q.Get("n")
-			if dnp, err := yeti.DecodeParam(http.DefaultClient, np, playerUrl); err != nil {
+			if dnp, err := yeti.DecodeParam(http.DefaultClient, videoId, np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
 				q.Set("n", dnp)
@@ -199,17 +201,17 @@ func downloadSingleFormat(dl *dolo.Client, relFilename string, formats yt_urls.F
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, relFilename string, videoPage *yt_urls.InitialPlayerResponse) error {
+func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, videoPage *yt_urls.InitialPlayerResponse) error {
 
 	relVideoFilename, relAudioFilename := yeti.VideoAudioFilenames(relFilename)
 
 	//download video format
-	if err := downloadSingleFormat(dl, relVideoFilename, videoPage.AdaptiveVideoFormats(), videoPage.PlayerUrl); err != nil {
+	if err := downloadSingleFormat(dl, videoId, relVideoFilename, videoPage.AdaptiveVideoFormats(), videoPage.PlayerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
-	if err := downloadSingleFormat(dl, relAudioFilename, videoPage.AdaptiveAudioFormats(), videoPage.PlayerUrl); err != nil {
+	if err := downloadSingleFormat(dl, videoId, relAudioFilename, videoPage.AdaptiveAudioFormats(), videoPage.PlayerUrl); err != nil {
 		return err
 	}
 

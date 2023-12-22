@@ -15,15 +15,15 @@ import (
 )
 
 const (
-	decoderStart           = "function(a){var b=a.split(\"\"),"
-	decoderEnd             = "return b.join(\"\")};"
-	decoderScriptFilename  = "decoder.js"
-	decoderBrowserFilename = "decoder.html"
+	decoderStart      = "function(a){var b=a.split(\"\"),"
+	decoderEnd        = "return b.join(\"\")};"
+	decoderScriptExt  = ".js"
+	decoderBrowserExt = ".html"
 )
 
 var memoizer = make(map[string]string)
 
-func DecodeParam(hc *http.Client, n, playerUrl string) (string, error) {
+func DecodeParam(hc *http.Client, videoId, n, playerUrl string) (string, error) {
 
 	if dn, ok := memoizer[n+playerUrl]; ok {
 		return dn, nil
@@ -55,10 +55,12 @@ func DecodeParam(hc *http.Client, n, playerUrl string) (string, error) {
 		return "", dpa.EndWithError(err)
 	}
 
-	filename := decoderScriptFilename
+	ext := decoderScriptExt
 	if !IsJSBinaryAvailable() {
-		filename = decoderBrowserFilename
+		ext = decoderBrowserExt
 	}
+
+	filename := filepath.Join(os.TempDir(), videoId+ext)
 
 	decoderFile, err := os.Create(filename)
 	if err != nil {
@@ -68,10 +70,10 @@ func DecodeParam(hc *http.Client, n, playerUrl string) (string, error) {
 	defer decoderFile.Close()
 
 	var createFile func(io.Writer, string, string, string) error
-	switch filename {
-	case decoderScriptFilename:
+	switch ext {
+	case decoderScriptExt:
 		createFile = createNodeFile
-	case decoderBrowserFilename:
+	case decoderBrowserExt:
 		createFile = createBrowserFile
 	}
 

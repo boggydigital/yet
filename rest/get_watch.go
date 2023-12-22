@@ -107,7 +107,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		vu, err := decode(f.Url, videoPage.PlayerUrl)
+		vu, err := decode(videoId, f.Url, videoPage.PlayerUrl)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -246,7 +246,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func decode(urlStr, playerUrl string) (*url.URL, error) {
+func decode(videoId, urlStr, playerUrl string) (*url.URL, error) {
 	u, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -254,7 +254,7 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 
 	q := u.Query()
 	np := q.Get("n")
-	if dnp, err := yeti.DecodeParam(http.DefaultClient, np, playerUrl); err != nil {
+	if dnp, err := yeti.DecodeParam(http.DefaultClient, videoId, np, playerUrl); err != nil {
 		return nil, err
 	} else {
 		q.Set("n", dnp)
