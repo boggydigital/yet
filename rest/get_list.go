@@ -76,10 +76,10 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
-	plnv := rdx.Keys(data.PlaylistNewVideosProperty)
-	newPlaylistVideos := make([]string, 0, len(plnv))
+	pldq := rdx.Keys(data.PlaylistDownloadQueueProperty)
+	newPlaylistVideos := make([]string, 0, len(pldq))
 
-	for _, pl := range plnv {
+	for _, pl := range pldq {
 		if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, pl); ok {
 			newPlaylistVideos = append(newPlaylistVideos, nv...)
 		}
