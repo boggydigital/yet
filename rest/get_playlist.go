@@ -56,7 +56,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	sb.WriteString("<h1>" + pt + "</h1>")
 
 	if pdq, ok := rdx.GetFirstVal(data.PlaylistDownloadQueueProperty, id); ok && pdq == data.TrueValue {
-		sb.WriteString("<div class='subtle'>Automatically adding new videos to downloads queue</div>")
+		sb.WriteString("<div class='subtle'>Automatically downloading new videos</div>")
 	}
 
 	sb.WriteString("<a class='video refresh' href='/refresh?id=" + id + "'>Refresh playlist</a>")
