@@ -15,6 +15,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.6 // indirect
+	github.com/boggydigital/coost v0.3.9 // indirect
 	github.com/boggydigital/match_node v0.1.16 // indirect
 	golang.org/x/net v0.19.0 // indirect
 )
