@@ -49,7 +49,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem;color:turquoise}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.playlist.ended {color:dimgray}" +
-		"div.subtle {color: dimgray}" +
+		"div.subtle {color: dimgray; margin-block-start: 2rem}" +
 		"ul {list-style:none; padding-inline-start: 1rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
