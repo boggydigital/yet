@@ -7,8 +7,10 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"golang.org/x/exp/maps"
+	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func AddVideosHandler(u *url.URL) error {
@@ -81,7 +83,16 @@ func addPropertyValues(rdx kvas.WriteableRedux, parseDelegate func(...string) ([
 		return apva.EndWithError(err)
 	}
 
-	if err := rdx.BatchAddValues(property, trueValues(values...)); err != nil {
+	valuesDelegate := trueValues
+
+	switch property {
+	case data.VideoEndedProperty:
+		valuesDelegate = timestampValues
+	default:
+		// do nothing, trueValues is already the default
+	}
+
+	if err := rdx.BatchAddValues(property, valuesDelegate(values...)); err != nil {
 		return apva.EndWithError(err)
 	}
 
@@ -100,6 +111,17 @@ func trueValues(ids ...string) map[string][]string {
 			continue
 		}
 		tv[id] = []string{data.TrueValue}
+	}
+	return tv
+}
+
+func timestampValues(ids ...string) map[string][]string {
+	tv := make(map[string][]string)
+	for _, id := range ids {
+		if id == "" {
+			continue
+		}
+		tv[id] = []string{time.Now().Format(http.TimeFormat)}
 	}
 	return tv
 }
