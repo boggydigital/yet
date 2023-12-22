@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"github.com/boggydigital/coost"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
@@ -9,7 +8,6 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
-	"net/http"
 	"net/url"
 	"strings"
 )
@@ -28,11 +26,6 @@ func Download(ids []string, queue, force bool) error {
 	defer da.End()
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return da.EndWithError(err)
-	}
-
-	absCookiePath, err := paths.AbsCookiesPath()
 	if err != nil {
 		return da.EndWithError(err)
 	}
@@ -60,19 +53,9 @@ func Download(ids []string, queue, force bool) error {
 
 	for _, videoId := range videoIds {
 
-		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
-			if strings.Contains(err.Error(), "Sign in to confirm your age") {
-				if hc, err := coost.NewHttpClientFromFile(absCookiePath); err != nil {
-					return da.EndWithError(err)
-				} else {
-					if videoPage, err = yt_urls.GetVideoPage(hc, videoId); err != nil {
-						return da.EndWithError(err)
-					}
-				}
-			} else {
-				return da.EndWithError(err)
-			}
+			return da.EndWithError(err)
 		}
 
 		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {

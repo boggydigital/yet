@@ -80,7 +80,7 @@ func GetVideoFile(force bool, ids ...string) error {
 			continue
 		}
 
-		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
 			if rerr := rdx.ReplaceValues(data.VideoErrorsProperty, videoId, err.Error()); rerr != nil {
 				return gva.EndWithError(rerr)

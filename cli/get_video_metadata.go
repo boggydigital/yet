@@ -7,7 +7,6 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
-	"net/http"
 	"net/url"
 	"strings"
 )
@@ -65,7 +64,7 @@ func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId stri
 
 	var err error
 	if videoPage == nil {
-		videoPage, err = yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		videoPage, err = yeti.GetVideoPage(videoId)
 		if err != nil {
 			return gvpma.EndWithError(err)
 		}

@@ -86,7 +86,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if videoUrl == "" || videoTitle == "" {
-		videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
+		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
