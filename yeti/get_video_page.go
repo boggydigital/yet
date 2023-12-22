@@ -8,25 +8,33 @@ import (
 	"strings"
 )
 
+var errorsSolvedWithCookies = []string{
+	"Sign in to confirm your age",
+	"Join this channel to get access to members-only content",
+}
+
 func GetVideoPage(videoId string) (*yt_urls.InitialPlayerResponse, error) {
 
 	// by default - use a default client that doesn't provide client cookies
 	videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 	if err != nil {
-		if strings.Contains(err.Error(), "Sign in to confirm your age") {
-			// fallback to HTTP client with cookies
-			absCookiePath, err := paths.AbsCookiesPath()
-			if err != nil {
-				return nil, err
-			}
-			if hc, err := coost.NewHttpClientFromFile(absCookiePath); err != nil {
-				return nil, err
-			} else {
-				if videoPage, err = yt_urls.GetVideoPage(hc, videoId); err != nil {
+		errSolvedWithCookies := false
+		for _, esc := range errorsSolvedWithCookies {
+			if strings.Contains(err.Error(), esc) {
+				errSolvedWithCookies = true
+				// fallback to HTTP client with cookies
+				if absCookiePath, err := paths.AbsCookiesPath(); err == nil {
+					if hc, err := coost.NewHttpClientFromFile(absCookiePath); err == nil {
+						return yt_urls.GetVideoPage(hc, videoId)
+					} else {
+						return nil, err
+					}
+				} else {
 					return nil, err
 				}
 			}
-		} else {
+		}
+		if !errSolvedWithCookies {
 			return nil, err
 		}
 	}
