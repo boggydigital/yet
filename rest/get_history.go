@@ -22,9 +22,8 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		"<title>🔻 History</title>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
-		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"a.video {display:flex;flex-direction: column; color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.video img {border-radius:0.25rem;width:200px}" +
-		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
 		"details {margin-block:2rem; content-visibility: auto}" +
@@ -32,6 +31,9 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem;color:turquoise}" +
 		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"ul {list-style:none; padding-inline-start: 1rem}" +
+		".title {margin-block-start:0.5rem;margin-block-end:0.25rem}" +
+		".subtitle {font-size:62.5%; font-weight:normal}" +
+		"a.video .subtitle {color:dimgray}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
