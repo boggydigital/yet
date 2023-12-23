@@ -7,9 +7,11 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func CleanupEndedHandler(u *url.URL) error {
@@ -51,11 +53,36 @@ func CleanupEnded() error {
 			return cea.EndWithError(err)
 		}
 		cea.Increment()
+
+		// checking and removing empty directories
+		if channelTitle, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channelTitle != "" {
+			absDirName := filepath.Join(absVideosDir, channelTitle)
+			if ok, err := directoryIsEmpty(absDirName); ok && err == nil {
+				if err := os.Remove(absDirName); err != nil {
+					return err
+				}
+			}
+		}
 	}
 
 	cea.EndWithResult("done")
 
 	return nil
+}
+
+// https://stackoverflow.com/questions/30697324/how-to-check-if-directory-on-path-is-empty
+func directoryIsEmpty(name string) (bool, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1)
+	if err == io.EOF {
+		return true, nil
+	}
+	return false, err
 }
 
 func removeVideoFile(videoId, absVideosDir string, rdx kvas.ReadableRedux) error {
@@ -66,7 +93,18 @@ func removeVideoFile(videoId, absVideosDir string, rdx kvas.ReadableRedux) error
 		return nil
 	}
 
-	relVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
+	relVideoFilename := ""
+
+	if strings.HasSuffix(videoId, yt_urls.DefaultVideoExt) {
+		relVideoFilename = videoId
+	} else {
+		relVideoFilename = yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
+	}
+
+	if relVideoFilename == "" {
+		return nil
+	}
+
 	absVideoFilename := filepath.Join(absVideosDir, relVideoFilename)
 
 	if _, err := os.Stat(absVideoFilename); err == nil {
