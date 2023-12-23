@@ -132,11 +132,14 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-		"h1 {margin: 1rem; margin-block: 2rem}" +
-		"details {margin: 1rem}" +
+		"h1 {margin-block: 2rem}" +
+		"details {margin-block: 1rem}" +
 		"details summary {cursor:pointer}" +
+		"summary::after {content: '\u2026';flex-shrink: 0}" +
+		"summary::-webkit-details-marker {display: none}" +
 		"h2 {display: inline}" +
-		".videoDescription {margin:1rem}" +
+		".videoDescription {margin-block:1rem}" +
+		"div.subtle {color:dimgray}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -151,8 +154,15 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	//}
 	sb.WriteString("</video>")
 
+	server := "origin"
 	if playbackType == "local" {
-		videoTitle = "🔻 " + videoTitle
+		server = "yet"
+	}
+
+	sb.WriteString(fmt.Sprintf("<div class='subtle'>This video will play from the %s server</div>", server))
+
+	if lastEndedTime != "" {
+		videoTitle = "☑️ " + videoTitle
 	}
 
 	sb.WriteString("<h1 class='videoTitle'>" + videoTitle + "</h1>")

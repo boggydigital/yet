@@ -44,11 +44,11 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"<title>🔻 " + pt + "</title>" +
 		"<style>" +
 		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
-		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"a.video, a.action {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.video img {border-radius:0.25rem;width:200px;aspect-ratio:16/9;background:dimgray}" +
 		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
-		"a.video.refresh {color: aqua; margin-block: 2.5rem;}" +
+		"a.action.refresh {color: dodgerblue; margin-block: 2rem;}" +
 		"div.subtle {color:dimgray}" +
 		"</style></head>")
 	sb.WriteString("<body>")
@@ -59,7 +59,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<div class='subtle'>Automatically downloading new videos</div>")
 	}
 
-	sb.WriteString("<a class='video refresh' href='/refresh?id=" + id + "'>Refresh playlist</a>")
+	sb.WriteString("<a class='action refresh' href='/refresh?list=" + id + "'>Refresh playlist</a>")
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for i, videoId := range videoIds {

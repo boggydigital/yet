@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"slices"
-	"strconv"
 	"strings"
 )
 
@@ -46,11 +45,14 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"a.highlight {color:gold; margin-block:2rem}" +
 		"details {margin-block:2rem; content-visibility: auto}" +
 		"summary {margin-block-end: 2rem}" +
-		"summary h1 {display: inline; cursor: pointer; margin-inline-start: 0.5rem;color:turquoise}" +
-		"a.playlist {display:block;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"summary::after {content: '\u2026';flex-shrink: 0}" +
+		"summary::-webkit-details-marker {display: none}" +
+		"summary h1 {display: inline; cursor: pointer;color:turquoise}" +
+		"a.playlist {display:flex;flex-direction:column;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.playlist.ended {color:dimgray}" +
+		"a.playlist .playlistSubtitle {font-size:62.5%; font-weight:normal}" +
 		"div.subtle {color: dimgray; margin-block-start: 2rem}" +
-		"ul {list-style:none; padding-inline-start: 1rem}" +
+		"ul {list-style:none; padding-inline-start: 0rem}" +
 		"</style></head>")
 	sb.WriteString("<body>")
 
@@ -142,7 +144,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 			pt := playlistTitle(id, rdx)
 			if nvc > 0 {
-				pt += " (" + strconv.Itoa(nvc) + " new)"
+				pt += fmt.Sprintf("<span class='playlistSubtitle'>%d new</span>", nvc)
 			}
 
 			pc := "playlist"
@@ -235,7 +237,7 @@ func playlistTitle(playlistId string, rdx kvas.ReadableRedux) string {
 	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 
 		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
-			return fmt.Sprintf("%s - %s", plc, plt)
+			return fmt.Sprintf("<span class='playlistTitle'>%s - %s</span>", plc, plt)
 		}
 
 		return plt
