@@ -21,7 +21,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 History</title>" +
 		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
+		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
 		"a.video {display:flex;flex-direction: column; color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.video img {border-radius:0.25rem;width:200px}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
