@@ -43,12 +43,15 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 " + pt + "</title>" +
 		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
-		"a.video, a.action {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
+		"a.video, a.action {display:flex;flex-direction: column; color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.video img {border-radius:0.25rem;width:200px;aspect-ratio:16/9;background:dimgray}" +
 		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.action.refresh {color: dodgerblue; margin-block: 2rem;}" +
+		".title {margin-block-start:0.5rem;margin-block-end:0.25rem}" +
+		".subtitle {font-size:62.5%; font-weight:normal}" +
+		"a.video .subtitle {color:dimgray}" +
 		"div.subtle {color:dimgray}" +
 		"</style></head>")
 	sb.WriteString("<body>")

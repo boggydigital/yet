@@ -20,7 +20,7 @@ func GetNew(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 Watch new</title>" +
 		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
+		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
 		"input[type='text'] {width:90%}" +
 		"input {font-size:1.25rem;display:block;}" +
 		"input[type='submit'] {margin-block: 1rem;}" +

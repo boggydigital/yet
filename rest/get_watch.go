@@ -130,7 +130,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 " + videoTitle + "</title>" +
 		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
+		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
 		"h1 {margin-block: 2rem}" +
 		"details {margin-block: 1rem}" +

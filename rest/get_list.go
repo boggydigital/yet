@@ -37,20 +37,21 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 Watch list</title>" +
 		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 1rem;} " +
-		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
+		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
+		"a.video {display:flex;flex-direction: column; color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.video img {border-radius:0.25rem;width:200px;aspect-ratio:16/9;background:dimgray}" +
-		"a.video span {font-size:1rem}" +
 		"a.video.ended {filter:grayscale(1.0)}" +
 		"a.highlight {color:gold; margin-block:2rem}" +
 		"details {margin-block:2rem; content-visibility: auto}" +
-		"summary {margin-block-end: 2rem}" +
+		"summary {margin-block-end: 1rem}" +
 		"summary::after {content: '\u2026';flex-shrink: 0}" +
 		"summary::-webkit-details-marker {display: none}" +
 		"summary h1 {display: inline; cursor: pointer;color:turquoise}" +
 		"a.playlist {display:flex;flex-direction:column;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
 		"a.playlist.ended {color:dimgray}" +
-		"a.playlist .playlistSubtitle {font-size:62.5%; font-weight:normal}" +
+		".title {margin-block-start:0.5rem;margin-block-end:0.25rem}" +
+		".subtitle {font-size:62.5%; font-weight:normal}" +
+		"a.video .subtitle {color:dimgray}" +
 		"div.subtle {color: dimgray; margin-block-start: 2rem}" +
 		"ul {list-style:none; padding-inline-start: 0rem}" +
 		"</style></head>")
@@ -144,7 +145,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 			pt := playlistTitle(id, rdx)
 			if nvc > 0 {
-				pt += fmt.Sprintf("<span class='playlistSubtitle'>%d new</span>", nvc)
+				pt += fmt.Sprintf("<span class='subtitle'>%d new</span>", nvc)
 			}
 
 			pc := "playlist"
@@ -225,10 +226,15 @@ func writeVideo(videoId string, showImage bool, rdx kvas.ReadableRedux, sb *stri
 		imageContent = "<img src='/poster?v=" + videoId + "&q=mqdefault' loading='lazy'/>"
 	}
 
+	publishedContent := ""
+	if published, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && published != "" {
+		publishedContent = "<span class='subtitle'>Published: " + published + "</span>"
+	}
+
 	sb.WriteString("<a class='" + class + "' href='" + videoUrl + "'>" +
 		imageContent +
-		"<br/>" +
-		"<span>" + videoTitle + "</span>" +
+		"<span class='title'>" + videoTitle + "</span>" +
+		publishedContent +
 		"</a>")
 
 }
