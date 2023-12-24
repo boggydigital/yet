@@ -5,7 +5,17 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
+
+const (
+	recentGroup    = "A week or less ago"
+	thisMonthGroup = "A month or less ago"
+	thisYearGroup  = "More than a month, less than a year ago"
+	olderGroup     = "More than a year ago"
+)
+
+var groupsOrder = []string{recentGroup, thisMonthGroup, thisYearGroup, olderGroup}
 
 func GetHistory(w http.ResponseWriter, r *http.Request) {
 
@@ -31,20 +41,45 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 
 	sb.WriteString("<h1>Watch history</h1>")
 
-	var err error
-
 	whKeys := rdx.Keys(data.VideoEndedProperty)
-	if len(whKeys) > 0 {
 
-		whKeys, err = rdx.Sort(whKeys, false, data.VideoTitleProperty)
+	endedGroups := make(map[string][]string)
+	for _, id := range whKeys {
+		group := olderGroup
+		if ets, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && ets != "" {
+			if et, err := time.Parse(http.TimeFormat, ets); err == nil {
+				days := time.Now().Sub(et).Hours() / 24
+				if days <= 7 {
+					group = recentGroup
+				} else if days <= 30 {
+					group = thisMonthGroup
+				} else if days <= 365 {
+					group = thisYearGroup
+				}
+			}
+		}
+		endedGroups[group] = append(endedGroups[group], id)
+	}
+
+	for _, grp := range groupsOrder {
+
+		open := ""
+		if grp == recentGroup {
+			open = "open"
+		}
+
+		sb.WriteString("<details " + open + "><summary><h2>" + grp + "</h2></summary>")
+
+		sortedIds, err := rdx.Sort(endedGroups[grp], false, data.VideoTitleProperty)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		for _, id := range whKeys {
+		for _, id := range sortedIds {
 			writeVideo(id, rdx, sb, ShowEndedDate)
 		}
+		sb.WriteString("</details>")
 	}
 
 	sb.WriteString("</body>")
