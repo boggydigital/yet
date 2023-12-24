@@ -64,7 +64,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
+		sb.WriteString("<details open name='watchlist'><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
 			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
 				writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
@@ -91,7 +91,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sb.WriteString("<details><summary><h1>Watchlist</h1></summary>")
+		sb.WriteString("<details name='watchlist'><summary><h1>Watchlist</h1></summary>")
 
 		for _, id := range wlKeys {
 			if slices.Contains(newPlaylistVideos, id) {
@@ -127,7 +127,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			openOrClose = "open"
 		}
 
-		sb.WriteString("<details " + openOrClose + "><summary><h1>Playlists</h1></summary>")
+		sb.WriteString("<details " + openOrClose + " name='watchlist'><summary><h1>Playlists</h1></summary>")
 		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 
@@ -163,7 +163,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
+		sb.WriteString("<details name='watchlist'><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
 			writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
 		}
