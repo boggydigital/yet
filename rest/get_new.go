@@ -19,14 +19,17 @@ func GetNew(w http.ResponseWriter, r *http.Request) {
 		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 Watch new</title>" +
-		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
+		"<style>")
+
+	writeSharedStyles(sb)
+
+	// new specific styles
+	sb.WriteString(
 		"input[type='text'] {width:90%}" +
-		"input {font-size:1.25rem;display:block;}" +
-		"input[type='submit'] {margin-block: 1rem;}" +
-		"a.video {display:block;color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
-		"a.highlight {color:gold; margin-block:2rem}" +
-		"</style></head>")
+			"input {font-size:1.25rem;display:block;}" +
+			"input[type='submit'] {margin-block: 1rem;}")
+
+	sb.WriteString("</style></head>")
 	sb.WriteString("<body>")
 
 	sb.WriteString("<a class='video highlight' href='/list'>Watch list</a>")

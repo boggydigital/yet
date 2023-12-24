@@ -42,26 +42,23 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 " + pt + "</title>" +
-		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
-		"a.video, a.action {display:flex;flex-direction: column; color:white;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:0.5rem;margin-block-end: 1rem}" +
-		"a.video img {border-radius:0.25rem;width:200px;aspect-ratio:16/9;background:dimgray}" +
-		"a.video.ended {filter:grayscale(1.0)}" +
-		"a.action.refresh {color: dodgerblue; margin-block: 2rem;}" +
-		".title {margin-block-start:0.5rem;margin-block-end:0.25rem}" +
-		".subtitle {font-size:62.5%; font-weight:normal}" +
-		"a.video .subtitle {color:dimgray}" +
-		"div.subtle {color:dimgray}" +
-		"</style></head>")
+		"<style>")
+
+	writeSharedStyles(sb)
+
+	// playlist specific styles
+	sb.WriteString("a.refresh {color: dodgerblue; margin-block: 2rem;}")
+
+	sb.WriteString("</style></head>")
 	sb.WriteString("<body>")
 
 	sb.WriteString("<h1>" + pt + "</h1>")
 
 	if pdq, ok := rdx.GetFirstVal(data.PlaylistDownloadQueueProperty, id); ok && pdq == data.TrueValue {
-		sb.WriteString("<div class='subtle'>Automatically downloading new videos</div>")
+		sb.WriteString("<div class='subtle'>Automatically refreshing and downloading new videos</div>")
 	}
 
-	sb.WriteString("<a class='action refresh' href='/refresh?list=" + id + "'>Refresh playlist</a>")
+	sb.WriteString("<a class='video refresh' href='/refresh?list=" + id + "'>Refresh playlist</a>")
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for i, videoId := range videoIds {

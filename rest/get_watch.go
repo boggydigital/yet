@@ -129,18 +129,17 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
 		"<meta name='color-scheme' content='dark light'>" +
 		"<title>🔻 " + videoTitle + "</title>" +
-		"<style>" +
-		"body {background: black; color: white;font-family:sans-serif; margin: 2rem;} " +
+		"<style>")
+
+	writeSharedStyles(sb)
+
+	sb.WriteString(
 		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-		"h1 {margin-block: 2rem}" +
-		"details {margin-block: 1rem}" +
-		"details summary {cursor:pointer}" +
-		"summary::after {content: '\u2026';flex-shrink: 0}" +
-		"summary::-webkit-details-marker {display: none}" +
-		"h2 {display: inline}" +
-		".videoDescription {margin-block:1rem}" +
-		"div.subtle {color:dimgray}" +
-		"</style></head>")
+			"h1 {margin-block: 2rem}" +
+			"h2 {display: inline}" +
+			".videoDescription {margin-block-end:1rem}")
+
+	sb.WriteString("</style></head>")
 	sb.WriteString("<body>")
 
 	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
