@@ -66,7 +66,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
 			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
-				writeVideo(id, true, rdx, sb)
+				writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
 			}
 		}
 		sb.WriteString("</details>")
@@ -102,7 +102,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
 				continue
 			}
-			writeVideo(id, true, rdx, sb)
+			writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
 		}
 
 		if len(newPlaylistVideos) > 0 {
@@ -164,7 +164,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
-			writeVideo(id, true, rdx, sb)
+			writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
 		}
 		sb.WriteString("</details>")
 	}
@@ -183,52 +183,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-}
-
-func writeVideo(videoId string, showImage bool, rdx kvas.ReadableRedux, sb *strings.Builder) {
-
-	videoTitle := videoId
-	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		videoTitle = title
-	}
-
-	ended := false
-	if et, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
-		ended = true
-	}
-
-	//progress := false
-	//if pt, ok := rdx.GetFirstVal(data.VideoProgressProperty, videoId); ok && pt != "" {
-	//	progress = true
-	//}
-
-	videoUrl := "/watch?"
-	if videoId != "" {
-		videoUrl += "v=" + videoId
-	}
-
-	class := ""
-	if ended {
-		videoTitle = "☑️ " + videoTitle
-		class += "ended"
-	}
-
-	imageContent := ""
-	if showImage {
-		imageContent = "<img src='/poster?v=" + videoId + "&q=mqdefault' loading='lazy'/>"
-	}
-
-	publishedContent := ""
-	if published, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && published != "" {
-		publishedContent = "<span class='subtitle'>Published: " + published + "</span>"
-	}
-
-	sb.WriteString("<a class='" + class + "' href='" + videoUrl + "'>" +
-		imageContent +
-		"<span class='title'>" + videoTitle + "</span>" +
-		publishedContent +
-		"</a>")
 
 }
 

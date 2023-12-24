@@ -62,8 +62,13 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for i, videoId := range videoIds {
-			showImage := i+1 < showImagesLimit
-			writeVideo(videoId, showImage, rdx, sb)
+			var options []VideoOptions
+			if i+1 < showImagesLimit {
+				options = []VideoOptions{ShowPoster, ShowPublishedDate}
+			} else {
+				options = []VideoOptions{ShowPublishedDate}
+			}
+			writeVideo(videoId, rdx, sb, options...)
 		}
 	}
 
