@@ -88,7 +88,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 			open = "open"
 		}
 
-		sb.WriteString("<details " + open + " name='history'><summary><h2>" + grp + "</h2></summary>")
+		sb.WriteString("<details " + open + "><summary><h2>" + grp + "</h2></summary>")
 
 		sortedIds, err := rdx.Sort(endedGroups[grp], true, data.VideoEndedProperty)
 		if err != nil {
