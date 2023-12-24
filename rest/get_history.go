@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/boggydigital/yet/data"
 	"io"
 	"net/http"
@@ -9,15 +10,18 @@ import (
 )
 
 const (
-	recentGroup    = "A week or less ago"
-	thisMonthGroup = "More than a week, less than a month ago"
-	thisYearGroup  = "More than a month, less than a year ago"
-	olderGroup     = "More than a year ago"
+	recentGroup      = "A week or less ago"
+	thisMonthGroup   = "More than a week, less than a month ago"
+	thisYearGroup    = "More than a month, less than a year ago"
+	olderGroup       = "More than a year ago"
+	endedVideosLimit = 100
 )
 
 var groupsOrder = []string{recentGroup, thisMonthGroup, thisYearGroup, olderGroup}
 
 func GetHistory(w http.ResponseWriter, r *http.Request) {
+
+	showAll := r.URL.Query().Has("showAll")
 
 	w.Header().Set("Content-Type", "text/html")
 
@@ -35,11 +39,17 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	writeSharedStyles(sb)
 
 	// no history specific styles at the moment
+	sb.WriteString("a.video.showAll {color: dodgerblue}")
 
 	sb.WriteString("</style></head>")
 	sb.WriteString("<body>")
 
-	sb.WriteString("<h1>Watch history</h1>")
+	pageTitle := fmt.Sprintf("Last %d watched videos", endedVideosLimit)
+	if showAll {
+		pageTitle = "All watched videos"
+	}
+
+	sb.WriteString("<h1>" + pageTitle + "</h1>")
 
 	whKeys := rdx.Keys(data.VideoEndedProperty)
 
@@ -61,7 +71,17 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		endedGroups[group] = append(endedGroups[group], id)
 	}
 
+	writtenVideos := 0
+
 	for _, grp := range groupsOrder {
+
+		if writtenVideos == endedVideosLimit && !showAll {
+			break
+		}
+
+		if len(endedGroups[grp]) == 0 {
+			continue
+		}
 
 		open := ""
 		if grp == recentGroup {
@@ -77,9 +97,21 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, id := range sortedIds {
+			if writtenVideos == endedVideosLimit && !showAll {
+				break
+			}
 			writeVideo(id, rdx, sb, ShowEndedDate)
+			writtenVideos++
 		}
 		sb.WriteString("</details>")
+	}
+
+	if !showAll {
+		sb.WriteString("<div class='subtle'>" +
+			"To load this page faster, yet is limiting displayed videos. " +
+			"Click the link below to see all watched videos" +
+			"</div>")
+		sb.WriteString("<a class='video showAll' href='/history?showAll'>Show all videos</a>")
 	}
 
 	sb.WriteString("</body>")

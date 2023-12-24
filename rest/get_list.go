@@ -172,7 +172,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	whKeys := rdx.Keys(data.VideoEndedProperty)
 	if len(whKeys) > 0 {
 		sb.WriteString("<details open><summary><h1>History</h1></summary>")
-		sb.WriteString("<a class='video' href='/history'>See all watch history</a>")
+		sb.WriteString("<a class='video' href='/history'>Check out your watch history</a>")
 		sb.WriteString("</details>")
 	}
 
