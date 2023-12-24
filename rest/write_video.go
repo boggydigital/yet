@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"net/http"
 	"slices"
 	"strings"
 	"time"
@@ -37,7 +36,7 @@ func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder, opt
 	publishedContent := ""
 	if slices.Contains(options, ShowPublishedDate) {
 		if pts, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && pts != "" {
-			publishedContent = "<span class='subtitle'><b>Published</b>: " + parseAndFormat(time.RFC3339, pts) + "</span>"
+			publishedContent = "<span class='subtitle'><b>Published</b>: " + parseAndFormat(pts) + "</span>"
 		}
 	}
 
@@ -46,7 +45,7 @@ func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder, opt
 	if ets, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && ets != "" {
 		ended = true
 		if slices.Contains(options, ShowEndedDate) {
-			endedContent = "<span class='subtitle'><b>Ended</b>: " + parseAndFormat(http.TimeFormat, ets) + "</span>"
+			endedContent = "<span class='subtitle'><b>Ended</b>: " + parseAndFormat(ets) + "</span>"
 		}
 	}
 
@@ -64,8 +63,8 @@ func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder, opt
 		"</a>")
 }
 
-func parseAndFormat(layout, ts string) string {
-	if pt, err := time.Parse(layout, ts); err == nil {
+func parseAndFormat(ts string) string {
+	if pt, err := time.Parse(time.RFC3339, ts); err == nil {
 		return pt.Local().Format(time.RFC1123)
 	} else {
 		return ts

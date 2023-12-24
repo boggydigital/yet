@@ -71,6 +71,30 @@ func main() {
 		os.Exit(1)
 	}
 
+	//metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//formattedTimes := make(map[string][]string)
+	//
+	//for _, id := range rdx.Keys(data.VideoEndedProperty) {
+	//	ets, _ := rdx.GetFirstVal(data.VideoEndedProperty, id)
+	//
+	//	if et, err := time.Parse(http.TimeFormat, ets); err == nil {
+	//		formattedTimes[id] = []string{et.Format(time.RFC3339)}
+	//	}
+	//}
+	//
+	//if err := rdx.BatchReplaceValues(data.VideoEndedProperty, formattedTimes); err != nil {
+	//	panic(err)
+	//}
+
 	if err := defs.Serve(os.Args[1:]); err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)

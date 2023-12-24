@@ -7,7 +7,6 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"golang.org/x/exp/maps"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -121,7 +120,7 @@ func timestampValues(ids ...string) map[string][]string {
 		if id == "" {
 			continue
 		}
-		tv[id] = []string{time.Now().Format(http.TimeFormat)}
+		tv[id] = []string{time.Now().Format(time.RFC3339)}
 	}
 	return tv
 }

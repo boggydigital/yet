@@ -25,7 +25,7 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store completion timestamp
-	currentTime := time.Now().Format(http.TimeFormat)
+	currentTime := time.Now().Format(time.RFC3339)
 	if err := rdx.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

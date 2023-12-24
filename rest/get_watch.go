@@ -173,17 +173,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		sb.WriteString("</details>")
 	}
 
-	//sb.WriteString("<details>")
-	//sb.WriteString("<summary><h1>Tools</h1></summary>")
-	//if lastEndedTime != "" {
-	//	if lt, err := time.Parse(http.TimeFormat, lastEndedTime); err == nil {
-	//		sb.WriteString("<div class='lastEnded'><span>Last watched: ")
-	//		sb.WriteString("<time>" + lt.Local().Format(time.RFC1123) + "</time></div>")
-	//	}
-	//}
-	//sb.WriteString("<span class='playbackType'>Video source: " + playbackType + "</span>")
-	//sb.WriteString("</details>")
-
 	sb.WriteString("<script>" +
 		"let video = document.getElementsByTagName('video')[0];" +
 		"</script>")

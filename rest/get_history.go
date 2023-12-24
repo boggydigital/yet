@@ -10,7 +10,7 @@ import (
 
 const (
 	recentGroup    = "A week or less ago"
-	thisMonthGroup = "A month or less ago"
+	thisMonthGroup = "More than a week, less than a month ago"
 	thisYearGroup  = "More than a month, less than a year ago"
 	olderGroup     = "More than a year ago"
 )
@@ -47,7 +47,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	for _, id := range whKeys {
 		group := olderGroup
 		if ets, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && ets != "" {
-			if et, err := time.Parse(http.TimeFormat, ets); err == nil {
+			if et, err := time.Parse(time.RFC3339, ets); err == nil {
 				days := time.Now().Sub(et).Hours() / 24
 				if days <= 7 {
 					group = recentGroup
@@ -70,7 +70,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 
 		sb.WriteString("<details " + open + "><summary><h2>" + grp + "</h2></summary>")
 
-		sortedIds, err := rdx.Sort(endedGroups[grp], false, data.VideoTitleProperty)
+		sortedIds, err := rdx.Sort(endedGroups[grp], true, data.VideoEndedProperty)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
