@@ -109,7 +109,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	if !showAll {
 		sb.WriteString("<div class='subtle'>" +
 			"To load this page faster, yet is limiting displayed videos. " +
-			"Click the link below to see all watched videos" +
+			"Click the link below to see all videos you ever watched on yet" +
 			"</div>")
 		sb.WriteString("<a class='video showAll' href='/history?showAll'>Show all videos</a>")
 	}

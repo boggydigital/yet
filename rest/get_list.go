@@ -6,6 +6,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"io"
 	"net/http"
+	"path"
 	"slices"
 	"strings"
 )
@@ -136,7 +137,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 				nvc = len(nv)
 			}
 
-			pt := playlistTitle(id, rdx)
+			pt := "<span class='playlistTitle'>" + playlistTitle(id, rdx) + "</span>"
 			if nvc > 0 {
 				pt += fmt.Sprintf("<span class='subtitle'>%d new</span>", nvc)
 			}
@@ -171,9 +172,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	whKeys := rdx.Keys(data.VideoEndedProperty)
 	if len(whKeys) > 0 {
-		sb.WriteString("<details open><summary><h1>History</h1></summary>")
+		sb.WriteString("<h1 class='highlight'>History</h1>")
 		sb.WriteString("<a class='video' href='/history'>Check out your watch history</a>")
-		sb.WriteString("</details>")
 	}
 
 	sb.WriteString("</body>")
@@ -190,7 +190,11 @@ func playlistTitle(playlistId string, rdx kvas.ReadableRedux) string {
 	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 
 		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
-			return fmt.Sprintf("<span class='playlistTitle'>%s - %s</span>", plc, plt)
+			if plt == "Videos" {
+				return plc
+			} else {
+				return path.Join(plc, plt)
+			}
 		}
 
 		return plt

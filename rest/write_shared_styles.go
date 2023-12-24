@@ -19,5 +19,5 @@ func writeSharedStyles(sb *strings.Builder) {
 			"summary {margin-block-end: 1rem}" +
 			"summary::after {content: '\u2026';flex-shrink: 0}" +
 			"summary::-webkit-details-marker {display: none}" +
-			"summary h1, summary h2 {display: inline; cursor: pointer;color:turquoise}")
+			"summary h1, summary h2, h1.highlight {display: inline; cursor: pointer;color:turquoise}")
 }
