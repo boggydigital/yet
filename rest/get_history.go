@@ -21,6 +21,13 @@ var groupsOrder = []string{recentGroup, thisMonthGroup, thisYearGroup, olderGrou
 
 func GetHistory(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	rdx, err = rdx.RefreshReader()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	showAll := r.URL.Query().Has("showAll")
 
 	w.Header().Set("Content-Type", "text/html")

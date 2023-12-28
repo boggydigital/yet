@@ -32,7 +32,7 @@ func RemovePlaylists(propertyValues map[string][]string) error {
 		return rpa.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, maps.Keys(propertyValues)...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, maps.Keys(propertyValues)...)
 	if err != nil {
 		return rpa.EndWithError(err)
 	}

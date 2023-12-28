@@ -33,7 +33,7 @@ func CleanupEnded() error {
 		return cea.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxReader(metadataDir,
+	rdx, err := kvas.NewReduxReader(metadataDir,
 		data.VideoEndedProperty,
 		data.VideoTitleProperty,
 		data.VideoOwnerChannelNameProperty)

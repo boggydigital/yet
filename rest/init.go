@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	rdx kvas.WriteableRedux
+	rdx kvas.ReadableRedux
 )
 
 func Init() error {
@@ -17,7 +17,7 @@ func Init() error {
 		return err
 	}
 
-	if rdx, err = kvas.ReduxWriter(metadataDir, data.AllProperties()...); err != nil {
+	if rdx, err = kvas.NewReduxReader(metadataDir, data.AllProperties()...); err != nil {
 		return err
 	}
 

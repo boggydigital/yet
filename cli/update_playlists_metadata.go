@@ -22,7 +22,7 @@ func UpdatePlaylistsMetadata() error {
 		return upma.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.PlaylistWatchlistProperty)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.PlaylistWatchlistProperty)
 	if err != nil {
 		return upma.EndWithError(err)
 	}

@@ -20,7 +20,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	// GET /watch?v&t
 
 	var err error
-	rdx, err = rdx.RefreshWriter()
+	rdx, err = rdx.RefreshReader()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -92,12 +92,12 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		for p, v := range yeti.ExtractMetadata(videoPage) {
-			if err := rdx.AddValues(p, videoId, v...); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}
+		//for p, v := range yeti.ExtractMetadata(videoPage) {
+		//	if err := rdx.AddValues(p, videoId, v...); err != nil {
+		//		http.Error(w, err.Error(), http.StatusInternalServerError)
+		//		return
+		//	}
+		//}
 
 		fs := videoPage.Formats()
 		var f yt_urls.Format

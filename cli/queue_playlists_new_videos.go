@@ -22,7 +22,7 @@ func QueuePlaylistsNewVideos() error {
 		return qpnva.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return qpnva.EndWithError(err)
 	}

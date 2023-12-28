@@ -36,7 +36,7 @@ func RemoveUrls(propertyValues map[string][]string, raw bool) error {
 		return rva.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir,
+	rdx, err := kvas.NewReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoProgressProperty,

@@ -30,7 +30,7 @@ func Download(ids []string, queue, force bool) error {
 		return da.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return da.EndWithError(err)
 	}

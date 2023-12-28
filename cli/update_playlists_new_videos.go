@@ -22,7 +22,7 @@ func UpdatePlaylistsNewVideos() error {
 		return upmnva.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return upmnva.EndWithError(err)
 	}

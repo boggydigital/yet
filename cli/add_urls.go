@@ -33,7 +33,7 @@ func AddUrls(propertyValues map[string][]string) error {
 		return aua.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir,
+	rdx, err := kvas.NewReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoEndedProperty)

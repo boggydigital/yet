@@ -16,7 +16,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	// GET /playlist?id
 
 	var err error
-	rdx, err = rdx.RefreshWriter()
+	rdx, err = rdx.RefreshReader()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

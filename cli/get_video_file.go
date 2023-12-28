@@ -41,7 +41,7 @@ func GetVideoFile(force bool, ids ...string) error {
 		return gva.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gva.EndWithError(err)
 	}

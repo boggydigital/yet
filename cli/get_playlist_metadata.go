@@ -34,7 +34,7 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 		return gpma.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gpma.EndWithError(err)
 	}

@@ -31,7 +31,7 @@ func GetCaptions(ids []string) error {
 		return gca.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir,
+	rdx, err := kvas.NewReduxWriter(metadataDir,
 		data.VideoCaptionsNamesProperty,
 		data.VideoCaptionsKindsProperty,
 		data.VideoCaptionsLanguagesProperty)

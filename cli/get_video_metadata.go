@@ -34,7 +34,7 @@ func GetVideoMetadata(force bool, ids ...string) error {
 		return gvma.EndWithError(err)
 	}
 
-	rdx, err := kvas.ReduxWriter(metadataDir, data.AllProperties()...)
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 	if err != nil {
 		return gvma.EndWithError(err)
 	}
