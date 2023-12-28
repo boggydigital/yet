@@ -54,6 +54,12 @@ func GetUrl(urls ...string) error {
 
 		start := time.Now()
 
+		// setting the title to the filename to enable proper sorting and
+		// other functionality that requires titles
+		if err := rdx.AddValues(data.VideoTitleProperty, filename, filename); err != nil {
+			return gfa.EndWithError(err)
+		}
+
 		// add to the download queue
 		if err := rdx.AddValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
 			return gfa.EndWithError(err)
