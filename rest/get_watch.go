@@ -92,12 +92,24 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		//for p, v := range yeti.ExtractMetadata(videoPage) {
-		//	if err := rdx.AddValues(p, videoId, v...); err != nil {
-		//		http.Error(w, err.Error(), http.StatusInternalServerError)
-		//		return
-		//	}
-		//}
+		metadataDir, err := paths.GetAbsDir(paths.Metadata)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		mdRdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		for p, values := range yeti.ExtractMetadata(videoPage) {
+			if err := mdRdx.AddValues(p, videoId, values...); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
 
 		fs := videoPage.Formats()
 		var f yt_urls.Format
