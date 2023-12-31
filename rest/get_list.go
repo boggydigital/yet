@@ -1,10 +1,8 @@
 package rest
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"io"
 	"net/http"
 	"path"
 	"slices"
@@ -14,6 +12,34 @@ import (
 const (
 	maxPlaylistVideosWatchlist = 3
 )
+
+type VideoViewModel struct {
+	VideoId           string
+	VideoUrl          string
+	VideoTitle        string
+	Class             string
+	ShowPoster        bool
+	ShowPublishedDate bool
+	PublishedDate     string
+	ShowEndedDate     bool
+	EndedDate         string
+}
+
+type PlaylistViewModel struct {
+	PlaylistId    string
+	PlaylistTitle string
+	Class         string
+	NewVideos     int
+}
+
+type ListViewModel struct {
+	Continue             []*VideoViewModel
+	Watchlist            []*VideoViewModel
+	Downloads            []*VideoViewModel
+	HasNewPlaylistVideos bool
+	Playlists            []*PlaylistViewModel
+	HasHistory           bool
+}
 
 func GetList(w http.ResponseWriter, r *http.Request) {
 
@@ -26,35 +52,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-
-	sb := &strings.Builder{}
-	sb.WriteString("<!doctype html>")
-	sb.WriteString("<html>")
-	sb.WriteString("<head>" +
-		"<meta charset='UTF-8'>" +
-		"<link rel='icon' href='data:image/svg+xml," +
-		"<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>" +
-		"<text y=%22.9em%22 font-size=%2290%22>🔻</text>" +
-		"</svg>' type='image/svg+xml'/>" +
-		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
-		"<meta name='color-scheme' content='dark light'>" +
-		"<title>🔻 Watch list</title>" +
-		"<style>")
-
-	writeSharedStyles(sb)
-
-	// list specific styles
-	sb.WriteString(
-		"a.playlist {display:flex;flex-direction:column;color:deeppink;font-size:1.3rem;font-weight:bold;text-decoration:none;margin-block:2rem;}" +
-			"a.playlist.ended {color:dimgray}" +
-			"a.playlist .subtitle {color: inherit}" +
-			"ul {list-style:none; padding-inline-start: 0rem}")
-
-	sb.WriteString("</style></head>")
-	sb.WriteString("<body>")
-
-	sb.WriteString("<a class='video highlight' href='/new'>Watch new</a>")
+	lvm := &ListViewModel{}
 
 	cwKeys := rdx.Keys(data.VideoProgressProperty)
 	if len(cwKeys) > 0 {
@@ -63,13 +61,11 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		sb.WriteString("<details open><summary><h1>Continue</h1></summary>")
 		for _, id := range cwKeys {
 			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
-				writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
+				lvm.Continue = append(lvm.Continue, videoViewModel(id, rdx, ShowPoster, ShowPublishedDate))
 			}
 		}
-		sb.WriteString("</details>")
 	}
 
 	pldq := rdx.Keys(data.PlaylistDownloadQueueProperty)
@@ -90,8 +86,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sb.WriteString("<details><summary><h1>Watchlist</h1></summary>")
-
 		for _, id := range wlKeys {
 			if slices.Contains(newPlaylistVideos, id) {
 				continue
@@ -102,14 +96,10 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
 				continue
 			}
-			writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
+			lvm.Watchlist = append(lvm.Watchlist, videoViewModel(id, rdx, ShowPoster, ShowPublishedDate))
 		}
 
-		if len(newPlaylistVideos) > 0 {
-			sb.WriteString("<div class='subtle'>Looking for more? New videos are available in the Playlists</div>")
-		}
-
-		sb.WriteString("</details>")
+		lvm.HasNewPlaylistVideos = len(newPlaylistVideos) > 0
 	}
 
 	plKeys := rdx.Keys(data.PlaylistWatchlistProperty)
@@ -121,13 +111,6 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		openOrClose := ""
-		if len(plKeys) < 7 {
-			openOrClose = "open"
-		}
-
-		sb.WriteString("<details " + openOrClose + "><summary><h1>Playlists</h1></summary>")
-		sb.WriteString("<ul>")
 		for _, id := range plKeys {
 
 			nvc := 0
@@ -136,21 +119,20 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 				nvc = len(nv)
 			}
 
-			pt := "<span class='playlistTitle'>" + playlistTitle(id, rdx) + "</span>"
-			if nvc > 0 {
-				pt += fmt.Sprintf("<span class='subtitle'>%d new</span>", nvc)
-			}
-
 			pc := "playlist"
 			if nvc == 0 {
 				pc += " ended"
 			}
 
-			sb.WriteString("<li><a class='" + pc + "' href='/playlist?list=" + id + "'>" + pt + "</a></li>")
+			plvm := &PlaylistViewModel{
+				PlaylistId:    id,
+				PlaylistTitle: playlistTitle(id, rdx),
+				Class:         pc,
+				NewVideos:     nvc,
+			}
 
+			lvm.Playlists = append(lvm.Playlists, plvm)
 		}
-		sb.WriteString("</ul>")
-		sb.WriteString("</details>")
 	}
 
 	dqKeys := rdx.Keys(data.VideosDownloadQueueProperty)
@@ -162,23 +144,16 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sb.WriteString("<details><summary><h1>Downloads</h1></summary>")
 		for _, id := range dqKeys {
-			writeVideo(id, rdx, sb, ShowPoster, ShowPublishedDate)
+			lvm.Downloads = append(lvm.Downloads, videoViewModel(id, rdx, ShowPoster, ShowPublishedDate))
 		}
-		sb.WriteString("</details>")
 	}
 
-	whKeys := rdx.Keys(data.VideoEndedProperty)
-	if len(whKeys) > 0 {
-		sb.WriteString("<h1 class='highlight'>History</h1>")
-		sb.WriteString("<a class='video' href='/history'>Check out your watch history</a>")
-	}
+	lvm.HasHistory = len(rdx.Keys(data.VideoEndedProperty)) > 0
 
-	sb.WriteString("</body>")
-	sb.WriteString("</html>")
+	w.Header().Set("Content-Type", "text/html")
 
-	if _, err := io.WriteString(w, sb.String()); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "list", lvm); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

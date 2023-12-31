@@ -1,0 +1,16 @@
+{{define "video"}}
+    <a class='{{.Class}}' href='{{.VideoUrl}}'>
+        {{if .ShowPoster}}
+            <img src='/poster?v={{.VideoId}}&q=mqdefault' loading='lazy'/>
+        {{end}}
+        <span class='title'>{{.VideoTitle}}</span>
+        {{if .ShowPublishedDate}}
+            {{if .PublishedDate}}
+            <span class='subtitle'><b>Published</b>: {{.PublishedDate}}</span>
+                {{end}}
+        {{end}}
+        {{if .ShowEndedDate}}
+            <span class='subtitle'><b>Ended</b>: {{.EndedDate}}</span>
+        {{end}}
+    </a>
+{{end}}
