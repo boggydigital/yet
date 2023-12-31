@@ -53,10 +53,10 @@
             {{range .Watchlist}}
                 {{template "video" .}}
             {{end}}
+            {{if .HasNewPlaylistVideos}}
+                <div class='subtle'>Looking for more? New videos are available in the Playlists</div>
+            {{end}}
         </details>
-        {{if .HasNewPlaylistVideos}}
-            <div class='subtle'>Looking for more? New videos are available in the Playlists</div>
-        {{end}}
     {{end}}
 
     {{if .Downloads}}
