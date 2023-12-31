@@ -7,13 +7,23 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
-	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+type WatchViewModel struct {
+	VideoId          string
+	VideoUrl         string
+	VideoPoster      string
+	Server           string
+	VideoTitle       string
+	VideoDescription string
+	CurrentTime      string
+	LastEndedTime    string
+}
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
 
@@ -132,126 +142,18 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	sb := &strings.Builder{}
-	sb.WriteString("<!doctype html>")
-	sb.WriteString("<html>")
-	sb.WriteString("<head>" +
-		"<meta charset='UTF-8'>" +
-		"<link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>' type='image/svg+xml'/>" +
-		"<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
-		"<meta name='color-scheme' content='dark light'>" +
-		"<title>🔻 " + videoTitle + "</title>" +
-		"<style>")
-
-	writeSharedStyles(sb)
-
-	sb.WriteString(
-		"video {width: 100%; height: 100%; aspect-ratio:16/9} " +
-			"h1 {margin-block: 2rem}" +
-			"h2 {display: inline}" +
-			".videoDescription {margin-block-end:1rem}")
-
-	sb.WriteString("</style></head>")
-	sb.WriteString("<body>")
-
-	sb.WriteString("<video controls='controls' preload='metadata' poster='" + videoPoster + "'>")
-	sb.WriteString("<source src='" + videoUrl + "' />")
-	//for _, vct := range videoCaptionTracks {
-	//	sb.WriteString("<track " +
-	//		"kind='" + vct.Kind + "' " +
-	//		"label='" + vct.TrackName + "' " +
-	//		"srclang='" + vct.LanguageCode + "' " +
-	//		"src='" + vct.BaseUrl + "'/>")
-	//}
-	sb.WriteString("</video>")
-
-	server := "origin"
-	if playbackType == "local" {
-		server = "yet"
+	wvm := &WatchViewModel{
+		VideoId:          videoId,
+		VideoUrl:         videoUrl,
+		VideoPoster:      videoPoster,
+		Server:           playbackType,
+		VideoTitle:       videoTitle,
+		VideoDescription: videoDescription,
+		CurrentTime:      t,
+		LastEndedTime:    lastEndedTime,
 	}
 
-	sb.WriteString(fmt.Sprintf("<div class='subtle'>This video will play from the %s server</div>", server))
-
-	if lastEndedTime != "" {
-		videoTitle = "☑️ " + videoTitle
-	}
-
-	sb.WriteString("<h1 class='videoTitle'>" + videoTitle + "</h1>")
-
-	if videoDescription != "" {
-		sb.WriteString("<details>")
-		sb.WriteString("<summary><h2>Description</h2></summary>")
-		sb.WriteString("<div class='videoDescription'>" + videoDescription + "</div>")
-		sb.WriteString("</details>")
-	}
-
-	sb.WriteString("<script>" +
-		"let video = document.getElementsByTagName('video')[0];" +
-		"</script>")
-
-	// only continue the videos that have not been watched
-	if t != "" && lastEndedTime == "" {
-		sb.WriteString("<script>video.currentTime = " + t + ";</script>")
-	}
-
-	sb.WriteString("<script>" +
-		"let lastProgressUpdate = new Date();" +
-		"video.addEventListener('timeupdate', (e) => {" +
-		"	let now = new Date();" +
-		"	let elapsed = now - lastProgressUpdate;" +
-		"	if (elapsed > 5000) {" +
-		"		fetch('/progress', {" +
-		"			method: 'post'," +
-		"			headers: {" +
-		"				'Content-Type': 'application/json'}," +
-		"			body: JSON.stringify({" +
-		"				v: '" + videoId + "'," +
-		"				t: video.currentTime.toString()})" +
-		"		}).then((resp) => { if (resp && !resp.ok) {" +
-		"			console.log(resp)}" +
-		"		});" +
-		"		lastProgressUpdate = now;" +
-		"	}});" +
-		"</script>")
-
-	sb.WriteString("<script>" +
-		"video.addEventListener('ended', (e) => {" +
-		"fetch('/ended', {" +
-		"		method: 'post'," +
-		"		headers: {" +
-		"			'Content-Type': 'application/json'}," +
-		"		body: JSON.stringify({v: '" + videoId + "'})" +
-		"	}).then((resp) => { if (resp && !resp.ok) {" +
-		"		console.log(resp)}" +
-		"	});});" +
-		"</script>")
-
-	sb.WriteString("<script>" +
-		"document.body.addEventListener('keydown', (e) => {" +
-		"	switch (e.keyCode) {" +
-		// ArrowRight
-		"		case 39:" +
-		"		e.preventDefault();" +
-		"		video.currentTime += 15;" +
-		"		break;" +
-		// ArrowLeft
-		"		case 37:" +
-		"		e.preventDefault();" +
-		"		video.currentTime -= 15;" +
-		"		break;" +
-		// Space
-		"		case 32:" +
-		"		e.preventDefault();" +
-		"		video.paused ? video.play() : video.pause();" +
-		"		break;" +
-		"	};" +
-		"	});" +
-		"</script>")
-
-	sb.WriteString("</body>")
-	sb.WriteString("</html>")
-
-	if _, err := io.WriteString(w, sb.String()); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "watch", wvm); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
