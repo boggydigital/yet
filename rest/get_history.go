@@ -12,7 +12,7 @@ const (
 	thisMonthGroup   = "More than a week, less than a month ago"
 	thisYearGroup    = "More than a month, less than a year ago"
 	olderGroup       = "More than a year ago"
-	endedVideosLimit = 10
+	endedVideosLimit = 100
 )
 
 var groupsOrder = []string{recentGroup, thisMonthGroup, thisYearGroup, olderGroup}
