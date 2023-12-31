@@ -1,0 +1,48 @@
+{{define "history"}}
+    <!doctype html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <link rel='icon'
+              href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>'
+              type='image/svg+xml'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta name='color-scheme' content='dark light'>
+        <title>🔻 History</title>
+        {{template "css-shared"}}
+        <style id="css-history">
+            a.video.showAll {
+                color: var(--color-light-blue)
+            }
+        </style>
+    </head>
+    <body>
+
+    <h1>{{.Title}}</h1>
+
+    {{$openGroup := .OpenGroup}}
+    {{$groups := .Groups}}
+
+    {{range $group := .GroupsOrder}}
+        {{$videos := index $groups $group}}
+        {{if $videos}}
+            <details {{if eq $group $openGroup}}open{{end}}>
+                <summary><h2>{{$group}}</h2></summary>
+                {{range $videos}}
+                    {{template "video" .}}
+                {{end}}
+            </details>
+        {{end}}
+    {{end}}
+
+    {{if .ShowAll}}
+    {{else}}
+        <div class='subtle'>To load this page faster, yet is limiting displayed videos.
+            Click the link below to see all videos you ever watched on yet
+        </div>
+        <a class='video showAll' href='/history?showAll'>Show all videos</a>
+    {{end}}
+
+    </body>
+    </html>
+{{end}}

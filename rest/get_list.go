@@ -25,7 +25,7 @@ type VideoViewModel struct {
 	EndedDate         string
 }
 
-type PlaylistViewModel struct {
+type ListPlaylistViewModel struct {
 	PlaylistId    string
 	PlaylistTitle string
 	Class         string
@@ -37,7 +37,7 @@ type ListViewModel struct {
 	Watchlist            []*VideoViewModel
 	Downloads            []*VideoViewModel
 	HasNewPlaylistVideos bool
-	Playlists            []*PlaylistViewModel
+	Playlists            []*ListPlaylistViewModel
 	HasHistory           bool
 }
 
@@ -124,7 +124,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 				pc += " ended"
 			}
 
-			plvm := &PlaylistViewModel{
+			plvm := &ListPlaylistViewModel{
 				PlaylistId:    id,
 				PlaylistTitle: playlistTitle(id, rdx),
 				Class:         pc,
