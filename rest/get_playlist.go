@@ -41,6 +41,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	// playlist specific styles
 
 	plvm := &PlaylistViewModel{
+		PlaylistId:    id,
 		PlaylistTitle: pt,
 	}
 

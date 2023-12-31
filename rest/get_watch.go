@@ -90,11 +90,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	lastEndedTime := ""
-	if et, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
-		lastEndedTime = et
-	}
-
 	if videoUrl == "" || videoTitle == "" {
 		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
@@ -138,6 +133,12 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		videoUrl = vu.String()
 		videoTitle = videoPage.VideoDetails.Title
 		videoDescription = videoPage.VideoDetails.ShortDescription
+	}
+
+	lastEndedTime := ""
+	if et, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
+		lastEndedTime = et
+		videoTitle = "☑️ " + videoTitle
 	}
 
 	w.Header().Set("Content-Type", "text/html")
