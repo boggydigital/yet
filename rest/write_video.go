@@ -4,7 +4,6 @@ import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"slices"
-	"strings"
 	"time"
 )
 
@@ -15,53 +14,6 @@ const (
 	ShowPublishedDate
 	ShowEndedDate
 )
-
-func writeVideo(videoId string, rdx kvas.ReadableRedux, sb *strings.Builder, options ...VideoOptions) {
-
-	videoTitle := videoId
-	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		videoTitle = title
-	}
-
-	videoUrl := "/watch?"
-	if videoId != "" {
-		videoUrl += "v=" + videoId
-	}
-
-	posterContent := ""
-	if slices.Contains(options, ShowPoster) {
-		posterContent = "<img src='/poster?v=" + videoId + "&q=mqdefault' loading='lazy'/>"
-	}
-
-	publishedContent := ""
-	if slices.Contains(options, ShowPublishedDate) {
-		if pts, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && pts != "" {
-			publishedContent = "<span class='subtitle'><b>Published</b>: " + parseAndFormat(pts) + "</span>"
-		}
-	}
-
-	ended := false
-	endedContent := ""
-	if ets, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && ets != "" {
-		ended = true
-		if slices.Contains(options, ShowEndedDate) {
-			endedContent = "<span class='subtitle'><b>Ended</b>: " + parseAndFormat(ets) + "</span>"
-		}
-	}
-
-	class := ""
-	if ended {
-		videoTitle = "☑️ " + videoTitle
-		class += "ended"
-	}
-
-	sb.WriteString("<a class='" + class + "' href='" + videoUrl + "'>" +
-		posterContent +
-		"<span class='title'>" + videoTitle + "</span>" +
-		endedContent +
-		publishedContent +
-		"</a>")
-}
 
 func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOptions) *VideoViewModel {
 
@@ -76,9 +28,14 @@ func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOpti
 	}
 
 	publishedDate := ""
+	downloadedDate := ""
+
 	if slices.Contains(options, ShowPublishedDate) {
 		if pts, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && pts != "" {
 			publishedDate = parseAndFormat(pts)
+		}
+		if dts, ok := rdx.GetFirstVal(data.VideoDownloadedDateProperty, videoId); ok && dts != "" {
+			downloadedDate = parseAndFormat(dts)
 		}
 	}
 
@@ -105,6 +62,7 @@ func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOpti
 		ShowPoster:        slices.Contains(options, ShowPoster),
 		ShowPublishedDate: slices.Contains(options, ShowPublishedDate),
 		PublishedDate:     publishedDate,
+		DownloadedDate:    downloadedDate,
 		ShowEndedDate:     slices.Contains(options, ShowEndedDate),
 		EndedDate:         endedDate,
 	}

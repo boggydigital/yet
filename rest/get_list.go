@@ -21,6 +21,7 @@ type VideoViewModel struct {
 	ShowPoster        bool
 	ShowPublishedDate bool
 	PublishedDate     string
+	DownloadedDate    string
 	ShowEndedDate     bool
 	EndedDate         string
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/boggydigital/yt_urls"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func DownloadHandler(u *url.URL) error {
@@ -71,6 +72,11 @@ func Download(ids []string, queue, force bool) error {
 		}
 
 		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient); err != nil {
+			return da.EndWithError(err)
+		}
+
+		// set downloaded date
+		if err := rdx.AddValues(data.VideoDownloadedDateProperty, videoId, time.Now().Format(time.RFC3339)); err != nil {
 			return da.EndWithError(err)
 		}
 

@@ -6,8 +6,12 @@
         <span class='title'>{{.VideoTitle}}</span>
         {{if .ShowPublishedDate}}
             {{if .PublishedDate}}
-            <span class='subtitle'><b>Published</b>: {{.PublishedDate}}</span>
+                <span class='subtitle'><b>Published</b>: {{.PublishedDate}}</span>
+            {{else}}
+                {{if .DownloadedDate}}
+                    <span class='subtitle'><b>Downloaded</b>: {{.DownloadedDate}}</span>
                 {{end}}
+            {{end}}
         {{end}}
         {{if .ShowEndedDate}}
             <span class='subtitle'><b>Ended</b>: {{.EndedDate}}</span>
