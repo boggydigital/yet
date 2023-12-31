@@ -74,6 +74,11 @@ func GetUrl(urls ...string) error {
 			return gfa.EndWithError(err)
 		}
 
+		// set downloaded date
+		if err := rdx.AddValues(data.VideoDownloadedDateProperty, filename, time.Now().Format(time.RFC3339)); err != nil {
+			return gfa.EndWithError(err)
+		}
+
 		// clear from the queue upon successful download
 		if err := rdx.CutValues(data.VideosDownloadQueueProperty, filename, data.TrueValue); err != nil {
 			return gfa.EndWithError(err)

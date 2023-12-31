@@ -41,16 +41,18 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 
 	// attempt to fetch posters from the origin if they don't exist locally
 	// unless that's a URL file
-	if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) {
-		if !strings.Contains(videoId, yt_urls.DefaultVideoExt) {
-			if err := yeti.GetPosters(videoId, dolo.DefaultClient, quality); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
+	if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) &&
+		!strings.Contains(videoId, yt_urls.DefaultVideoExt) {
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, quality); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	} else if err == nil {
 		http.ServeFile(w, r, absPosterFilename)
-	} else {
+		return
+	}
+
+	if _, err := os.Stat(absPosterFilename); err != nil {
 		var br io.ReadSeeker
 		filename := ""
 

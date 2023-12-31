@@ -17,17 +17,16 @@ func RemoveVideosHandler(u *url.URL) error {
 	watchlist := strings.Split(q.Get("watchlist"), ",")
 	progress := strings.Split(q.Get("progress"), ",")
 	ended := strings.Split(q.Get("ended"), ",")
-	raw := q.Has("raw")
 
 	return RemoveVideos(map[string][]string{
 		data.VideosDownloadQueueProperty: downloadQueue,
 		data.VideosWatchlistProperty:     watchlist,
 		data.VideoProgressProperty:       progress,
 		data.VideoEndedProperty:          ended,
-	}, raw)
+	})
 }
 
-func RemoveVideos(propertyValues map[string][]string, raw bool) error {
+func RemoveVideos(propertyValues map[string][]string) error {
 
 	rva := nod.NewProgress("removing videos...")
 	defer rva.End()
