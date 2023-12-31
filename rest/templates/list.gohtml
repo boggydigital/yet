@@ -59,15 +59,6 @@
         </details>
     {{end}}
 
-    {{if .Downloads}}
-        <details>
-            <summary><h1>Downloads</h1></summary>
-            {{range .Downloads}}
-                {{template "video" .}}
-            {{end}}
-        </details>
-    {{end}}
-
     {{if .Playlists}}
         <details>
             <summary><h1>Playlists</h1></summary>
@@ -84,6 +75,15 @@
 
                 {{end}}
             </ul>
+        </details>
+    {{end}}
+
+    {{if .Downloads}}
+        <details>
+            <summary><h1>Downloads</h1></summary>
+            {{range .Downloads}}
+                {{template "video" .}}
+            {{end}}
         </details>
     {{end}}
 
