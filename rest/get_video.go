@@ -2,9 +2,11 @@ package rest
 
 import (
 	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yt_urls"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func GetVideo(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +26,9 @@ func GetVideo(w http.ResponseWriter, r *http.Request) {
 		absFilepath := filepath.Join(absVideosDir, file)
 
 		if _, err := os.Stat(absFilepath); err == nil {
+			if strings.HasSuffix(file, yt_urls.DefaultVideoExt) {
+				w.Header().Set("Content-Type", "video/mp4")
+			}
 			http.ServeFile(w, r, absFilepath)
 		} else {
 			http.NotFound(w, r)
