@@ -14,16 +14,19 @@ const (
 )
 
 type VideoViewModel struct {
-	VideoId           string
-	VideoUrl          string
-	VideoTitle        string
-	Class             string
-	ShowPoster        bool
-	ShowPublishedDate bool
-	PublishedDate     string
-	DownloadedDate    string
-	ShowEndedDate     bool
-	EndedDate         string
+	VideoId               string
+	VideoUrl              string
+	VideoTitle            string
+	Class                 string
+	ShowPoster            bool
+	ShowPublishedDate     bool
+	PublishedDate         string
+	DownloadedDate        string
+	ShowEndedDate         bool
+	EndedDate             string
+	ShowRemainingDuration bool
+	RemainingTime         string
+	Duration              string
 }
 
 type ListPlaylistViewModel struct {
@@ -64,7 +67,10 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		}
 		for _, id := range cwKeys {
 			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
-				lvm.Continue = append(lvm.Continue, videoViewModel(id, rdx, ShowPoster, ShowPublishedDate))
+				lvm.Continue = append(lvm.Continue, videoViewModel(id, rdx,
+					ShowPoster,
+					ShowPublishedDate,
+					ShowRemainingDuration))
 			}
 		}
 	}

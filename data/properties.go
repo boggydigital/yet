@@ -14,6 +14,7 @@ const (
 	VideoUploadDateProperty        = "video-upload-date"
 	VideoDownloadedDateProperty    = "video-downloaded-date"
 	VideoProgressProperty          = "video-progress"
+	VideoDurationProperty          = "video-duration"
 	VideoEndedProperty             = "video-ended"
 	VideoErrorsProperty            = "video-errors"
 
@@ -47,6 +48,7 @@ func AllProperties() []string {
 		VideoUploadDateProperty,
 		VideoDownloadedDateProperty,
 		VideoProgressProperty,
+		VideoDurationProperty,
 		VideoEndedProperty,
 		VideoErrorsProperty,
 		VideosDownloadQueueProperty,

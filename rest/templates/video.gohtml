@@ -16,5 +16,8 @@
         {{if .ShowEndedDate}}
             <span class='subtitle'><b>Ended</b>: {{.EndedDate}}</span>
         {{end}}
+        {{if .ShowRemainingDuration}}
+            <span class='subtitle'><b>Remaining</b>: {{.RemainingTime}}, <b>Duration:</b> {{.Duration}}</span>
+        {{end}}
     </a>
 {{end}}

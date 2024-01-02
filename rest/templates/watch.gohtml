@@ -71,7 +71,8 @@
                         'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         v: '{{.VideoId}}',
-                        t: video.currentTime.toString()})
+                        t: video.currentTime.toString(),
+                        d: video.duration.toString()})
                 }).then((resp) => { if (resp && !resp.ok) {
                     console.log(resp)}
                 });
