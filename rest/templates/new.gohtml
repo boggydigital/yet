@@ -12,17 +12,22 @@
         {{template "css-shared"}}
         <style id="css-new">
 
+            label {
+                display: block;
+                margin-block: var(--normal);
+            }
+
             input[type='text'] {
-                width: 90%
+                width: calc(100% - var(--normal))
             }
 
             input {
-                font-size: 1.25rem;
+                font-size: var(--fs-larger);
                 display: block;
             }
 
             input[type='submit'] {
-                margin-block: 1rem;
+                margin-block: var(--normal);
             }
 
         </style>
@@ -32,7 +37,8 @@
     <a class='video highlight' href='/list'>Watch list</a>
 
     <form method='get' action='/watch'>
-        <input id='v' name='v' type='text' placeholder='Paste or enter YouTube link or video-id'/>
+        <label for='v'>Paste or enter YouTube link or video-id:</label>
+        <input id='v' name='v' type='text' placeholder='YouTube link or video-id'/>
         <input type='submit'/>
     </form>
 

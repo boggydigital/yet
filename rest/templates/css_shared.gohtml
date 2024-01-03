@@ -10,15 +10,15 @@
             display: flex;
             flex-direction: column;
             color: var(--color);
-            font-size: 1.3rem;
+            font-size: var(--fs-larger);
             font-weight: bold;
             text-decoration: none;
-            margin-block: 2rem;
+            margin-block: var(--large);
         }
 
         a img {
-            border-radius: 0.25rem;
-            width: 200px;
+            border-radius: var(--border-radius);
+            width: 240px;
             aspect-ratio: 16/9;
             background: var(--subtle-color)
         }
@@ -29,16 +29,16 @@
 
         a.highlight {
             color: var(--color-orange);
-            margin-block: 2rem
+            margin-block: var(--large)
         }
 
         .title {
-            margin-block-start: 0.5rem;
-            margin-block-end: 0.25rem
+            margin-block-start: var(--small);
+            margin-block-end: var(--x-small)
         }
 
         .subtitle {
-            font-size: 66%;
+            font-size: calc((var(--fs-x-smaller) + var(--fs-xx-smaller))/2);
             font-weight: normal
         }
 
@@ -51,12 +51,12 @@
         }
 
         details {
-            margin-block: 2rem;
+            margin-block: var(--large);
             content-visibility: auto
         }
 
         summary {
-            margin-block-end: 1rem
+            margin-block-end: var(--normal)
         }
 
         summary::after {
