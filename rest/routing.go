@@ -20,11 +20,12 @@ func HandleFuncs() {
 		"/poster":   GetOnly(Log(http.HandlerFunc(GetPoster))),
 		"/captions": GetOnly(Log(http.HandlerFunc(GetCaptions))),
 
-		"/watch":   BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
-		"/list":    BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
-		"/new":     BrGzip(GetOnly(Log(http.HandlerFunc(GetNew)))),
-		"/history": BrGzip(GetOnly(Log(http.HandlerFunc(GetHistory)))),
-
+		"/watch":    BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
+		"/list":     BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
+		"/new":      BrGzip(GetOnly(Log(http.HandlerFunc(GetNew)))),
+		"/history":  BrGzip(GetOnly(Log(http.HandlerFunc(GetHistory)))),
+		"/search":   BrGzip(GetOnly(Log(http.HandlerFunc(GetSearch)))),
+		"/results":  BrGzip(GetOnly(Log(http.HandlerFunc(GetResults)))),
 		"/progress": PostOnly(Log(http.HandlerFunc(PostProgress))),
 		"/ended":    PostOnly(Log(http.HandlerFunc(PostEnded))),
 

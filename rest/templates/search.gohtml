@@ -1,4 +1,4 @@
-{{define "new"}}
+{{define "search"}}
     <!doctype html>
     <html>
     <head>
@@ -8,7 +8,7 @@
               type='image/svg+xml'/>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <meta name='color-scheme' content='dark light'>
-        <title>🔻 Paste new</title>
+        <title>🔻 Search</title>
         {{template "css-shared"}}
         <style id="css-new">
 
@@ -17,7 +17,7 @@
                 margin-block: var(--normal);
             }
 
-            input[type='text'] {
+            input[type='search'] {
                 width: calc(100% - var(--normal))
             }
 
@@ -36,9 +36,9 @@
 
     <a class='video highlight' href='/list'>Watch list</a>
 
-    <form method='get' action='/watch'>
-        <label for='v'>Paste or enter YouTube link or video-id:</label>
-        <input id='v' name='v' type='text' placeholder='YouTube link or video-id'/>
+    <form method='get' action='/results'>
+        <label for='search_query'>YouTube videos search terms:</label>
+        <input id='search_query' name='search_query' type='search' placeholder='Terms'/>
         <input type='submit'/>
     </form>
 
