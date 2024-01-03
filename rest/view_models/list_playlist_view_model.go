@@ -11,48 +11,42 @@ const (
 	showImagesLimit = 20
 )
 
-type ListPlaylistViewModel struct {
-	PlaylistId    string
-	PlaylistTitle string
-	Class         string
-	NewVideos     int
-}
-
 type PlaylistViewModel struct {
-	PlaylistTitle   string
 	PlaylistId      string
+	PlaylistTitle   string
+	PlaylistClass   string
+	NewVideos       int
 	AutoDownloading bool
 	Videos          []*VideoViewModel
 }
 
-func GetListPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *ListPlaylistViewModel {
+func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
+
 	nvc := 0
 
 	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok {
 		nvc = len(nv)
 	}
 
-	pc := "playlist"
-	if nvc == 0 {
-		pc += " ended"
-	}
-
-	return &ListPlaylistViewModel{
-		PlaylistId:    playlistId,
-		PlaylistTitle: PlaylistTitle(playlistId, rdx),
-		Class:         pc,
-		NewVideos:     nvc,
-	}
-}
-
-func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
-	plvm := &PlaylistViewModel{
-		PlaylistId:    playlistId,
-		PlaylistTitle: PlaylistTitle(playlistId, rdx),
-	}
-
+	autoDownloading := false
 	if pdq, ok := rdx.GetFirstVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
-		plvm.AutoDownloading = true
+		autoDownloading = true
+	}
+
+	pc := ""
+	if autoDownloading {
+		pc = "autodownloading"
+		if nvc == 0 {
+			pc += " ended"
+		}
+	}
+
+	plvm := &PlaylistViewModel{
+		PlaylistId:      playlistId,
+		PlaylistClass:   pc,
+		NewVideos:       nvc,
+		PlaylistTitle:   PlaylistTitle(playlistId, rdx),
+		AutoDownloading: autoDownloading,
 	}
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok && len(videoIds) > 0 {

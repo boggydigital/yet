@@ -16,7 +16,7 @@ type ListViewModel struct {
 	Watchlist            []*view_models.VideoViewModel
 	Downloads            []*view_models.VideoViewModel
 	HasNewPlaylistVideos bool
-	Playlists            []*view_models.ListPlaylistViewModel
+	Playlists            []*view_models.PlaylistViewModel
 	HasHistory           bool
 }
 
@@ -97,7 +97,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 		for _, playlistId := range plKeys {
 			lvm.Playlists = append(lvm.Playlists,
-				view_models.GetListPlaylistViewModel(playlistId, rdx))
+				view_models.GetPlaylistViewModel(playlistId, rdx))
 		}
 	}
 

@@ -1,7 +1,7 @@
 {{define "playlist"}}
     <li>
-        <a class="{{.Class}}" href='/playlist?list={{.PlaylistId}}'>
-            <span class='playlistTitle'>{{.PlaylistTitle}}</span>
+        <a class="playlist {{.PlaylistClass}}" href='/playlist?list={{.PlaylistId}}'>
+            <span class='title'>{{.PlaylistTitle}}</span>
             {{if gt .NewVideos 0}}
                 <span class='subtitle'>{{.NewVideos}} new</span>
             {{end}}

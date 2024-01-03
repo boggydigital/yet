@@ -18,7 +18,7 @@
         </style>
     </head>
     <body>
-    <h1><span class='playlistTitle'>{{.PlaylistTitle}}</span></h1>
+    <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
     {{if .AutoDownloading}}
         <div class='subtle'>Automatically refreshing and downloading new videos</div>
     {{end}}

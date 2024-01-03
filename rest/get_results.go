@@ -14,7 +14,7 @@ type ResultsViewModel struct {
 	SearchQuery string
 	Refinements []string
 	Channels    []*view_models.ChannelViewModel
-	Playlists   []*view_models.ListPlaylistViewModel
+	Playlists   []*view_models.PlaylistViewModel
 	Videos      []*view_models.VideoViewModel
 }
 
@@ -80,7 +80,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, plr := range sid.PlaylistRenderers() {
-		rvm.Playlists = append(rvm.Playlists, view_models.GetListPlaylistViewModel(plr.PlaylistId, wRdx))
+		rvm.Playlists = append(rvm.Playlists, view_models.GetPlaylistViewModel(plr.PlaylistId, wRdx))
 	}
 
 	for _, vr := range sid.VideoRenderers() {
