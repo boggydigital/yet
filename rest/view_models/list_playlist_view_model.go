@@ -1,9 +1,9 @@
 package view_models
 
 import (
+	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"path"
 	"strings"
 )
 
@@ -48,7 +48,7 @@ func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
 			if plt == "Videos" {
 				return plc
 			} else {
-				return path.Join(plc, plt)
+				return fmt.Sprintf("%s | %s", plc, plt)
 			}
 		}
 

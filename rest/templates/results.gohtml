@@ -40,14 +40,16 @@
         </ul>
     </details>
 
-    <details>
-        <summary><h2>Playlists</h2></summary>
-        <ul class='playlists'>
-            {{range .Playlists}}
-                {{template "playlist" .}}
-            {{end}}
-        </ul>
-    </details>
+    {{if .Playlists}}
+        <details>
+            <summary><h2>Playlists</h2></summary>
+            <ul class='playlists'>
+                {{range .Playlists}}
+                    {{template "playlist" .}}
+                {{end}}
+            </ul>
+        </details>
+    {{end}}
 
     <details open>
         <summary><h2>Videos</h2></summary>

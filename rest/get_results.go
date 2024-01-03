@@ -94,6 +94,7 @@ var extractedSearchVideosProperties = []string{
 
 var extractedSearchPlaylistProperties = []string{
 	data.PlaylistTitleProperty,
+	data.PlaylistChannelProperty,
 }
 
 func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[string][]string {

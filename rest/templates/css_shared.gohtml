@@ -11,7 +11,7 @@
             flex-direction: column;
             color: var(--color);
             font-size: var(--fs-larger);
-            font-weight: bold;
+            font-weight: 600;
             text-decoration: none;
             margin-block: var(--large);
         }
@@ -39,15 +39,16 @@
         a.playlist {
             display: flex;
             flex-direction: column;
-            color: var(--color-pink);
+            color: var(--color-amber);
             font-size: 1.3rem;
-            font-weight: bold;
+            font-weight: 600;
             text-decoration: none;
             margin-block: 2rem;
         }
 
         a.playlist.ended {
-            color: var(--subtle-color)
+            filter: none;
+            color: var(--color-brown)
         }
 
         a.playlist .subtitle {
