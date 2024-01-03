@@ -1,6 +1,6 @@
 {{define "results"}}
     <!doctype html>
-    <html>
+    <html lang="en">
     <head>
         <meta charset='UTF-8'>
         <link rel='icon'
@@ -39,6 +39,17 @@
             {{end}}
         </ul>
     </details>
+
+    {{if .Channels}}
+        <details>
+            <summary><h2>Channels</h2></summary>
+            <ul class='channels'>
+                {{range .Channels}}
+                    {{template "channel" .}}
+                {{end}}
+            </ul>
+        </details>
+    {{end}}
 
     {{if .Playlists}}
         <details>

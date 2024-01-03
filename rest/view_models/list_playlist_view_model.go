@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const (
+	showImagesLimit = 20
+)
+
 type ListPlaylistViewModel struct {
 	PlaylistId    string
 	PlaylistTitle string
@@ -39,6 +43,30 @@ func GetListPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *ListPl
 		Class:         pc,
 		NewVideos:     nvc,
 	}
+}
+
+func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
+	plvm := &PlaylistViewModel{
+		PlaylistId:    playlistId,
+		PlaylistTitle: PlaylistTitle(playlistId, rdx),
+	}
+
+	if pdq, ok := rdx.GetFirstVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
+		plvm.AutoDownloading = true
+	}
+
+	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok && len(videoIds) > 0 {
+		for i, videoId := range videoIds {
+			var options []VideoOptions
+			if i+1 < showImagesLimit {
+				options = []VideoOptions{ShowPoster, ShowPublishedDate}
+			} else {
+				options = []VideoOptions{ShowPublishedDate}
+			}
+			plvm.Videos = append(plvm.Videos, GetVideoViewModel(videoId, rdx, options...))
+		}
+	}
+	return plvm
 }
 
 func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {

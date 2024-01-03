@@ -13,6 +13,7 @@ import (
 type ResultsViewModel struct {
 	SearchQuery string
 	Refinements []string
+	Channels    []*view_models.ChannelViewModel
 	Playlists   []*view_models.ListPlaylistViewModel
 	Videos      []*view_models.VideoViewModel
 }
@@ -37,6 +38,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	extractedProperties := extractedSearchVideosProperties
 	extractedProperties = append(extractedProperties, extractedSearchPlaylistProperties...)
+	extractedProperties = append(extractedProperties, extractedSearchChannelProperties...)
 
 	wRdx, err := kvas.NewReduxWriter(metadataDir, extractedProperties...)
 	if err != nil {
@@ -60,9 +62,21 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	propertyValues = extractSearchChannelMetadata(sid.ChannelRenderers())
+	for property, keyValues := range propertyValues {
+		if err := wRdx.BatchAddValues(property, keyValues); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	rvm := &ResultsViewModel{
 		SearchQuery: searchQuery,
 		Refinements: sid.Refinements,
+	}
+
+	for _, chr := range sid.ChannelRenderers() {
+		rvm.Channels = append(rvm.Channels, view_models.GetChannelViewModel(chr.ChannelId, wRdx))
 	}
 
 	for _, plr := range sid.PlaylistRenderers() {
@@ -95,6 +109,10 @@ var extractedSearchVideosProperties = []string{
 var extractedSearchPlaylistProperties = []string{
 	data.PlaylistTitleProperty,
 	data.PlaylistChannelProperty,
+}
+
+var extractedSearchChannelProperties = []string{
+	data.ChannelTitleProperty,
 }
 
 func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[string][]string {
@@ -139,6 +157,28 @@ func extractSearchPlaylistMetadata(sprs []yt_urls.PlaylistRenderer) map[string]m
 			switch property {
 			case data.PlaylistTitleProperty:
 				pkv[property][id] = []string{pvr.Title.SimpleText}
+			}
+		}
+
+	}
+
+	return pkv
+}
+
+func extractSearchChannelMetadata(scrs []yt_urls.ChannelRenderer) map[string]map[string][]string {
+	pkv := make(map[string]map[string][]string)
+
+	for _, property := range extractedSearchChannelProperties {
+
+		pkv[property] = make(map[string][]string)
+
+		for _, cr := range scrs {
+
+			id := cr.ChannelId
+
+			switch property {
+			case data.ChannelTitleProperty:
+				pkv[property][id] = []string{cr.Title.SimpleText}
 			}
 		}
 

@@ -1,7 +1,7 @@
 {{define "video"}}
     <a class='{{.Class}}' href='{{.VideoUrl}}'>
         {{if .ShowPoster}}
-            <img src='/poster?v={{.VideoId}}&q=mqdefault' loading='lazy'/>
+            <img src='/poster?v={{.VideoId}}&q=mqdefault' loading='lazy' alt='{{.VideoTitle}}'/>
         {{end}}
         <span class='title'>{{.VideoTitle}}</span>
         {{if .ShowOwnerChannel}}

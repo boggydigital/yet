@@ -31,19 +31,27 @@
             color: var(--color-orange);
         }
 
-        ul.playlists {
+        ul {
             list-style: none;
             padding-inline-start: 0
         }
 
-        a.playlist {
+        a.playlist,
+        a.channel {
             display: flex;
             flex-direction: column;
-            color: var(--color-amber);
             font-size: 1.3rem;
             font-weight: 600;
             text-decoration: none;
             margin-block: 2rem;
+        }
+
+        a.playlist {
+            color: var(--color-amber)
+        }
+
+        a.channel {
+            color: var(--color-light-green)
         }
 
         a.playlist.ended {

@@ -60,11 +60,14 @@ func AllProperties() []string {
 		VideoCaptionsLanguagesProperty,
 		VideoCaptionsKindsProperty,
 		VideoCaptionsNamesProperty,
+
 		PlaylistWatchlistProperty,
 		PlaylistDownloadQueueProperty,
 		PlaylistNewVideosProperty,
 		PlaylistChannelProperty,
 		PlaylistTitleProperty,
 		PlaylistVideosProperty,
+
+		ChannelTitleProperty,
 	}
 }
