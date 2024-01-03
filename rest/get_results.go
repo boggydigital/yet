@@ -10,12 +10,16 @@ import (
 )
 
 type ResultsViewModel struct {
-	Videos []*VideoViewModel
+	SearchQuery string
+	Refinements []string
+	Videos      []*VideoViewModel
 }
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
 
-	terms := strings.Split(r.URL.Query().Get("search_query"), " ")
+	searchQuery := r.URL.Query().Get("search_query")
+
+	terms := strings.Split(searchQuery, " ")
 
 	sid, err := yt_urls.GetSearchResultsPage(http.DefaultClient, terms...)
 	if err != nil {
@@ -43,7 +47,10 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	rvm := &ResultsViewModel{}
+	rvm := &ResultsViewModel{
+		SearchQuery: searchQuery,
+		Refinements: sid.Refinements,
+	}
 
 	for _, vr := range sid.VideoRenderers() {
 		rvm.Videos = append(rvm.Videos, videoViewModel(vr.VideoId, vmRdx,

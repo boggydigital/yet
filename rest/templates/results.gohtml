@@ -10,14 +10,42 @@
         <meta name='color-scheme' content='dark light'>
         <title>🔻 Search results</title>
         {{template "css-shared"}}
+        <style id="css-results">
+            ul {
+                list-style: none;
+                padding: 0;
+                display: flex;
+                flex-direction: row;
+                row-gap: var(--normal);
+                column-gap: var(--large);
+                flex-wrap: wrap;
+            }
+
+            ul li a {
+                font-size: var(--fs-smaller);
+                margin: 0;
+            }
+        </style>
     </head>
     <body>
 
-    <h1>Search results</h1>
+    <h1>Search results for '{{.SearchQuery}}'</h1>
 
-    {{range .Videos}}
-        {{template "video" .}}
-    {{end}}
+    <details>
+        <summary><h2>Refinements</h2></summary>
+        <ul>
+            {{range .Refinements}}
+                <li><a href='/results?search_query={{.}}'>{{.}}</a></li>
+            {{end}}
+        </ul>
+    </details>
+
+    <details open>
+        <summary><h2>Videos</h2></summary>
+        {{range .Videos}}
+            {{template "video" .}}
+        {{end}}
+    </details>
 
     </body>
     </html>
