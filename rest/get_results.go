@@ -65,6 +65,7 @@ var extractedSearchProperties = []string{
 	data.VideoOwnerChannelNameProperty,
 	data.VideoViewCountProperty,
 	data.VideoPublishTimeTextProperty,
+	data.VideoEndedProperty,
 }
 
 func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[string][]string {

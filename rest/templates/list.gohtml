@@ -37,8 +37,13 @@
             ul.topLinks {
                 display: flex;
                 flex-direction: row;
-                column-gap: var(--large);
-                margin-block: var(--normal)
+                column-gap: var(--normal);
+                margin-block: var(--normal);
+                align-items: baseline;
+            }
+
+            ul.topLinks li.subtle {
+                color: var(--subtle-color)
             }
 
             ul.topLinks a {
@@ -52,6 +57,7 @@
         <li>
             <a class='video highlight' href='/search'>Search</a>
         </li>
+        <li class="subtle">|</li>
         <li>
             <a class='video highlight' href='/new'>Paste new</a>
         </li>
