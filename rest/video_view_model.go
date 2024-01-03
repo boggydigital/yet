@@ -15,7 +15,29 @@ const (
 	ShowPublishedDate
 	ShowEndedDate
 	ShowRemainingDuration
+	ShowOwnerChannel
+	ShowViewCount
 )
+
+type VideoViewModel struct {
+	VideoId               string
+	VideoUrl              string
+	VideoTitle            string
+	Class                 string
+	ShowPoster            bool
+	ShowPublishedDate     bool
+	PublishedDate         string
+	DownloadedDate        string
+	ShowEndedDate         bool
+	EndedDate             string
+	ShowRemainingDuration bool
+	RemainingTime         string
+	Duration              string
+	ShowOwnerChannel      bool
+	OwnerChannel          string
+	ShowViewCount         bool
+	ViewCount             string
+}
 
 func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOptions) *VideoViewModel {
 
@@ -35,11 +57,24 @@ func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOpti
 	optShowPublishedDate := slices.Contains(options, ShowPublishedDate)
 
 	if optShowPublishedDate {
-		if pts, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && pts != "" {
-			publishedDate = parseAndFormat(pts)
+		if pds, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && pds != "" {
+			publishedDate = parseAndFormat(pds)
+		} else {
+			if ptts, ok := rdx.GetFirstVal(data.VideoPublishTimeTextProperty, videoId); ok && ptts != "" {
+				publishedDate = ptts
+			}
 		}
 		if dts, ok := rdx.GetFirstVal(data.VideoDownloadedDateProperty, videoId); ok && dts != "" {
 			downloadedDate = parseAndFormat(dts)
+		}
+	}
+
+	ownerChannel := ""
+
+	optShowOwnerChannel := slices.Contains(options, ShowOwnerChannel)
+	if optShowOwnerChannel {
+		if och, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {
+			ownerChannel = och
 		}
 	}
 
@@ -73,6 +108,15 @@ func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOpti
 		rem = dur - ct
 	}
 
+	viewCount := ""
+	optShowViewCount := slices.Contains(options, ShowViewCount)
+
+	if optShowViewCount {
+		if vc, ok := rdx.GetFirstVal(data.VideoViewCountProperty, videoId); ok && vc != "" {
+			viewCount = vc
+		}
+	}
+
 	class := ""
 	if ended {
 		videoTitle = "☑️ " + videoTitle
@@ -95,6 +139,10 @@ func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOpti
 		ShowRemainingDuration: optShowRemainingDuration && dur > 0,
 		RemainingTime:         formatSeconds(rem),
 		Duration:              formatSeconds(dur),
+		ShowOwnerChannel:      optShowOwnerChannel,
+		OwnerChannel:          ownerChannel,
+		ShowViewCount:         optShowViewCount,
+		ViewCount:             viewCount,
 	}
 
 }

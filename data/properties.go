@@ -11,6 +11,7 @@ const (
 	VideoOwnerProfileUrlProperty   = "video-owner-profile-url"
 	VideoCategoryProperty          = "video-category"
 	VideoPublishDateProperty       = "video-publish-date"
+	VideoPublishTimeTextProperty   = "video-publish-time-text"
 	VideoUploadDateProperty        = "video-upload-date"
 	VideoDownloadedDateProperty    = "video-downloaded-date"
 	VideoProgressProperty          = "video-progress"
@@ -45,6 +46,7 @@ func AllProperties() []string {
 		VideoOwnerProfileUrlProperty,
 		VideoCategoryProperty,
 		VideoPublishDateProperty,
+		VideoPublishTimeTextProperty,
 		VideoUploadDateProperty,
 		VideoDownloadedDateProperty,
 		VideoProgressProperty,

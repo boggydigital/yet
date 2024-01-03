@@ -13,22 +13,6 @@ const (
 	maxPlaylistVideosWatchlist = 3
 )
 
-type VideoViewModel struct {
-	VideoId               string
-	VideoUrl              string
-	VideoTitle            string
-	Class                 string
-	ShowPoster            bool
-	ShowPublishedDate     bool
-	PublishedDate         string
-	DownloadedDate        string
-	ShowEndedDate         bool
-	EndedDate             string
-	ShowRemainingDuration bool
-	RemainingTime         string
-	Duration              string
-}
-
 type ListPlaylistViewModel struct {
 	PlaylistId    string
 	PlaylistTitle string
