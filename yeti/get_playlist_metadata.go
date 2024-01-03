@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func GetPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
+func GetPlaylistPageMetadata(playlistPage *yt_urls.PlaylistInitialData, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
 	defer gppma.End()
@@ -21,12 +21,12 @@ func GetPlaylistPageMetadata(playlistPage *yt_urls.ContextualPlaylist, playlistI
 		}
 	}
 
-	ph := playlistPage.Playlist.PlaylistHeader()
+	ph := playlistPage.PlaylistHeader()
 	if err := rdx.ReplaceValues(data.PlaylistTitleProperty, playlistId, ph.Title.SimpleText); err != nil {
 		return gppma.EndWithError(err)
 	}
 
-	if err := rdx.ReplaceValues(data.PlaylistChannelProperty, playlistId, playlistPage.Playlist.PlaylistOwner()); err != nil {
+	if err := rdx.ReplaceValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
 		return gppma.EndWithError(err)
 	}
 
