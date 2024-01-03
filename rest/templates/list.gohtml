@@ -11,29 +11,6 @@
         <title>🔻 Watch list</title>
         {{template "css-shared"}}
         <style id="css-list">
-            a.playlist {
-                display: flex;
-                flex-direction: column;
-                color: var(--color-pink);
-                font-size: 1.3rem;
-                font-weight: bold;
-                text-decoration: none;
-                margin-block: 2rem;
-            }
-
-            a.playlist.ended {
-                color: var(--subtle-color)
-            }
-
-            a.playlist .subtitle {
-                color: inherit
-            }
-
-            ul {
-                list-style: none;
-                padding-inline-start: 0
-            }
-
             ul.topLinks {
                 display: flex;
                 flex-direction: row;
@@ -87,17 +64,9 @@
     {{if .Playlists}}
         <details>
             <summary><h1>Playlists</h1></summary>
-            <ul>
+            <ul class='playlists'>
                 {{range .Playlists}}
-                    <li>
-                        <a class="{{.Class}}" href='/playlist?list={{.PlaylistId}}'>
-                            <span class='playlistTitle'>{{.PlaylistTitle}}</span>
-                            {{if gt .NewVideos 0}}
-                                <span class='subtitle'>{{.NewVideos}} new</span>
-                            {{end}}
-                        </a>
-                    </li>
-
+                    {{template "playlist" .}}
                 {{end}}
             </ul>
         </details>

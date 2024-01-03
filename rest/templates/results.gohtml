@@ -11,7 +11,7 @@
         <title>🔻 Search results</title>
         {{template "css-shared"}}
         <style id="css-results">
-            ul {
+            ul.refinements {
                 list-style: none;
                 padding: 0;
                 display: flex;
@@ -21,7 +21,7 @@
                 flex-wrap: wrap;
             }
 
-            ul li a {
+            ul.refinements li a {
                 font-size: var(--fs-smaller);
                 margin: 0;
             }
@@ -33,9 +33,18 @@
 
     <details>
         <summary><h2>Refinements</h2></summary>
-        <ul>
+        <ul class='refinements'>
             {{range .Refinements}}
                 <li><a href='/results?search_query={{.}}'>{{.}}</a></li>
+            {{end}}
+        </ul>
+    </details>
+
+    <details>
+        <summary><h2>Playlists</h2></summary>
+        <ul class='playlists'>
+            {{range .Playlists}}
+                {{template "playlist" .}}
             {{end}}
         </ul>
     </details>

@@ -13,6 +13,7 @@ import (
 type ResultsViewModel struct {
 	SearchQuery string
 	Refinements []string
+	Playlists   []*view_models.ListPlaylistViewModel
 	Videos      []*view_models.VideoViewModel
 }
 
@@ -34,15 +35,26 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vmRdx, err := kvas.NewReduxWriter(metadataDir, extractedSearchProperties...)
+	extractedProperties := extractedSearchVideosProperties
+	extractedProperties = append(extractedProperties, extractedSearchPlaylistProperties...)
+
+	wRdx, err := kvas.NewReduxWriter(metadataDir, extractedProperties...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	properyValues := extractSearchVideosMetadata(sid.VideoRenderers())
-	for property, keyValues := range properyValues {
-		if err := vmRdx.BatchAddValues(property, keyValues); err != nil {
+	propertyValues := extractSearchVideosMetadata(sid.VideoRenderers())
+	for property, keyValues := range propertyValues {
+		if err := wRdx.BatchAddValues(property, keyValues); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	propertyValues = extractSearchPlaylistMetadata(sid.PlaylistRenderers())
+	for property, keyValues := range propertyValues {
+		if err := wRdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -53,8 +65,12 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		Refinements: sid.Refinements,
 	}
 
+	for _, plr := range sid.PlaylistRenderers() {
+		rvm.Playlists = append(rvm.Playlists, view_models.GetListPlaylistViewModel(plr.PlaylistId, wRdx))
+	}
+
 	for _, vr := range sid.VideoRenderers() {
-		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, vmRdx,
+		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, wRdx,
 			view_models.ShowOwnerChannel,
 			view_models.ShowPublishedDate,
 			view_models.ShowViewCount))
@@ -68,7 +84,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var extractedSearchProperties = []string{
+var extractedSearchVideosProperties = []string{
 	data.VideoTitleProperty,
 	data.VideoOwnerChannelNameProperty,
 	data.VideoViewCountProperty,
@@ -76,10 +92,14 @@ var extractedSearchProperties = []string{
 	data.VideoEndedProperty,
 }
 
+var extractedSearchPlaylistProperties = []string{
+	data.PlaylistTitleProperty,
+}
+
 func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[string][]string {
 	pkv := make(map[string]map[string][]string)
 
-	for _, property := range extractedSearchProperties {
+	for _, property := range extractedSearchVideosProperties {
 
 		pkv[property] = make(map[string][]string)
 
@@ -96,6 +116,28 @@ func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[st
 				pkv[property][id] = []string{svr.ViewCountText.SimpleText}
 			case data.VideoPublishTimeTextProperty:
 				pkv[property][id] = []string{svr.PublishedTimeText.SimpleText}
+			}
+		}
+
+	}
+
+	return pkv
+}
+
+func extractSearchPlaylistMetadata(sprs []yt_urls.PlaylistRenderer) map[string]map[string][]string {
+	pkv := make(map[string]map[string][]string)
+
+	for _, property := range extractedSearchPlaylistProperties {
+
+		pkv[property] = make(map[string][]string)
+
+		for _, pvr := range sprs {
+
+			id := pvr.PlaylistId
+
+			switch property {
+			case data.PlaylistTitleProperty:
+				pkv[property][id] = []string{pvr.Title.SimpleText}
 			}
 		}
 

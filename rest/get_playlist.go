@@ -55,7 +55,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err := tmpl.ExecuteTemplate(w, "playlist", plvm); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "playlists", plvm); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

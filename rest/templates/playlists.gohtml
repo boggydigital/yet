@@ -1,0 +1,31 @@
+{{define "playlists"}}
+    <!doctype html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <link rel='icon'
+              href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>'
+              type='image/svg+xml'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta name='color-scheme' content='dark light'>
+        <title>🔻 {{.PlaylistTitle}}</title>
+        {{template "css-shared"}}
+        <style id="css-playlist">
+            a.refresh {
+                color: var(--color-light-blue);
+                margin-block: var(--large);
+            }
+        </style>
+    </head>
+    <body>
+    <h1><span class='playlistTitle'>{{.PlaylistTitle}}</span></h1>
+    {{if .AutoDownloading}}
+        <div class='subtle'>Automatically refreshing and downloading new videos</div>
+    {{end}}
+    <a class='video refresh' href='/refresh?list={{.PlaylistId}}'>Refresh playlist</a>
+    {{range .Videos}}
+        {{template "video" .}}
+    {{end}}
+    </body>
+    </html>
+{{end}}
