@@ -33,11 +33,29 @@
                 list-style: none;
                 padding-inline-start: 0
             }
+
+            ul.topLinks {
+                display: flex;
+                flex-direction: row;
+                column-gap: var(--large);
+                margin-block: var(--normal)
+            }
+
+            ul.topLinks a {
+                margin: 0;
+            }
+
         </style>
     </head>
     <body>
-    <a class='video highlight' href='/search'>Search</a>
-    <a class='video highlight' href='/new'>Paste new</a>
+    <ul class="topLinks">
+        <li>
+            <a class='video highlight' href='/search'>Search</a>
+        </li>
+        <li>
+            <a class='video highlight' href='/new'>Paste new</a>
+        </li>
+    </ul>
 
     {{if .Continue}}
         <details open>
