@@ -4,6 +4,7 @@ import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/rest/view_models"
 	"github.com/boggydigital/yt_urls"
 	"net/http"
 	"strings"
@@ -12,7 +13,7 @@ import (
 type ResultsViewModel struct {
 	SearchQuery string
 	Refinements []string
-	Videos      []*VideoViewModel
+	Videos      []*view_models.VideoViewModel
 }
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
@@ -53,10 +54,10 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, vr := range sid.VideoRenderers() {
-		rvm.Videos = append(rvm.Videos, videoViewModel(vr.VideoId, vmRdx,
-			ShowOwnerChannel,
-			ShowPublishedDate,
-			ShowViewCount))
+		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, vmRdx,
+			view_models.ShowOwnerChannel,
+			view_models.ShowPublishedDate,
+			view_models.ShowViewCount))
 	}
 
 	w.Header().Set("Content-Type", "text/html")

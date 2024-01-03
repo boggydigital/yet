@@ -1,4 +1,4 @@
-package rest
+package view_models
 
 import (
 	"github.com/boggydigital/kvas"
@@ -39,7 +39,7 @@ type VideoViewModel struct {
 	ViewCount             string
 }
 
-func videoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOptions) *VideoViewModel {
+func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOptions) *VideoViewModel {
 
 	videoTitle := videoId
 	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {

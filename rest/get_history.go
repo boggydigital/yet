@@ -3,6 +3,7 @@ package rest
 import (
 	"fmt"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/rest/view_models"
 	"net/http"
 	"time"
 )
@@ -22,7 +23,7 @@ type HistoryViewModel struct {
 	ShowAll     bool
 	OpenGroup   string
 	GroupsOrder []string
-	Groups      map[string][]*VideoViewModel
+	Groups      map[string][]*view_models.VideoViewModel
 }
 
 func GetHistory(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +49,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		ShowAll:     showAll,
 		OpenGroup:   recentGroup,
 		GroupsOrder: groupsOrder,
-		Groups:      make(map[string][]*VideoViewModel),
+		Groups:      make(map[string][]*view_models.VideoViewModel),
 	}
 
 	whKeys := rdx.Keys(data.VideoEndedProperty)
@@ -93,7 +94,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 			if writtenVideos == endedVideosLimit && !showAll {
 				break
 			}
-			hvm.Groups[grp] = append(hvm.Groups[grp], videoViewModel(id, rdx, ShowEndedDate))
+			hvm.Groups[grp] = append(hvm.Groups[grp], view_models.GetVideoViewModel(id, rdx, view_models.ShowEndedDate))
 			writtenVideos++
 		}
 	}

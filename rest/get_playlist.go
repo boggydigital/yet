@@ -2,19 +2,13 @@ package rest
 
 import (
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/rest/view_models"
 	"net/http"
 )
 
 const (
 	showImagesLimit = 20
 )
-
-type PlaylistViewModel struct {
-	PlaylistTitle   string
-	PlaylistId      string
-	AutoDownloading bool
-	Videos          []*VideoViewModel
-}
 
 func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
@@ -34,13 +28,13 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pt := playlistTitle(id, rdx)
+	pt := view_models.PlaylistTitle(id, rdx)
 
 	w.Header().Set("Content-Type", "text/html")
 
 	// playlist specific styles
 
-	plvm := &PlaylistViewModel{
+	plvm := &view_models.PlaylistViewModel{
 		PlaylistId:    id,
 		PlaylistTitle: pt,
 	}
@@ -51,13 +45,13 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, id); ok && len(videoIds) > 0 {
 		for i, videoId := range videoIds {
-			var options []VideoOptions
+			var options []view_models.VideoOptions
 			if i+1 < showImagesLimit {
-				options = []VideoOptions{ShowPoster, ShowPublishedDate}
+				options = []view_models.VideoOptions{view_models.ShowPoster, view_models.ShowPublishedDate}
 			} else {
-				options = []VideoOptions{ShowPublishedDate}
+				options = []view_models.VideoOptions{view_models.ShowPublishedDate}
 			}
-			plvm.Videos = append(plvm.Videos, videoViewModel(videoId, rdx, options...))
+			plvm.Videos = append(plvm.Videos, view_models.GetVideoViewModel(videoId, rdx, options...))
 		}
 	}
 
