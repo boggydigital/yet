@@ -14,11 +14,13 @@
     <body>
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
     <div class='subtle'>
-    {{if .Downloading}}
-        Automatically refreshing playlist and downloading new videos
-    {{else if .Watching}}
-        Automatically refreshing playlist
-    {{end}}
+        {{if .Downloading}}
+            Automatically refreshing playlist and downloading new videos
+        {{else if .Watching}}
+            Automatically refreshing playlist
+        {{else}}
+            This playlist is not refreshed and videos are not downloaded automatically
+        {{end}}
     </div>
     <a class='refresh' href='/manage_playlist?list={{.PlaylistId}}'>Manage automatic updates</a>
     <a class='refresh' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh playlist right now</a>
