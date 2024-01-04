@@ -22,7 +22,7 @@ func HandleFuncs() {
 
 		"/watch":   BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
 		"/list":    BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
-		"/new":     BrGzip(GetOnly(Log(http.HandlerFunc(GetNew)))),
+		"/paste":   BrGzip(GetOnly(Log(http.HandlerFunc(GetPaste)))),
 		"/history": BrGzip(GetOnly(Log(http.HandlerFunc(GetHistory)))),
 		"/search":  BrGzip(GetOnly(Log(http.HandlerFunc(GetSearch)))),
 		"/results": BrGzip(GetOnly(Log(http.HandlerFunc(GetResults)))),

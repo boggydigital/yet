@@ -40,7 +40,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	t := r.URL.Query().Get("t")
 
 	if v == "" {
-		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)
+		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
 	}
 

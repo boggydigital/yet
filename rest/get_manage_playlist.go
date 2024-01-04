@@ -19,7 +19,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 	playlistId := r.URL.Query().Get("list")
 
 	if playlistId == "" {
-		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)
+		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
 	}
 

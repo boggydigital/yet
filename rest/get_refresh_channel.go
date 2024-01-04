@@ -15,7 +15,7 @@ func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 	channelId := r.URL.Query().Get("id")
 
 	if channelId == "" {
-		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)
+		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
 	}
 
