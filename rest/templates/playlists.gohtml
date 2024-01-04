@@ -20,7 +20,8 @@
         Automatically refreshing playlist
     {{end}}
     </div>
-    <a class='refresh' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh playlist</a>
+    <a class='refresh' href='/manage_playlist?list={{.PlaylistId}}'>Manage automatic updates</a>
+    <a class='refresh' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh playlist right now</a>
     {{range .Videos}}
         {{template "video" .}}
     {{end}}

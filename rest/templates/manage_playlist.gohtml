@@ -1,0 +1,40 @@
+{{define "manage_playlist"}}
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset='UTF-8'>
+        <link rel='icon'
+              href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>'
+              type='image/svg+xml'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta name='color-scheme' content='dark light'>
+        <title>Manage {{.PlaylistTitle}}</title>
+        {{template "css-shared"}}
+        <style id="css-manage-playlist">
+            li {
+                margin-block: var(--normal);
+                font-size: var(--fs-larger);
+            }
+        </style>
+    </head>
+    <body>
+    <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
+
+    <form method="get" action="/update_playlist">
+        <input type="hidden" id="list" name="list" value="{{.PlaylistId}}" />
+        <ul>
+            <li>
+                <input id="refresh" type="checkbox" name="refresh" {{if .Watching}}checked{{end}} />
+                <label for="refresh">Automatically refresh</label>
+            </li>
+            <li>
+                <input id="download" type="checkbox" name="download" {{if .Downloading}}checked{{end}} />
+                <label for="download">Automatically download new videos. Requires automatic refresh</label>
+            </li>
+        </ul>
+        <input type="submit"/>
+    </form>
+
+    </body>
+    </html>
+{{end}}

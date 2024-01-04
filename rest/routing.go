@@ -32,6 +32,8 @@ func HandleFuncs() {
 
 		"/playlist":         BrGzip(GetOnly(Log(http.HandlerFunc(GetPlaylist)))),
 		"/refresh_playlist": BrGzip(GetOnly(Log(http.HandlerFunc(GetRefreshPlaylist)))),
+		"/manage_playlist":  BrGzip(GetOnly(Log(http.HandlerFunc(GetManagePlaylist)))),
+		"/update_playlist":  BrGzip(GetOnly(Log(http.HandlerFunc(GetUpdatePlaylist)))),
 
 		"/channel":         BrGzip(GetOnly(Log(http.HandlerFunc(GetChannel)))),
 		"/refresh_channel": BrGzip(GetOnly(Log(http.HandlerFunc(GetRefreshChannel)))),
