@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -31,7 +32,7 @@ func AddVideos(propertyValues map[string][]string) error {
 	ava := nod.NewProgress("adding videos...")
 	defer ava.End()
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return ava.EndWithError(err)
 	}

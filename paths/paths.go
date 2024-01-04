@@ -3,6 +3,7 @@ package paths
 import (
 	"errors"
 	"fmt"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yt_urls"
 	"os"
 	"path/filepath"
@@ -14,7 +15,7 @@ const (
 )
 
 func AbsCookiesPath() (string, error) {
-	idp, err := GetAbsDir(Input)
+	idp, err := pathology.GetAbsDir(Input)
 	return filepath.Join(idp, cookiesFilename), err
 }
 
@@ -24,7 +25,7 @@ func AbsCookiesPath() (string, error) {
 // /path/to/posters/v/i/videoId/quality.jpg
 func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, error) {
 
-	pdp, err := GetAbsDir(Posters)
+	pdp, err := pathology.GetAbsDir(Posters)
 	if err != nil {
 		return "", err
 	}
@@ -41,7 +42,7 @@ func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, er
 // first and second letters of video-id to product something like
 // /path/to/captions/f/s/fs_lang.jpg
 func AbsCaptionsTrackPath(videoId, lang string) (string, error) {
-	cdp, err := GetAbsDir(Captions)
+	cdp, err := pathology.GetAbsDir(Captions)
 	if err != nil {
 		return "", err
 	}

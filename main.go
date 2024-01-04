@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"github.com/boggydigital/clo"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/wits"
 	"github.com/boggydigital/yet/cli"
 	"github.com/boggydigital/yet/paths"
@@ -23,15 +24,27 @@ const (
 )
 
 func main() {
+	// setup directories
+	pathology.SetDefaultRootDir(paths.DefaultYetRootDir)
+	if err := pathology.SetAbsDirs(paths.AllAbsDirs...); err != nil {
+		panic(err)
+	}
+	if _, err := os.Stat(userDirsFilename); err == nil {
+		udFile, err := os.Open(userDirsFilename)
+		if err != nil {
+			panic(err)
+		}
+		userDirs, err := wits.ReadKeyValue(udFile)
+		if err != nil {
+			panic(err)
+		}
+		pathology.SetUserDirsOverrides(userDirs)
+	}
+
 	nod.EnableStdOutPresenter()
 
 	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.End()
-
-	if err := chRoot(userDirsFilename, paths.DefaultDirs); err != nil {
-		_ = ya.EndWithError(err)
-		os.Exit(1)
-	}
 
 	defs, err := clo.Load(
 		bytes.NewBuffer(cliCommands),
@@ -46,6 +59,7 @@ func main() {
 		"add-playlists":               cli.AddPlaylistsHandler,
 		"add-videos":                  cli.AddVideosHandler,
 		"add-urls":                    cli.AddUrlsHandler,
+		"backup":                      cli.BackupHandler,
 		"cleanup-ended":               cli.CleanupEndedHandler,
 		"download":                    cli.DownloadHandler,
 		"get-captions":                cli.GetCaptionsHandler,
@@ -76,27 +90,4 @@ func main() {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
 	}
-}
-
-func chRoot(userDirsFilename string, defaultDirs map[string]string) error {
-
-	var userDirs map[string]string
-
-	if _, err := os.Stat(userDirsFilename); err == nil {
-		udFile, err := os.Open(userDirsFilename)
-		if err != nil {
-			return err
-		}
-
-		userDirs, err = wits.ReadKeyValue(udFile)
-		if err != nil {
-			return err
-		}
-	} else if os.IsNotExist(err) {
-		userDirs = defaultDirs
-	} else {
-		return err
-	}
-
-	return paths.SetAbsDirs(userDirs)
 }

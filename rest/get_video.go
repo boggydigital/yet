@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yt_urls"
 	"net/http"
@@ -17,7 +18,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request) {
 
 	if filepath.IsLocal(file) {
 
-		absVideosDir, err := paths.GetAbsDir(paths.Videos)
+		absVideosDir, err := pathology.GetAbsDir(paths.Videos)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

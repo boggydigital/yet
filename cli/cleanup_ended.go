@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -23,12 +24,12 @@ func CleanupEnded() error {
 	cea := nod.NewProgress("cleaning up ended media...")
 	defer cea.End()
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return cea.EndWithError(err)
 	}
 
-	absVideosDir, err := paths.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathology.GetAbsDir(paths.Videos)
 	if err != nil {
 		return cea.EndWithError(err)
 	}

@@ -21,6 +21,8 @@ add-videos
     watchlist&
     ended&
 
+backup
+
 cleanup-ended
 
 download

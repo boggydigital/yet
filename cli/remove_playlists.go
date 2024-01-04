@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -27,7 +28,7 @@ func RemovePlaylists(propertyValues map[string][]string) error {
 	rpa := nod.NewProgress("removing playlists...")
 	defer rpa.End()
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return rpa.EndWithError(err)
 	}

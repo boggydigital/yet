@@ -3,6 +3,7 @@ package rest
 import (
 	"encoding/json"
 	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/http"
@@ -20,7 +21,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	// POST /progress
 	// {v, t}
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

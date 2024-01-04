@@ -3,6 +3,7 @@ package view_models
 import (
 	"fmt"
 	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -50,7 +51,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
 		if channel, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
 			localVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
-			if absVideosDir, err := paths.GetAbsDir(paths.Videos); err == nil {
+			if absVideosDir, err := pathology.GetAbsDir(paths.Videos); err == nil {
 				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
 					playbackType = "local"
@@ -72,7 +73,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 			return nil, err
 		}
 
-		metadataDir, err := paths.GetAbsDir(paths.Metadata)
+		metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 		if err != nil {
 			return nil, err
 		}

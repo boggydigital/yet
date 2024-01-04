@@ -5,6 +5,7 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	pathology "github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
@@ -27,7 +28,7 @@ func GetUrl(urls ...string) error {
 	gfa := nod.NewProgress(fmt.Sprintf("downloading %d file(s)", len(urls)))
 	defer gfa.End()
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return gfa.EndWithError(err)
 	}
@@ -65,7 +66,7 @@ func GetUrl(urls ...string) error {
 			return gfa.EndWithError(err)
 		}
 
-		absVideosDir, err := paths.GetAbsDir(paths.Videos)
+		absVideosDir, err := pathology.GetAbsDir(paths.Videos)
 		if err != nil {
 			return gfa.EndWithError(err)
 		}

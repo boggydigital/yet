@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
@@ -17,7 +18,7 @@ func UpdatePlaylistsNewVideos() error {
 	upmnva := nod.NewProgress("updating playlists new videos (new since last ended)...")
 	defer upmnva.End()
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return upmnva.EndWithError(err)
 	}

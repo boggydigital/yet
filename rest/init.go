@@ -3,6 +3,7 @@ package rest
 import (
 	"embed"
 	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/pathology"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"html/template"
@@ -17,7 +18,7 @@ var (
 
 func Init() error {
 
-	metadataDir, err := paths.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return err
 	}
