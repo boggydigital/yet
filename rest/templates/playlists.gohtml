@@ -10,12 +10,6 @@
         <meta name='color-scheme' content='dark light'>
         <title>{{.PlaylistTitle}}</title>
         {{template "css-shared"}}
-        <style id="css-playlist">
-            a.refresh {
-                color: var(--color-light-blue);
-                margin-block: var(--large);
-            }
-        </style>
     </head>
     <body>
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
@@ -26,7 +20,7 @@
         Automatically refreshing new videos, not downloading
     {{end}}
     </div>
-    <a class='video refresh' href='/refresh?list={{.PlaylistId}}'>Refresh playlist</a>
+    <a class='refresh' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh playlist</a>
     {{range .Videos}}
         {{template "video" .}}
     {{end}}

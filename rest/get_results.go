@@ -113,6 +113,7 @@ var extractedSearchPlaylistProperties = []string{
 
 var extractedSearchChannelProperties = []string{
 	data.ChannelTitleProperty,
+	data.ChannelDescriptionProperty,
 }
 
 func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[string][]string {
@@ -179,6 +180,8 @@ func extractSearchChannelMetadata(scrs []yt_urls.ChannelRenderer) map[string]map
 			switch property {
 			case data.ChannelTitleProperty:
 				pkv[property][id] = []string{cr.Title.SimpleText}
+			case data.ChannelDescriptionProperty:
+				pkv[property][id] = []string{cr.DescriptionSnippet.String()}
 			}
 		}
 

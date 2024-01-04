@@ -16,6 +16,7 @@
     {{if .ChannelDescription}}
         <div class="channelDescription subtle">{{.ChannelDescription}}</div>
     {{end}}
+    <a class='refresh' href='/refresh_channel?id={{.ChannelId}}'>Refresh channel</a>
     {{$playlists := .Playlists}}
     {{$playlistsVideos := .PlaylistsVideos}}
     {{range $playlistId := .PlaylistsOrder}}

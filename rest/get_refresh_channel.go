@@ -8,13 +8,13 @@ import (
 	"net/http"
 )
 
-func GetRefresh(w http.ResponseWriter, r *http.Request) {
+func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh?id
+	// GET /refresh_channel?id
 
-	id := r.URL.Query().Get("list")
+	channelId := r.URL.Query().Get("id")
 
-	if id == "" {
+	if channelId == "" {
 		http.Redirect(w, r, "/new", http.StatusPermanentRedirect)
 		return
 	}
@@ -25,22 +25,17 @@ func GetRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plRdx, err := kvas.NewReduxWriter(metadataDir,
-		data.PlaylistTitleProperty,
-		data.PlaylistChannelProperty,
-		data.PlaylistVideosProperty,
-		data.VideoTitleProperty,
-		data.VideoOwnerChannelNameProperty)
+	chRdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := yeti.GetPlaylistPageMetadata(nil, id, false, plRdx); err != nil {
+	if err := yeti.GetChannelPageMetadata(nil, channelId, chRdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.Redirect(w, r, "/playlist?list="+id, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/channel?id="+channelId, http.StatusTemporaryRedirect)
 }

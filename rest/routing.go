@@ -26,13 +26,15 @@ func HandleFuncs() {
 		"/history": BrGzip(GetOnly(Log(http.HandlerFunc(GetHistory)))),
 		"/search":  BrGzip(GetOnly(Log(http.HandlerFunc(GetSearch)))),
 		"/results": BrGzip(GetOnly(Log(http.HandlerFunc(GetResults)))),
-		"/channel": BrGzip(GetOnly(Log(http.HandlerFunc(GetChannel)))),
 
 		"/progress": PostOnly(Log(http.HandlerFunc(PostProgress))),
 		"/ended":    PostOnly(Log(http.HandlerFunc(PostEnded))),
 
-		"/playlist": BrGzip(GetOnly(Log(http.HandlerFunc(GetPlaylist)))),
-		"/refresh":  BrGzip(GetOnly(Log(http.HandlerFunc(GetRefresh)))),
+		"/playlist":         BrGzip(GetOnly(Log(http.HandlerFunc(GetPlaylist)))),
+		"/refresh_playlist": BrGzip(GetOnly(Log(http.HandlerFunc(GetRefreshPlaylist)))),
+
+		"/channel":         BrGzip(GetOnly(Log(http.HandlerFunc(GetChannel)))),
+		"/refresh_channel": BrGzip(GetOnly(Log(http.HandlerFunc(GetRefreshChannel)))),
 
 		"/": GetOnly(Log(http.RedirectHandler("/list", http.StatusPermanentRedirect))),
 	}
