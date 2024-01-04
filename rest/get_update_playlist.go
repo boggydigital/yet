@@ -13,13 +13,6 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// GET /update_playlist?list
 
-	var err error
-	rdx, err = rdx.RefreshReader()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	playlistId := r.URL.Query().Get("list")
 
 	if playlistId == "" {
@@ -33,20 +26,19 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plRdx, err := kvas.NewReduxWriter(metadataDir, data.PlaylistWatchlistProperty, data.PlaylistDownloadQueueProperty)
+	properties := []string{data.PlaylistWatchlistProperty, data.PlaylistDownloadQueueProperty}
+
+	plRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := updatePlaylistProperty(playlistId, data.PlaylistWatchlistProperty, r.URL, plRdx); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := updatePlaylistProperty(playlistId, data.PlaylistDownloadQueueProperty, r.URL, plRdx); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	for _, p := range properties {
+		if err := updatePlaylistProperty(playlistId, p, r.URL, plRdx); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 
 	http.Redirect(w, r, "/playlist?list="+playlistId, http.StatusTemporaryRedirect)
@@ -75,7 +67,7 @@ func updatePlaylistProperty(playlistId string, property string, u *url.URL, rdx 
 		}
 	} else {
 		if rdx.HasKey(property, playlistId) {
-			err = rdx.CutValues(property, playlistId, data.TrueValue)
+			err = rdx.CutKeys(property, playlistId)
 		}
 	}
 

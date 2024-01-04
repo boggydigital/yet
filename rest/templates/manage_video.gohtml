@@ -1,0 +1,55 @@
+{{define "manage_video"}}
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset='UTF-8'>
+        <link rel='icon'
+              href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔻</text></svg>'
+              type='image/svg+xml'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta name='color-scheme' content='dark light'>
+        <title>Manage {{.VideoTitle}}</title>
+        {{template "css-shared"}}
+    </head>
+    <body>
+    <h1 class='video'>{{.VideoTitle}}</h1>
+
+    <div class="subtle"><b>VideoId:</b> {{.VideoId}}</div>
+    {{if .CanViewAtOrigin}}
+        <a class="action" href="https://youtu.be/{{.VideoId}}">View at origin</a>
+    {{end}}
+
+    <form method="get" action="/update_video">
+        <input type="hidden" id="v" name="v" value="{{.VideoId}}"/>
+        <ul class="management">
+            <li>
+                <input id="progress" type="checkbox" name="progress" {{if .Progress}}checked{{end}} />
+                <label for="progress"><b>Progress</b>.
+                    <span class='subtle'>Setting has no effect - scrub the video instead.
+                        Unset to clear that progress.</span></label>
+            </li>
+            <li>
+                <input id="ended" type="checkbox" name="ended" {{if .Ended}}checked{{end}} />
+                <label for="ended"><b>Ended</b>.
+                    <span class="subtle">Set to mark as ended.
+                        Unset to mark as new.</span></label>
+            </li>
+            <li>
+                <input id="watchlist" type="checkbox" name="watchlist" {{if .Watchlist}}checked{{end}} />
+                <label for="watchlist"><b>Watchlist</b>.
+                    <span class="subtle">Set to add to watchlist.
+                        Unset to remove from watchlist.</span></label>
+            </li>
+            <li>
+                <input id="download" type="checkbox" name="download" {{if .DownloadQueue}}checked{{end}} />
+                <label for="download"><b>Download queue</b>.
+                    <span class="subtle">Set to add to download queue and download at the next sync.
+                        Unset to remove from download queue.</span></label>
+            </li>
+        </ul>
+        <input type="submit" value='Update'/>
+    </form>
+
+    </body>
+    </html>
+{{end}}

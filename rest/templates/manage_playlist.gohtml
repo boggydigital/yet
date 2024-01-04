@@ -10,26 +10,25 @@
         <meta name='color-scheme' content='dark light'>
         <title>Manage {{.PlaylistTitle}}</title>
         {{template "css-shared"}}
-        <style id="css-manage-playlist">
-            li {
-                margin-block: var(--normal);
-                font-size: var(--fs-larger);
-            }
-        </style>
     </head>
     <body>
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
 
+    <div class="subtle"><b>PlaylistId:</b> {{.PlaylistId}}</div>
+    <a class="action" href="https://www.youtube.com/playlist?list={{.PlaylistId}}">View at origin</a>
+
     <form method="get" action="/update_playlist">
         <input type="hidden" id="list" name="list" value="{{.PlaylistId}}" />
-        <ul>
+        <ul class="management">
             <li>
                 <input id="refresh" type="checkbox" name="refresh" {{if .Watching}}checked{{end}} />
-                <label for="refresh">Automatically refresh</label>
+                <label for="refresh"><b>Automatically refresh</b>.
+                    <span class="subtle">Check new videos, download metadata</span></label>
             </li>
             <li>
                 <input id="download" type="checkbox" name="download" {{if .Downloading}}checked{{end}} />
-                <label for="download">Automatically download new videos. Requires automatic refresh</label>
+                <label for="download"><b>Automatically download new videos</b>.
+                    <span class="subtle">Requires automatic refresh</span></label>
             </li>
         </ul>
         <input type="submit" value='Update'/>

@@ -68,7 +68,7 @@ func removePropertyValues(rdx kvas.WriteableRedux, parseDelegate func(...string)
 		return rpva.EndWithError(err)
 	}
 
-	if err := rdx.BatchCutKeys(property, values); err != nil {
+	if err := rdx.CutKeys(property, values...); err != nil {
 		return rpva.EndWithError(err)
 	}
 

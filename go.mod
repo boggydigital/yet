@@ -6,7 +6,7 @@ require (
 	github.com/boggydigital/clo v1.0.4
 	github.com/boggydigital/coost v0.3.9
 	github.com/boggydigital/dolo v0.2.13
-	github.com/boggydigital/kvas v0.4.3
+	github.com/boggydigital/kvas v0.4.4
 	github.com/boggydigital/middleware v0.1.11
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/wits v0.2.3
