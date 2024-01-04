@@ -49,10 +49,10 @@
         </details>
     {{end}}
 
-    {{if .Watchlist}}
+    {{if .Videos}}
         <details>
-            <summary><h1>Watchlist</h1></summary>
-            {{range .Watchlist}}
+            <summary><h1>Videos</h1></summary>
+            {{range .Videos}}
                 {{template "video" .}}
             {{end}}
             {{if .HasNewPlaylistVideos}}
