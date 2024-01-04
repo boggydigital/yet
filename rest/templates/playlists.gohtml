@@ -19,9 +19,13 @@
     </head>
     <body>
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
+    <div class='subtle'>
     {{if .AutoDownloading}}
-        <div class='subtle'>Automatically refreshing and downloading new videos</div>
+        Automatically refreshing and downloading new videos
+    {{else}}
+        Automatically refreshing new videos, not downloading
     {{end}}
+    </div>
     <a class='video refresh' href='/refresh?list={{.PlaylistId}}'>Refresh playlist</a>
     {{range .Videos}}
         {{template "video" .}}
