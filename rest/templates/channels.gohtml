@@ -16,6 +16,7 @@
     {{if .ChannelDescription}}
         <div class="channelDescription subtle">{{.ChannelDescription}}</div>
     {{end}}
+    <a class='action' href='https://www.youtube.com/channel/{{.ChannelId}}'>Browse at origin</a>
     <a class='action' href='/refresh_channel?id={{.ChannelId}}'>Refresh channel</a>
     {{$playlists := .Playlists}}
     {{$playlistsVideos := .PlaylistsVideos}}
