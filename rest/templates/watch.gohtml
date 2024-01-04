@@ -32,7 +32,7 @@
     </head>
     <body>
 
-    <video controls='controls' preload='metadata' poster='{{.VideoPoster}}'>
+    <video controls='controls' preload='auto' poster='{{.VideoPoster}}' loading="lazy">
         <source src='{{.VideoUrl}}'/>
     </video>
 

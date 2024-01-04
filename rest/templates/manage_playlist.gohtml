@@ -15,7 +15,7 @@
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
 
     <div class="subtle"><b>PlaylistId:</b> {{.PlaylistId}}</div>
-    <a class="action" href="https://www.youtube.com/playlist?list={{.PlaylistId}}">View at origin</a>
+    <a class="action" href="https://www.youtube.com/playlist?list={{.PlaylistId}}">Browse at origin</a>
 
     <form method="get" action="/update_playlist">
         <input type="hidden" id="list" name="list" value="{{.PlaylistId}}" />

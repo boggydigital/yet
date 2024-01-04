@@ -16,7 +16,11 @@
 
     <div class="subtle"><b>VideoId:</b> {{.VideoId}}</div>
     {{if .CanViewAtOrigin}}
-        <a class="action" href="https://youtu.be/{{.VideoId}}">View at origin</a>
+        <a class="action"
+           href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}&t={{.CurrentTime}}{{end}}">
+            {{if .CurrentTime}}Continue watching at origin{{else}}Watch at origin{{end}}</a>
+    {{else}}
+        <a class="action"></a>
     {{end}}
 
     <form method="get" action="/update_video">
