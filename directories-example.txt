@@ -1,9 +1,12 @@
 backups
     /usr/share/yet/backups
 input
-    # cookies.txt, skiplist.txt
-    /usr/share/yet
+    /usr/share/yet/
 metadata
     /usr/share/yet/metadata
 videos
     /usr/share/yet/videos
+posters
+    /usr/share/yet/posters
+captions
+    /usr/share/yet/captions
