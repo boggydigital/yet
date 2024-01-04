@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	showImagesLimit = 20
+	showImagesLimit = 12
 )
 
 type PlaylistViewModel struct {

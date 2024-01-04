@@ -52,7 +52,10 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := os.Stat(absPosterFilename); err != nil {
+	if _, err := os.Stat(absPosterFilename); err == nil {
+		http.ServeFile(w, r, absPosterFilename)
+		return
+	} else {
 		var br io.ReadSeeker
 		filename := ""
 
