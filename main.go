@@ -49,6 +49,7 @@ func main() {
 		"cleanup-ended":               cli.CleanupEndedHandler,
 		"download":                    cli.DownloadHandler,
 		"get-captions":                cli.GetCaptionsHandler,
+		"get-channel-metadata":        cli.GetChannelMetadataHandler,
 		"get-url":                     cli.GetUrlHandler,
 		"get-playlist-metadata":       cli.GetPlaylistMetadataHandler,
 		"get-poster":                  cli.GetPosterHandler,
@@ -70,13 +71,6 @@ func main() {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
 	}
-
-	//cid, err := yt_urls.GetChannelPage(http.DefaultClient, "UCsvn_Po0SmunchJYOWpOxMg")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//fmt.Println(cid)
 
 	if err := defs.Serve(os.Args[1:]); err != nil {
 		_ = ya.EndWithError(err)

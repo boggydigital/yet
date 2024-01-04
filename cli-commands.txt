@@ -31,6 +31,10 @@ download
 get-captions
     id&^
 
+get-channel-metadata
+    id&^
+    force
+
 get-url
     url&^
 

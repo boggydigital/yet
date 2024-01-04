@@ -33,7 +33,9 @@ const (
 	PlaylistTitleProperty         = "playlist-title"
 	PlaylistVideosProperty        = "playlist-videos"
 
-	ChannelTitleProperty = "channel-title"
+	ChannelTitleProperty       = "channel-title"
+	ChannelDescriptionProperty = "channel-description"
+	ChannelPlaylistsProperty   = "channel-playlists"
 )
 
 func AllProperties() []string {
@@ -69,5 +71,7 @@ func AllProperties() []string {
 		PlaylistVideosProperty,
 
 		ChannelTitleProperty,
+		ChannelDescriptionProperty,
+		ChannelPlaylistsProperty,
 	}
 }

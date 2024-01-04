@@ -12,7 +12,24 @@
         {{template "css-shared"}}
     </head>
     <body>
-    <h1 class='channel'><span >{{.ChannelTitle}}</span></h1>
+    <h1 class='channel'><span>{{.ChannelTitle}}</span></h1>
+    {{if .ChannelDescription}}
+        <div class="channelDescription subtle">{{.ChannelDescription}}</div>
+    {{end}}
+    {{$playlists := .Playlists}}
+    {{$playlistsVideos := .PlaylistsVideos}}
+    {{range $playlistId := .PlaylistsOrder}}
+        {{if $playlistId}}
+            <details>
+                <summary><h2>{{index $playlists $playlistId}}</h2></summary>
+                <a class='playlist' href='/playlist?list={{$playlistId}}'>View playlist</a>
+                {{$videos := index $playlistsVideos $playlistId}}
+                {{range $video := $videos}}
+                    {{template "video" $video}}
+                {{end}}
+            </details>
+        {{end}}
+    {{end}}
     </body>
     </html>
 {{end}}

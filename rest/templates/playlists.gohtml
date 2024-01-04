@@ -22,7 +22,7 @@
     <div class='subtle'>
     {{if .AutoDownloading}}
         Automatically refreshing and downloading new videos
-    {{else}}
+    {{else if .Watching}}
         Automatically refreshing new videos, not downloading
     {{end}}
     </div>

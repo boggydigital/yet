@@ -16,6 +16,7 @@ type PlaylistViewModel struct {
 	PlaylistTitle   string
 	PlaylistClass   string
 	NewVideos       int
+	Watching        bool
 	AutoDownloading bool
 	Videos          []*VideoViewModel
 }
@@ -26,6 +27,11 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 
 	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok {
 		nvc = len(nv)
+	}
+
+	watching := false
+	if pwl, ok := rdx.GetFirstVal(data.PlaylistWatchlistProperty, playlistId); ok && pwl == data.TrueValue {
+		watching = true
 	}
 
 	autoDownloading := false
@@ -46,6 +52,7 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		PlaylistClass:   pc,
 		NewVideos:       nvc,
 		PlaylistTitle:   PlaylistTitle(playlistId, rdx),
+		Watching:        watching,
 		AutoDownloading: autoDownloading,
 	}
 

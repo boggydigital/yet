@@ -27,7 +27,7 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 		return gpma.EndWithError(err)
 	}
 
-	gpma.TotalInt(len(ids))
+	gpma.TotalInt(len(playlistIds))
 
 	metadataDir, err := paths.GetAbsDir(paths.Metadata)
 	if err != nil {

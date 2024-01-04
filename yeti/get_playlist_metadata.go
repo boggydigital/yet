@@ -21,8 +21,8 @@ func GetPlaylistPageMetadata(playlistPage *yt_urls.PlaylistInitialData, playlist
 		}
 	}
 
-	ph := playlistPage.PlaylistHeader()
-	if err := rdx.ReplaceValues(data.PlaylistTitleProperty, playlistId, ph.Title.SimpleText); err != nil {
+	phr := playlistPage.PlaylistHeaderRenderer()
+	if err := rdx.ReplaceValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
 		return gppma.EndWithError(err)
 	}
 
