@@ -12,13 +12,13 @@ const (
 )
 
 type PlaylistViewModel struct {
-	PlaylistId      string
-	PlaylistTitle   string
-	PlaylistClass   string
-	NewVideos       int
-	Watching        bool
-	AutoDownloading bool
-	Videos          []*VideoViewModel
+	PlaylistId    string
+	PlaylistTitle string
+	PlaylistClass string
+	NewVideos     int
+	Watching      bool
+	Downloading   bool
+	Videos        []*VideoViewModel
 }
 
 func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
@@ -34,26 +34,26 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		watching = true
 	}
 
-	autoDownloading := false
+	downloading := false
 	if pdq, ok := rdx.GetFirstVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
-		autoDownloading = true
+		downloading = true
 	}
 
 	pc := ""
-	if autoDownloading {
-		pc = "autoDownloading"
+	if downloading {
+		pc = "downloading"
 		if nvc == 0 {
 			pc += " ended"
 		}
 	}
 
 	plvm := &PlaylistViewModel{
-		PlaylistId:      playlistId,
-		PlaylistClass:   pc,
-		NewVideos:       nvc,
-		PlaylistTitle:   PlaylistTitle(playlistId, rdx),
-		Watching:        watching,
-		AutoDownloading: autoDownloading,
+		PlaylistId:    playlistId,
+		PlaylistClass: pc,
+		NewVideos:     nvc,
+		PlaylistTitle: PlaylistTitle(playlistId, rdx),
+		Watching:      watching,
+		Downloading:   downloading,
 	}
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok && len(videoIds) > 0 {
@@ -74,11 +74,11 @@ func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
 	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 
 		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
-			if plt == "Videos" {
-				return plc
-			} else {
-				return fmt.Sprintf("%s | %s", plc, plt)
-			}
+			//if plt == "Videos" {
+			//	return plc
+			//} else {
+			return fmt.Sprintf("%s | %s", plc, plt)
+			//}
 		}
 
 		return plt

@@ -14,10 +14,10 @@
     <body>
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
     <div class='subtle'>
-    {{if .AutoDownloading}}
-        Automatically refreshing and downloading new videos
+    {{if .Downloading}}
+        Automatically refreshing playlist and downloading new videos
     {{else if .Watching}}
-        Automatically refreshing new videos, not downloading
+        Automatically refreshing playlist
     {{end}}
     </div>
     <a class='refresh' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh playlist</a>

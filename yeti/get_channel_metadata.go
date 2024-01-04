@@ -40,6 +40,7 @@ func GetChannelPageMetadata(channelPage *yt_urls.ChannelInitialData, channelId s
 	gchpma.TotalInt(len(tabs))
 
 	channelPlaylists := make([]string, 0, len(tabs))
+	playlistsChannel := make(map[string][]string, len(tabs))
 	playlistsTitles := make(map[string][]string, len(tabs))
 	playlistsVideos := make(map[string][]string, videosPerTab)
 	videosTitles := make(map[string][]string, len(tabs)*videosPerTab)
@@ -53,6 +54,7 @@ func GetChannelPageMetadata(channelPage *yt_urls.ChannelInitialData, channelId s
 			playlistId := section.PlaylistId()
 			channelPlaylists = append(channelPlaylists, playlistId)
 			playlistsTitles[playlistId] = []string{section.Title.String()}
+			playlistsChannel[playlistId] = []string{chmd.Title}
 
 			for _, gvr := range section.GridVideoRenderers() {
 				playlistsVideos[playlistId] = append(playlistsVideos[playlistId], gvr.VideoId)
@@ -72,6 +74,10 @@ func GetChannelPageMetadata(channelPage *yt_urls.ChannelInitialData, channelId s
 	}
 
 	if err := rdx.BatchAddValues(data.PlaylistTitleProperty, playlistsTitles); err != nil {
+		return gchpma.EndWithError(err)
+	}
+
+	if err := rdx.BatchAddValues(data.PlaylistChannelProperty, playlistsChannel); err != nil {
 		return gchpma.EndWithError(err)
 	}
 
