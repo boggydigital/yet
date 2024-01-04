@@ -23,7 +23,9 @@
             <span class='subtitle'><b>Remaining</b>: {{.RemainingTime}}, <b>Duration:</b> {{.Duration}}</span>
         {{end}}
         {{if .ShowViewCount}}
-            <span class='subtitle'><b>Views</b>: {{.ViewCount}}</span>
+            {{if .ViewCount}}
+                <span class='subtitle'><b>Views</b>: {{.ViewCount}}</span>
+            {{end}}
         {{end}}
     </a>
 {{end}}
