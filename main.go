@@ -6,7 +6,6 @@ import (
 	"github.com/boggydigital/clo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathology"
-	"github.com/boggydigital/wits"
 	"github.com/boggydigital/yet/cli"
 	"github.com/boggydigital/yet/paths"
 	"os"
@@ -20,36 +19,25 @@ var (
 )
 
 const (
-	userDirsFilename = "directories.txt"
+	dirOverridesFilename = "directories.txt"
 )
 
 func main() {
-	// setup directories
-	pathology.SetDefaultRootDir(paths.DefaultYetRootDir)
-	if err := pathology.SetAbsDirs(paths.AllAbsDirs...); err != nil {
-		panic(err)
-	}
-	if _, err := os.Stat(userDirsFilename); err == nil {
-		udFile, err := os.Open(userDirsFilename)
-		if err != nil {
-			panic(err)
-		}
-		userDirs, err := wits.ReadKeyValue(udFile)
-		if err != nil {
-			panic(err)
-		}
-		pathology.SetUserDirsOverrides(userDirs)
-	}
-
 	nod.EnableStdOutPresenter()
 
 	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.End()
 
+	if err := pathology.Setup(dirOverridesFilename, paths.DefaultYetRootDir, paths.AllAbsDirs...); err != nil {
+		_ = ya.EndWithError(err)
+		os.Exit(1)
+	}
+
 	defs, err := clo.Load(
 		bytes.NewBuffer(cliCommands),
 		bytes.NewBuffer(cliHelp),
 		nil)
+
 	if err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
