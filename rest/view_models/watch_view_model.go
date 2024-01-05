@@ -90,14 +90,26 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		}
 
 		fs := videoPage.Formats()
-		var f yt_urls.Format
-		for _, ff := range fs {
-			if ff.Quality == "hd720" {
-				f = ff
+		qualityIndex := make(map[string]int)
+
+		for ii, ff := range fs {
+			qualityIndex[ff.QualityLabel] = ii
+		}
+
+		qualityOrder := []string{"2160p", "1440p", "1080p", "720p"}
+		bestIndex := -1
+		for _, q := range qualityOrder {
+			if ii, ok := qualityIndex[q]; ok {
+				bestIndex = ii
 			}
 		}
 
-		vu, err := decode(videoId, f.Url, videoPage.PlayerUrl)
+		if bestIndex == -1 && len(fs) > 0 {
+			// use the first available if none of the best quality formats are present
+			bestIndex = 0
+		}
+
+		vu, err := decode(videoId, fs[bestIndex].Url, videoPage.PlayerUrl)
 		if err != nil {
 			return nil, err
 		}
