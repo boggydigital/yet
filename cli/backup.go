@@ -8,15 +8,11 @@ import (
 	"net/url"
 )
 
-func BackupHandler(u *url.URL) error {
-	aofp, err := pathology.GetAbsDir(paths.Backups)
-	if err != nil {
-		return err
-	}
-	return Backup(aofp)
+func BackupHandler(_ *url.URL) error {
+	return Backup()
 }
 
-func Backup(to string) error {
+func Backup() error {
 	ea := nod.NewProgress("backing up metadata...")
 	defer ea.End()
 
@@ -25,7 +21,12 @@ func Backup(to string) error {
 		return ea.EndWithError(err)
 	}
 
-	if err := packer.Pack(amp, to, ea); err != nil {
+	abp, err := pathology.GetAbsDir(paths.Backups)
+	if err != nil {
+		return ea.EndWithError(err)
+	}
+
+	if err := packer.Pack(amp, abp, ea); err != nil {
 		return ea.EndWithError(err)
 	}
 
