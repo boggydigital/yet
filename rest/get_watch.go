@@ -40,7 +40,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	wvm, err := view_models.GetWatchViewModel(videoId, t, rdx)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Redirect(w, r, "/video_error?v="+videoId+"&err="+err.Error(), http.StatusTemporaryRedirect)
 		return
 	}
 

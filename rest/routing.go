@@ -23,6 +23,7 @@ func HandleFuncs() {
 		"/watch":        BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
 		"/manage_video": BrGzip(GetOnly(http.HandlerFunc(GetManageVideo))),
 		"/update_video": BrGzip(GetOnly(http.HandlerFunc(GetUpdateVideo))),
+		"/video_error":  BrGzip(GetOnly(http.HandlerFunc(GetVideoError))),
 
 		"/list": BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
 
