@@ -9,6 +9,13 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 
 	// GET /manage_video?v
 
+	var err error
+	rdx, err = rdx.RefreshReader()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	videoId := r.URL.Query().Get("v")
 
 	if videoId == "" {

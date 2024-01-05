@@ -73,7 +73,7 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 		if !rdx.HasKey(property, videoId) {
 			value := data.TrueValue
 			switch property {
-			case data.VideosWatchlistProperty:
+			case data.VideoProgressProperty:
 				// setting progress requires current time - users should be encouraged to scrub video instead
 				return nil
 			case data.VideoEndedProperty:
