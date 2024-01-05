@@ -28,7 +28,10 @@ func main() {
 	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.End()
 
-	if err := pathology.Setup(dirOverridesFilename, paths.DefaultYetRootDir, paths.AllAbsDirs...); err != nil {
+	if err := pathology.Setup(dirOverridesFilename,
+		paths.DefaultYetRootDir,
+		nil,
+		paths.AllAbsDirs...); err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
 	}
