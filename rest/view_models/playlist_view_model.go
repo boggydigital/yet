@@ -77,7 +77,7 @@ func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
 			//if plt == "Videos" {
 			//	return plc
 			//} else {
-			return fmt.Sprintf("%s | %s", plc, plt)
+			return fmt.Sprintf("%s · %s", plt, plc)
 			//}
 		}
 

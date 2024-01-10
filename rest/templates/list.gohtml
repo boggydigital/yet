@@ -64,12 +64,21 @@
     {{if .Playlists}}
         <details>
             <summary><h1>Playlists</h1></summary>
-            <ul class='playlists'>
-                {{range .Playlists}}
-                    {{template "playlist" .}}
-                {{end}}
-            </ul>
+            {{$playlists := .Playlists}}
+            {{range $ii, $playlistSection := .PlaylistsOrder}}
+                <details {{if eq $ii 0}}open{{end}}>
+                    <summary><h2>{{$playlistSection}}</h2></summary>
+                    <ul class='playlists'>
+                        {{$playlist := index $playlists $playlistSection}}
+                        {{range $playlist}}
+                            {{template "playlist" .}}
+                        {{end}}
+                    </ul>
+                </details>
+
+            {{end}}
         </details>
+
     {{end}}
 
     {{if .Downloads}}

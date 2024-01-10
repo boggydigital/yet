@@ -11,12 +11,25 @@ type ListViewModel struct {
 	Videos               []*VideoViewModel
 	Downloads            []*VideoViewModel
 	HasNewPlaylistVideos bool
-	Playlists            []*PlaylistViewModel
+	PlaylistsOrder       []string
+	Playlists            map[string][]*PlaylistViewModel
 	HasHistory           bool
 }
 
+const (
+	playlistsNewVideos   = "New videos"
+	playlistsNoNewVideos = "Nothing new"
+)
+
+var (
+	playlistsOrder = []string{playlistsNewVideos, playlistsNoNewVideos}
+)
+
 func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
-	lvm := &ListViewModel{}
+	lvm := &ListViewModel{
+		PlaylistsOrder: playlistsOrder,
+		Playlists:      make(map[string][]*PlaylistViewModel),
+	}
 
 	var err error
 
@@ -74,13 +87,32 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 	plKeys := rdx.Keys(data.PlaylistWatchlistProperty)
 	if len(plKeys) > 0 {
 
-		plKeys, err = rdx.Sort(plKeys, false, data.PlaylistTitleProperty, data.PlaylistChannelProperty)
+		plNewVideos, plNoNewVideos := make([]string, 0, len(plKeys)), make([]string, 0, len(plKeys))
+
+		for _, playlistId := range plKeys {
+			if newVideos, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok && len(newVideos) > 0 {
+				plNewVideos = append(plNewVideos, playlistId)
+			} else {
+				plNoNewVideos = append(plNoNewVideos, playlistId)
+			}
+		}
+
+		plNewVideos, err = rdx.Sort(plNewVideos, false, data.PlaylistTitleProperty, data.PlaylistChannelProperty)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, playlistId := range plKeys {
-			lvm.Playlists = append(lvm.Playlists, GetPlaylistViewModel(playlistId, rdx))
+		plNoNewVideos, err = rdx.Sort(plNoNewVideos, false, data.PlaylistTitleProperty, data.PlaylistChannelProperty)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, playlistId := range plNewVideos {
+			lvm.Playlists[playlistsNewVideos] = append(lvm.Playlists[playlistsNewVideos], GetPlaylistViewModel(playlistId, rdx))
+		}
+
+		for _, playlistId := range plNoNewVideos {
+			lvm.Playlists[playlistsNoNewVideos] = append(lvm.Playlists[playlistsNoNewVideos], GetPlaylistViewModel(playlistId, rdx))
 		}
 	}
 
