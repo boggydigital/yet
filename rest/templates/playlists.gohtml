@@ -22,6 +22,8 @@
             This playlist is not refreshed and videos are not downloaded automatically
         {{end}}
     </div>
+    <a class="action" href="https://www.youtube.com/playlist?list={{.PlaylistId}}">Browse at origin</a>
+    <a class="action" href="https://www.youtube.com/feeds/videos.xml?playlist_id={{.PlaylistId}}">Playlist RSS feed</a>
     <a class='action' href='/manage_playlist?list={{.PlaylistId}}'>Manage automatic updates</a>
     <a class='action' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh playlist right now</a>
     {{range .Videos}}
