@@ -41,10 +41,10 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 
 	pc := ""
 	if downloading {
-		pc = "downloading"
-		if nvc == 0 {
-			pc += " ended"
-		}
+		pc += " downloading"
+	}
+	if nvc == 0 {
+		pc += " ended"
 	}
 
 	plvm := &PlaylistViewModel{
