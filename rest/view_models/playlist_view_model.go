@@ -74,11 +74,7 @@ func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
 	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 
 		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
-			//if plt == "Videos" {
-			//	return plc
-			//} else {
 			return fmt.Sprintf("%s · %s", plt, plc)
-			//}
 		}
 
 		return plt
