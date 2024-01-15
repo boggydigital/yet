@@ -10,31 +10,12 @@
         <meta name='color-scheme' content='dark light'>
         <title>Watch list</title>
         {{template "css-shared"}}
-        <style id="css-list">
-            ul.topLinks {
-                display: flex;
-                flex-direction: row;
-                column-gap: var(--small);
-                margin-block: var(--normal);
-                align-items: baseline;
-            }
-
-            ul.topLinks li.subtle {
-                color: var(--subtle-color)
-            }
-
-            ul.topLinks a {
-                margin: 0;
-            }
-
-        </style>
     </head>
     <body>
-    <ul class="topLinks">
+    <ul class="horizontal">
         <li>
             <a class='action' href='/search'>Search</a>
         </li>
-        <li class="subtle">·</li>
         <li>
             <a class='action' href='/paste'>Paste</a>
         </li>

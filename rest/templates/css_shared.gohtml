@@ -37,6 +37,16 @@
             padding-inline-start: 0
         }
 
+        ul.horizontal {
+            display: flex;
+            flex-direction: row;
+            column-gap: var(--normal);
+
+            & a.action {
+                margin-block: var(--small)
+            }
+        }
+
         a.playlist,
         a.channel {
             display: flex;
