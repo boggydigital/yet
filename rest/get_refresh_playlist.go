@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -20,7 +20,7 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

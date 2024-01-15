@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
@@ -31,7 +31,7 @@ func RemoveUrls(propertyValues map[string][]string) error {
 	rva := nod.NewProgress("removing urls...")
 	defer rva.End()
 
-	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return rva.EndWithError(err)
 	}

@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
@@ -18,7 +18,7 @@ func UpdatePlaylistsMetadata() error {
 	upma := nod.NewProgress("updating all playlists metadata...")
 	defer upma.End()
 
-	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return upma.EndWithError(err)
 	}

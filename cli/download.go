@@ -4,7 +4,7 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -27,7 +27,7 @@ func Download(ids []string, queue, force bool) error {
 	da := nod.NewProgress("downloading videos...")
 	defer da.End()
 
-	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return da.EndWithError(err)
 	}

@@ -1,21 +1,21 @@
 package paths
 
 import (
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 )
 
 const DefaultYetRootDir = "/usr/share/yet"
 
 const (
-	Backups  pathology.AbsDir = "backups"
-	Input    pathology.AbsDir = "input"
-	Metadata pathology.AbsDir = "metadata"
-	Videos   pathology.AbsDir = "videos"
-	Posters  pathology.AbsDir = "posters"
-	Captions pathology.AbsDir = "captions"
+	Backups  pasu.AbsDir = "backups"
+	Input    pasu.AbsDir = "input"
+	Metadata pasu.AbsDir = "metadata"
+	Videos   pasu.AbsDir = "videos"
+	Posters  pasu.AbsDir = "posters"
+	Captions pasu.AbsDir = "captions"
 )
 
-var AllAbsDirs = []pathology.AbsDir{
+var AllAbsDirs = []pasu.AbsDir{
 	Backups,
 	Input,
 	Metadata,

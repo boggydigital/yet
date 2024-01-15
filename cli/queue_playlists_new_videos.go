@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
@@ -18,7 +18,7 @@ func QueuePlaylistsNewVideos() error {
 	qpnva := nod.NewProgress("queueing playlists new videos...")
 	defer qpnva.End()
 
-	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return qpnva.EndWithError(err)
 	}

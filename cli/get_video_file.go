@@ -5,7 +5,7 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathology"
+	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -37,7 +37,7 @@ func GetVideoFile(force bool, ids ...string) error {
 	gva := nod.NewProgress(fmt.Sprintf("getting %d video(s)", len(ids)))
 	defer gva.End()
 
-	metadataDir, err := pathology.GetAbsDir(paths.Metadata)
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return gva.EndWithError(err)
 	}
@@ -47,7 +47,7 @@ func GetVideoFile(force bool, ids ...string) error {
 		return gva.EndWithError(err)
 	}
 
-	videosDir, err := pathology.GetAbsDir(paths.Videos)
+	videosDir, err := pasu.GetAbsDir(paths.Videos)
 	if err != nil {
 		return gva.EndWithError(err)
 	}
@@ -116,7 +116,7 @@ func downloadVideo(
 
 	relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
-	absVideosDir, err := pathology.GetAbsDir(paths.Videos)
+	absVideosDir, err := pasu.GetAbsDir(paths.Videos)
 	if err != nil {
 		return err
 	}
@@ -182,7 +182,7 @@ func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, formats 
 			}
 		}
 
-		absVideosDir, err := pathology.GetAbsDir(paths.Videos)
+		absVideosDir, err := pasu.GetAbsDir(paths.Videos)
 		if err != nil {
 			return tpw.EndWithError(err)
 		}
