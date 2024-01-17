@@ -2,8 +2,11 @@
     <li>
         <a class="playlist {{.PlaylistClass}}" href='/playlist?list={{.PlaylistId}}'>
             <span class='title'>{{.PlaylistTitle}}</span>
+            {{if .PlaylistChannelTitle}}
+                <span class='subtitle'><b>Channel</b>: {{.PlaylistChannelTitle}}</span>
+            {{end}}
             {{if gt .NewVideos 0}}
-                <span class='subtitle'>{{.NewVideos}} new</span>
+                <span class='subtitle'><b>New</b>: {{.NewVideos}}</span>
             {{end}}
         </a>
     </li>

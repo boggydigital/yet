@@ -11,7 +11,6 @@
         <title>Search</title>
         {{template "css-shared"}}
         <style id="css-new">
-
             label {
                 display: block;
                 margin-block: var(--normal);
@@ -27,12 +26,11 @@
             input[type='submit'] {
                 margin-block: var(--normal);
             }
-
         </style>
     </head>
     <body>
 
-    <a class='video highlight' href='/list'>Back to the watch list</a>
+    {{template "back"}}
 
     <form method='get' action='/results'>
         <label for='search_query'>YouTube videos search terms:</label>

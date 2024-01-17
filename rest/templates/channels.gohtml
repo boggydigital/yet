@@ -12,6 +12,9 @@
         {{template "css-shared"}}
     </head>
     <body>
+
+    {{template "back"}}
+
     <h1 class='channel'><span>{{.ChannelTitle}}</span></h1>
     {{if .ChannelDescription}}
         <div class="channelDescription subtle">{{.ChannelDescription}}</div>

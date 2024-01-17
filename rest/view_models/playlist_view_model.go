@@ -1,10 +1,8 @@
 package view_models
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"strings"
 )
 
 const (
@@ -12,13 +10,14 @@ const (
 )
 
 type PlaylistViewModel struct {
-	PlaylistId    string
-	PlaylistTitle string
-	PlaylistClass string
-	NewVideos     int
-	Watching      bool
-	Downloading   bool
-	Videos        []*VideoViewModel
+	PlaylistId           string
+	PlaylistTitle        string
+	PlaylistChannelTitle string
+	PlaylistClass        string
+	NewVideos            int
+	Watching             bool
+	Downloading          bool
+	Videos               []*VideoViewModel
 }
 
 func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
@@ -47,13 +46,24 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		pc += " ended"
 	}
 
+	playlistTitle := ""
+	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+		playlistTitle = plt
+	}
+
+	playlistChannelTitle := ""
+	if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" {
+		playlistChannelTitle = plc
+	}
+
 	plvm := &PlaylistViewModel{
-		PlaylistId:    playlistId,
-		PlaylistClass: pc,
-		NewVideos:     nvc,
-		PlaylistTitle: PlaylistTitle(playlistId, rdx),
-		Watching:      watching,
-		Downloading:   downloading,
+		PlaylistId:           playlistId,
+		PlaylistClass:        pc,
+		NewVideos:            nvc,
+		PlaylistTitle:        playlistTitle,
+		PlaylistChannelTitle: playlistChannelTitle,
+		Watching:             watching,
+		Downloading:          downloading,
 	}
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok && len(videoIds) > 0 {
@@ -70,15 +80,15 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 	return plvm
 }
 
-func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
-	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
-
-		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
-			return fmt.Sprintf("%s · %s", plt, plc)
-		}
-
-		return plt
-	}
-
-	return playlistId
-}
+//func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
+//	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+//
+//		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
+//			return fmt.Sprintf("%s · %s", plt, plc)
+//		}
+//
+//		return plt
+//	}
+//
+//	return playlistId
+//}

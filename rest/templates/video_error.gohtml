@@ -12,12 +12,15 @@
         {{template "css-shared"}}
     </head>
     <body>
-        <h1>Error loading {{.VideoTitle}}</h1>
 
-        <div class="subtle"><b>VideoId</b>: {{.VideoId}}</div>
-        <div class="subtle"><b>Error</b>: {{.Error}}</div>
+    {{template "back"}}
 
-        <a class='action' href="https://www.youtube.com/watch?v={{.VideoId}}">Watch at origin</a>
+    <h1>Error loading {{.VideoTitle}}</h1>
+
+    <div class="subtle"><b>VideoId</b>: {{.VideoId}}</div>
+    <div class="subtle"><b>Error</b>: {{.Error}}</div>
+
+    <a class='action' href="https://www.youtube.com/watch?v={{.VideoId}}">Watch at origin</a>
     </body>
     </html>
 {{end}}
