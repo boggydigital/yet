@@ -64,7 +64,7 @@ func AddVideos(propertyValues map[string][]string) error {
 	}
 
 	if len(uniqueVideos) > 0 {
-		if err := GetVideoMetadata(false, maps.Keys(uniqueVideos)...); err != nil {
+		if err := GetVideoMetadata("", false, maps.Keys(uniqueVideos)...); err != nil {
 			return ava.EndWithError(err)
 		}
 	}

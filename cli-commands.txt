@@ -55,6 +55,7 @@ get-video-file
 
 get-video-metadata
     id&^
+    for-id
     force
 
 queue-playlists-new-videos

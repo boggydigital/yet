@@ -15,11 +15,12 @@ import (
 func GetVideoMetadataHandler(u *url.URL) error {
 	q := u.Query()
 	ids := strings.Split(q.Get("id"), ",")
+	forId := q.Get("for-id")
 	force := q.Has("force")
-	return GetVideoMetadata(force, ids...)
+	return GetVideoMetadata(forId, force, ids...)
 }
 
-func GetVideoMetadata(force bool, ids ...string) error {
+func GetVideoMetadata(forId string, force bool, ids ...string) error {
 	gvma := nod.NewProgress("getting video metadata...")
 	defer gvma.End()
 
@@ -48,6 +49,10 @@ func GetVideoMetadata(force bool, ids ...string) error {
 
 		if err := getVideoPageMetadata(nil, videoId, rdx); err != nil {
 			gvma.Error(err)
+		} else {
+			if err := copyMetadata(videoId, forId, rdx); err != nil {
+				return gvma.EndWithError(err)
+			}
 		}
 
 		gvma.Increment()
@@ -78,6 +83,23 @@ func getVideoPageMetadata(videoPage *yt_urls.InitialPlayerResponse, videoId stri
 	}
 
 	gvpma.EndWithResult("done")
+
+	return nil
+}
+
+func copyMetadata(videoId, forId string, rdx kvas.WriteableRedux) error {
+
+	if forId == "" || forId == videoId {
+		return nil
+	}
+
+	for _, property := range data.AllProperties() {
+		if values, ok := rdx.GetAllValues(property, videoId); ok && len(values) > 0 {
+			if err := rdx.AddValues(property, forId, values...); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

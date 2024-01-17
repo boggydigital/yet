@@ -14,10 +14,10 @@ import (
 func GetPosterHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
 	forId := u.Query().Get("for-id")
-	return GetPoster(ids, forId)
+	return GetPoster(forId, ids...)
 }
 
-func GetPoster(ids []string, forId string) error {
+func GetPoster(forId string, ids ...string) error {
 
 	gpa := nod.NewProgress("getting poster(s)...")
 	defer gpa.End()
