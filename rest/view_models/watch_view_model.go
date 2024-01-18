@@ -36,7 +36,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		// TODO: check if that local file exists first
 		playbackType = "local"
 		videoUrl = "/video?file=" + videoId
-		videoTitle = videoId
+		//videoTitle = videoId
 	}
 
 	videoPoster := fmt.Sprintf("/poster?v=%s&q=%s", videoId, yt_urls.ThumbnailQualityMaxRes)

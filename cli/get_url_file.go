@@ -14,12 +14,12 @@ import (
 	"time"
 )
 
-func GetUrlHandler(u *url.URL) error {
+func GetUrlFileHandler(u *url.URL) error {
 	urls := strings.Split(u.Query().Get("url"), ",")
-	return GetUrl(urls...)
+	return GetUrlFile(urls...)
 }
 
-func GetUrl(urls ...string) error {
+func GetUrlFile(urls ...string) error {
 
 	if len(urls) == 0 {
 		return nil

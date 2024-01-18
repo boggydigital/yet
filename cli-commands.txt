@@ -37,8 +37,12 @@ get-channel-metadata
     id&^
     force
 
-get-url
+get-url-file
     url&^
+
+get-url-data
+    id*
+    video-id*
 
 get-playlist-metadata
     id&^

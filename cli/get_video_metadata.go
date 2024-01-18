@@ -95,7 +95,7 @@ func copyMetadata(videoId, forId string, rdx kvas.WriteableRedux) error {
 
 	for _, property := range data.AllProperties() {
 		if values, ok := rdx.GetAllValues(property, videoId); ok && len(values) > 0 {
-			if err := rdx.AddValues(property, forId, values...); err != nil {
+			if err := rdx.ReplaceValues(property, forId, values...); err != nil {
 				return err
 			}
 		}

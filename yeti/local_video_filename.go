@@ -26,6 +26,11 @@ func DefaultFilenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerRes
 // "video-id.mp4". In either case, the resulting filename is sanitized to remove
 // characters not suitable for file names.
 func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
+
+	if strings.HasSuffix(videoId, yt_urls.DefaultVideoExt) {
+		return videoId
+	}
+
 	var fn string
 	if title != "" {
 		fn = fmt.Sprintf("%s-%s", title, videoId)
