@@ -26,6 +26,17 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// resolve full YouTube URL to just video-id, as needed
+	if strings.Contains(v, "?") {
+		if videoIds, err := yeti.ParseVideoIds(v); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		} else if len(videoIds) > 0 {
+			http.Redirect(w, r, "/watch?v="+videoIds[0], http.StatusPermanentRedirect)
+			return
+		}
+	}
+
 	// iOS insists on inserting a space on paste
 	v = strings.TrimSpace(v)
 
