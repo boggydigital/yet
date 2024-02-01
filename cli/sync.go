@@ -31,5 +31,9 @@ func Sync(force bool) error {
 		return sa.EndWithError(err)
 	}
 
+	if err := Backup(); err != nil {
+		return sa.EndWithError(err)
+	}
+
 	return nil
 }
