@@ -21,6 +21,13 @@
         </li>
     </ul>
 
+    {{if .Random}}
+        <details open>
+            <summary><h1>Random</h1></summary>
+            {{template "video" .Random}}
+        </details>
+    {{end}}
+
     {{if .Continue}}
         <details open>
             <summary><h1>Continue</h1></summary>

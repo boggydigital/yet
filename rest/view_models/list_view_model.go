@@ -3,11 +3,13 @@ package view_models
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
+	"math/rand"
 	"slices"
 )
 
 type ListViewModel struct {
 	Continue             []*VideoViewModel
+	Random               *VideoViewModel
 	Videos               []*VideoViewModel
 	Downloads            []*VideoViewModel
 	HasNewPlaylistVideos bool
@@ -46,6 +48,20 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 					ShowPublishedDate,
 					ShowRemainingDuration))
 			}
+		}
+	}
+
+	if len(lvm.Continue) == 0 {
+		// add random video to suggest watching
+		pool := make([]string, 0)
+		for _, id := range rdx.Keys(data.PlaylistNewVideosProperty) {
+			if pnv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, id); ok {
+				pool = append(pool, pnv...)
+			}
+		}
+
+		if len(pool) > 0 {
+			lvm.Random = GetVideoViewModel(pool[rand.Intn(len(pool))], rdx, ShowPoster, ShowPublishedDate)
 		}
 	}
 
