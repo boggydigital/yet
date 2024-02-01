@@ -3,11 +3,14 @@ package yeti
 import (
 	"fmt"
 	"github.com/boggydigital/yt_urls"
+	"net/url"
+	"path"
 	"strings"
 )
 
 const (
-	youtuBeHost = "youtu.be/"
+	youtuBeHost     = "youtu.be/"
+	youtubeEmbedUrl = "youtube.com/embed"
 )
 
 // ParseVideoIds converts list of videoIds in any form - as video-ids,
@@ -27,6 +30,14 @@ func ParseVideoIds(args ...string) ([]string, error) {
 			//youtu.be/videoId
 			if _, videoId, ok := strings.Cut(urlOrId, youtuBeHost); ok {
 				videoIds = append(videoIds, videoId)
+			}
+		} else if strings.Contains(urlOrId, youtubeEmbedUrl) {
+			//currently YouTube embed links are formatted as
+			//youtube.com/embed/videoId
+			if u, err := url.Parse(urlOrId); err == nil {
+				videoIds = append(videoIds, path.Base(u.Path))
+			} else {
+				return nil, err
 			}
 		} else if strings.Contains(urlOrId, "v=") {
 			//currently, YouTube video URLs contain v=video-id parameter
