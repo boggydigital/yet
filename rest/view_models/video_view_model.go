@@ -42,7 +42,7 @@ type VideoViewModel struct {
 func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOptions) *VideoViewModel {
 
 	videoTitle := videoId
-	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
+	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
 		videoTitle = title
 	}
 
@@ -57,14 +57,14 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 	optShowPublishedDate := slices.Contains(options, ShowPublishedDate)
 
 	if optShowPublishedDate {
-		if pds, ok := rdx.GetFirstVal(data.VideoPublishDateProperty, videoId); ok && pds != "" {
+		if pds, ok := rdx.GetLastVal(data.VideoPublishDateProperty, videoId); ok && pds != "" {
 			publishedDate = parseAndFormat(pds)
 		} else {
-			if ptts, ok := rdx.GetFirstVal(data.VideoPublishTimeTextProperty, videoId); ok && ptts != "" {
+			if ptts, ok := rdx.GetLastVal(data.VideoPublishTimeTextProperty, videoId); ok && ptts != "" {
 				publishedDate = ptts
 			}
 		}
-		if dts, ok := rdx.GetFirstVal(data.VideoDownloadedDateProperty, videoId); ok && dts != "" {
+		if dts, ok := rdx.GetLastVal(data.VideoDownloadedDateProperty, videoId); ok && dts != "" {
 			downloadedDate = parseAndFormat(dts)
 		}
 	}
@@ -73,7 +73,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	optShowOwnerChannel := slices.Contains(options, ShowOwnerChannel)
 	if optShowOwnerChannel {
-		if och, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {
+		if och, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {
 			ownerChannel = och
 		}
 	}
@@ -82,7 +82,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	ended := false
 	endedDate := ""
-	if ets, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && ets != "" {
+	if ets, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && ets != "" {
 		ended = true
 		if optShowEndedDate {
 			endedDate = parseAndFormat(ets)
@@ -95,12 +95,12 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	if optShowRemainingDuration {
 		var ct int64
-		if cts, ok := rdx.GetFirstVal(data.VideoProgressProperty, videoId); ok && cts != "" {
+		if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
 			if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
 				ct = cti
 			}
 		}
-		if durs, sure := rdx.GetFirstVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+		if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
 			if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
 				dur = duri
 			}
@@ -112,7 +112,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 	optShowViewCount := slices.Contains(options, ShowViewCount)
 
 	if optShowViewCount {
-		if vc, ok := rdx.GetFirstVal(data.VideoViewCountProperty, videoId); ok && vc != "" {
+		if vc, ok := rdx.GetLastVal(data.VideoViewCountProperty, videoId); ok && vc != "" {
 			viewCount = vc
 		}
 	}

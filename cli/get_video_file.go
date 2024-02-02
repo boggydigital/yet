@@ -65,7 +65,7 @@ func GetVideoFile(force bool, ids ...string) error {
 
 		// check known errors before doing anything else
 		if !force {
-			if knownError, ok := rdx.GetFirstVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
+			if knownError, ok := rdx.GetLastVal(data.VideoErrorsProperty, videoId); ok && knownError != "" {
 				if err := completeVideo(rdx, videoId, gva, gv, knownError); err != nil {
 					return gva.EndWithError(err)
 				}
@@ -225,8 +225,8 @@ func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, videoP
 
 func videoExistsLocally(rdx kvas.ReadableRedux, videosDir, videoId string) bool {
 	// check if the video file matching videoId is already available locally
-	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok {
-		if channel, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok {
+	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok {
+		if channel, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok {
 			relVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
 			absVideoFilename := filepath.Join(videosDir, relVideoFilename)
 			if _, err := os.Stat(absVideoFilename); err == nil {

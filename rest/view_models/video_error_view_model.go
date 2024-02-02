@@ -13,7 +13,7 @@ type VideoErrorViewModel struct {
 
 func GetVideoErrorViewModel(videoId, error string, rdx kvas.ReadableRedux) *VideoErrorViewModel {
 	videoTitle := ""
-	if vt, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && vt != "" {
+	if vt, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vt != "" {
 		videoTitle = vt
 	}
 

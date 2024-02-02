@@ -29,12 +29,12 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 	}
 
 	watching := false
-	if pwl, ok := rdx.GetFirstVal(data.PlaylistWatchlistProperty, playlistId); ok && pwl == data.TrueValue {
+	if pwl, ok := rdx.GetLastVal(data.PlaylistWatchlistProperty, playlistId); ok && pwl == data.TrueValue {
 		watching = true
 	}
 
 	downloading := false
-	if pdq, ok := rdx.GetFirstVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
+	if pdq, ok := rdx.GetLastVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
 		downloading = true
 	}
 
@@ -47,12 +47,12 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 	}
 
 	playlistTitle := ""
-	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+	if plt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 		playlistTitle = plt
 	}
 
 	playlistChannelTitle := ""
-	if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" {
+	if plc, ok := rdx.GetLastVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" {
 		playlistChannelTitle = plc
 	}
 
@@ -81,9 +81,9 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 }
 
 //func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
-//	if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+//	if plt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 //
-//		if plc, ok := rdx.GetFirstVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
+//		if plc, ok := rdx.GetLastVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
 //			return fmt.Sprintf("%s · %s", plt, plc)
 //		}
 //

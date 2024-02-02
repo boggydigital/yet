@@ -16,12 +16,12 @@ type ChannelViewModel struct {
 
 func GetChannelViewModel(channelId string, rdx kvas.ReadableRedux) *ChannelViewModel {
 	channelTitle := channelId
-	if ct, ok := rdx.GetFirstVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
+	if ct, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
 		channelTitle = ct
 	}
 
 	channelDescription := ""
-	if cd, ok := rdx.GetFirstVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
+	if cd, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
 		channelDescription = cd
 	}
 
@@ -32,7 +32,7 @@ func GetChannelViewModel(channelId string, rdx kvas.ReadableRedux) *ChannelViewM
 
 	playlists := make(map[string]string, len(playlistsOrder))
 	for _, playlistId := range playlistsOrder {
-		if plt, ok := rdx.GetFirstVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+		if plt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
 			playlists[playlistId] = plt
 		}
 	}

@@ -20,12 +20,12 @@ type VideoManagementViewModel struct {
 
 func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManagementViewModel {
 	videoTitle := ""
-	if vt, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && vt != "" {
+	if vt, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vt != "" {
 		videoTitle = vt
 	}
 
 	currentTime := ""
-	if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, videoId); ok && ct != "" {
+	if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && ct != "" {
 		currentTime = ct
 	}
 

@@ -43,13 +43,13 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 
 	// if current time is not specified with a query parameter - read it from metadata
 	if currentTime == "" {
-		if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, videoId); ok {
+		if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok {
 			currentTime = ct
 		}
 	}
 
-	if title, ok := rdx.GetFirstVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		if channel, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
+	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
+		if channel, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
 			localVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
 			if absVideosDir, err := pasu.GetAbsDir(paths.Videos); err == nil {
 				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
@@ -57,7 +57,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 					playbackType = "local"
 					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
 					videoTitle = title
-					videoDescription, _ = rdx.GetFirstVal(data.VideoShortDescriptionProperty, videoId)
+					videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
 
 					//if vct, err := getLocalCaptionTracks(videoId, rdx); err == nil {
 					//	videoCaptionTracks = vct
@@ -120,7 +120,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	}
 
 	lastEndedTime := ""
-	if et, ok := rdx.GetFirstVal(data.VideoEndedProperty, videoId); ok && et != "" {
+	if et, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && et != "" {
 		lastEndedTime = et
 		videoTitle = "☑️ " + videoTitle
 	}

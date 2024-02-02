@@ -56,7 +56,7 @@ func CleanupEnded() error {
 		cea.Increment()
 
 		// checking and removing empty directories
-		if channelTitle, ok := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId); ok && channelTitle != "" {
+		if channelTitle, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && channelTitle != "" {
 			absDirName := filepath.Join(absVideosDir, channelTitle)
 			if ok, err := directoryIsEmpty(absDirName); ok && err == nil {
 				if err := os.Remove(absDirName); err != nil {
@@ -87,8 +87,8 @@ func directoryIsEmpty(name string) (bool, error) {
 }
 
 func removeVideoFile(videoId, absVideosDir string, rdx kvas.ReadableRedux) error {
-	title, _ := rdx.GetFirstVal(data.VideoTitleProperty, videoId)
-	channel, _ := rdx.GetFirstVal(data.VideoOwnerChannelNameProperty, videoId)
+	title, _ := rdx.GetLastVal(data.VideoTitleProperty, videoId)
+	channel, _ := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId)
 
 	if title == "" || channel == "" {
 		return nil

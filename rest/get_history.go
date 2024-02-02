@@ -57,7 +57,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	endedGroups := make(map[string][]string)
 	for _, id := range whKeys {
 		group := olderGroup
-		if ets, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && ets != "" {
+		if ets, ok := rdx.GetLastVal(data.VideoEndedProperty, id); ok && ets != "" {
 			if et, err := time.Parse(time.RFC3339, ets); err == nil {
 				days := time.Now().Sub(et).Hours() / 24
 				if days <= 7 {

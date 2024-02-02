@@ -42,7 +42,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 			return nil, err
 		}
 		for _, id := range cwKeys {
-			if ended, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); !ok || ended == "" {
+			if ended, ok := rdx.GetLastVal(data.VideoEndedProperty, id); !ok || ended == "" {
 				lvm.Continue = append(lvm.Continue, GetVideoViewModel(id, rdx,
 					ShowPoster,
 					ShowPublishedDate,
@@ -55,8 +55,8 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		// add random video to suggest watching
 		pool := make([]string, 0)
 		for _, id := range rdx.Keys(data.PlaylistNewVideosProperty) {
-			if pnv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, id); ok {
-				pool = append(pool, pnv...)
+			if pnv, ok := rdx.GetLastVal(data.PlaylistNewVideosProperty, id); ok {
+				pool = append(pool, pnv)
 			}
 		}
 
@@ -86,10 +86,10 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 			if slices.Contains(newPlaylistVideos, id) {
 				continue
 			}
-			if le, ok := rdx.GetFirstVal(data.VideoEndedProperty, id); ok && le != "" {
+			if le, ok := rdx.GetLastVal(data.VideoEndedProperty, id); ok && le != "" {
 				continue
 			}
-			if ct, ok := rdx.GetFirstVal(data.VideoProgressProperty, id); ok || ct != "" {
+			if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, id); ok || ct != "" {
 				continue
 			}
 			lvm.Videos = append(lvm.Videos, GetVideoViewModel(id, rdx,
