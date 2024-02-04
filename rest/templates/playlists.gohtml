@@ -39,9 +39,11 @@
             <a class='action' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh</a>
         </li>
     </ul>
+    <ul class="videos resp-grid">
     {{range .Videos}}
-        {{template "video" .}}
+        <li>{{template "video" .}}</li>
     {{end}}
+    </ul>
     </body>
     </html>
 {{end}}

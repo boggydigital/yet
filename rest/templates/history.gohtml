@@ -30,9 +30,11 @@
         {{if $videos}}
             <details {{if eq $group $openGroup}}open{{end}}>
                 <summary><h2>{{$group}}</h2></summary>
+                <ul class="videos resp-grid">
                 {{range $videos}}
-                    {{template "video" .}}
+                    <li>{{template "video" .}}</li>
                 {{end}}
+                </ul>
             </details>
         {{end}}
     {{end}}

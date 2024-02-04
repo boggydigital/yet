@@ -4,6 +4,9 @@
         body {
             font-family: sans-serif;
             margin: var(--large);
+            margin-block-start: var(--normal);
+            container-type: inline-size;
+
         }
 
         a {
@@ -13,7 +16,7 @@
             font-size: var(--fs-normal);
             font-weight: var(--fw-bolder);
             text-decoration: none;
-            margin-block: var(--large);
+            /*margin-block: var(--large);*/
         }
 
         a img {
@@ -43,13 +46,18 @@
             }
         }
 
+        .videos {
+            justify-content: start;
+            gap: var(--large)
+        }
+
         .playlists {
             justify-content: start;
         }
 
         .playlist-container {
             background: var(--highlight-color);
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius-large);
             width: var(--resp-grid-column-width);
         }
 
@@ -122,11 +130,10 @@
         details {
             margin-block: var(--large);
             content-visibility: auto;
-            container-type: inline-size;
         }
 
         summary {
-            margin-block-end: var(--normal)
+            margin-block-end: var(--large)
         }
 
         summary::after {

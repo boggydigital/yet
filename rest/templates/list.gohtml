@@ -31,18 +31,22 @@
     {{if .Continue}}
         <details open>
             <summary><h1>Continue</h1></summary>
+            <ul class="videos resp-grid">
             {{range .Continue}}
-                {{template "video" .}}
+                <li>{{template "video" .}}</li>
             {{end}}
+            </ul>
         </details>
     {{end}}
 
     {{if .Videos}}
         <details>
             <summary><h1>Videos</h1></summary>
+            <ul class="videos resp-grid">
             {{range .Videos}}
-                {{template "video" .}}
+                <li>{{template "video" .}}</li>
             {{end}}
+            </ul>
             {{if .HasNewPlaylistVideos}}
                 <div class='subtle'>Looking for more? New videos are available in the Playlists</div>
             {{end}}
@@ -72,9 +76,11 @@
     {{if .Downloads}}
         <details>
             <summary><h1>Downloads</h1></summary>
+            <ul class="videos resp-grid">
             {{range .Downloads}}
-                {{template "video" .}}
+                <li>{{template "video" .}}</li>
             {{end}}
+            </ul>
         </details>
     {{end}}
 

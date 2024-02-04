@@ -63,9 +63,11 @@
 
     <details open>
         <summary><h2>Videos</h2></summary>
+        <ul class="videos resp-grid">
         {{range .Videos}}
-            {{template "video" .}}
+            <li>{{template "video" .}}</li>
         {{end}}
+        </ul>
     </details>
 
     </body>
