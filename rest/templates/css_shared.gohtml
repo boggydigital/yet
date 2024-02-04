@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             color: var(--color);
-            font-size: var(--fs-larger);
+            font-size: var(--fs-normal);
             font-weight: var(--fw-bolder);
             text-decoration: none;
             margin-block: var(--large);
@@ -47,7 +47,7 @@
         a.channel {
             display: flex;
             flex-direction: column;
-            font-size: 1.3rem;
+            font-size: var(--fs-larger);
             text-decoration: none;
             margin-block: 2rem;
         }
@@ -55,6 +55,7 @@
         a.action {
             color: var(--color-light-blue);
             margin-block: var(--large);
+            font-size: var(--fs-normal);
         }
 
         .playlist {
@@ -80,8 +81,8 @@
         }
 
         a.playlist .subtitle {
-            color: inherit
-        }
+            font-size: var(--fs-smaller);
+            color: inherit;        }
 
         .title {
             margin-block-start: var(--small);
@@ -89,7 +90,7 @@
         }
 
         .subtitle {
-            font-size: calc((var(--fs-x-smaller) + var(--fs-xx-smaller))/2);
+            font-size: var(--fs-x-smaller);
             font-weight: normal
         }
 
@@ -122,8 +123,15 @@
         summary h1, summary h2, h1.highlight {
             display: inline;
             cursor: pointer;
-            /*color: var(--color-cyan);*/
             margin: 0;
+        }
+
+        h1 {
+            font-size: var(--fs-x-larger);
+        }
+
+        h2 {
+            font-size: var(--fs-larger);
         }
 
         ul.management {
