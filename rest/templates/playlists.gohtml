@@ -16,7 +16,7 @@
     {{template "back"}}
 
     <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
-    <div class='subtle'>
+    <div class='info'>
         {{if .Downloading}}
             Automatically refreshing playlist and downloading new videos
         {{else if .Watching}}
