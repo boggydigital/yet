@@ -56,7 +56,7 @@
             {{range $ii, $playlistSection := .PlaylistsOrder}}
                 <details {{if eq $ii 0}}open{{end}}>
                     <summary><h2>{{$playlistSection}}</h2></summary>
-                    <ul class='playlists'>
+                    <ul class='playlists resp-grid'>
                         {{$playlist := index $playlists $playlistSection}}
                         {{range $playlist}}
                             {{template "playlist" .}}

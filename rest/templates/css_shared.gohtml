@@ -43,13 +43,30 @@
             }
         }
 
+        .playlists {
+            justify-content: start;
+        }
+
+        .playlist-container {
+            background: var(--highlight-color);
+            border-radius: var(--border-radius);
+            width: var(--resp-grid-column-width);
+        }
+
+        @media only screen and (max-width: 700px) {
+            .playlist-container {
+                width: calc(100%);
+            }
+        }
+
         a.playlist,
         a.channel {
+            padding: var(--normal);
             display: flex;
             flex-direction: column;
             font-size: var(--fs-larger);
             text-decoration: none;
-            margin-block: 2rem;
+            margin-block: initial;
         }
 
         a.action {
@@ -104,7 +121,8 @@
 
         details {
             margin-block: var(--large);
-            content-visibility: auto
+            content-visibility: auto;
+            container-type: inline-size;
         }
 
         summary {
