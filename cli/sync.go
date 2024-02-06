@@ -7,10 +7,11 @@ import (
 
 func SyncHandler(u *url.URL) error {
 	force := u.Query().Has("force")
-	return Sync(force)
+	singleFormat := u.Query().Has("single-format")
+	return Sync(force, singleFormat)
 }
 
-func Sync(force bool) error {
+func Sync(force, singleFormat bool) error {
 
 	sa := nod.Begin("syncing playlists subscriptions...")
 	defer sa.End()
@@ -27,7 +28,7 @@ func Sync(force bool) error {
 		return sa.EndWithError(err)
 	}
 
-	if err := Download(nil, true, force); err != nil {
+	if err := Download(nil, true, force, singleFormat); err != nil {
 		return sa.EndWithError(err)
 	}
 
