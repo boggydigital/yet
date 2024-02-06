@@ -28,6 +28,7 @@ cleanup-ended
 download
     id&^
     force
+    single-format
     queue
 
 get-captions
@@ -56,6 +57,7 @@ get-poster
 get-video-file
     id&^
     force
+    single-format
 
 get-video-metadata
     id&^

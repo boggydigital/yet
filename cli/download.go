@@ -19,10 +19,11 @@ func DownloadHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
 	queue := u.Query().Has("queue")
 	force := u.Query().Has("force")
-	return Download(ids, queue, force)
+	singleFormat := u.Query().Has("single-format")
+	return Download(ids, queue, force, singleFormat)
 }
 
-func Download(ids []string, queue, force bool) error {
+func Download(ids []string, queue, force, singleFormat bool) error {
 
 	da := nod.NewProgress("downloading videos...")
 	defer da.End()
@@ -64,7 +65,7 @@ func Download(ids []string, queue, force bool) error {
 			return da.EndWithError(err)
 		}
 
-		if err := downloadVideo(dolo.DefaultClient, videoId, videoPage); err != nil {
+		if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, force, singleFormat); err != nil {
 			return da.EndWithError(err)
 		}
 

@@ -25,10 +25,11 @@ const (
 func GetVideoFileHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
 	force := u.Query().Has("force")
-	return GetVideoFile(force, ids...)
+	singleFormat := u.Query().Has("single-format")
+	return GetVideoFile(force, singleFormat, ids...)
 }
 
-func GetVideoFile(force bool, ids ...string) error {
+func GetVideoFile(force, singleFormat bool, ids ...string) error {
 
 	if len(ids) == 0 {
 		return nil
@@ -96,7 +97,7 @@ func GetVideoFile(force bool, ids ...string) error {
 
 		start := time.Now()
 
-		if err := downloadVideo(dolo.DefaultClient, relFilename, videoPage); err != nil {
+		if err := downloadVideo(dolo.DefaultClient, relFilename, videoPage, force, singleFormat); err != nil {
 			gv.Error(err)
 		}
 
@@ -112,7 +113,9 @@ func GetVideoFile(force bool, ids ...string) error {
 func downloadVideo(
 	dl *dolo.Client,
 	videoId string,
-	videoPage *yt_urls.InitialPlayerResponse) error {
+	videoPage *yt_urls.InitialPlayerResponse,
+	force bool,
+	singleFormat bool) error {
 
 	relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
@@ -123,12 +126,12 @@ func downloadVideo(
 
 	absFilename := filepath.Join(absVideosDir, relFilename)
 
-	if _, err := os.Stat(absFilename); err == nil {
+	if _, err := os.Stat(absFilename); !force && err == nil {
 		//local file already exists - won't attempt to download again
 		return nil
 	}
 
-	if yeti.GetBinary(yeti.FFMpegBin) == "" {
+	if yeti.GetBinary(yeti.FFMpegBin) == "" || singleFormat {
 		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.Formats(), videoPage.PlayerUrl); err != nil {
 			return err
 		}
