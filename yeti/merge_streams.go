@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-func MergeStreams(relFilename string) error {
+func MergeStreams(relFilename string, force bool) error {
 	absVideosDir, err := pasu.GetAbsDir(paths.Videos)
 	if err != nil {
 		return err
@@ -21,6 +21,12 @@ func MergeStreams(relFilename string) error {
 	absVideoFilename := filepath.Join(absVideosDir, relVideoFilename)
 	absAudioFilename := filepath.Join(absVideosDir, relAudioFilename)
 	absFilename := filepath.Join(absVideosDir, relFilename)
+
+	if _, err := os.Stat(absFilename); err == nil && force {
+		if err := os.Remove(absFilename); err != nil {
+			return err
+		}
+	}
 
 	ffmb := GetBinary(FFMpegBin)
 	if ffmb == "" {

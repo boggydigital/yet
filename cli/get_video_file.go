@@ -136,7 +136,7 @@ func downloadVideo(
 			return err
 		}
 	} else {
-		if err := downloadAdaptiveFormat(dl, videoId, relFilename, videoPage); err != nil {
+		if err := downloadAdaptiveFormat(dl, videoId, relFilename, videoPage, force); err != nil {
 			return err
 		}
 	}
@@ -205,7 +205,7 @@ func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, formats 
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, videoPage *yt_urls.InitialPlayerResponse) error {
+func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, videoPage *yt_urls.InitialPlayerResponse, force bool) error {
 
 	relVideoFilename, relAudioFilename := yeti.VideoAudioFilenames(relFilename)
 
@@ -219,7 +219,7 @@ func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, videoP
 		return err
 	}
 
-	if err := yeti.MergeStreams(relFilename); err != nil {
+	if err := yeti.MergeStreams(relFilename, force); err != nil {
 		return err
 	}
 
