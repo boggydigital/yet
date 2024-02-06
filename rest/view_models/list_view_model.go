@@ -51,6 +51,8 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 	}
 
+	lvm.Continue = nil
+
 	if len(lvm.Continue) == 0 {
 		// add random video to suggest watching
 		pool := make([]string, 0)
