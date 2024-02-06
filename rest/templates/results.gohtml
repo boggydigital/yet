@@ -30,7 +30,7 @@
 
     <h1>Search results for '{{.SearchQuery}}'</h1>
 
-    <details>
+    <details class="results">
         <summary><h2>Refinements</h2></summary>
         <ul class='horizontal refinements'>
             {{range .Refinements}}
@@ -40,7 +40,7 @@
     </details>
 
     {{if .Channels}}
-        <details>
+        <details class="results">
             <summary><h2>Channels</h2></summary>
             <ul class='channels'>
                 {{range .Channels}}
@@ -51,7 +51,7 @@
     {{end}}
 
     {{if .Playlists}}
-        <details>
+        <details class="results">
             <summary><h2>Playlists</h2></summary>
             <ul class='playlists'>
                 {{range .Playlists}}
@@ -61,7 +61,7 @@
         </details>
     {{end}}
 
-    <details open>
+    <details class="results" open>
         <summary><h2>Videos</h2></summary>
         <ul class="videos resp-grid">
         {{range .Videos}}

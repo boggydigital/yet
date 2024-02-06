@@ -34,13 +34,15 @@
     {{$playlistsVideos := .PlaylistsVideos}}
     {{range $playlistId := .PlaylistsOrder}}
         {{if $playlistId}}
-            <details>
+            <details class="channel_playlist">
                 <summary><h2>{{index $playlists $playlistId}}</h2></summary>
                 <a class='playlist' href='/playlist?list={{$playlistId}}'>View playlist</a>
                 {{$videos := index $playlistsVideos $playlistId}}
+                <ul class="videos resp-grid">
                 {{range $video := $videos}}
-                    {{template "video" $video}}
+                    <li>{{template "video" $video}}</li>
                 {{end}}
+                </ul>
             </details>
         {{end}}
     {{end}}
