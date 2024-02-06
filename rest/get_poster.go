@@ -33,47 +33,46 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	absPosterFilename, err := paths.AbsPosterPath(videoId, quality)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	for q := quality; q != yt_urls.ThumbnailQualityUnknown; q = yt_urls.LowerQuality(q) {
 
-	// attempt to fetch posters from the origin if they don't exist locally
-	// unless that's a URL file
-	if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) &&
-		!strings.Contains(videoId, yt_urls.DefaultVideoExt) {
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, quality); err != nil {
+		absPosterFilename, err := paths.AbsPosterPath(videoId, q)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	} else if err == nil {
-		http.ServeFile(w, r, absPosterFilename)
-		return
+
+		// attempt to fetch posters from the origin if they don't exist locally
+		// unless that's a URL file
+		if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) &&
+			!strings.Contains(videoId, yt_urls.DefaultVideoExt) {
+			if err := yeti.GetPosters(videoId, dolo.DefaultClient, q); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		if _, err := os.Stat(absPosterFilename); err == nil {
+			http.ServeFile(w, r, absPosterFilename)
+			return
+		}
 	}
 
-	if _, err := os.Stat(absPosterFilename); err == nil {
-		http.ServeFile(w, r, absPosterFilename)
-		return
+	var br io.ReadSeeker
+	filename := ""
+
+	switch quality {
+	case yt_urls.ThumbnailQualityMaxRes:
+		filename = "yet_maxresdefault.png"
+		br = bytes.NewReader(yetPosterMaxResDefault)
+	default:
+		filename = "yet_hqdefault.png"
+		br = bytes.NewReader(yetPosterHQDefault)
+	}
+
+	if br != nil {
+		http.ServeContent(w, r, filename, time.Unix(0, 0), br)
 	} else {
-		var br io.ReadSeeker
-		filename := ""
-
-		switch quality {
-		case yt_urls.ThumbnailQualityMaxRes:
-			filename = "yet_maxresdefault.png"
-			br = bytes.NewReader(yetPosterMaxResDefault)
-		default:
-			filename = "yet_hqdefault.png"
-			br = bytes.NewReader(yetPosterHQDefault)
-		}
-
-		if br != nil {
-			http.ServeContent(w, r, filename, time.Unix(0, 0), br)
-		} else {
-			http.NotFound(w, r)
-		}
-
-		return
+		http.NotFound(w, r)
 	}
+
 }

@@ -25,7 +25,11 @@ func GetPosters(videoId string, dl *dolo.Client, qualities ...yt_urls.ThumbnailQ
 
 		if absFilename, err := paths.AbsPosterPath(videoId, q); err == nil {
 			if err := dl.Download(u, nil, absFilename); err != nil {
-				return gpa.EndWithError(err)
+				if lq := yt_urls.LowerQuality(q); lq != yt_urls.ThumbnailQualityUnknown {
+					return GetPosters(videoId, dl, lq)
+				} else {
+					return gpa.EndWithError(err)
+				}
 			}
 		} else {
 			return gpa.EndWithError(err)

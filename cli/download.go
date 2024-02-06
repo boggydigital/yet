@@ -69,11 +69,11 @@ func Download(ids []string, queue, force bool) error {
 		}
 
 		if err := yeti.GetPosters(videoId, dolo.DefaultClient, yt_urls.AllThumbnailQualities()...); err != nil {
-			return da.EndWithError(err)
+			da.Error(err)
 		}
 
 		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient); err != nil {
-			return da.EndWithError(err)
+			da.Error(err)
 		}
 
 		// set downloaded date
