@@ -17,7 +17,11 @@ const (
 	VideoProgressProperty          = "video-progress"
 	VideoDurationProperty          = "video-duration"
 	VideoEndedProperty             = "video-ended"
+	VideoSkippedProperty           = "video-skipped"
 	VideoErrorsProperty            = "video-errors"
+
+	VideoForcedDownloadProperty       = "video-forced-download"
+	VideoSingleFormatDownloadProperty = "video-single-format-download"
 
 	VideosDownloadQueueProperty = "videos-download-queue"
 	VideosWatchlistProperty     = "videos-watchlist"
@@ -26,12 +30,13 @@ const (
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
 	VideoCaptionsNamesProperty     = "video-captions-names"
 
-	PlaylistWatchlistProperty     = "playlist-watchlist"
-	PlaylistDownloadQueueProperty = "playlist-download-queue"
-	PlaylistNewVideosProperty     = "playlist-new-videos"
-	PlaylistChannelProperty       = "playlist-channel"
-	PlaylistTitleProperty         = "playlist-title"
-	PlaylistVideosProperty        = "playlist-videos"
+	PlaylistWatchlistProperty            = "playlist-watchlist"
+	PlaylistDownloadQueueProperty        = "playlist-download-queue"
+	PlaylistNewVideosProperty            = "playlist-new-videos"
+	PlaylistChannelProperty              = "playlist-channel"
+	PlaylistTitleProperty                = "playlist-title"
+	PlaylistVideosProperty               = "playlist-videos"
+	PlaylistSingleFormatDownloadProperty = "playlist-single-format"
 
 	ChannelTitleProperty       = "channel-title"
 	ChannelDescriptionProperty = "channel-description"

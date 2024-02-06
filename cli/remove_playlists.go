@@ -17,10 +17,12 @@ func RemovePlaylistsHandler(u *url.URL) error {
 
 	watchlist := strings.Split(q.Get("watchlist"), ",")
 	downloadQueue := strings.Split(q.Get("download-queue"), ",")
+	singleFormat := strings.Split(q.Get("single-format"), ",")
 
 	return RemovePlaylists(map[string][]string{
-		data.PlaylistWatchlistProperty:     watchlist,
-		data.PlaylistDownloadQueueProperty: downloadQueue,
+		data.PlaylistWatchlistProperty:            watchlist,
+		data.PlaylistDownloadQueueProperty:        downloadQueue,
+		data.PlaylistSingleFormatDownloadProperty: singleFormat,
 	})
 }
 

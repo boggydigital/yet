@@ -17,11 +17,13 @@ func AddPlaylistsHandler(u *url.URL) error {
 
 	watchlist := strings.Split(q.Get("watchlist"), ",")
 	downloadQueue := strings.Split(q.Get("download-queue"), ",")
+	singleFormat := strings.Split(q.Get("single-format"), ",")
 	allVideos := q.Has("all-videos")
 
 	return AddPlaylists(allVideos, map[string][]string{
-		data.PlaylistWatchlistProperty:     watchlist,
-		data.PlaylistDownloadQueueProperty: downloadQueue,
+		data.PlaylistWatchlistProperty:            watchlist,
+		data.PlaylistDownloadQueueProperty:        downloadQueue,
+		data.PlaylistSingleFormatDownloadProperty: singleFormat,
 	})
 }
 

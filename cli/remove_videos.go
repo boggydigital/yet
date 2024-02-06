@@ -18,12 +18,18 @@ func RemoveVideosHandler(u *url.URL) error {
 	watchlist := strings.Split(q.Get("watchlist"), ",")
 	progress := strings.Split(q.Get("progress"), ",")
 	ended := strings.Split(q.Get("ended"), ",")
+	skipped := strings.Split(q.Get("skipped"), ",")
+	forcedDownload := strings.Split(q.Get("forced-download"), ",")
+	singleFormat := strings.Split(q.Get("single-format"), ",")
 
 	return RemoveVideos(map[string][]string{
-		data.VideosDownloadQueueProperty: downloadQueue,
-		data.VideosWatchlistProperty:     watchlist,
-		data.VideoProgressProperty:       progress,
-		data.VideoEndedProperty:          ended,
+		data.VideosDownloadQueueProperty:       downloadQueue,
+		data.VideosWatchlistProperty:           watchlist,
+		data.VideoProgressProperty:             progress,
+		data.VideoEndedProperty:                ended,
+		data.VideoSkippedProperty:              skipped,
+		data.VideoForcedDownloadProperty:       forcedDownload,
+		data.VideoSingleFormatDownloadProperty: singleFormat,
 	})
 }
 
@@ -41,7 +47,10 @@ func RemoveVideos(propertyValues map[string][]string) error {
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
 		data.VideoProgressProperty,
-		data.VideoEndedProperty)
+		data.VideoEndedProperty,
+		data.VideoSkippedProperty,
+		data.VideoForcedDownloadProperty,
+		data.VideoSingleFormatDownloadProperty)
 	if err != nil {
 		return rva.EndWithError(err)
 	}

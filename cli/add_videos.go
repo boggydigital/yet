@@ -19,11 +19,17 @@ func AddVideosHandler(u *url.URL) error {
 	downloadQueue := strings.Split(q.Get("download-queue"), ",")
 	watchlist := strings.Split(q.Get("watchlist"), ",")
 	ended := strings.Split(q.Get("ended"), ",")
+	skipped := strings.Split(q.Get("skipped"), ",")
+	forcedDownload := strings.Split(q.Get("forced-download"), ",")
+	singleFormat := strings.Split(q.Get("single-format"), ",")
 
 	return AddVideos(map[string][]string{
-		data.VideosDownloadQueueProperty: downloadQueue,
-		data.VideosWatchlistProperty:     watchlist,
-		data.VideoEndedProperty:          ended,
+		data.VideosDownloadQueueProperty:       downloadQueue,
+		data.VideosWatchlistProperty:           watchlist,
+		data.VideoEndedProperty:                ended,
+		data.VideoSkippedProperty:              skipped,
+		data.VideoForcedDownloadProperty:       forcedDownload,
+		data.VideoSingleFormatDownloadProperty: singleFormat,
 	})
 }
 
@@ -40,7 +46,10 @@ func AddVideos(propertyValues map[string][]string) error {
 	rdx, err := kvas.NewReduxWriter(metadataDir,
 		data.VideosDownloadQueueProperty,
 		data.VideosWatchlistProperty,
-		data.VideoEndedProperty)
+		data.VideoEndedProperty,
+		data.VideoSkippedProperty,
+		data.VideoForcedDownloadProperty,
+		data.VideoSingleFormatDownloadProperty)
 	if err != nil {
 		return ava.EndWithError(err)
 	}
@@ -89,7 +98,7 @@ func addPropertyValues(rdx kvas.WriteableRedux, parseDelegate func(...string) ([
 	case data.VideoEndedProperty:
 		valuesDelegate = timestampValues
 	default:
-		// do nothing, trueValues is already the default
+		// do nothing, trueValues is already the correct default
 	}
 
 	if err := rdx.BatchAddValues(property, valuesDelegate(values...)); err != nil {

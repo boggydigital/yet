@@ -14,12 +14,16 @@ add-urls
 add-playlists
     download-queue&
     watchlist&
+    single-format&
     all-videos
 
 add-videos
     download-queue&
     watchlist&
     ended&
+    skipped&
+    forced-download&
+    single-format&
 
 backup
 
@@ -69,18 +73,22 @@ queue-playlists-new-videos
 remove-playlists
     download-queue&
     watchlist&
+    single-format&
 
 remove-videos
     download-queue&
     watchlist&
     progress&
     ended&
+    forced-download&
+    single-format&
 
 remove-urls
     download-queue&
     watchlist&
     progress&
     ended&
+    skipped&
 
 serve
     port$*
