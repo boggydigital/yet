@@ -28,10 +28,15 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	properties := []string{data.VideoProgressProperty,
+	properties := []string{
+		data.VideoProgressProperty,
 		data.VideoEndedProperty,
+		data.VideoSkippedProperty,
 		data.VideosWatchlistProperty,
-		data.VideosDownloadQueueProperty}
+		data.VideosDownloadQueueProperty,
+		data.VideoForcedDownloadProperty,
+		data.VideoSingleFormatDownloadProperty,
+	}
 
 	vRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
 	if err != nil {
@@ -57,10 +62,16 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 		flagStr = "progress"
 	case data.VideoEndedProperty:
 		flagStr = "ended"
+	case data.VideoSkippedProperty:
+		flagStr = "skipped"
 	case data.VideosWatchlistProperty:
 		flagStr = "watchlist"
 	case data.VideosDownloadQueueProperty:
 		flagStr = "download"
+	case data.VideoForcedDownloadProperty:
+		flagStr = "forced-download"
+	case data.VideoSingleFormatDownloadProperty:
+		flagStr = "single-format"
 	default:
 		return fmt.Errorf("unsupported property %s", property)
 	}
@@ -76,6 +87,14 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 			case data.VideoProgressProperty:
 				// setting progress requires current time - users should be encouraged to scrub video instead
 				return nil
+			case data.VideoSkippedProperty:
+				// skipped video must also make sure the video is set as ended
+				if !rdx.HasKey(data.VideoEndedProperty, videoId) {
+					t := time.Now().Format(time.RFC3339)
+					if err := rdx.AddValues(data.VideoEndedProperty, videoId, t); err != nil {
+						return err
+					}
+				}
 			case data.VideoEndedProperty:
 				// ended requires current time as a value to set
 				value = time.Now().Format(time.RFC3339)

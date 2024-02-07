@@ -27,7 +27,11 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	properties := []string{data.PlaylistWatchlistProperty, data.PlaylistDownloadQueueProperty}
+	properties := []string{
+		data.PlaylistWatchlistProperty,
+		data.PlaylistDownloadQueueProperty,
+		data.PlaylistSingleFormatDownloadProperty,
+	}
 
 	plRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
 	if err != nil {
@@ -54,6 +58,8 @@ func updatePlaylistProperty(playlistId string, property string, u *url.URL, rdx 
 		flagStr = "refresh"
 	case data.PlaylistDownloadQueueProperty:
 		flagStr = "download"
+	case data.PlaylistSingleFormatDownloadProperty:
+		flagStr = "single-format"
 	default:
 		return fmt.Errorf("unsupported property %s", property)
 	}

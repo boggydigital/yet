@@ -17,6 +17,7 @@ type PlaylistViewModel struct {
 	NewVideos            int
 	Watching             bool
 	Downloading          bool
+	SingleFormat         bool
 	Videos               []*VideoViewModel
 }
 
@@ -36,6 +37,11 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 	downloading := false
 	if pdq, ok := rdx.GetLastVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
 		downloading = true
+	}
+
+	singleFormat := false
+	if psf, ok := rdx.GetLastVal(data.PlaylistSingleFormatDownloadProperty, playlistId); ok && psf == data.TrueValue {
+		singleFormat = true
 	}
 
 	pc := ""
@@ -64,6 +70,7 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		PlaylistChannelTitle: playlistChannelTitle,
 		Watching:             watching,
 		Downloading:          downloading,
+		SingleFormat:         singleFormat,
 	}
 
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok && len(videoIds) > 0 {

@@ -89,6 +89,11 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		}
 	}
 
+	skipped := false
+	if s, ok := rdx.GetLastVal(data.VideoSkippedProperty, videoId); ok && s != "" {
+		skipped = true
+	}
+
 	var rem, dur int64
 
 	optShowRemainingDuration := slices.Contains(options, ShowRemainingDuration)
@@ -119,8 +124,13 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	class := ""
 	if ended {
-		videoTitle = "☑️ " + videoTitle
-		class += "ended"
+		titlePrefix := "☑️ "
+		class += "ended "
+		if skipped {
+			titlePrefix = "⏭️ "
+			class += "skipped "
+		}
+		videoTitle = titlePrefix + videoTitle
 	}
 
 	optShowPoster := slices.Contains(options, ShowPoster)

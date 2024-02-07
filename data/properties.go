@@ -20,11 +20,10 @@ const (
 	VideoSkippedProperty           = "video-skipped"
 	VideoErrorsProperty            = "video-errors"
 
+	VideosDownloadQueueProperty       = "videos-download-queue"
 	VideoForcedDownloadProperty       = "video-forced-download"
 	VideoSingleFormatDownloadProperty = "video-single-format-download"
-
-	VideosDownloadQueueProperty = "videos-download-queue"
-	VideosWatchlistProperty     = "videos-watchlist"
+	VideosWatchlistProperty           = "videos-watchlist"
 
 	VideoCaptionsLanguagesProperty = "video-captions-languages"
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
@@ -58,9 +57,12 @@ func AllProperties() []string {
 		VideoPublishTimeTextProperty,
 		VideoUploadDateProperty,
 		VideoDownloadedDateProperty,
+		VideoForcedDownloadProperty,
+		VideoSingleFormatDownloadProperty,
 		VideoProgressProperty,
 		VideoDurationProperty,
 		VideoEndedProperty,
+		VideoSkippedProperty,
 		VideoErrorsProperty,
 		VideosDownloadQueueProperty,
 		VideosWatchlistProperty,
@@ -70,6 +72,7 @@ func AllProperties() []string {
 
 		PlaylistWatchlistProperty,
 		PlaylistDownloadQueueProperty,
+		PlaylistSingleFormatDownloadProperty,
 		PlaylistNewVideosProperty,
 		PlaylistChannelProperty,
 		PlaylistTitleProperty,

@@ -14,8 +14,11 @@ type VideoManagementViewModel struct {
 	Progress        bool
 	CurrentTime     string
 	Ended           bool
+	Skipped         bool
 	Watchlist       bool
 	DownloadQueue   bool
+	ForcedDownload  bool
+	SingleFormat    bool
 }
 
 func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManagementViewModel {
@@ -36,7 +39,10 @@ func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManag
 		CurrentTime:     currentTime,
 		Progress:        rdx.HasKey(data.VideoProgressProperty, videoId),
 		Ended:           rdx.HasKey(data.VideoEndedProperty, videoId),
+		Skipped:         rdx.HasKey(data.VideoSkippedProperty, videoId),
 		Watchlist:       rdx.HasKey(data.VideosWatchlistProperty, videoId),
 		DownloadQueue:   rdx.HasKey(data.VideosDownloadQueueProperty, videoId),
+		ForcedDownload:  rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
+		SingleFormat:    rdx.HasKey(data.VideoSingleFormatDownloadProperty, videoId),
 	}
 }

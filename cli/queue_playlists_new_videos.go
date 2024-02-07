@@ -54,6 +54,13 @@ func QueuePlaylistsNewVideos() error {
 				if err := rdx.AddValues(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
 					return qpnva.EndWithError(err)
 				}
+
+				// set video to download as single format if playlist has that flag set
+				if rdx.HasKey(data.PlaylistSingleFormatDownloadProperty, pdq) {
+					if err := rdx.AddValues(data.VideoSingleFormatDownloadProperty, videoId, data.TrueValue); err != nil {
+						return qpnva.EndWithError(err)
+					}
+				}
 			}
 		}
 	}

@@ -122,7 +122,11 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	lastEndedTime := ""
 	if et, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && et != "" {
 		lastEndedTime = et
-		videoTitle = "☑️ " + videoTitle
+		titlePrefix := "☑️ "
+		if rdx.HasKey(data.VideoSkippedProperty, videoId) {
+			titlePrefix = "⏭️ "
+		}
+		videoTitle = titlePrefix + videoTitle
 	}
 
 	return &WatchViewModel{

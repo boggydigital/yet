@@ -56,6 +56,9 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 
 	for _, videoId := range videoIds {
 
+		vidForce := rdx.HasKey(data.VideoForcedDownloadProperty, videoId) || force
+		videoSingleFormat := rdx.HasKey(data.VideoSingleFormatDownloadProperty, videoId) || singleFormat
+
 		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
 			return da.EndWithError(err)
@@ -65,7 +68,7 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 			return da.EndWithError(err)
 		}
 
-		if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, force, singleFormat); err != nil {
+		if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, vidForce, videoSingleFormat); err != nil {
 			return da.EndWithError(err)
 		}
 
