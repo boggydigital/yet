@@ -19,7 +19,7 @@
             }
 
             h1 {
-                margin-block: var(--large)
+                margin-block: var(--normal);
             }
 
             h2 {
@@ -29,6 +29,11 @@
             .videoDescription {
                 margin-block: var(--normal)
             }
+
+            a.action {
+                margin-block: var(--normal)
+            }
+
         </style>
     </head>
     <body>
@@ -40,22 +45,36 @@
     </video>
 
     <div class='subtle'>This video will play from the {{if eq .Server "local"}}yet{{else}}origin{{end}} server</div>
-    <h1 class='videoTitle'>{{.VideoTitle}}</h1>
 
-    {{if .VideoDescription}}
-        <details>
-            <summary><h2>Description</h2></summary>
-            <div class='videoDescription'>{{.VideoDescription}}</div>
-        </details>
-    {{end}}
+    <ul class="video_details_container">
 
-    {{if .PlaylistViewModel}}
-        <ul class="playlists">
-            {{template "playlist" .PlaylistViewModel}}
-        </ul>
-    {{end}}
+        <h1 class='videoTitle'>{{.VideoTitle}}</h1>
 
-    <a class='action' href="/manage_video?v={{.VideoId}}">Manage video</a>
+        {{if .ChannelId}}
+            {{if .ChannelTitle}}
+                <a class="channel" href="/channel?id={{.ChannelId}}">Channel: {{.ChannelTitle}}</a>
+            {{end}}
+        {{end}}
+
+        {{if .VideoDescription}}
+            <details>
+                <summary><h2>Description</h2></summary>
+                <div class='videoDescription'>{{.VideoDescription}}</div>
+            </details>
+        {{end}}
+
+        {{if .PlaylistViewModel}}
+            <details>
+                <summary><h2>Playlist</h2></summary>
+                <ul class="playlists">
+                    {{template "playlist" .PlaylistViewModel}}
+                </ul>
+            </details>
+        {{end}}
+
+        <a class='action' href="/manage_video?v={{.VideoId}}">Manage video</a>
+
+    </ul>
 
     <script>
         let video = document.getElementsByTagName('video')[0];

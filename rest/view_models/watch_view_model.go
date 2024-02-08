@@ -24,6 +24,8 @@ type WatchViewModel struct {
 	VideoDescription  string
 	CurrentTime       string
 	LastEndedTime     string
+	ChannelId         string
+	ChannelTitle      string
 	PlaylistViewModel *PlaylistViewModel
 }
 
@@ -115,6 +117,14 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		playlistId = playlistIds[0]
 	}
 
+	channelId, channelTitle := "", ""
+	if ci, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, videoId); ok && ci != "" {
+		channelId = ci
+		if ct, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && ct != "" {
+			channelTitle = ct
+		}
+	}
+
 	return &WatchViewModel{
 		VideoId:           videoId,
 		VideoUrl:          videoUrl,
@@ -124,6 +134,8 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		VideoDescription:  videoDescription,
 		CurrentTime:       currentTime,
 		LastEndedTime:     lastEndedTime,
+		ChannelId:         channelId,
+		ChannelTitle:      channelTitle,
 		PlaylistViewModel: GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }

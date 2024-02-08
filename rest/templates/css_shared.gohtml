@@ -12,7 +12,8 @@
         .watchlist_container,
         .playlists_container,
         .results_container,
-        .history_container {
+        .history_container,
+        .video_details_container {
             display: flex;
             flex-direction: column;
             gap: var(--small)
@@ -98,8 +99,8 @@
             margin-block: initial;
         }
 
-        .results a.channel {
-            padding: 0;
+        a.channel {
+            padding-inline: 0;
         }
 
         .channel_playlist a.playlist {
