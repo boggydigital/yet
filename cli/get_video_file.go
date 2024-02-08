@@ -134,7 +134,7 @@ func downloadVideo(
 
 	if yeti.GetBinary(yeti.FFMpegBin) == "" || singleFormat {
 
-		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl); err != nil {
+		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl, force); err != nil {
 			return err
 		}
 	} else {
@@ -158,7 +158,12 @@ func downloadVideo(
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, format *yt_urls.Format, playerUrl string) error {
+func downloadSingleFormat(
+	dl *dolo.Client,
+	videoId, relFilename string,
+	format *yt_urls.Format,
+	playerUrl string,
+	force bool) error {
 
 	if format.Url == "" {
 		return errors.New("stream format needs url")
@@ -189,6 +194,15 @@ func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, format *
 		return tpw.EndWithError(err)
 	}
 
+	if force {
+		absFilename := filepath.Join(absVideosDir, relFilename)
+		if _, err := os.Stat(absFilename); err == nil {
+			if err := os.Remove(absFilename); err != nil {
+				return tpw.EndWithError(err)
+			}
+		}
+	}
+
 	if err := dl.Download(u, tpw, absVideosDir, relFilename); err != nil {
 		return tpw.EndWithError(err)
 	}
@@ -203,12 +217,12 @@ func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, vp *yt
 	rvfn, rafn := yeti.VideoAudioFilenames(relFilename)
 
 	//download video format
-	if err := downloadSingleFormat(dl, videoId, rvfn, vp.BestAdaptiveVideoFormat(), vp.PlayerUrl); err != nil {
+	if err := downloadSingleFormat(dl, videoId, rvfn, vp.BestAdaptiveVideoFormat(), vp.PlayerUrl, force); err != nil {
 		return err
 	}
 
 	//download audio format
-	if err := downloadSingleFormat(dl, videoId, rafn, vp.BestAdaptiveAudioFormat(), vp.PlayerUrl); err != nil {
+	if err := downloadSingleFormat(dl, videoId, rafn, vp.BestAdaptiveAudioFormat(), vp.PlayerUrl, force); err != nil {
 		return err
 	}
 
