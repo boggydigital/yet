@@ -96,7 +96,7 @@
             margin-block: initial;
         }
 
-        .results a.channel{
+        .results a.channel {
             padding: 0;
         }
 
@@ -134,17 +134,23 @@
             color: var(--color-light-green)
         }
 
-        a.playlist .subtitle {
-            font-size: var(--fs-smaller);
-            color: inherit;        }
-
-        .title {
-            margin-block-end: var(--normal);
-        }
-
         .subtitle {
             font-size: var(--fs-x-smaller);
             font-weight: normal
+        }
+
+        a.playlist .subtitle {
+            font-size: var(--fs-smaller);
+            color: inherit;
+        }
+
+        .title {
+            margin-block: var(--small)
+        }
+
+        a.playlist .title {
+            margin-block-start: 0;
+            margin-block-end: var(--normal);
         }
 
         .info {
