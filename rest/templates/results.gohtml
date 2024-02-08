@@ -20,6 +20,7 @@
             }
 
             ul.refinements li a {
+                color: var(--color-light-green);
                 font-size: var(--fs-smaller);
                 margin: 0;
             }
@@ -29,47 +30,51 @@
 
     {{template "back"}}
 
-    <h1>Search results for '{{.SearchQuery}}'</h1>
+    <h1 class="results">Search results for '{{.SearchQuery}}'</h1>
 
-    <details class="results">
-        <summary><h2>Refinements</h2></summary>
-        <ul class='horizontal refinements'>
-            {{range .Refinements}}
-                <li><a href='/results?search_query={{.}}'>{{.}}</a></li>
-            {{end}}
-        </ul>
-    </details>
+    <section class="results_container">
 
-    {{if .Channels}}
         <details class="results">
-            <summary><h2>Channels</h2></summary>
-            <ul class='channels'>
-                {{range .Channels}}
-                    {{template "channel" .}}
+            <summary><h2>Refinements</h2></summary>
+            <ul class='horizontal refinements'>
+                {{range .Refinements}}
+                    <li><a href='/results?search_query={{.}}'>{{.}}</a></li>
                 {{end}}
             </ul>
         </details>
-    {{end}}
 
-    {{if .Playlists}}
-        <details class="results">
-            <summary><h2>Playlists</h2></summary>
-            <ul class='playlists'>
-                {{range .Playlists}}
-                    {{template "playlist" .}}
-                {{end}}
-            </ul>
-        </details>
-    {{end}}
-
-    <details class="results" open>
-        <summary><h2>Videos</h2></summary>
-        <ul class="videos resp-grid">
-        {{range .Videos}}
-            <li>{{template "video" .}}</li>
+        {{if .Channels}}
+            <details class="results">
+                <summary><h2>Channels</h2></summary>
+                <ul class='channels'>
+                    {{range .Channels}}
+                        {{template "channel" .}}
+                    {{end}}
+                </ul>
+            </details>
         {{end}}
-        </ul>
-    </details>
+
+        {{if .Playlists}}
+            <details class="results">
+                <summary><h2>Playlists</h2></summary>
+                <ul class='playlists'>
+                    {{range .Playlists}}
+                        {{template "playlist" .}}
+                    {{end}}
+                </ul>
+            </details>
+        {{end}}
+
+        <details class="results" open>
+            <summary><h2>Videos</h2></summary>
+            <ul class="videos resp-grid">
+                {{range .Videos}}
+                    <li>{{template "video" .}}</li>
+                {{end}}
+            </ul>
+        </details>
+
+    </section>
 
     </body>
     </html>

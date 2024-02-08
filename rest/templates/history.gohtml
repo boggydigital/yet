@@ -20,10 +20,12 @@
 
     {{template "back"}}
 
-    <h1>{{.Title}}</h1>
+    <h1 class="history">{{.Title}}</h1>
 
     {{$openGroup := .OpenGroup}}
     {{$groups := .Groups}}
+
+    <section class="history_container">
 
     {{range $group := .GroupsOrder}}
         {{$videos := index $groups $group}}
@@ -38,6 +40,8 @@
             </details>
         {{end}}
     {{end}}
+
+    </section>
 
     {{if .ShowAll}}
     {{else}}

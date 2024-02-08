@@ -30,6 +30,8 @@
             <a class='action' href='/refresh_channel?id={{.ChannelId}}'>Refresh</a>
         </li>
     </ul>
+
+    <section class="playlists_container">
     {{$playlists := .Playlists}}
     {{$playlistsVideos := .PlaylistsVideos}}
     {{range $playlistId := .PlaylistsOrder}}
@@ -46,6 +48,8 @@
             </details>
         {{end}}
     {{end}}
+    </section>
+
     </body>
     </html>
 {{end}}

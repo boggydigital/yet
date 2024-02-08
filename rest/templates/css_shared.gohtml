@@ -9,8 +9,10 @@
 
         }
 
-        .watchlist,
-        .playlists_container {
+        .watchlist_container,
+        .playlists_container,
+        .results_container,
+        .history_container {
             display: flex;
             flex-direction: column;
             gap: var(--small)
@@ -75,6 +77,13 @@
             .playlist-container {
                 width: calc(100%);
             }
+        }
+
+        h1.playlist,
+        h1.channel,
+        h1.history,
+        h1.results {
+            margin-block: var(--large);
         }
 
         a.playlist,
