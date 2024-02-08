@@ -23,6 +23,10 @@ type PlaylistViewModel struct {
 
 func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
 
+	if playlistId == "" {
+		return nil
+	}
+
 	nvc := 0
 
 	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok {

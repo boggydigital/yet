@@ -16,14 +16,15 @@ import (
 )
 
 type WatchViewModel struct {
-	VideoId          string
-	VideoUrl         string
-	VideoPoster      string
-	Server           string
-	VideoTitle       string
-	VideoDescription string
-	CurrentTime      string
-	LastEndedTime    string
+	VideoId           string
+	VideoUrl          string
+	VideoPoster       string
+	Server            string
+	VideoTitle        string
+	VideoDescription  string
+	CurrentTime       string
+	LastEndedTime     string
+	PlaylistViewModel *PlaylistViewModel
 }
 
 func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*WatchViewModel, error) {
@@ -109,15 +110,21 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		videoTitle = titlePrefix + videoTitle
 	}
 
+	playlistId := ""
+	if playlistIds := rdx.MatchAsset(data.PlaylistVideosProperty, []string{videoId}, nil); len(playlistIds) > 0 {
+		playlistId = playlistIds[0]
+	}
+
 	return &WatchViewModel{
-		VideoId:          videoId,
-		VideoUrl:         videoUrl,
-		VideoPoster:      videoPoster,
-		Server:           playbackType,
-		VideoTitle:       videoTitle,
-		VideoDescription: videoDescription,
-		CurrentTime:      currentTime,
-		LastEndedTime:    lastEndedTime,
+		VideoId:           videoId,
+		VideoUrl:          videoUrl,
+		VideoPoster:       videoPoster,
+		Server:            playbackType,
+		VideoTitle:        videoTitle,
+		VideoDescription:  videoDescription,
+		CurrentTime:       currentTime,
+		LastEndedTime:     lastEndedTime,
+		PlaylistViewModel: GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }
 

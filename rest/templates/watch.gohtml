@@ -49,6 +49,12 @@
         </details>
     {{end}}
 
+    {{if .PlaylistViewModel}}
+        <ul class="playlists">
+            {{template "playlist" .PlaylistViewModel}}
+        </ul>
+    {{end}}
+
     <a class='action' href="/manage_video?v={{.VideoId}}">Manage video</a>
 
     <script>
