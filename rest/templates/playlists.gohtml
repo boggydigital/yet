@@ -27,16 +27,13 @@
     </div>
     <ul class="horizontal">
         <li>
-            <a class="action" href="https://www.youtube.com/playlist?list={{.PlaylistId}}">Origin</a>
-        </li>
-        <li>
             <a class="action" href="https://www.youtube.com/feeds/videos.xml?playlist_id={{.PlaylistId}}">RSS</a>
         </li>
         <li>
-            <a class='action' href='/manage_playlist?list={{.PlaylistId}}'>Manage</a>
+            <a class='action' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh</a>
         </li>
         <li>
-            <a class='action' href='/refresh_playlist?list={{.PlaylistId}}'>Refresh</a>
+            <a class='action' href='/manage_playlist?list={{.PlaylistId}}'>Manage</a>
         </li>
     </ul>
     <ul class="videos resp-grid">
