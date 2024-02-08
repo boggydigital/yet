@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
@@ -132,7 +133,8 @@ func downloadVideo(
 	}
 
 	if yeti.GetBinary(yeti.FFMpegBin) == "" || singleFormat {
-		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.Formats(), videoPage.PlayerUrl); err != nil {
+
+		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl); err != nil {
 			return err
 		}
 	} else {
@@ -156,66 +158,57 @@ func downloadVideo(
 	return nil
 }
 
-func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, formats yt_urls.Formats, playerUrl string) error {
+func downloadSingleFormat(dl *dolo.Client, videoId, relFilename string, format *yt_urls.Format, playerUrl string) error {
 
-	for _, format := range formats {
-
-		if format.Url == "" {
-			continue
-		}
-
-		tpw := nod.NewProgress("file: " + relFilename)
-
-		u, err := url.Parse(format.Url)
-		if err != nil {
-			_ = tpw.EndWithError(err)
-			continue
-		}
-
-		fast := os.Getenv(fastEnv) != ""
-
-		if yeti.IsJSBinaryAvailable() || fast {
-			q := u.Query()
-			np := q.Get("n")
-			if dnp, err := yeti.DecodeParam(http.DefaultClient, videoId, np, playerUrl); err != nil {
-				return tpw.EndWithError(err)
-			} else {
-				q.Set("n", dnp)
-				u.RawQuery = q.Encode()
-			}
-		}
-
-		absVideosDir, err := pasu.GetAbsDir(paths.Videos)
-		if err != nil {
-			return tpw.EndWithError(err)
-		}
-
-		if err := dl.Download(u, tpw, absVideosDir, relFilename); err != nil {
-			_ = tpw.EndWithError(err)
-			continue
-		}
-
-		tpw.EndWithResult("done")
-
-		//yt_urls.StreamingUrls returns bitrate sorted video urls,
-		//so we can stop, if we've successfully got the best streaming quality
-		break
+	if format.Url == "" {
+		return errors.New("stream format needs url")
 	}
+
+	tpw := nod.NewProgress("file: " + relFilename)
+
+	u, err := url.Parse(format.Url)
+	if err != nil {
+		return tpw.EndWithError(err)
+	}
+
+	fast := os.Getenv(fastEnv) != ""
+
+	if yeti.IsJSBinaryAvailable() || fast {
+		q := u.Query()
+		np := q.Get("n")
+		if dnp, err := yeti.DecodeParam(http.DefaultClient, videoId, np, playerUrl); err != nil {
+			return tpw.EndWithError(err)
+		} else {
+			q.Set("n", dnp)
+			u.RawQuery = q.Encode()
+		}
+	}
+
+	absVideosDir, err := pasu.GetAbsDir(paths.Videos)
+	if err != nil {
+		return tpw.EndWithError(err)
+	}
+
+	if err := dl.Download(u, tpw, absVideosDir, relFilename); err != nil {
+		return tpw.EndWithError(err)
+	}
+
+	tpw.EndWithResult("done")
 
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, videoPage *yt_urls.InitialPlayerResponse, force bool) error {
+func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, vp *yt_urls.InitialPlayerResponse, force bool) error {
 
-	relVideoFilename, relAudioFilename := yeti.VideoAudioFilenames(relFilename)
+	rvfn, rafn := yeti.VideoAudioFilenames(relFilename)
 
 	//download video format
-	if err := downloadSingleFormat(dl, videoId, relVideoFilename, videoPage.AdaptiveVideoFormats(), videoPage.PlayerUrl); err != nil {
+	if err := downloadSingleFormat(dl, videoId, rvfn, vp.BestAdaptiveVideoFormat(), vp.PlayerUrl); err != nil {
 		return err
 	}
 
 	//download audio format
-	if err := downloadSingleFormat(dl, videoId, relAudioFilename, videoPage.AdaptiveAudioFormats(), videoPage.PlayerUrl); err != nil {
+	if err := downloadSingleFormat(dl, videoId, rafn, vp.BestAdaptiveAudioFormat(), vp.PlayerUrl); err != nil {
 		return err
 	}
 
