@@ -8,7 +8,6 @@ require (
 	github.com/boggydigital/dolo v0.2.14
 	github.com/boggydigital/hogo v0.1.0
 	github.com/boggydigital/kvas v0.4.7
-	github.com/boggydigital/middleware v0.1.13
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pasu v0.1.12
 	github.com/boggydigital/yt_urls v0.1.42
@@ -16,7 +15,6 @@ require (
 )
 
 require (
-	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/boggydigital/match_node v0.1.16 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
 	golang.org/x/net v0.20.0 // indirect
