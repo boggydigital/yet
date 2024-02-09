@@ -7,45 +7,43 @@ import (
 )
 
 var (
-	GetOnly  = middleware.GetMethodOnly
-	PostOnly = middleware.PostMethodOnly
-	Log      = nod.RequestLog
-	BrGzip   = middleware.BrGzip
+	Log    = nod.RequestLog
+	BrGzip = middleware.BrGzip
 )
 
 func HandleFuncs() {
 
 	patternHandlers := map[string]http.Handler{
-		"/video":    GetOnly(Log(http.HandlerFunc(GetVideo))),
-		"/poster":   GetOnly(Log(http.HandlerFunc(GetPoster))),
-		"/captions": GetOnly(Log(http.HandlerFunc(GetCaptions))),
+		"GET /video":    Log(http.HandlerFunc(GetVideo)),
+		"GET /poster":   Log(http.HandlerFunc(GetPoster)),
+		"GET /captions": Log(http.HandlerFunc(GetCaptions)),
 
-		"/watch":        BrGzip(GetOnly(Log(http.HandlerFunc(GetWatch)))),
-		"/manage_video": BrGzip(GetOnly(http.HandlerFunc(GetManageVideo))),
-		"/update_video": BrGzip(GetOnly(http.HandlerFunc(GetUpdateVideo))),
-		"/video_error":  BrGzip(GetOnly(http.HandlerFunc(GetVideoError))),
+		"GET /watch":        BrGzip(Log(http.HandlerFunc(GetWatch))),
+		"GET /manage_video": BrGzip(http.HandlerFunc(GetManageVideo)),
+		"GET /update_video": BrGzip(http.HandlerFunc(GetUpdateVideo)),
+		"GET /video_error":  BrGzip(http.HandlerFunc(GetVideoError)),
 
-		"/list": BrGzip(GetOnly(Log(http.HandlerFunc(GetList)))),
+		"GET /list": BrGzip(Log(http.HandlerFunc(GetList))),
 
-		"/paste": BrGzip(GetOnly(Log(http.HandlerFunc(GetPaste)))),
+		"GET /paste": BrGzip(Log(http.HandlerFunc(GetPaste))),
 
-		"/history": BrGzip(GetOnly(Log(http.HandlerFunc(GetHistory)))),
+		"GET /history": BrGzip(Log(http.HandlerFunc(GetHistory))),
 
-		"/search":  BrGzip(GetOnly(Log(http.HandlerFunc(GetSearch)))),
-		"/results": BrGzip(GetOnly(Log(http.HandlerFunc(GetResults)))),
+		"GET /search":  BrGzip(Log(http.HandlerFunc(GetSearch))),
+		"GET /results": BrGzip(Log(http.HandlerFunc(GetResults))),
 
-		"/progress": PostOnly(Log(http.HandlerFunc(PostProgress))),
-		"/ended":    PostOnly(Log(http.HandlerFunc(PostEnded))),
+		"POST /progress": Log(http.HandlerFunc(PostProgress)),
+		"POST /ended":    Log(http.HandlerFunc(PostEnded)),
 
-		"/playlist":         BrGzip(GetOnly(Log(http.HandlerFunc(GetPlaylist)))),
-		"/refresh_playlist": BrGzip(GetOnly(Log(http.HandlerFunc(GetRefreshPlaylist)))),
-		"/manage_playlist":  BrGzip(GetOnly(Log(http.HandlerFunc(GetManagePlaylist)))),
-		"/update_playlist":  BrGzip(GetOnly(Log(http.HandlerFunc(GetUpdatePlaylist)))),
+		"GET /playlist":         BrGzip(Log(http.HandlerFunc(GetPlaylist))),
+		"GET /refresh_playlist": BrGzip(Log(http.HandlerFunc(GetRefreshPlaylist))),
+		"GET /manage_playlist":  BrGzip(Log(http.HandlerFunc(GetManagePlaylist))),
+		"GET /update_playlist":  BrGzip(Log(http.HandlerFunc(GetUpdatePlaylist))),
 
-		"/channel":         BrGzip(GetOnly(Log(http.HandlerFunc(GetChannel)))),
-		"/refresh_channel": BrGzip(GetOnly(Log(http.HandlerFunc(GetRefreshChannel)))),
+		"GET /channel":         BrGzip(Log(http.HandlerFunc(GetChannel))),
+		"GET /refresh_channel": BrGzip(Log(http.HandlerFunc(GetRefreshChannel))),
 
-		"/": GetOnly(Log(http.RedirectHandler("/list", http.StatusPermanentRedirect))),
+		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}
 
 	for p, h := range patternHandlers {

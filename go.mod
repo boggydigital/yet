@@ -1,6 +1,6 @@
 module github.com/boggydigital/yet
 
-go 1.21
+go 1.22
 
 require (
 	github.com/boggydigital/clo v1.0.4
@@ -8,7 +8,7 @@ require (
 	github.com/boggydigital/dolo v0.2.14
 	github.com/boggydigital/hogo v0.1.0
 	github.com/boggydigital/kvas v0.4.7
-	github.com/boggydigital/middleware v0.1.11
+	github.com/boggydigital/middleware v0.1.13
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pasu v0.1.12
 	github.com/boggydigital/yt_urls v0.1.42
