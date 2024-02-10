@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/hogo"
+	"github.com/boggydigital/konpo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/paths"
@@ -28,7 +28,7 @@ func Backup() error {
 		return ea.EndWithError(err)
 	}
 
-	if err := hogo.Compress(amp, abp); err != nil {
+	if err := konpo.Compress(amp, abp); err != nil {
 		return ea.EndWithError(err)
 	}
 
@@ -37,7 +37,7 @@ func Backup() error {
 	cba := nod.NewProgress("cleaning up old backups...")
 	defer cba.End()
 
-	if err := hogo.Cleanup(abp, true, cba); err != nil {
+	if err := konpo.Cleanup(abp, true, cba); err != nil {
 		return cba.EndWithError(err)
 	}
 
