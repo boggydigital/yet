@@ -14,33 +14,32 @@ const (
 	ShowPoster VideoOptions = iota
 	ShowPublishedDate
 	ShowEndedDate
-	ShowRemainingDuration
+	ShowProgress
 	ShowDuration
 	ShowOwnerChannel
 	ShowViewCount
 )
 
 type VideoViewModel struct {
-	VideoId               string
-	VideoUrl              string
-	VideoTitle            string
-	Class                 string
-	ShowPoster            bool
-	ShowPublishedDate     bool
-	PublishedDate         string
-	DownloadedDate        string
-	ShowEndedDate         bool
-	EndedDate             string
-	RemainingTime         string
-	Duration              string
-	ShowDuration          bool
-	ShowRemainingDuration bool
-	CurrentTimeSeconds    string
-	DurationSeconds       string
-	ShowOwnerChannel      bool
-	OwnerChannel          string
-	ShowViewCount         bool
-	ViewCount             string
+	VideoId            string
+	VideoUrl           string
+	VideoTitle         string
+	Class              string
+	ShowPoster         bool
+	ShowPublishedDate  bool
+	PublishedDate      string
+	DownloadedDate     string
+	ShowEndedDate      bool
+	EndedDate          string
+	ShowDuration       bool
+	Duration           string
+	ShowProgress       bool
+	CurrentTimeSeconds string
+	DurationSeconds    string
+	ShowOwnerChannel   bool
+	OwnerChannel       string
+	ShowViewCount      bool
+	ViewCount          string
 }
 
 func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoOptions) *VideoViewModel {
@@ -101,9 +100,9 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 	var rem, dur int64
 
 	optShowDuration := slices.Contains(options, ShowDuration)
-	optShowRemainingDuration := slices.Contains(options, ShowRemainingDuration)
+	optShowProgress := slices.Contains(options, ShowProgress)
 
-	if optShowDuration || optShowRemainingDuration {
+	if optShowDuration || optShowProgress {
 		if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
 			if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
 				dur = duri
@@ -111,7 +110,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		}
 	}
 
-	if optShowRemainingDuration {
+	if optShowProgress {
 		var ct int64
 		if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
 			if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
@@ -144,26 +143,25 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 	optShowPoster := slices.Contains(options, ShowPoster)
 
 	return &VideoViewModel{
-		VideoId:               videoId,
-		VideoUrl:              videoUrl,
-		VideoTitle:            videoTitle,
-		Class:                 class,
-		ShowPoster:            optShowPoster,
-		ShowPublishedDate:     optShowPublishedDate,
-		PublishedDate:         publishedDate,
-		DownloadedDate:        downloadedDate,
-		ShowEndedDate:         optShowEndedDate,
-		EndedDate:             endedDate,
-		ShowDuration:          optShowDuration && dur > 0,
-		Duration:              formatSeconds(dur),
-		ShowRemainingDuration: optShowRemainingDuration && dur > 0,
-		RemainingTime:         formatSeconds(rem),
-		CurrentTimeSeconds:    strconv.FormatInt(dur-rem, 10),
-		DurationSeconds:       strconv.FormatInt(dur, 10),
-		ShowOwnerChannel:      optShowOwnerChannel,
-		OwnerChannel:          ownerChannel,
-		ShowViewCount:         optShowViewCount,
-		ViewCount:             viewCount,
+		VideoId:            videoId,
+		VideoUrl:           videoUrl,
+		VideoTitle:         videoTitle,
+		Class:              class,
+		ShowPoster:         optShowPoster,
+		ShowPublishedDate:  optShowPublishedDate,
+		PublishedDate:      publishedDate,
+		DownloadedDate:     downloadedDate,
+		ShowEndedDate:      optShowEndedDate,
+		EndedDate:          endedDate,
+		ShowDuration:       optShowDuration && dur > 0,
+		Duration:           formatSeconds(dur),
+		ShowProgress:       optShowProgress && rem > 0 && dur > 0,
+		CurrentTimeSeconds: strconv.FormatInt(dur-rem, 10),
+		DurationSeconds:    strconv.FormatInt(dur, 10),
+		ShowOwnerChannel:   optShowOwnerChannel,
+		OwnerChannel:       ownerChannel,
+		ShowViewCount:      optShowViewCount,
+		ViewCount:          viewCount,
 	}
 
 }
@@ -180,6 +178,13 @@ func formatSeconds(ts int64) string {
 	if ts == 0 {
 		return "unknown"
 	}
-	dur := time.Duration(float64(ts) * float64(time.Second))
-	return dur.String()
+
+	t := time.Unix(ts, 0).UTC()
+
+	layout := "4:05"
+	if t.Hour() > 0 {
+		layout = "15:04:05"
+	}
+
+	return t.Format(layout)
 }

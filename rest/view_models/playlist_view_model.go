@@ -90,16 +90,3 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 	}
 	return plvm
 }
-
-//func PlaylistTitle(playlistId string, rdx kvas.ReadableRedux) string {
-//	if plt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
-//
-//		if plc, ok := rdx.GetLastVal(data.PlaylistChannelProperty, playlistId); ok && plc != "" && !strings.Contains(plt, plc) {
-//			return fmt.Sprintf("%s · %s", plt, plc)
-//		}
-//
-//		return plt
-//	}
-//
-//	return playlistId
-//}

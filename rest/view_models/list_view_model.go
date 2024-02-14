@@ -46,7 +46,8 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 				lvm.Continue = append(lvm.Continue, GetVideoViewModel(id, rdx,
 					ShowPoster,
 					ShowPublishedDate,
-					ShowRemainingDuration))
+					ShowDuration,
+					ShowProgress))
 			}
 		}
 	}
