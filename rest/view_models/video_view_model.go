@@ -33,6 +33,8 @@ type VideoViewModel struct {
 	ShowRemainingDuration bool
 	RemainingTime         string
 	Duration              string
+	CurrentTimeSeconds    string
+	DurationSeconds       string
 	ShowOwnerChannel      bool
 	OwnerChannel          string
 	ShowViewCount         bool
@@ -149,6 +151,8 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		ShowRemainingDuration: optShowRemainingDuration && dur > 0,
 		RemainingTime:         formatSeconds(rem),
 		Duration:              formatSeconds(dur),
+		CurrentTimeSeconds:    strconv.FormatInt(dur-rem, 10),
+		DurationSeconds:       strconv.FormatInt(dur, 10),
 		ShowOwnerChannel:      optShowOwnerChannel,
 		OwnerChannel:          ownerChannel,
 		ShowViewCount:         optShowViewCount,

@@ -2,6 +2,9 @@
     <a class='{{.Class}}' href='{{.VideoUrl}}'>
         {{if .ShowPoster}}
             <img src='/poster?v={{.VideoId}}&q=mqdefault' loading='lazy' alt='{{.VideoTitle}}'/>
+            {{if .ShowRemainingDuration}}
+                <progress value="{{.CurrentTimeSeconds}}" max="{{.DurationSeconds}}"></progress>
+            {{end}}
         {{end}}
         <span class='title'>{{.VideoTitle}}</span>
         {{if .ShowOwnerChannel}}
