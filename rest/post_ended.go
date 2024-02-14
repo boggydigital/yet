@@ -3,9 +3,7 @@ package rest
 import (
 	"encoding/json"
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pasu"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"net/http"
 	"time"
 )
@@ -19,21 +17,9 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	// POST /ended
 	// {v}
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	endRdx, err := kvas.NewReduxWriter(metadataDir, data.VideoEndedProperty, data.PlaylistNewVideosProperty)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	decoder := json.NewDecoder(r.Body)
 	var er EndedRequest
-	err = decoder.Decode(&er)
+	err := decoder.Decode(&er)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -41,18 +27,28 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 
 	// store completion timestamp
 	currentTime := time.Now().Format(time.RFC3339)
-	if err := endRdx.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
+	if err := progressRdx.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// remove the video from playlist new videos
-	for _, playlistId := range endRdx.Keys(data.PlaylistNewVideosProperty) {
-		if endRdx.HasValue(data.PlaylistNewVideosProperty, playlistId, er.VideoId) {
-			if err := endRdx.CutValues(data.PlaylistNewVideosProperty, playlistId, er.VideoId); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+	if err := rmVideoFromPlaylistNewVideos(er.VideoId, progressRdx); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func rmVideoFromPlaylistNewVideos(videoId string, rdx kvas.WriteableRedux) error {
+	if err := rdx.MustHave(data.PlaylistNewVideosProperty); err != nil {
+		return err
+	}
+	for _, playlistId := range progressRdx.Keys(data.PlaylistNewVideosProperty) {
+		if progressRdx.HasValue(data.PlaylistNewVideosProperty, playlistId, videoId) {
+			if err := progressRdx.CutValues(data.PlaylistNewVideosProperty, playlistId, videoId); err != nil {
+				return err
 			}
 		}
 	}
+	return nil
 }

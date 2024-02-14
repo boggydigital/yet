@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	rdx  kvas.ReadableRedux
-	tmpl *template.Template
+	rdx         kvas.ReadableRedux
+	progressRdx kvas.WriteableRedux
+	tmpl        *template.Template
 	//go:embed "templates/*.gohtml"
 	templates embed.FS
 )
@@ -24,6 +25,14 @@ func Init() error {
 	}
 
 	if rdx, err = kvas.NewReduxReader(metadataDir, data.AllProperties()...); err != nil {
+		return err
+	}
+
+	if progressRdx, err = kvas.NewReduxWriter(metadataDir,
+		data.VideoProgressProperty,
+		data.VideoEndedProperty,
+		data.PlaylistNewVideosProperty,
+	); err != nil {
 		return err
 	}
 

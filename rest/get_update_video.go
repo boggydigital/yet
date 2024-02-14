@@ -36,6 +36,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		data.VideosDownloadQueueProperty,
 		data.VideoForcedDownloadProperty,
 		data.VideoSingleFormatDownloadProperty,
+		data.PlaylistNewVideosProperty,
 	}
 
 	vRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
@@ -49,6 +50,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
 	}
 
 	http.Redirect(w, r, "/watch?v="+videoId, http.StatusTemporaryRedirect)
@@ -99,7 +101,11 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 				// ended requires current time as a value to set
 				value = time.Now().Format(time.RFC3339)
 			}
-			err = rdx.AddValues(property, videoId, value)
+			if err := rdx.AddValues(property, videoId, value); err != nil {
+				return err
+			}
+			// removing video from new playlist videos
+			err = rmVideoFromPlaylistNewVideos(videoId, rdx)
 		}
 	} else {
 		if rdx.HasKey(property, videoId) {
