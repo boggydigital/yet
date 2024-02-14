@@ -33,6 +33,7 @@ func GetPlaylistPageMetadata(playlistPage *yt_urls.PlaylistInitialData, playlist
 	playlistVideos := make([]string, 0)
 	videoTitles := make(map[string][]string)
 	videoChannels := make(map[string][]string)
+	videoLengths := make(map[string][]string)
 
 	for playlistPage != nil &&
 		len(playlistPage.Videos()) > 0 {
@@ -42,6 +43,7 @@ func GetPlaylistPageMetadata(playlistPage *yt_urls.PlaylistInitialData, playlist
 			playlistVideos = append(playlistVideos, videoId)
 			videoTitles[videoId] = []string{video.Title}
 			videoChannels[videoId] = []string{video.Channel}
+			videoLengths[videoId] = []string{video.Length}
 		}
 
 		if allVideos && playlistPage.HasContinuation() {
@@ -58,6 +60,10 @@ func GetPlaylistPageMetadata(playlistPage *yt_urls.PlaylistInitialData, playlist
 	}
 
 	if err := rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
+		return gppma.EndWithError(err)
+	}
+
+	if err := rdx.BatchAddValues(data.VideoDurationProperty, videoLengths); err != nil {
 		return gppma.EndWithError(err)
 	}
 
