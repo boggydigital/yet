@@ -145,6 +145,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		for _, id := range dqKeys {
 			lvm.Downloads = append(lvm.Downloads, GetVideoViewModel(id, rdx,
 				ShowPoster,
+				ShowDuration,
 				ShowPublishedDate))
 		}
 	}
