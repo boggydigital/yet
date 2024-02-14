@@ -61,7 +61,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 
 		if len(pool) > 0 {
-			lvm.Random = GetVideoViewModel(pool[rand.Intn(len(pool))], rdx, ShowPoster, ShowPublishedDate)
+			lvm.Random = GetVideoViewModel(pool[rand.Intn(len(pool))], rdx, ShowPoster, ShowPublishedDate, ShowDuration)
 		}
 	}
 
@@ -94,7 +94,8 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 			}
 			lvm.Videos = append(lvm.Videos, GetVideoViewModel(id, rdx,
 				ShowPoster,
-				ShowPublishedDate))
+				ShowPublishedDate,
+				ShowDuration))
 		}
 
 		lvm.HasNewPlaylistVideos = len(newPlaylistVideos) > 0

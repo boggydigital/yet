@@ -15,6 +15,7 @@ const (
 	ShowPublishedDate
 	ShowEndedDate
 	ShowRemainingDuration
+	ShowDuration
 	ShowOwnerChannel
 	ShowViewCount
 )
@@ -30,9 +31,10 @@ type VideoViewModel struct {
 	DownloadedDate        string
 	ShowEndedDate         bool
 	EndedDate             string
-	ShowRemainingDuration bool
 	RemainingTime         string
 	Duration              string
+	ShowDuration          bool
+	ShowRemainingDuration bool
 	CurrentTimeSeconds    string
 	DurationSeconds       string
 	ShowOwnerChannel      bool
@@ -98,18 +100,22 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	var rem, dur int64
 
+	optShowDuration := slices.Contains(options, ShowDuration)
 	optShowRemainingDuration := slices.Contains(options, ShowRemainingDuration)
+
+	if optShowDuration || optShowRemainingDuration {
+		if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+			if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
+				dur = duri
+			}
+		}
+	}
 
 	if optShowRemainingDuration {
 		var ct int64
 		if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
 			if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
 				ct = cti
-			}
-		}
-		if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
-			if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
-				dur = duri
 			}
 		}
 		rem = dur - ct
@@ -148,9 +154,10 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		DownloadedDate:        downloadedDate,
 		ShowEndedDate:         optShowEndedDate,
 		EndedDate:             endedDate,
+		ShowDuration:          optShowDuration,
+		Duration:              formatSeconds(dur),
 		ShowRemainingDuration: optShowRemainingDuration && dur > 0,
 		RemainingTime:         formatSeconds(rem),
-		Duration:              formatSeconds(dur),
 		CurrentTimeSeconds:    strconv.FormatInt(dur-rem, 10),
 		DurationSeconds:       strconv.FormatInt(dur, 10),
 		ShowOwnerChannel:      optShowOwnerChannel,
@@ -170,6 +177,9 @@ func parseAndFormat(ts string) string {
 }
 
 func formatSeconds(ts int64) string {
+	if ts == 0 {
+		return "unknown"
+	}
 	dur := time.Duration(float64(ts) * float64(time.Second))
 	return dur.String()
 }

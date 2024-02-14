@@ -7,11 +7,11 @@ require (
 	github.com/boggydigital/coost v0.3.9
 	github.com/boggydigital/dolo v0.2.14
 	github.com/boggydigital/konpo v0.1.2
-	github.com/boggydigital/kvas v0.4.7
+	github.com/boggydigital/kvas v0.4.8
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pasu v0.1.12
-	github.com/boggydigital/yt_urls v0.1.42
-	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3
+	github.com/boggydigital/yt_urls v0.1.43
+	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a
 )
 
 require (

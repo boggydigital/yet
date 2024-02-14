@@ -13,6 +13,7 @@ func ExtractMetadata(ipr *yt_urls.InitialPlayerResponse) map[string][]string {
 	for _, t := range ipr.VideoDetails.Thumbnail.Thumbnails {
 		vpm[data.VideoThumbnailUrlsProperty] = append(vpm[data.VideoThumbnailUrlsProperty], t.Url)
 	}
+	vpm[data.VideoDurationProperty] = []string{ipr.VideoDetails.LengthSeconds}
 	vpm[data.VideoExternalChannelIdProperty] = []string{ipr.VideoDetails.ChannelId}
 	vpm[data.VideoShortDescriptionProperty] = []string{ipr.VideoDetails.ShortDescription}
 	vpm[data.VideoViewCountProperty] = []string{ipr.VideoDetails.ViewCount}
