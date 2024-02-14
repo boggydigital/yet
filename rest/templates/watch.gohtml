@@ -44,6 +44,16 @@
                 margin-block: var(--normal)
             }
 
+            table tr th {
+                text-align: left;
+            }
+
+            table tr td {
+                display: block;
+                margin-block: var(--small);
+                margin-inline-start: var(--large)
+            }
+
         </style>
     </head>
     <body>
@@ -54,7 +64,8 @@
         <source src='{{.VideoUrl}}'/>
     </video>
 
-    <div class='video_source'>This video will play from the {{if eq .Server "local"}}yet{{else}}origin{{end}} server</div>
+    <div class='video_source'>This video will play from the {{if eq .Server "local"}}yet{{else}}origin{{end}}server
+    </div>
 
     <ul class="video_details_container">
 
@@ -70,6 +81,24 @@
             <details>
                 <summary><h2>Description</h2></summary>
                 <div class='video_description'>{{.VideoDescription}}</div>
+            </details>
+        {{end}}
+
+        {{if .VideoProperties}}
+            <details>
+                <summary><h2>Properties</h2></summary>
+                <table>
+                    {{$videoProperties := .VideoProperties}}
+                    {{range $property := .VideoPropertiesOrder}}
+                        {{$value := index $videoProperties $property}}
+                        {{if $value}}
+                            <tr>
+                                <th>{{$property}}</th>
+                                <td>{{$value}}</td>
+                            </tr>
+                        {{end}}
+                    {{end}}
+                </table>
             </details>
         {{end}}
 

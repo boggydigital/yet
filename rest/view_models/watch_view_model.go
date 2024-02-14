@@ -12,21 +12,24 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
 type WatchViewModel struct {
-	VideoId           string
-	VideoUrl          string
-	VideoPoster       string
-	Server            string
-	VideoTitle        string
-	VideoDescription  string
-	CurrentTime       string
-	LastEndedTime     string
-	ChannelId         string
-	ChannelTitle      string
-	PlaylistViewModel *PlaylistViewModel
+	VideoId              string
+	VideoUrl             string
+	CurrentTime          string
+	LastEndedTime        string
+	VideoPoster          string
+	Server               string
+	VideoTitle           string
+	ChannelId            string
+	ChannelTitle         string
+	VideoDescription     string
+	VideoPropertiesOrder []string
+	VideoProperties      map[string]string
+	PlaylistViewModel    *PlaylistViewModel
 }
 
 func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*WatchViewModel, error) {
@@ -112,6 +115,38 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		videoTitle = titlePrefix + videoTitle
 	}
 
+	joinProperties := []string{
+		data.VideoKeywordsProperty,
+		data.VideoCategoryProperty,
+	}
+	properties := []string{
+		data.VideoViewCountProperty,
+		data.VideoKeywordsProperty,
+		data.VideoCategoryProperty,
+		data.VideoPublishDateProperty,
+		data.VideoUploadDateProperty,
+		data.VideoDownloadedDateProperty,
+		data.VideoDurationProperty,
+		data.VideoEndedProperty,
+		data.VideoSkippedProperty,
+		data.VideosDownloadQueueProperty,
+		data.VideoForcedDownloadProperty,
+		data.VideoSingleFormatDownloadProperty,
+		data.VideosWatchlistProperty,
+	}
+	videoProperties := make(map[string]string)
+	for _, p := range properties {
+		if slices.Contains(joinProperties, p) {
+			if values, ok := rdx.GetAllValues(p, videoId); ok && len(values) > 0 {
+				videoProperties[p] = strings.Join(values, ", ")
+			}
+		} else {
+			if value, ok := rdx.GetLastVal(p, videoId); ok && value != "" {
+				videoProperties[p] = value
+			}
+		}
+	}
+
 	playlistId := ""
 	if playlistIds := rdx.MatchAsset(data.PlaylistVideosProperty, []string{videoId}, nil); len(playlistIds) > 0 {
 		playlistId = playlistIds[0]
@@ -126,17 +161,19 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	}
 
 	return &WatchViewModel{
-		VideoId:           videoId,
-		VideoUrl:          videoUrl,
-		VideoPoster:       videoPoster,
-		Server:            playbackType,
-		VideoTitle:        videoTitle,
-		VideoDescription:  videoDescription,
-		CurrentTime:       currentTime,
-		LastEndedTime:     lastEndedTime,
-		ChannelId:         channelId,
-		ChannelTitle:      channelTitle,
-		PlaylistViewModel: GetPlaylistViewModel(playlistId, rdx),
+		VideoId:              videoId,
+		VideoUrl:             videoUrl,
+		VideoPoster:          videoPoster,
+		Server:               playbackType,
+		VideoTitle:           videoTitle,
+		VideoDescription:     videoDescription,
+		VideoPropertiesOrder: properties,
+		VideoProperties:      videoProperties,
+		CurrentTime:          currentTime,
+		LastEndedTime:        lastEndedTime,
+		ChannelId:            channelId,
+		ChannelTitle:         channelTitle,
+		PlaylistViewModel:    GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }
 
