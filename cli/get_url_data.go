@@ -1,20 +1,40 @@
 package cli
 
 import (
+	"errors"
+	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yt_urls"
 	"net/url"
+	"strings"
 )
 
 func GetUrlDataHandler(u *url.URL) error {
 	id := u.Query().Get("id")
 	videoId := u.Query().Get("video-id")
-	return GetUrlData(id, videoId)
+	lastDownloaded := u.Query().Has("last-downloaded")
+	return GetUrlData(id, lastDownloaded, videoId)
 }
 
-func GetUrlData(id, videoId string) error {
+func GetUrlData(id string, lastDownloaded bool, videoId string) error {
 
-	guda := nod.Begin("getting url data...")
+	// set id to the last downloaded URL
+	if lastDownloaded {
+		var err error
+		if id, err = lastDownloadedId(); err != nil {
+			return err
+		}
+	}
+
+	guda := nod.Begin("getting url data for %s...", id)
 	defer guda.End()
+
+	if id == "" {
+		return guda.EndWithError(errors.New("id is required"))
+	}
 
 	if err := GetVideoMetadata(id, true, videoId); err != nil {
 		return guda.EndWithError(err)
@@ -27,4 +47,29 @@ func GetUrlData(id, videoId string) error {
 	guda.EndWithResult("done")
 
 	return nil
+}
+
+func lastDownloadedId() (string, error) {
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+	if err != nil {
+		return "", err
+	}
+
+	rdx, err := kvas.NewReduxReader(metadataDir, data.VideoDownloadedDateProperty)
+	if err != nil {
+		return "", err
+	}
+
+	ids, err := rdx.Sort(rdx.Keys(data.VideoDownloadedDateProperty), true, data.VideoDownloadedDateProperty)
+	if err != nil {
+		return "", err
+	}
+
+	for _, sid := range ids {
+		if strings.HasSuffix(sid, yt_urls.DefaultVideoExt) {
+			return sid, nil
+		}
+	}
+
+	return "", nil
 }

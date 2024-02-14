@@ -46,8 +46,9 @@ get-url-file
     url&^
 
 get-url-data
-    id*
+    id
     video-id*
+    last-downloaded
 
 get-playlist-metadata
     id&^
