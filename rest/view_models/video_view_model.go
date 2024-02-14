@@ -154,7 +154,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		DownloadedDate:        downloadedDate,
 		ShowEndedDate:         optShowEndedDate,
 		EndedDate:             endedDate,
-		ShowDuration:          optShowDuration,
+		ShowDuration:          optShowDuration && dur > 0,
 		Duration:              formatSeconds(dur),
 		ShowRemainingDuration: optShowRemainingDuration && dur > 0,
 		RemainingTime:         formatSeconds(rem),

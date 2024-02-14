@@ -81,7 +81,7 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		for i, videoId := range videoIds {
 			var options []VideoOptions
 			if i+1 <= showImagesLimit {
-				options = []VideoOptions{ShowPoster, ShowViewCount, ShowPublishedDate}
+				options = []VideoOptions{ShowPoster, ShowViewCount, ShowDuration, ShowPublishedDate}
 			} else {
 				options = []VideoOptions{ShowViewCount, ShowPublishedDate}
 			}

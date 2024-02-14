@@ -28,8 +28,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	}
 
 	progRdx, err := kvas.NewReduxWriter(metadataDir,
-		data.VideoProgressProperty,
-		data.VideoDurationProperty)
+		data.VideoProgressProperty)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -46,14 +45,6 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	if err := progRdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	td := trimTime(pr.Duration)
-	if !progRdx.HasValue(data.VideoDurationProperty, pr.VideoId, td) {
-		if err := progRdx.ReplaceValues(data.VideoDurationProperty, pr.VideoId, td); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 	}
 }
 
