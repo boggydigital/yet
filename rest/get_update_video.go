@@ -46,6 +46,9 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, p := range properties {
+		if p == data.PlaylistNewVideosProperty {
+			continue
+		}
 		if err := updateVideoProperty(videoId, p, r.URL, vRdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
