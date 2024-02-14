@@ -31,27 +31,20 @@
                 color: var(--subtle-color)
             }
 
-            .video_description {
+            .video_description,
+            .properties {
                 margin-block: var(--large);
                 padding: var(--normal);
                 border-radius: var(--border-radius-large);
                 color: var(--subtle-color);
                 background-color: var(--highlight-color);
+            }
 
+            .properties {
             }
 
             a.action {
                 margin-block: var(--normal)
-            }
-
-            table tr th {
-                text-align: left;
-            }
-
-            table tr td {
-                display: block;
-                margin-block: var(--small);
-                margin-inline-start: var(--large)
             }
 
         </style>
@@ -87,18 +80,18 @@
         {{if .VideoProperties}}
             <details>
                 <summary><h2>Properties</h2></summary>
-                <table>
+                <ul class="properties">
                     {{$videoProperties := .VideoProperties}}
                     {{range $property := .VideoPropertiesOrder}}
                         {{$value := index $videoProperties $property}}
                         {{if $value}}
-                            <tr>
-                                <th>{{$property}}</th>
-                                <td>{{$value}}</td>
-                            </tr>
+                            <li>
+                                <h3>{{$property}}</h3>
+                                <span>{{$value}}</span>
+                            </li>
                         {{end}}
                     {{end}}
-                </table>
+                </ul>
             </details>
         {{end}}
 
