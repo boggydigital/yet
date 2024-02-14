@@ -26,8 +26,18 @@
                 display: inline
             }
 
-            .videoDescription {
-                margin-block: var(--normal)
+            .video_source {
+                font-size: var(--fs-x-smaller);
+                color: var(--subtle-color)
+            }
+
+            .video_description {
+                margin-block: var(--large);
+                padding: var(--normal);
+                border-radius: var(--border-radius-large);
+                color: var(--subtle-color);
+                background-color: var(--highlight-color);
+
             }
 
             a.action {
@@ -44,11 +54,11 @@
         <source src='{{.VideoUrl}}'/>
     </video>
 
-    <div class='subtle'>This video will play from the {{if eq .Server "local"}}yet{{else}}origin{{end}} server</div>
+    <div class='video_source'>This video will play from the {{if eq .Server "local"}}yet{{else}}origin{{end}} server</div>
 
     <ul class="video_details_container">
 
-        <h1 class='videoTitle'>{{.VideoTitle}}</h1>
+        <h1 class='video_title'>{{.VideoTitle}}</h1>
 
         {{if .ChannelId}}
             {{if .ChannelTitle}}
@@ -59,7 +69,7 @@
         {{if .VideoDescription}}
             <details>
                 <summary><h2>Description</h2></summary>
-                <div class='videoDescription'>{{.VideoDescription}}</div>
+                <div class='video_description'>{{.VideoDescription}}</div>
             </details>
         {{end}}
 
