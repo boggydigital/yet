@@ -269,6 +269,8 @@ func fmtPropertyValue(property, value string) string {
 	case data.VideoPublishDateProperty:
 		fallthrough
 	case data.VideoDownloadedDateProperty:
+		fallthrough
+	case data.VideoEndedProperty:
 		if dt, err := time.Parse(time.RFC3339, value); err == nil {
 			return dt.Format(time.RFC1123)
 		}
