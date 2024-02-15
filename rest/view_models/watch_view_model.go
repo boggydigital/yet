@@ -13,7 +13,9 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type WatchViewModel struct {
@@ -156,14 +158,14 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 
 	for _, p := range properties {
 		title := propertyTitles[p]
-		titles = append(titles)
+		titles = append(titles, title)
 		if slices.Contains(joinProperties, p) {
 			if values, ok := rdx.GetAllValues(p, videoId); ok && len(values) > 0 {
 				videoProperties[title] = strings.Join(values, ", ")
 			}
 		} else {
 			if value, ok := rdx.GetLastVal(p, videoId); ok && value != "" {
-				videoProperties[title] = value
+				videoProperties[title] = fmtPropertyValue(p, value)
 			}
 		}
 	}
@@ -254,4 +256,24 @@ func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]yt_urls.Ca
 	}
 
 	return cts, nil
+}
+
+func fmtPropertyValue(property, value string) string {
+	switch property {
+	case data.VideoDurationProperty:
+		if iv, err := strconv.ParseInt(value, 10, 32); err == nil {
+			return formatSeconds(iv)
+		}
+	case data.VideoUploadDateProperty:
+		fallthrough
+	case data.VideoPublishDateProperty:
+		fallthrough
+	case data.VideoDownloadedDateProperty:
+		if dt, err := time.Parse(time.RFC3339, value); err == nil {
+			return dt.Format(time.RFC1123)
+		}
+	default:
+		return value
+	}
+	return value
 }
