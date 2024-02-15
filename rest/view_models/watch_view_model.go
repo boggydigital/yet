@@ -32,6 +32,22 @@ type WatchViewModel struct {
 	PlaylistViewModel    *PlaylistViewModel
 }
 
+var propertyTitles = map[string]string{
+	data.VideoViewCountProperty:            "Views",
+	data.VideoKeywordsProperty:             "Keywords",
+	data.VideoCategoryProperty:             "Category",
+	data.VideoUploadDateProperty:           " Uploaded",
+	data.VideoPublishDateProperty:          "Published",
+	data.VideoDownloadedDateProperty:       "Downloaded",
+	data.VideoDurationProperty:             "Duration",
+	data.VideoEndedProperty:                "Last Ended",
+	data.VideoSkippedProperty:              "Skipped",
+	data.VideosWatchlistProperty:           "In Watchlist",
+	data.VideosDownloadQueueProperty:       "In Download Queue",
+	data.VideoForcedDownloadProperty:       "Forced Download",
+	data.VideoSingleFormatDownloadProperty: "Single Format Download",
+}
+
 func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
@@ -123,26 +139,31 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		data.VideoViewCountProperty,
 		data.VideoKeywordsProperty,
 		data.VideoCategoryProperty,
-		data.VideoPublishDateProperty,
 		data.VideoUploadDateProperty,
+		data.VideoPublishDateProperty,
 		data.VideoDownloadedDateProperty,
 		data.VideoDurationProperty,
 		data.VideoEndedProperty,
 		data.VideoSkippedProperty,
+		data.VideosWatchlistProperty,
 		data.VideosDownloadQueueProperty,
 		data.VideoForcedDownloadProperty,
 		data.VideoSingleFormatDownloadProperty,
-		data.VideosWatchlistProperty,
 	}
+
 	videoProperties := make(map[string]string)
+	titles := make([]string, 0, len(properties))
+
 	for _, p := range properties {
+		title := propertyTitles[p]
+		titles = append(titles)
 		if slices.Contains(joinProperties, p) {
 			if values, ok := rdx.GetAllValues(p, videoId); ok && len(values) > 0 {
-				videoProperties[p] = strings.Join(values, ", ")
+				videoProperties[title] = strings.Join(values, ", ")
 			}
 		} else {
 			if value, ok := rdx.GetLastVal(p, videoId); ok && value != "" {
-				videoProperties[p] = value
+				videoProperties[title] = value
 			}
 		}
 	}
@@ -167,7 +188,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		Server:               playbackType,
 		VideoTitle:           videoTitle,
 		VideoDescription:     videoDescription,
-		VideoPropertiesOrder: properties,
+		VideoPropertiesOrder: titles,
 		VideoProperties:      videoProperties,
 		CurrentTime:          currentTime,
 		LastEndedTime:        lastEndedTime,
