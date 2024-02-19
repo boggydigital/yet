@@ -107,10 +107,12 @@
         a.channel {
             padding: var(--normal);
             display: flex;
+            gap: var(--normal);
             flex-direction: column;
             font-size: var(--fs-larger);
             text-decoration: none;
             margin-block: initial;
+            position: relative;
         }
 
         a.channel {
@@ -161,13 +163,25 @@
             color: inherit;
         }
 
+        a.playlist .new_videos {
+            position: absolute;
+            background-color: var(--color-pink);
+            color: var(--highlight-color);
+            right: var(--small);
+            top: var(--small);
+            padding-inline: var(--x-small);
+            padding-block: var(--xx-small);
+            font-size: var(--fs-x-smaller);
+            border-radius: var(--border-radius);
+        }
+
         .title {
             margin-block: var(--small)
         }
 
         a.playlist .title {
-            margin-block-start: 0;
-            margin-block-end: var(--normal);
+            margin-block: 0;
+        /*    margin-block-end: var(--normal);*/
         }
 
         .info {

@@ -1,12 +1,10 @@
 {{define "playlist"}}
     <li class="playlist-container">
         <a class="playlist {{.PlaylistClass}}" href='/playlist?list={{.PlaylistId}}'>
-            <span class='title'>{{.PlaylistTitle}}</span>
-            {{if .PlaylistChannelTitle}}
-                <span class='subtitle'><b>Channel</b>: {{.PlaylistChannelTitle}}</span>
-            {{end}}
+            <span class='title'>{{.PlaylistChannelTitle}}</span>
+            <span class='subtitle'>{{.PlaylistTitle}}</span>
             {{if gt .NewVideos 0}}
-                <span class='subtitle'><b>New</b>: {{.NewVideos}}</span>
+                <span class='new_videos'>{{.NewVideos}}</span>
             {{end}}
         </a>
     </li>

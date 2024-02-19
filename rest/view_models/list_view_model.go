@@ -115,12 +115,12 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 			}
 		}
 
-		plNewVideos, err = rdx.Sort(plNewVideos, false, data.PlaylistTitleProperty, data.PlaylistChannelProperty)
+		plNewVideos, err = rdx.Sort(plNewVideos, false, data.PlaylistChannelProperty, data.PlaylistTitleProperty)
 		if err != nil {
 			return nil, err
 		}
 
-		plNoNewVideos, err = rdx.Sort(plNoNewVideos, false, data.PlaylistTitleProperty, data.PlaylistChannelProperty)
+		plNoNewVideos, err = rdx.Sort(plNoNewVideos, false, data.PlaylistChannelProperty, data.PlaylistTitleProperty)
 		if err != nil {
 			return nil, err
 		}
