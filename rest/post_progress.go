@@ -17,9 +17,16 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	// POST /progress
 	// {v, t}
 
+	var err error
+	progressRdx, err = progressRdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	var pr ProgressRequest
-	err := decoder.Decode(&pr)
+	err = decoder.Decode(&pr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

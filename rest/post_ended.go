@@ -17,9 +17,16 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	// POST /ended
 	// {v}
 
+	var err error
+	progressRdx, err = progressRdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	var er EndedRequest
-	err := decoder.Decode(&er)
+	err = decoder.Decode(&er)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
