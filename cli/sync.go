@@ -32,6 +32,10 @@ func Sync(force, singleFormat bool) error {
 		return sa.EndWithError(err)
 	}
 
+	if err := CleanupEnded(); err != nil {
+		return sa.EndWithError(err)
+	}
+
 	if err := Backup(); err != nil {
 		return sa.EndWithError(err)
 	}
