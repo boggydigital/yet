@@ -30,44 +30,44 @@
         <input type="hidden" id="v" name="v" value="{{.VideoId}}"/>
         <ul class="management">
             <li>
-                <input id="progress" type="checkbox" name="progress" {{if .Progress}}checked{{end}} />
+                <input id="progress" type="checkbox" switch name="progress" {{if .Progress}}checked{{end}} />
                 <label for="progress"><b>Progress</b>.
                     <span class='subtle'>Setting has no effect - scrub the video instead.
                         Unset to clear that progress.</span></label>
             </li>
             <li>
-                <input id="ended" type="checkbox" name="ended" {{if .Ended}}checked{{end}} />
+                <input id="ended" type="checkbox" switch name="ended" {{if .Ended}}checked{{end}} />
                 <label for="ended"><b>Ended</b>.
                     <span class="subtle">Set to mark as ended.
                         Unset to mark as new.</span></label>
             </li>
             <li>
-                <input id="skipped" type="checkbox" name="skipped" {{if .Skipped}}checked{{end}} />
+                <input id="skipped" type="checkbox" switch name="skipped" {{if .Skipped}}checked{{end}} />
                 <label for="skipped"><b>Skipped</b>.
                     <span class="subtle">Set to mark as skipped, this will also mark as ended.
                         Unset to remove skipped, keeping ended.</span></label>
             </li>
             <li>
-                <input id="watchlist" type="checkbox" name="watchlist" {{if .Watchlist}}checked{{end}} />
+                <input id="watchlist" type="checkbox" switch name="watchlist" {{if .Watchlist}}checked{{end}} />
                 <label for="watchlist"><b>Watchlist</b>.
                     <span class="subtle">Set to add to watchlist.
                         Unset to remove from watchlist.</span></label>
             </li>
             <li>
-                <input id="download" type="checkbox" name="download" {{if .DownloadQueue}}checked{{end}} />
+                <input id="download" type="checkbox" switch name="download" {{if .DownloadQueue}}checked{{end}} />
                 <label for="download"><b>Download queue</b>.
                     <span class="subtle">Set to add to download queue and download at the next sync.
                         Unset to remove from download queue.</span></label>
             </li>
             <li><h2>Download options</h2></li>
             <li>
-                <input id="forced-download" type="checkbox" name="forced-download" {{if .ForcedDownload}}checked{{end}} />
+                <input id="forced-download" type="checkbox" switch name="forced-download" {{if .ForcedDownload}}checked{{end}} />
                 <label for="forced-download"><b>Forced download</b>.
                     <span class="subtle">Set to add to re-download even if the file already exists.
                         Unset to avoid re-downloading file if it exists locally.</span></label>
             </li>
             <li>
-                <input id="single-format" type="checkbox" name="single-format" {{if .SingleFormat}}checked{{end}} />
+                <input id="single-format" type="checkbox" switch name="single-format" {{if .SingleFormat}}checked{{end}} />
                 <label for="single-format"><b>Single format</b>.
                     <span class="subtle">Set to download in mobile format (720p).
                         Unset to download in the best supported quality.</span></label>
