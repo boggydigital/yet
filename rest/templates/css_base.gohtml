@@ -129,19 +129,32 @@
             & summary {
                 display: flex;
                 align-items: center;
+                justify-items: center;
                 font-weight: var(--fw-bolder);
+                padding: var(--normal);
+                padding-inline-end: calc((var(--normal) + var(--large))/2);
+                background: var(--highlight-color);
+                border-radius: var(--large);
+                width: min-content;
 
-                &::after {
-                    content: "\2026";
+
+                &::before {
+                    content: "\002B";
                     padding-inline-start: var(--x-small);
+                    padding-inline-end: calc((var(--normal) + var(--small))/2);
                     color: var(--subtle-color);
                     flex-shrink: 0;
+                    font-size: var(--fs-x-larger);
                 }
 
                 &::-webkit-details-marker {
                     display: none;
                 }
             }
+        }
+
+        details[open]>summary::before {
+            content: "\00D7";
         }
 
         input[type=text],
