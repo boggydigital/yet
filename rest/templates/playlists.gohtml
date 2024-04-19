@@ -10,12 +10,33 @@
         <meta name='color-scheme' content='dark light'>
         <title>{{.PlaylistTitle}}</title>
         {{template "css-shared"}}
+        <style id="css-playlists">
+            .titles {
+                display: flex;
+                flex-direction: column;
+                gap: var(--normal);
+                margin-block: var(--large);
+
+                & h1, h2 {
+                    margin-block: 0;
+                }
+
+                h2 {
+                    font-weight: normal;
+                }
+            }
+
+        </style>
     </head>
     <body>
 
     {{template "back"}}
 
-    <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h1>
+    <section class="titles">
+        <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistChannelTitle}}</h1>
+        <h2 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h2>
+    </section>
+
     <div class='info'>
         {{if .Downloading}}
             Automatically refreshing playlist and downloading new videos
@@ -37,9 +58,9 @@
         </li>
     </ul>
     <ul class="videos resp-grid">
-    {{range .Videos}}
-        <li>{{template "video" .}}</li>
-    {{end}}
+        {{range .Videos}}
+            <li>{{template "video" .}}</li>
+        {{end}}
     </ul>
     </body>
     </html>
