@@ -27,8 +27,12 @@
             }
 
             .video_source {
+                color: var(--color-brown);
                 font-size: var(--fs-x-smaller);
-                color: var(--subtle-color)
+
+                &.local {
+                    color: var(--color-light-green)
+                }
             }
 
             .video_description,
@@ -73,7 +77,7 @@
         <source src='{{.VideoUrl}}'/>
     </video>
 
-    <div class='video_source'>This video will play from the {{if eq .Server "local"}}yet{{else}}origin{{end}} server
+    <div class='video_source {{if .LocalPlayback}}local{{end}}'>This video will play from the {{if .LocalPlayback}}local{{else}}origin{{end}} server
     </div>
 
     <ul class="video_details_container">

@@ -19,12 +19,13 @@ import (
 )
 
 type WatchViewModel struct {
-	VideoId              string
-	VideoUrl             string
-	CurrentTime          string
-	LastEndedTime        string
-	VideoPoster          string
-	Server               string
+	VideoId       string
+	VideoUrl      string
+	CurrentTime   string
+	LastEndedTime string
+	VideoPoster   string
+	LocalPlayback bool
+	//Server               string
 	VideoTitle           string
 	ChannelId            string
 	ChannelTitle         string
@@ -54,11 +55,11 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
 	//var videoCaptionTracks []yt_urls.CaptionTrack
-	playbackType := "streaming"
+	localPlayback := false
 
 	if strings.HasSuffix(videoId, yt_urls.DefaultVideoExt) {
 		// TODO: check if that local file exists first
-		playbackType = "local"
+		localPlayback = true
 		videoUrl = "/video?file=" + videoId
 		//videoTitle = videoId
 	}
@@ -78,7 +79,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 			if absVideosDir, err := pasu.GetAbsDir(paths.Videos); err == nil {
 				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
-					playbackType = "local"
+					localPlayback = true
 					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
 					videoTitle = title
 					videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
@@ -187,7 +188,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		VideoId:              videoId,
 		VideoUrl:             videoUrl,
 		VideoPoster:          videoPoster,
-		Server:               playbackType,
+		LocalPlayback:        localPlayback,
 		VideoTitle:           videoTitle,
 		VideoDescription:     videoDescription,
 		VideoPropertiesOrder: titles,
