@@ -31,23 +31,24 @@
 
         a img {
             border-radius: var(--border-radius);
-            width: 240px;
+            width: var(--resp-grid-column-width);
             aspect-ratio: 16/9;
+            object-fit: cover;
             background: var(--subtle-color)
         }
 
         a progress {
-            width: 240px;
+            width: var(--resp-grid-column-width);
         }
 
         a .duration {
             position: absolute;
-            padding: var(--x-small);
+            padding: var(--small);
             font-size: var(--fs-x-smaller);
-            background: var(--background-color);
-            margin: var(--xx-small);
-            border-radius: var(--border-radius);
-            opacity: 0.8;
+            background: var(--highlight-color);
+            border-top-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            color: var(--color);
         }
 
         a.ended {
