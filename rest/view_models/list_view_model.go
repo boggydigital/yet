@@ -8,14 +8,13 @@ import (
 )
 
 type ListViewModel struct {
-	Continue             []*VideoViewModel
-	Random               *VideoViewModel
-	Videos               []*VideoViewModel
-	Downloads            []*VideoViewModel
-	HasNewPlaylistVideos bool
-	PlaylistsOrder       []string
-	Playlists            map[string][]*PlaylistViewModel
-	HasHistory           bool
+	Continue       []*VideoViewModel
+	Random         *VideoViewModel
+	Videos         []*VideoViewModel
+	Downloads      []*VideoViewModel
+	PlaylistsOrder []string
+	Playlists      map[string][]*PlaylistViewModel
+	HasHistory     bool
 }
 
 const (
@@ -98,8 +97,6 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 				ShowPublishedDate,
 				ShowDuration))
 		}
-
-		lvm.HasNewPlaylistVideos = len(newPlaylistVideos) > 0
 	}
 
 	plKeys := rdx.Keys(data.PlaylistWatchlistProperty)
