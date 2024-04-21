@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	recentGroup      = "A week or less ago"
-	thisMonthGroup   = "More than a week, less than a month ago"
-	thisYearGroup    = "More than a month, less than a year ago"
+	recentGroup      = "Less than a week ago"
+	thisMonthGroup   = "Less than a month ago"
+	thisYearGroup    = "Less than a year ago"
 	olderGroup       = "More than a year ago"
 	endedVideosLimit = 100
 )
@@ -39,9 +39,11 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	pageTitle := fmt.Sprintf("Last %d watched videos", endedVideosLimit)
+	whKeys := rdx.Keys(data.VideoEndedProperty)
+
+	pageTitle := fmt.Sprintf("Last %d watched videos (out of %d)", endedVideosLimit, len(whKeys))
 	if showAll {
-		pageTitle = "All watched videos"
+		pageTitle = fmt.Sprintf("All %d watched videos", len(whKeys))
 	}
 
 	hvm := &HistoryViewModel{
@@ -51,8 +53,6 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 		GroupsOrder: groupsOrder,
 		Groups:      make(map[string][]*view_models.VideoViewModel),
 	}
-
-	whKeys := rdx.Keys(data.VideoEndedProperty)
 
 	endedGroups := make(map[string][]string)
 	for _, id := range whKeys {
