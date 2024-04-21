@@ -28,8 +28,8 @@ func ParseVideoIds(args ...string) ([]string, error) {
 		} else if strings.Contains(urlOrId, youtuBeHost) {
 			//currently, YouTube own short URLs are formatted as
 			//youtu.be/videoId
-			if _, videoId, ok := strings.Cut(urlOrId, youtuBeHost); ok {
-				videoIds = append(videoIds, videoId)
+			if ybeu, err := url.Parse(urlOrId); err == nil {
+				videoIds = append(videoIds, path.Base(ybeu.Path))
 			}
 		} else if strings.Contains(urlOrId, youtubeEmbedUrl) {
 			//currently YouTube embed links are formatted as
