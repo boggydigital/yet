@@ -23,7 +23,6 @@
            href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}&t={{.CurrentTime}}{{end}}">
             {{if .CurrentTime}}Continue watching at origin{{else}}Watch at origin{{end}}</a>
     {{else}}
-        <a class="action"></a>
     {{end}}
 
     <form method="get" action="/update_video">
