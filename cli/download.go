@@ -61,15 +61,15 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 
 		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
-			return da.EndWithError(err)
+			da.Error(err)
 		}
 
 		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
-			return da.EndWithError(err)
+			da.Error(err)
 		}
 
 		if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, videoForce, videoSingleFormat); err != nil {
-			return da.EndWithError(err)
+			da.Error(err)
 		}
 
 		if err := yeti.GetPosters(videoId, dolo.DefaultClient, yt_urls.AllThumbnailQualities()...); err != nil {
@@ -77,6 +77,7 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 		}
 
 		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient); err != nil {
+
 			da.Error(err)
 		}
 
