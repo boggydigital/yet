@@ -62,6 +62,7 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
 			da.Error(err)
+			continue
 		}
 
 		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
