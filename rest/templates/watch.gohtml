@@ -90,7 +90,10 @@
 
     {{if eq .CurrentTimeSeconds "0"}}
     {{else}}
-        <progress value="{{.CurrentTimeSeconds}}" max="{{.DurationSeconds}}"></progress>
+        {{if .LastEndedTime}}
+        {{else}}
+            <progress value="{{.CurrentTimeSeconds}}" max="{{.DurationSeconds}}"></progress>
+        {{end}}
     {{end}}
 
 
