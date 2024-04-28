@@ -19,13 +19,14 @@ import (
 )
 
 type WatchViewModel struct {
-	VideoId       string
-	VideoUrl      string
-	CurrentTime   string
-	LastEndedTime string
-	VideoPoster   string
-	LocalPlayback bool
-	//Server               string
+	VideoId              string
+	VideoUrl             string
+	CurrentTime          string
+	LastEndedTime        string
+	VideoPoster          string
+	LocalPlayback        bool
+	CurrentTimeSeconds   string
+	DurationSeconds      string
 	VideoTitle           string
 	ChannelId            string
 	ChannelTitle         string
@@ -66,12 +67,24 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 
 	videoPoster := fmt.Sprintf("/poster?v=%s&q=%s", videoId, yt_urls.ThumbnailQualityMaxRes)
 
-	// if current time is not specified with a query parameter - read it from metadata
-	if currentTime == "" {
-		if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok {
-			currentTime = ct
+	var rem, dur int64
+
+	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+		if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
+			dur = duri
 		}
 	}
+
+	var ct int64
+	if currentTime == "" {
+		if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
+			if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
+				ct = cti
+				currentTime = strconv.FormatInt(ct, 10)
+			}
+		}
+	}
+	rem = dur - ct
 
 	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
 		if channel, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
@@ -189,15 +202,17 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 		VideoUrl:             videoUrl,
 		VideoPoster:          videoPoster,
 		LocalPlayback:        localPlayback,
+		CurrentTimeSeconds:   strconv.FormatInt(dur-rem, 10),
+		DurationSeconds:      strconv.FormatInt(dur, 10),
 		VideoTitle:           videoTitle,
 		VideoDescription:     videoDescription,
 		VideoPropertiesOrder: titles,
 		VideoProperties:      videoProperties,
-		CurrentTime:          currentTime,
-		LastEndedTime:        lastEndedTime,
-		ChannelId:            channelId,
-		ChannelTitle:         channelTitle,
-		PlaylistViewModel:    GetPlaylistViewModel(playlistId, rdx),
+		//CurrentTime:          currentTime,
+		LastEndedTime:     lastEndedTime,
+		ChannelId:         channelId,
+		ChannelTitle:      channelTitle,
+		PlaylistViewModel: GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }
 

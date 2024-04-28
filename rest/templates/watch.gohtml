@@ -15,8 +15,12 @@
                 width: 100%;
                 height: 100%;
                 aspect-ratio: 16/9;
-                margin-block-start: var(--normal);
+                margin-block-start: var(--small);
                 border-radius: var(--border-radius);
+            }
+
+            progress {
+                width: 100%;
             }
 
             h1 {
@@ -29,6 +33,7 @@
             }
 
             .video_source {
+                text-align: right;
                 color: var(--color-brown);
                 font-size: var(--fs-x-smaller);
 
@@ -75,12 +80,19 @@
 
     {{template "back"}}
 
+    <div class='video_source {{if .LocalPlayback}}local{{end}}'>This video will play from
+        the {{if .LocalPlayback}}local{{else}}origin{{end}} server
+    </div>
+
     <video controls='controls' preload='metadata' poster='{{.VideoPoster}}'>
         <source src='{{.VideoUrl}}'/>
     </video>
 
-    <div class='video_source {{if .LocalPlayback}}local{{end}}'>This video will play from the {{if .LocalPlayback}}local{{else}}origin{{end}} server
-    </div>
+    {{if eq .CurrentTimeSeconds "0"}}
+    {{else}}
+        <progress value="{{.CurrentTimeSeconds}}" max="{{.DurationSeconds}}"></progress>
+    {{end}}
+
 
     <ul class="video_details_container">
 
@@ -135,10 +147,10 @@
     </script>
 
 
-    {{if .CurrentTime}}
+    {{if .CurrentTimeSeconds}}
         {{if .LastEndedTime}}
         {{else}}
-            <script>video.currentTime = {{.CurrentTime}};</script>
+            <script>video.currentTime = {{.CurrentTimeSeconds}};</script>
         {{end}}
 
     {{end}}
