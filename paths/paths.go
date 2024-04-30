@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	cookiesFilename      = "cookies.txt"
-	defaultYTCaptionsExt = ".ytt"
+	cookiesFilename    = "cookies.txt"
+	defaultCaptionsExt = ".ytt"
+	defaultScriptExt   = ".js"
 )
 
 func AbsCookiesPath() (string, error) {
@@ -52,7 +53,7 @@ func AbsCaptionsTrackPath(videoId, lang string) (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(scdp, fmt.Sprintf("%s_%s%s", videoId, lang, defaultYTCaptionsExt)), nil
+	return filepath.Join(scdp, fmt.Sprintf("%s_%s%s", videoId, lang, defaultCaptionsExt)), nil
 }
 
 func mkdirAllVideoIdDirs(path, videoId string) (string, error) {
@@ -86,4 +87,13 @@ func mkdirAllVideoIdDirs(path, videoId string) (string, error) {
 	}
 
 	return subPath, nil
+}
+
+func AbsPlayerPath(version string) (string, error) {
+	pdp, err := pasu.GetAbsDir(Players)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(pdp, version+defaultScriptExt), nil
 }

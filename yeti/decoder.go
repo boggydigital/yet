@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/yt_urls"
 	"io"
 	"net/http"
 	"os"
@@ -41,16 +40,13 @@ func DecodeParam(hc *http.Client, videoId, n, playerUrl string) (string, error) 
 	dpa := nod.Begin("decoding n=%s...", n)
 	defer dpa.End()
 
-	pu := yt_urls.PlayerUrl(playerUrl)
-
-	resp, err := hc.Get(pu.String())
+	playerContent, err := GetPlayerContent(hc, playerUrl)
 	if err != nil {
 		return "", dpa.EndWithError(err)
 	}
+	defer playerContent.Close()
 
-	defer resp.Body.Close()
-
-	dfb, dfn, err := getDecodeFuncBodyName(resp.Body)
+	dfb, dfn, err := getDecodeFuncBodyName(playerContent)
 	if err != nil {
 		return "", dpa.EndWithError(err)
 	}
@@ -70,6 +66,7 @@ func DecodeParam(hc *http.Client, videoId, n, playerUrl string) (string, error) 
 	defer decoderFile.Close()
 
 	var createFile func(io.Writer, string, string, string) error
+
 	switch ext {
 	case decoderScriptExt:
 		createFile = createNodeFile

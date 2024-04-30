@@ -26,6 +26,8 @@ VOLUME /usr/share/yet/input
 VOLUME /usr/share/yet/metadata
 # videos
 VOLUME /usr/share/yet/videos
+# players
+VOLUME /usr/share/yet/players
 
 ENTRYPOINT ["/usr/bin/yet"]
 CMD ["serve","-port", "2005", "-stderr"]

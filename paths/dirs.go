@@ -13,6 +13,7 @@ const (
 	Videos   pasu.AbsDir = "videos"
 	Posters  pasu.AbsDir = "posters"
 	Captions pasu.AbsDir = "captions"
+	Players  pasu.AbsDir = "players"
 )
 
 var AllAbsDirs = []pasu.AbsDir{
@@ -22,4 +23,5 @@ var AllAbsDirs = []pasu.AbsDir{
 	Videos,
 	Posters,
 	Captions,
+	Players,
 }

@@ -54,6 +54,8 @@ services:
       - /docker/yet/posters:/usr/share/yet/posters
       # captions
       - /docker/yet/captions:/usr/share/yet/captions
+      # players
+      - /docker/yet/players:/usr/share/yet/players
       # sharing timezone from the host
       - /etc/localtime:/etc/localtime:ro 
 ```
