@@ -22,7 +22,7 @@ const (
 
 var memoizer = make(map[string]string)
 
-func DecodeParam(hc *http.Client, videoId, n, playerUrl string) (string, error) {
+func DecodeNParameter(hc *http.Client, videoId, n, playerUrl string) (string, error) {
 
 	if dn, ok := memoizer[n+playerUrl]; ok {
 		return dn, nil

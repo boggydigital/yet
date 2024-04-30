@@ -9,6 +9,7 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yt_urls"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -65,6 +66,10 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 			continue
 		}
 
+		if err := yeti.DecodeSignatureCipher(http.DefaultClient, videoPage); err != nil {
+			return da.EndWithError(err)
+		}
+
 		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
 			da.Error(err)
 		}
@@ -73,11 +78,11 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 			da.Error(err)
 		}
 
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, yt_urls.AllThumbnailQualities()...); err != nil {
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, yt_urls.AllThumbnailQualities()...); err != nil {
 			da.Error(err)
 		}
 
-		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient); err != nil {
+		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, force); err != nil {
 
 			da.Error(err)
 		}

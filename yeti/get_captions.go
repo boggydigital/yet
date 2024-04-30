@@ -9,7 +9,7 @@ import (
 	"net/url"
 )
 
-func GetCaptions(dl *dolo.Client, rdx kvas.WriteableRedux, videoId string, captionTracks []yt_urls.CaptionTrack) error {
+func GetCaptions(dl *dolo.Client, rdx kvas.WriteableRedux, videoId string, captionTracks []yt_urls.CaptionTrack, force bool) error {
 
 	properties := []string{
 		data.VideoCaptionsNamesProperty,
@@ -48,7 +48,7 @@ func GetCaptions(dl *dolo.Client, rdx kvas.WriteableRedux, videoId string, capti
 		}
 
 		if absFilename, err := paths.AbsCaptionsTrackPath(videoId, ct.LanguageCode); err == nil {
-			if err := dl.Download(u, nil, absFilename); err != nil {
+			if err := dl.Download(u, force, nil, absFilename); err != nil {
 				return err
 			}
 		} else {

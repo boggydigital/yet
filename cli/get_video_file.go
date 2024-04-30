@@ -94,6 +94,10 @@ func GetVideoFile(force, singleFormat bool, ids ...string) error {
 			continue
 		}
 
+		if err := yeti.DecodeSignatureCipher(http.DefaultClient, videoPage); err != nil {
+			return gva.EndWithError(err)
+		}
+
 		relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
 		start := time.Now()
@@ -181,7 +185,7 @@ func downloadSingleFormat(
 	if yeti.IsJSBinaryAvailable() || fast {
 		q := u.Query()
 		np := q.Get("n")
-		if dnp, err := yeti.DecodeParam(http.DefaultClient, videoId, np, playerUrl); err != nil {
+		if dnp, err := yeti.DecodeNParameter(http.DefaultClient, videoId, np, playerUrl); err != nil {
 			return tpw.EndWithError(err)
 		} else {
 			q.Set("n", dnp)
@@ -203,7 +207,7 @@ func downloadSingleFormat(
 		}
 	}
 
-	if err := dl.Download(u, tpw, absVideosDir, relFilename); err != nil {
+	if err := dl.Download(u, force, tpw, absVideosDir, relFilename); err != nil {
 		return tpw.EndWithError(err)
 	}
 

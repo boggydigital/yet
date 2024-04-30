@@ -14,10 +14,11 @@ import (
 func GetPosterHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
 	forId := u.Query().Get("for-id")
-	return GetPoster(forId, ids...)
+	force := u.Query().Has("force")
+	return GetPoster(forId, force, ids...)
 }
 
-func GetPoster(forId string, ids ...string) error {
+func GetPoster(forId string, force bool, ids ...string) error {
 
 	gpa := nod.NewProgress("getting poster(s)...")
 	defer gpa.End()
@@ -31,7 +32,7 @@ func GetPoster(forId string, ids ...string) error {
 
 	for _, videoId := range videoIds {
 
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, yt_urls.AllThumbnailQualities()...); err != nil {
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, yt_urls.AllThumbnailQualities()...); err != nil {
 			gpa.Error(err)
 		} else {
 			if err := renamePosters(videoId, forId); err != nil {

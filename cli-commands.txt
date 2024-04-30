@@ -37,6 +37,7 @@ download
 
 get-captions
     id&^
+    force
 
 get-channel-metadata
     id&^
@@ -44,11 +45,13 @@ get-channel-metadata
 
 get-url-file
     url&^
+    force
 
 get-url-data
     id
     video-id*
     last-downloaded
+    force
 
 get-playlist-metadata
     id&^
@@ -58,6 +61,7 @@ get-playlist-metadata
 get-poster
     id&^
     for-id
+    force
 
 get-video-file
     id&^

@@ -15,7 +15,7 @@ var errorsSolvedWithCookies = []string{
 
 func GetVideoPage(videoId string) (*yt_urls.InitialPlayerResponse, error) {
 
-	// by default - use a default client that doesn't provide client cookies
+	// by default - use a default client that doesn't supply client cookies
 	videoPage, err := yt_urls.GetVideoPage(http.DefaultClient, videoId)
 	if err != nil {
 		errSolvedWithCookies := false

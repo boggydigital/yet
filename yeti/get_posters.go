@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func GetPosters(videoId string, dl *dolo.Client, qualities ...yt_urls.ThumbnailQuality) error {
+func GetPosters(videoId string, dl *dolo.Client, force bool, qualities ...yt_urls.ThumbnailQuality) error {
 
 	gpa := nod.NewProgress(" posters for %s", videoId)
 	defer gpa.End()
@@ -24,9 +24,9 @@ func GetPosters(videoId string, dl *dolo.Client, qualities ...yt_urls.ThumbnailQ
 		fnse = strings.TrimSuffix(fnse, filepath.Ext(fnse))
 
 		if absFilename, err := paths.AbsPosterPath(videoId, q); err == nil {
-			if err := dl.Download(u, nil, absFilename); err != nil {
+			if err := dl.Download(u, force, nil, absFilename); err != nil {
 				if lq := yt_urls.LowerQuality(q); lq != yt_urls.ThumbnailQualityUnknown {
-					return GetPosters(videoId, dl, lq)
+					return GetPosters(videoId, dl, force, lq)
 				} else {
 					return gpa.EndWithError(err)
 				}

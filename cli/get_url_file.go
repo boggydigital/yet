@@ -16,10 +16,11 @@ import (
 
 func GetUrlFileHandler(u *url.URL) error {
 	urls := strings.Split(u.Query().Get("url"), ",")
-	return GetUrlFile(urls...)
+	force := u.Query().Has("force")
+	return GetUrlFile(force, urls...)
 }
 
-func GetUrlFile(urls ...string) error {
+func GetUrlFile(force bool, urls ...string) error {
 
 	if len(urls) == 0 {
 		return nil
@@ -71,7 +72,7 @@ func GetUrlFile(urls ...string) error {
 			return gfa.EndWithError(err)
 		}
 
-		if err := dl.Download(u, gv, absVideosDir, filename); err != nil {
+		if err := dl.Download(u, force, gv, absVideosDir, filename); err != nil {
 			return gfa.EndWithError(err)
 		}
 

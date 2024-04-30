@@ -16,10 +16,11 @@ func GetUrlDataHandler(u *url.URL) error {
 	id := u.Query().Get("id")
 	videoId := u.Query().Get("video-id")
 	lastDownloaded := u.Query().Has("last-downloaded")
-	return GetUrlData(id, lastDownloaded, videoId)
+	force := u.Query().Has("force")
+	return GetUrlData(id, lastDownloaded, force, videoId)
 }
 
-func GetUrlData(id string, lastDownloaded bool, videoId string) error {
+func GetUrlData(id string, lastDownloaded, force bool, videoId string) error {
 
 	// set id to the last downloaded URL
 	if lastDownloaded {
@@ -40,7 +41,7 @@ func GetUrlData(id string, lastDownloaded bool, videoId string) error {
 		return guda.EndWithError(err)
 	}
 
-	if err := GetPoster(id, videoId); err != nil {
+	if err := GetPoster(id, force, videoId); err != nil {
 		return guda.EndWithError(err)
 	}
 

@@ -106,8 +106,13 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	}
 
 	if videoUrl == "" || videoTitle == "" {
+
 		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
+			return nil, err
+		}
+
+		if err := yeti.DecodeSignatureCipher(http.DefaultClient, videoPage); err != nil {
 			return nil, err
 		}
 
@@ -224,7 +229,7 @@ func decode(videoId, urlStr, playerUrl string) (*url.URL, error) {
 
 	q := u.Query()
 	np := q.Get("n")
-	if dnp, err := yeti.DecodeParam(http.DefaultClient, videoId, np, playerUrl); err != nil {
+	if dnp, err := yeti.DecodeNParameter(http.DefaultClient, videoId, np, playerUrl); err != nil {
 		return nil, err
 	} else {
 		q.Set("n", dnp)

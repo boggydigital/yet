@@ -45,7 +45,7 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 		// unless that's a URL file
 		if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) &&
 			!strings.Contains(videoId, yt_urls.DefaultVideoExt) {
-			if err := yeti.GetPosters(videoId, dolo.DefaultClient, q); err != nil {
+			if err := yeti.GetPosters(videoId, dolo.DefaultClient, false, q); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}

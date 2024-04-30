@@ -15,10 +15,11 @@ import (
 
 func GetCaptionsHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
-	return GetCaptions(ids)
+	force := u.Query().Has("force")
+	return GetCaptions(force, ids...)
 }
 
-func GetCaptions(ids []string) error {
+func GetCaptions(force bool, ids ...string) error {
 
 	gca := nod.NewProgress("getting captions...")
 	defer gca.End()
@@ -42,7 +43,7 @@ func GetCaptions(ids []string) error {
 
 	for _, videoId := range ids {
 
-		if err := getVideoPageCaptions(nil, videoId, rdx, dl); err != nil {
+		if err := getVideoPageCaptions(nil, videoId, rdx, dl, force); err != nil {
 			gca.Error(err)
 		}
 
@@ -54,7 +55,12 @@ func GetCaptions(ids []string) error {
 	return nil
 }
 
-func getVideoPageCaptions(videoPage *yt_urls.InitialPlayerResponse, videoId string, rdx kvas.WriteableRedux, dl *dolo.Client) error {
+func getVideoPageCaptions(
+	videoPage *yt_urls.InitialPlayerResponse,
+	videoId string,
+	rdx kvas.WriteableRedux,
+	dl *dolo.Client,
+	force bool) error {
 
 	gca := nod.Begin(" captions for %s", videoId)
 	defer gca.End()
@@ -68,7 +74,7 @@ func getVideoPageCaptions(videoPage *yt_urls.InitialPlayerResponse, videoId stri
 	}
 
 	captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
-	if err := yeti.GetCaptions(dl, rdx, videoId, captionTracks); err != nil {
+	if err := yeti.GetCaptions(dl, rdx, videoId, captionTracks, force); err != nil {
 		return gca.EndWithError(err)
 	}
 
