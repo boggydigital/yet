@@ -11,11 +11,17 @@ import (
 
 const (
 	playerUrlPfx = "/s/player/"
-	playerUrlSfx = "/player_ias.vflset/en_US/base.js"
+	playerUrlSfx = "/player_ias.vflset/"
 )
 
 func PlayerVersion(playerUrl string) string {
-	return strings.TrimPrefix(strings.TrimSuffix(playerUrl, playerUrlSfx), playerUrlPfx)
+
+	s := strings.TrimPrefix(playerUrl, playerUrlPfx)
+	if s, _, ok := strings.Cut(s, playerUrlSfx); ok {
+		return s
+	}
+
+	return ""
 }
 
 func GetPlayerContent(hc *http.Client, playerUrl string) (io.ReadCloser, error) {

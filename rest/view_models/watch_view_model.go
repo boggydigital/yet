@@ -229,7 +229,7 @@ func decode(videoId, urlStr, playerUrl string) (*url.URL, error) {
 
 	q := u.Query()
 	np := q.Get("n")
-	if dnp, err := yeti.DecodeNParameter(http.DefaultClient, videoId, np, playerUrl); err != nil {
+	if dnp, err := yeti.DecodeNParameter(videoId, np, playerUrl); err != nil {
 		return nil, err
 	} else {
 		q.Set("n", dnp)

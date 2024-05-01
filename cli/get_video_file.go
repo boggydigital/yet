@@ -19,10 +19,6 @@ import (
 	"time"
 )
 
-const (
-	fastEnv = "YET_FAST"
-)
-
 func GetVideoFileHandler(u *url.URL) error {
 	ids := strings.Split(u.Query().Get("id"), ",")
 	force := u.Query().Has("force")
@@ -180,12 +176,10 @@ func downloadSingleFormat(
 		return tpw.EndWithError(err)
 	}
 
-	fast := os.Getenv(fastEnv) != ""
-
-	if yeti.IsJSBinaryAvailable() || fast {
+	if yeti.IsJSBinaryAvailable() {
 		q := u.Query()
 		np := q.Get("n")
-		if dnp, err := yeti.DecodeNParameter(http.DefaultClient, videoId, np, playerUrl); err != nil {
+		if dnp, err := yeti.DecodeNParameter(videoId, np, playerUrl); err != nil {
 			return tpw.EndWithError(err)
 		} else {
 			q.Set("n", dnp)

@@ -13,6 +13,8 @@ const (
 	cookiesFilename    = "cookies.txt"
 	defaultCaptionsExt = ".ytt"
 	defaultScriptExt   = ".js"
+
+	nParamDecoderSfx = "-n"
 )
 
 func AbsCookiesPath() (string, error) {
@@ -96,4 +98,13 @@ func AbsPlayerPath(version string) (string, error) {
 	}
 
 	return filepath.Join(pdp, version+defaultScriptExt), nil
+}
+
+func AbsNParamDecoderPath(version string) (string, error) {
+	pdp, err := pasu.GetAbsDir(Players)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(pdp, version+nParamDecoderSfx+defaultScriptExt), nil
 }

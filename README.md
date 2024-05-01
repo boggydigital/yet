@@ -123,20 +123,9 @@ If you'd prefer to specify `ffmpeg` binary location manually, set `YET_FFMPEG_CM
 
 YouTube implements measures to restrict download speed, unless download client passes a challenge. [This issue](https://github.com/ytdl-org/youtube-dl/issues/29326#issuecomment-894619419) goes into more details - check it out if you want to know more about that restriction.
 
-In order to unlock faster downloads yet can extract decoding code from YouTube video page and run it for you. There are two ways to achieve that. The first one requires user input, but doesn't require any additional software other than the web browser that has JavaScript engine to run that decoding code (any modern browser would work). The second option doesn't require user input and is completely automatic, but requires a JavaScript engine (Node.js or Deno) that would run that decoding code.
+In order to unlock faster downloads yet can extract decoding code from YouTube video page and run it for you. This but requires a JavaScript engine (Node.js or Deno) that would run that decoding code.
 
 Below you will find details on how to enable each option depending on your needs and available software. There is of course a third option - do nothing and live with slower yet download speeds.
-
-#### Using web browser to run decoding code
-
-Set `YET_FAST` environment variable to any non-empty value and run yet. For example on macOS you can do the following:
-
-```shell
-YET_FAST=1 ./yet <video-id>
-```
-Upon encountering an encoded parameter, yet will download decoding code and create `decoder.html` file in the working directory and post a `file://` link to it in your Terminal. You would need to open that file in any browser with JavaScript engine and the loaded page will contain decoded value. Copy that value and paste to respond to yet request. Download will continue and complete automatically and the `decoder.html` file will be removed. 
-
-You will need to perform that for every individual video, even if you're downloading a playlist.
 
 #### Using a JavaScript engine to run decoding code automatically
 
