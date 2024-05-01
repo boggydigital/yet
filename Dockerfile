@@ -9,8 +9,8 @@ RUN go build \
     -ldflags="-s -w -X 'github.com/boggydigital/yet/cli.GitTag=`git describe --tags --abbrev=0`'" \
     main.go
 
-# starting with deno runtime
-FROM denoland/deno:alpine
+# starting with Node.js runtime
+FROM node:alpine
 # adding ffmpeg
 RUN apk update && apk add && apk add ffmpeg
 # adding yet
