@@ -18,12 +18,19 @@ const (
 	nParamDecoderFuncEnd   = "return b.join(\"\")};"
 )
 
-var ErrJavaScriptRuntimeNotFound = errors.New("javascript runtime not found")
+var (
+	ErrNodeJsRequired        = errors.New("node.js is required")
+	ErrNParamDecoderNotFound = errors.New("n-param decoder not found")
+)
 
 func DecodeNParam(n, playerUrl string) (string, error) {
 
+	if n == "" {
+		return "", nil
+	}
+
 	if !HasBinary(NodeBin) {
-		return "", ErrJavaScriptRuntimeNotFound
+		return "", ErrNodeJsRequired
 	}
 
 	if playerUrl == "" {
@@ -32,7 +39,7 @@ func DecodeNParam(n, playerUrl string) (string, error) {
 
 	// decode `n` parameter:
 	// 1) get `n` parameter decoder (local extract for a given player version, download as needed)
-	// 2) run it with the JavaScript engine and capture output (transformed n)
+	// 2) run it with the Node.js and capture output (transformed n)
 	// 3) use the transformed parameter to unlock faster YouTube downloads
 
 	dpa := nod.Begin("decoding n=%s...", n)
@@ -43,16 +50,7 @@ func DecodeNParam(n, playerUrl string) (string, error) {
 		return "", dpa.EndWithError(err)
 	}
 
-	sb := &strings.Builder{}
-
-	cmd := exec.Command(GetBinary(NodeBin), ndp, n)
-
-	cmd.Stdout = sb
-	if err := cmd.Run(); err != nil {
-		return "", dpa.EndWithError(err)
-	}
-
-	nDecoded := strings.TrimSuffix(sb.String(), "\n")
+	nDecoded, err := execNodeDecodeNParam(ndp, n)
 
 	dpa.EndWithResult("done (n=%s)", nDecoded)
 
@@ -76,9 +74,13 @@ func getNParamDecoder(playerUrl string) (string, error) {
 	}
 	defer playerContent.Close()
 
-	dfb, dfn, err := getDecodeFuncBodyName(playerContent)
+	dfb, dfn, err := nParamDecodeFuncBodyName(playerContent)
 	if err != nil {
 		return "", err
+	}
+
+	if dfb == "" || dfn == "" {
+		return "", ErrNParamDecoderNotFound
 	}
 
 	decoderFile, err := os.Create(ndp)
@@ -94,7 +96,7 @@ func getNParamDecoder(playerUrl string) (string, error) {
 	return ndp, nil
 }
 
-func getDecodeFuncBodyName(r io.Reader) (string, string, error) {
+func nParamDecodeFuncBodyName(r io.Reader) (string, string, error) {
 
 	scanner := bufio.NewScanner(r)
 	sb := &strings.Builder{}
@@ -134,4 +136,17 @@ func writeNDecoder(w io.Writer, decodeFuncBody, decodeFuncName string) error {
 		return err
 	}
 	return nil
+}
+
+func execNodeDecodeNParam(decoderPath, n string) (string, error) {
+	sb := &strings.Builder{}
+
+	cmd := exec.Command(GetBinary(NodeBin), decoderPath, n)
+
+	cmd.Stdout = sb
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+
+	return strings.TrimSuffix(sb.String(), "\n"), nil
 }

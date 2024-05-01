@@ -66,7 +66,7 @@ func Download(ids []string, queue, force, singleFormat bool) error {
 			continue
 		}
 
-		if err := yeti.DecodeSignatureCipher(http.DefaultClient, videoPage); err != nil {
+		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
 			return da.EndWithError(err)
 		}
 

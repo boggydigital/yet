@@ -112,7 +112,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 			return nil, err
 		}
 
-		if err := yeti.DecodeSignatureCipher(http.DefaultClient, videoPage); err != nil {
+		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
 			return nil, err
 		}
 
@@ -228,14 +228,16 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 	}
 
 	q := u.Query()
-	np := q.Get("n")
-	if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
-		return nil, err
-	} else {
-		q.Set("n", dnp)
-		u.RawQuery = q.Encode()
-		return u, nil
+	if np := q.Get("n"); np != "" {
+		if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
+			return nil, err
+		} else {
+			q.Set("n", dnp)
+			u.RawQuery = q.Encode()
+		}
 	}
+
+	return u, nil
 }
 
 func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]yt_urls.CaptionTrack, error) {

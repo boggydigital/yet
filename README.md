@@ -1,9 +1,9 @@
 # yet
-yet is a minimalist YouTube video, playlist, channel downloader. 
+yet is a minimalist YouTube video, playlist downloader. 
 
 Engineering design constraints lead to a simple application and code base. yet is built on top of `github.com/boggydigital/yt_urls`, similarly compact module, that provides low-level helpers to get and work with YouTube data.
 
-yet can be run as a [CLI tool](#using-yet-as-a-cli-tool) or as a [Docker service](#using-yet-as-a-docker-service).
+yet can be run as a [Docker service](#using-yet-as-a-docker-service) or a [CLI tool](#using-yet-as-a-cli-tool).
 
 ## Using yet as a CLI tool
 
@@ -66,8 +66,6 @@ services:
 yet Docker service is a work in progress and will be improved in the future to add more functionality. 
 
 ## Advanced scenarios
-
-Despite supporting only video-ids and playlist-ids, yet also (implicitly) supports channel and user videos, when they can be expressed as playlists. 
 
 All advanced scenarios are detailed below. 
 

@@ -14,7 +14,8 @@ const (
 	defaultCaptionsExt = ".ytt"
 	defaultScriptExt   = ".js"
 
-	nParamDecoderSfx = "-n"
+	nParamDecoderSfx          = "-n"
+	signatureCipherDecoderSfx = "-signatureCipher"
 )
 
 func AbsCookiesPath() (string, error) {
@@ -107,4 +108,13 @@ func AbsNParamDecoderPath(version string) (string, error) {
 	}
 
 	return filepath.Join(pdp, version+nParamDecoderSfx+defaultScriptExt), nil
+}
+
+func AbsSignatureCipherDecoderPath(version string) (string, error) {
+	pdp, err := pasu.GetAbsDir(Players)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(pdp, version+signatureCipherDecoderSfx+defaultScriptExt), nil
 }
