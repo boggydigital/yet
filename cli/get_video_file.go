@@ -134,7 +134,7 @@ func downloadVideo(
 
 	if yeti.GetBinary(yeti.FFMpegBin) == "" || singleFormat {
 
-		if err := downloadSingleFormat(dl, videoId, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl, force); err != nil {
+		if err := downloadSingleFormat(dl, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl, force); err != nil {
 			return err
 		}
 	} else {
@@ -160,7 +160,7 @@ func downloadVideo(
 
 func downloadSingleFormat(
 	dl *dolo.Client,
-	videoId, relFilename string,
+	relFilename string,
 	format *yt_urls.Format,
 	playerUrl string,
 	force bool) error {
@@ -179,7 +179,7 @@ func downloadSingleFormat(
 	if yeti.HasBinary(yeti.NodeBin) {
 		q := u.Query()
 		np := q.Get("n")
-		if dnp, err := yeti.DecodeNParameter(videoId, np, playerUrl); err != nil {
+		if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
 			return tpw.EndWithError(err)
 		} else {
 			q.Set("n", dnp)
@@ -215,12 +215,12 @@ func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, vp *yt
 	rvfn, rafn := yeti.VideoAudioFilenames(relFilename)
 
 	//download video format
-	if err := downloadSingleFormat(dl, videoId, rvfn, vp.BestAdaptiveVideoFormat(), vp.PlayerUrl, force); err != nil {
+	if err := downloadSingleFormat(dl, rvfn, vp.BestAdaptiveVideoFormat(), vp.PlayerUrl, force); err != nil {
 		return err
 	}
 
 	//download audio format
-	if err := downloadSingleFormat(dl, videoId, rafn, vp.BestAdaptiveAudioFormat(), vp.PlayerUrl, force); err != nil {
+	if err := downloadSingleFormat(dl, rafn, vp.BestAdaptiveAudioFormat(), vp.PlayerUrl, force); err != nil {
 		return err
 	}
 

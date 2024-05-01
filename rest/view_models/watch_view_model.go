@@ -132,7 +132,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 			}
 		}
 
-		vu, err := decode(videoId, videoPage.BestFormat().Url, videoPage.PlayerUrl)
+		vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
 		if err != nil {
 			return nil, err
 		}
@@ -221,7 +221,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	}, nil
 }
 
-func decode(videoId, urlStr, playerUrl string) (*url.URL, error) {
+func decode(urlStr, playerUrl string) (*url.URL, error) {
 	u, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -229,7 +229,7 @@ func decode(videoId, urlStr, playerUrl string) (*url.URL, error) {
 
 	q := u.Query()
 	np := q.Get("n")
-	if dnp, err := yeti.DecodeNParameter(videoId, np, playerUrl); err != nil {
+	if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
 		return nil, err
 	} else {
 		q.Set("n", dnp)

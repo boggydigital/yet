@@ -20,7 +20,7 @@ const (
 
 var ErrJavaScriptRuntimeNotFound = errors.New("javascript runtime not found")
 
-func DecodeNParameter(videoId, n, playerUrl string) (string, error) {
+func DecodeNParam(n, playerUrl string) (string, error) {
 
 	if !HasBinary(NodeBin) {
 		return "", ErrJavaScriptRuntimeNotFound
@@ -30,7 +30,7 @@ func DecodeNParameter(videoId, n, playerUrl string) (string, error) {
 		return "", errors.New("player url is empty")
 	}
 
-	// transform `n` parameter:
+	// decode `n` parameter:
 	// 1) get `n` parameter decoder (local extract for a given player version, download as needed)
 	// 2) run it with the JavaScript engine and capture output (transformed n)
 	// 3) use the transformed parameter to unlock faster YouTube downloads
@@ -38,7 +38,7 @@ func DecodeNParameter(videoId, n, playerUrl string) (string, error) {
 	dpa := nod.Begin("decoding n=%s...", n)
 	defer dpa.End()
 
-	ndp, err := getNParameterDecoder(playerUrl)
+	ndp, err := getNParamDecoder(playerUrl)
 	if err != nil {
 		return "", dpa.EndWithError(err)
 	}
@@ -59,7 +59,7 @@ func DecodeNParameter(videoId, n, playerUrl string) (string, error) {
 	return nDecoded, nil
 }
 
-func getNParameterDecoder(playerUrl string) (string, error) {
+func getNParamDecoder(playerUrl string) (string, error) {
 
 	ndp, err := paths.AbsNParamDecoderPath(PlayerVersion(playerUrl))
 	if err != nil {
