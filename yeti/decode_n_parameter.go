@@ -22,7 +22,7 @@ var ErrJavaScriptRuntimeNotFound = errors.New("javascript runtime not found")
 
 func DecodeNParameter(videoId, n, playerUrl string) (string, error) {
 
-	if !IsJSBinaryAvailable() {
+	if !HasBinary(NodeBin) {
 		return "", ErrJavaScriptRuntimeNotFound
 	}
 
@@ -45,15 +45,7 @@ func DecodeNParameter(videoId, n, playerUrl string) (string, error) {
 
 	sb := &strings.Builder{}
 
-	var cmd *exec.Cmd
-
-	if GetBinary(NodeBin) != "" {
-		cmd = execNodeDecodeNParam(ndp, n)
-	} else if GetBinary(DenoBin) != "" {
-		cmd = execDenoDecodeNParam(ndp, n)
-	} else {
-		return "", errors.New("unknown js binary")
-	}
+	cmd := exec.Command(GetBinary(NodeBin), ndp, n)
 
 	cmd.Stdout = sb
 	if err := cmd.Run(); err != nil {
@@ -142,13 +134,4 @@ func writeNDecoder(w io.Writer, decodeFuncBody, decodeFuncName string) error {
 		return err
 	}
 	return nil
-}
-
-func execNodeDecodeNParam(filename, nParam string) *exec.Cmd {
-	return exec.Command(GetBinary(NodeBin), filename, nParam)
-}
-
-func execDenoDecodeNParam(filename, nParam string) *exec.Cmd {
-	return exec.Command(GetBinary(DenoBin), "run", filename, nParam)
-
 }

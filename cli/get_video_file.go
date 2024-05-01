@@ -176,7 +176,7 @@ func downloadSingleFormat(
 		return tpw.EndWithError(err)
 	}
 
-	if yeti.IsJSBinaryAvailable() {
+	if yeti.HasBinary(yeti.NodeBin) {
 		q := u.Query()
 		np := q.Get("n")
 		if dnp, err := yeti.DecodeNParameter(videoId, np, playerUrl); err != nil {

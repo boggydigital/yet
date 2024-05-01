@@ -11,13 +11,11 @@ type Binary string
 const (
 	FFMpegBin Binary = "ffmpeg"
 	NodeBin   Binary = "node"
-	DenoBin   Binary = "deno"
 )
 
 var cmdEnv = map[Binary]string{
 	FFMpegBin: "YET_FFMPEG_CMD",
 	NodeBin:   "YET_NODE_CMD",
-	DenoBin:   "YET_DENO_CMD",
 }
 
 func AllBinaries() []Binary {
@@ -37,6 +35,6 @@ func GetBinary(name Binary) string {
 	return ""
 }
 
-func IsJSBinaryAvailable() bool {
-	return GetBinary(NodeBin) != "" || GetBinary(DenoBin) != ""
+func HasBinary(name Binary) bool {
+	return GetBinary(name) != ""
 }
