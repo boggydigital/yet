@@ -12,6 +12,9 @@
         {{template "css-shared"}}
     </head>
     <body>
+
+    {{template "icons"}}
+
     <ul class="horizontal">
         <li>
             <a class='action' href='/search'>Search</a>
@@ -24,14 +27,14 @@
     <section class="watchlist_container">
     {{if .Random}}
         <details open>
-            <summary><h1>Suggestion</h1></summary>
+            <summary>{{template "plus_icon"}}<h1>Suggestion</h1></summary>
             {{template "video" .Random}}
         </details>
     {{end}}
 
     {{if .Continue}}
         <details open>
-            <summary><h1>Continue</h1></summary>
+            <summary>{{template "plus_icon"}}<h1>Continue</h1></summary>
             <ul class="videos resp-grid">
             {{range .Continue}}
                 <li>{{template "video" .}}</li>
@@ -42,7 +45,7 @@
 
     {{if .Videos}}
         <details>
-            <summary><h1>Videos</h1></summary>
+            <summary>{{template "plus_icon"}}<h1>Videos</h1></summary>
             <ul class="videos resp-grid">
             {{range .Videos}}
                 <li>{{template "video" .}}</li>
@@ -53,12 +56,12 @@
 
     {{if .Playlists}}
         <details>
-            <summary><h1>Playlists</h1></summary>
+            <summary>{{template "plus_icon"}}<h1>Playlists</h1></summary>
             <section class="playlists_container">
             {{$playlists := .Playlists}}
             {{range $ii, $playlistSection := .PlaylistsOrder}}
                 <details {{if eq $ii 0}}open{{end}}>
-                    <summary><h2>{{$playlistSection}}</h2></summary>
+                    <summary>{{template "plus_icon"}}<h2>{{$playlistSection}}</h2></summary>
                     <ul class='playlists resp-grid'>
                         {{$playlist := index $playlists $playlistSection}}
                         {{range $playlist}}
@@ -74,7 +77,7 @@
 
     {{if .Downloads}}
         <details>
-            <summary><h1>Downloads</h1></summary>
+            <summary>{{template "plus_icon"}}<h1>Downloads</h1></summary>
             <ul class="videos resp-grid">
             {{range .Downloads}}
                 <li>{{template "video" .}}</li>
@@ -85,7 +88,7 @@
 
     {{if .HasHistory}}
         <details open>
-            <summary><h1>History</h1></summary>
+            <summary>{{template "plus_icon"}}<h1>History</h1></summary>
             <a class='action' href='/history'>Check out your watch history</a>
         </details>
     {{end}}

@@ -136,14 +136,14 @@
                 background: var(--highlight-color);
                 border-radius: var(--large);
                 width: max-content;
+                column-gap: var(--small);
 
-                &::before {
-                    content: "\002B";
-                    padding-inline-start: var(--x-small);
-                    padding-inline-end: calc((var(--normal) + var(--small))/2);
+                &>svg {
+                    width: calc((var(--normal) + var(--small))/2);
+                    height: calc((var(--normal) + var(--small))/2);
                     color: var(--subtle-color);
-                    flex-shrink: 0;
-                    font-size: var(--fs-x-larger);
+                    transform-origin: 50% 50%;
+                    transition: rotate 100ms ease-in-out;
                 }
 
                 &::-webkit-details-marker {
@@ -152,8 +152,8 @@
             }
         }
 
-        details[open]>summary::before {
-            content: "\00D7";
+        details[open]>summary>svg {
+            rotate: 45deg;
         }
 
         input[type=text],

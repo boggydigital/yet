@@ -78,6 +78,8 @@
     </head>
     <body>
 
+    {{template "icons"}}
+
     {{template "back"}}
 
     <div class='video_source {{if .LocalPlayback}}local{{end}}'>This video will play from
@@ -109,14 +111,14 @@
 
         {{if .VideoDescription}}
             <details>
-                <summary><h2>Description</h2></summary>
+                <summary>{{template "plus_icon"}}<h2>Description</h2></summary>
                 <div class='video_description'>{{.VideoDescription}}</div>
             </details>
         {{end}}
 
         {{if .VideoProperties}}
             <details>
-                <summary><h2>Properties</h2></summary>
+                <summary>{{template "plus_icon"}}<h2>Properties</h2></summary>
                 <ul class="properties">
                     {{$videoProperties := .VideoProperties}}
                     {{range $property := .VideoPropertiesOrder}}
@@ -134,7 +136,7 @@
 
         {{if .PlaylistViewModel}}
             <details open>
-                <summary><h2>Playlist</h2></summary>
+                <summary>{{template "plus_icon"}}<h2>Playlist</h2></summary>
                 <ul class="playlists">
                     {{template "playlist" .PlaylistViewModel}}
                 </ul>

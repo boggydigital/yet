@@ -13,6 +13,7 @@
     </head>
     <body>
 
+    {{template "icons"}}
     {{template "back"}}
 
     <h1 class='channel'><span>{{.ChannelTitle}}</span></h1>
@@ -37,7 +38,7 @@
     {{range $playlistId := .PlaylistsOrder}}
         {{if $playlistId}}
             <details class="channel_playlist">
-                <summary><h2>{{index $playlists $playlistId}}</h2></summary>
+                <summary>{{template "plus_icon"}}<h2>{{index $playlists $playlistId}}</h2></summary>
                 <a class='playlist' href='/playlist?list={{$playlistId}}'>View playlist</a>
                 {{$videos := index $playlistsVideos $playlistId}}
                 <ul class="videos resp-grid">

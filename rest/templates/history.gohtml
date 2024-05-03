@@ -18,6 +18,7 @@
     </head>
     <body>
 
+    {{template "icons"}}
     {{template "back"}}
 
     <h1 class="history">{{.Title}}</h1>
@@ -31,7 +32,7 @@
         {{$videos := index $groups $group}}
         {{if $videos}}
             <details {{if eq $group $openGroup}}open{{end}}>
-                <summary><h2>{{$group}}</h2></summary>
+                <summary>{{template "plus_icon"}}<h2>{{$group}}</h2></summary>
                 <ul class="videos resp-grid">
                 {{range $videos}}
                     <li>{{template "video" .}}</li>
