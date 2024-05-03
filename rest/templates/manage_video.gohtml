@@ -20,8 +20,8 @@
     <div class="subtle"><b>VideoId:</b> {{.VideoId}}</div>
     {{if .CanViewAtOrigin}}
         <a class="action"
-           href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}&t={{.CurrentTime}}{{end}}">
-            {{if .CurrentTime}}Continue watching at origin{{else}}Watch at origin{{end}}</a>
+           href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}&t={{.CurrentTime}}{{end}}{{end}}">
+            {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
     {{else}}
     {{end}}
 
@@ -60,13 +60,15 @@
             </li>
             <li><h2>Download options</h2></li>
             <li>
-                <input id="forced-download" type="checkbox" switch name="forced-download" {{if .ForcedDownload}}checked{{end}} />
+                <input id="forced-download" type="checkbox" switch name="forced-download"
+                       {{if .ForcedDownload}}checked{{end}} />
                 <label for="forced-download"><b>Forced download</b>.
                     <span class="subtle">Set to add to re-download even if the file already exists.
                         Unset to avoid re-downloading file if it exists locally.</span></label>
             </li>
             <li>
-                <input id="single-format" type="checkbox" switch name="single-format" {{if .SingleFormat}}checked{{end}} />
+                <input id="single-format" type="checkbox" switch name="single-format"
+                       {{if .SingleFormat}}checked{{end}} />
                 <label for="single-format"><b>Single format</b>.
                     <span class="subtle">Set to download in mobile format (720p).
                         Unset to download in the best supported quality.</span></label>
