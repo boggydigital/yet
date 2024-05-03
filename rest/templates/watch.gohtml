@@ -160,10 +160,13 @@
 
     <script>
         let lastProgressUpdate = new Date();
+
+        let prg = document.getElementsByTagName('progress')[0]
         video.addEventListener('timeupdate', (e) => {
             let now = new Date();
             let elapsed = now - lastProgressUpdate;
-            if (elapsed > 5000) {
+            if (elapsed > 3000) {
+                prg.value = video.currentTime
                 fetch('/progress', {
                     method: 'post',
                     headers: {
@@ -187,7 +190,9 @@
                 body: JSON.stringify({v: '{{.VideoId}}'})
             }).then((resp) => { if (resp && !resp.ok) {
                 console.log(resp)}
-            });});
+            });
+        prg.value = prg.max
+        });
     </script>
 
     <script>

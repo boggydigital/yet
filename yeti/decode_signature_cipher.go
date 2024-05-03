@@ -16,7 +16,6 @@ import (
 
 const (
 	signatureCipherFuncBodyStart = "a=a.split(\"\")"
-	signatureCipherFuncBodyEnd   = "};"
 	objectStartTemplate          = "var %s={"
 	objectEnd                    = "};"
 )
