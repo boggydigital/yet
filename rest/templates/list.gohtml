@@ -10,6 +10,21 @@
         <meta name='color-scheme' content='dark light'>
         <title>Watch list</title>
         {{template "css-shared"}}
+        <style>
+            summary.h2 {
+                background-color: var(--subtle-color);
+                color: var(--highlight-color);
+            }
+
+            summary.h2.Unwatched {
+                background-color: var(--color-lime);
+            }
+
+            summary.h2.Watched {
+                background-color: var(--color-brown);
+            }
+
+        </style>
     </head>
     <body>
 
@@ -61,7 +76,7 @@
             {{$playlists := .Playlists}}
             {{range $ii, $playlistSection := .PlaylistsOrder}}
                 <details {{if eq $ii 0}}open{{end}}>
-                    <summary>{{template "plus_icon"}}<h2>{{$playlistSection}}</h2></summary>
+                    <summary class="h2 {{$playlistSection}}">{{template "plus_icon"}}<h2>{{$playlistSection}}</h2></summary>
                     <ul class='playlists resp-grid'>
                         {{$playlist := index $playlists $playlistSection}}
                         {{range $playlist}}

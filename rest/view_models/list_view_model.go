@@ -18,7 +18,7 @@ type ListViewModel struct {
 }
 
 const (
-	playlistsNewVideos   = "Unwatched"
+	playlistsNewVideos   = "New"
 	playlistsNoNewVideos = "Watched"
 )
 
