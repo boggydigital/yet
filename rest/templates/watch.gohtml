@@ -168,7 +168,7 @@
             let now = new Date();
             let elapsed = now - lastProgressUpdate;
             if (elapsed > 3000) {
-                prg.value = video.currentTime
+            if (prg) {prg.value = video.currentTime}
                 fetch('/progress', {
                     method: 'post',
                     headers: {
@@ -193,7 +193,7 @@
             }).then((resp) => { if (resp && !resp.ok) {
                 console.log(resp)}
             });
-        prg.value = prg.max
+        if (prg) {prg.value = prg.max}
         });
     </script>
 
