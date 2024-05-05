@@ -52,6 +52,7 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err := os.Stat(absPosterFilename); err == nil {
+			w.Header().Add("Cache-Control", "max-age=31536000")
 			http.ServeFile(w, r, absPosterFilename)
 			return
 		}
@@ -70,6 +71,7 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if br != nil {
+		w.Header().Add("Cache-Control", "max-age=31536000")
 		http.ServeContent(w, r, filename, time.Unix(0, 0), br)
 	} else {
 		http.NotFound(w, r)
