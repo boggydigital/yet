@@ -29,6 +29,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	// resolve full YouTube URL to just video-id, as needed
 	if strings.Contains(v, "?") {
 		if videoIds, err := yeti.ParseVideoIds(v); err != nil {
+
+			// one more attempt - redirect to playlist page if we've got a valid playlist
+			if playlistIds, err := yeti.ParsePlaylistIds(v); err == nil && len(playlistIds) > 0 {
+				http.Redirect(w, r, "/playlist?list="+playlistIds[0], http.StatusPermanentRedirect)
+				return
+			}
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		} else if len(videoIds) > 0 {
