@@ -27,19 +27,25 @@
         <ul class="management">
             <li>
                 <input id="refresh" type="checkbox" switch name="refresh" {{if .Watching}}checked{{end}} />
-                <label for="refresh"><b>Automatically refresh</b>.
-                    <span class="subtle">Check new videos, download metadata</span></label>
+                <label for="refresh">
+                    <span class="title">Automatically refresh</span>
+                    <span class="subtitle subtle">Check new videos, download metadata</span>
+                </label>
             </li>
             <li>
                 <input id="download" type="checkbox" switch name="download" {{if .Downloading}}checked{{end}} />
-                <label for="download"><b>Automatically download new videos</b>.
-                    <span class="subtle">Requires automatic refresh</span></label>
+                <label for="download">
+                    <span class="title">Automatically download new videos</span>
+                    <span class="subtitle subtle">Requires automatic refresh</span>
+                </label>
             </li>
             <li><h2>Download options</h2></li>
             <li>
                 <input id="single-format" type="checkbox" switch name="single-format" {{if .SingleFormat}}checked{{end}} />
-                <label for="single-format"><b>Single format</b>.
-                    <span class="subtle">Download videos in mobile format (720p)</span></label>
+                <label for="single-format">
+                    <span class="title">Single format</span>
+                    <span class="subtitle subtle">Download videos in 720p format</span>
+                </label>
             </li>
         </ul>
         <input type="submit" value='Update'/>
