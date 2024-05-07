@@ -21,6 +21,7 @@ import (
 type WatchViewModel struct {
 	VideoId              string
 	VideoUrl             string
+	AudioUrl             string
 	CurrentTime          string
 	LastEndedTime        string
 	VideoPoster          string
@@ -52,9 +53,10 @@ var propertyTitles = map[string]string{
 	data.VideoSingleFormatDownloadProperty: "Single Format Download",
 }
 
-func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*WatchViewModel, error) {
+func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audioOnly bool) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
+	audioUrl := ""
 	//var videoCaptionTracks []yt_urls.CaptionTrack
 	localPlayback := false
 
@@ -132,12 +134,20 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 			}
 		}
 
-		vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
-		if err != nil {
-			return nil, err
+		if audioOnly {
+			au, err := decode(videoPage.BestAdaptiveAudioFormat().Url, videoPage.PlayerUrl)
+			if err != nil {
+				return nil, err
+			}
+			audioUrl = au.String()
+		} else {
+			vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
+			if err != nil {
+				return nil, err
+			}
+			videoUrl = vu.String()
 		}
 
-		videoUrl = vu.String()
 		videoTitle = videoPage.VideoDetails.Title
 		videoDescription = videoPage.VideoDetails.ShortDescription
 	}
@@ -205,6 +215,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux) (*Wa
 	return &WatchViewModel{
 		VideoId:              videoId,
 		VideoUrl:             videoUrl,
+		AudioUrl:             audioUrl,
 		VideoPoster:          videoPoster,
 		LocalPlayback:        localPlayback,
 		CurrentTimeSeconds:   strconv.FormatInt(dur-rem, 10),

@@ -61,6 +61,8 @@ func DecodeSignatureCiphers(hc *http.Client, ipr *yt_urls.InitialPlayerResponse)
 		formats[i].Url = u.String()
 	}
 
+	dsca.EndWithResult("done")
+
 	return nil
 }
 

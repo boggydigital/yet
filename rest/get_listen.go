@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func GetWatch(w http.ResponseWriter, r *http.Request) {
+func GetListen(w http.ResponseWriter, r *http.Request) {
 
 	// GET /watch?v&t
 
@@ -56,7 +56,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	wvm, err := view_models.GetWatchViewModel(videoId, t, rdx, false)
+	wvm, err := view_models.GetWatchViewModel(videoId, t, rdx, true)
 	if err != nil {
 		http.Redirect(w, r, "/video_error?v="+videoId+"&err="+err.Error(), http.StatusTemporaryRedirect)
 		return
