@@ -10,12 +10,12 @@ require (
 	github.com/boggydigital/kvas v0.4.8
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pasu v0.1.12
-	github.com/boggydigital/yt_urls v0.1.46
+	github.com/boggydigital/yt_urls v0.1.47
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
 )
 
 require (
 	github.com/boggydigital/match_node v0.1.16 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
-	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
 )
