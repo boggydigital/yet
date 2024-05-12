@@ -10,13 +10,6 @@
         <meta name='color-scheme' content='dark light'>
         <title>Manage {{.VideoTitle}}</title>
         {{template "css-shared"}}
-        <style>
-            section.actions {
-                display: flex;
-                flex-direction: row;
-                column-gap: var(--normal);
-            }
-        </style>
     </head>
     <body>
 
@@ -26,15 +19,12 @@
 
     <div class="subtle"><b>VideoId:</b> {{.VideoId}}</div>
 
-    <section class="actions">
-        {{if .CanViewAtOrigin}}
-            <a class="action"
-               href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}&t={{.CurrentTime}}{{end}}{{end}}">
-                {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
-        {{else}}
-        {{end}}
-        <a class='action' href="/listen?v={{.VideoId}}">Listen</a>
-    </section>
+    {{if .CanViewAtOrigin}}
+        <a class="action"
+           href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}&t={{.CurrentTime}}{{end}}{{end}}">
+            {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
+    {{else}}
+    {{end}}
 
     <form method="get" action="/update_video">
         <input type="hidden" id="v" name="v" value="{{.VideoId}}"/>
