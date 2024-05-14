@@ -24,6 +24,7 @@
 
     <form method="get" action="/update_playlist">
         <input type="hidden" id="list" name="list" value="{{.PlaylistId}}" />
+        <input type="submit" value='Update'/>
         <ul class="management">
             <li>
                 <input id="refresh" type="checkbox" switch name="refresh" {{if .Watching}}checked{{end}} />
