@@ -10,22 +10,24 @@ import (
 )
 
 func QueuePlaylistsNewVideosHandler(u *url.URL) error {
-	return QueuePlaylistsNewVideos()
+	return QueuePlaylistsNewVideos(nil)
 }
 
-func QueuePlaylistsNewVideos() error {
+func QueuePlaylistsNewVideos(rdx kvas.WriteableRedux) error {
 
 	qpnva := nod.NewProgress("queueing playlists new videos...")
 	defer qpnva.End()
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return qpnva.EndWithError(err)
-	}
+	if rdx == nil {
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return qpnva.EndWithError(err)
+		}
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-	if err != nil {
-		return qpnva.EndWithError(err)
+		rdx, err = kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+		if err != nil {
+			return qpnva.EndWithError(err)
+		}
 	}
 
 	notNewIndicatorProperties := []string{

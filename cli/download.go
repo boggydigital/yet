@@ -21,22 +21,25 @@ func DownloadHandler(u *url.URL) error {
 	queue := u.Query().Has("queue")
 	force := u.Query().Has("force")
 	singleFormat := u.Query().Has("single-format")
-	return Download(ids, queue, force, singleFormat)
+	return Download(nil, queue, force, singleFormat, ids...)
 }
 
-func Download(ids []string, queue, force, singleFormat bool) error {
+func Download(rdx kvas.WriteableRedux, queue, force, singleFormat bool, ids ...string) error {
 
 	da := nod.NewProgress("downloading videos...")
 	defer da.End()
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return da.EndWithError(err)
-	}
+	if rdx == nil {
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-	if err != nil {
-		return da.EndWithError(err)
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return da.EndWithError(err)
+		}
+
+		rdx, err = kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+		if err != nil {
+			return da.EndWithError(err)
+		}
 	}
 
 	if queue {

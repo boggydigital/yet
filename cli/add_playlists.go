@@ -20,26 +20,32 @@ func AddPlaylistsHandler(u *url.URL) error {
 	singleFormat := strings.Split(q.Get("single-format"), ",")
 	allVideos := q.Has("all-videos")
 
-	return AddPlaylists(allVideos, map[string][]string{
-		data.PlaylistWatchlistProperty:            watchlist,
-		data.PlaylistDownloadQueueProperty:        downloadQueue,
-		data.PlaylistSingleFormatDownloadProperty: singleFormat,
-	})
+	return AddPlaylists(
+		nil,
+		allVideos,
+		map[string][]string{
+			data.PlaylistWatchlistProperty:            watchlist,
+			data.PlaylistDownloadQueueProperty:        downloadQueue,
+			data.PlaylistSingleFormatDownloadProperty: singleFormat,
+		})
 }
 
-func AddPlaylists(allVideos bool, propertyValues map[string][]string) error {
+func AddPlaylists(rdx kvas.WriteableRedux, allVideos bool, propertyValues map[string][]string) error {
 
 	apa := nod.NewProgress("adding playlists...")
 	defer apa.End()
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return apa.EndWithError(err)
-	}
+	if rdx == nil {
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, maps.Keys(propertyValues)...)
-	if err != nil {
-		return apa.EndWithError(err)
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return apa.EndWithError(err)
+		}
+
+		rdx, err = kvas.NewReduxWriter(metadataDir, maps.Keys(propertyValues)...)
+		if err != nil {
+			return apa.EndWithError(err)
+		}
 	}
 
 	apa.TotalInt(len(propertyValues))
@@ -61,7 +67,7 @@ func AddPlaylists(allVideos bool, propertyValues map[string][]string) error {
 	}
 
 	if len(uniquePlaylists) > 0 {
-		if err := GetPlaylistMetadata(allVideos, false, maps.Keys(uniquePlaylists)...); err != nil {
+		if err := GetPlaylistMetadata(rdx, allVideos, false, maps.Keys(uniquePlaylists)...); err != nil {
 			return apa.EndWithError(err)
 		}
 	}

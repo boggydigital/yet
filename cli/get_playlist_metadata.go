@@ -16,10 +16,10 @@ func GetPlaylistMetadataHandler(u *url.URL) error {
 	ids := strings.Split(q.Get("id"), ",")
 	allVideos := q.Has("all-videos")
 	force := q.Has("force")
-	return GetPlaylistMetadata(allVideos, force, ids...)
+	return GetPlaylistMetadata(nil, allVideos, force, ids...)
 }
 
-func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
+func GetPlaylistMetadata(rdx kvas.WriteableRedux, allVideos, force bool, ids ...string) error {
 	gpma := nod.NewProgress("getting playlist metadata...")
 	defer gpma.End()
 
@@ -30,14 +30,17 @@ func GetPlaylistMetadata(allVideos, force bool, ids ...string) error {
 
 	gpma.TotalInt(len(playlistIds))
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return gpma.EndWithError(err)
-	}
+	if rdx == nil {
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-	if err != nil {
-		return gpma.EndWithError(err)
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return gpma.EndWithError(err)
+		}
+
+		rdx, err = kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+		if err != nil {
+			return gpma.EndWithError(err)
+		}
 	}
 
 	for _, playlistId := range playlistIds {

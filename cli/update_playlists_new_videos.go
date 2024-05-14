@@ -10,22 +10,25 @@ import (
 )
 
 func UpdatePlaylistsNewVideosHandler(u *url.URL) error {
-	return UpdatePlaylistsNewVideos()
+	return UpdatePlaylistsNewVideos(nil)
 }
 
-func UpdatePlaylistsNewVideos() error {
+func UpdatePlaylistsNewVideos(rdx kvas.WriteableRedux) error {
 
 	upmnva := nod.NewProgress("updating playlists new videos (new since last ended)...")
 	defer upmnva.End()
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return upmnva.EndWithError(err)
-	}
+	if rdx == nil {
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-	if err != nil {
-		return upmnva.EndWithError(err)
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return upmnva.EndWithError(err)
+		}
+
+		rdx, err = kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+		if err != nil {
+			return upmnva.EndWithError(err)
+		}
 	}
 
 	playlistIds := rdx.Keys(data.PlaylistWatchlistProperty)

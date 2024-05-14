@@ -16,30 +16,32 @@ import (
 )
 
 func CleanupEndedHandler(u *url.URL) error {
-	return CleanupEnded()
+	return CleanupEnded(nil)
 }
 
-func CleanupEnded() error {
+func CleanupEnded(rdx kvas.ReadableRedux) error {
 
 	cea := nod.NewProgress("cleaning up ended media...")
 	defer cea.End()
-
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return cea.EndWithError(err)
-	}
 
 	absVideosDir, err := pasu.GetAbsDir(paths.Videos)
 	if err != nil {
 		return cea.EndWithError(err)
 	}
 
-	rdx, err := kvas.NewReduxReader(metadataDir,
-		data.VideoEndedProperty,
-		data.VideoTitleProperty,
-		data.VideoOwnerChannelNameProperty)
-	if err != nil {
-		return cea.EndWithError(err)
+	if rdx == nil {
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return cea.EndWithError(err)
+		}
+
+		rdx, err = kvas.NewReduxReader(metadataDir,
+			data.VideoEndedProperty,
+			data.VideoTitleProperty,
+			data.VideoOwnerChannelNameProperty)
+		if err != nil {
+			return cea.EndWithError(err)
+		}
 	}
 
 	videoIds := rdx.Keys(data.VideoEndedProperty)

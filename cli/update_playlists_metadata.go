@@ -10,25 +10,27 @@ import (
 )
 
 func UpdatePlaylistsMetadataHandler(u *url.URL) error {
-	return UpdatePlaylistsMetadata()
+	return UpdatePlaylistsMetadata(nil)
 }
 
-func UpdatePlaylistsMetadata() error {
+func UpdatePlaylistsMetadata(rdx kvas.WriteableRedux) error {
 
 	upma := nod.NewProgress("updating all playlists metadata...")
 	defer upma.End()
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return upma.EndWithError(err)
+	if rdx == nil {
+		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		if err != nil {
+			return upma.EndWithError(err)
+		}
+
+		rdx, err = kvas.NewReduxWriter(metadataDir, data.PlaylistWatchlistProperty)
+		if err != nil {
+			return upma.EndWithError(err)
+		}
 	}
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.PlaylistWatchlistProperty)
-	if err != nil {
-		return upma.EndWithError(err)
-	}
-
-	if err := GetPlaylistMetadata(false, true, rdx.Keys(data.PlaylistWatchlistProperty)...); err != nil {
+	if err := GetPlaylistMetadata(rdx, false, true, rdx.Keys(data.PlaylistWatchlistProperty)...); err != nil {
 		return upma.EndWithError(err)
 	}
 

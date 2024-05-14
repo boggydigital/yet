@@ -1,7 +1,11 @@
 package cli
 
 import (
+	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/paths"
 	"net/url"
 )
 
@@ -16,23 +20,33 @@ func Sync(force, singleFormat bool) error {
 	sa := nod.Begin("syncing playlists subscriptions...")
 	defer sa.End()
 
-	if err := UpdatePlaylistsMetadata(); err != nil {
+	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+	if err != nil {
 		return sa.EndWithError(err)
 	}
 
-	if err := UpdatePlaylistsNewVideos(); err != nil {
+	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+	if err != nil {
 		return sa.EndWithError(err)
 	}
 
-	if err := QueuePlaylistsNewVideos(); err != nil {
+	if err := UpdatePlaylistsMetadata(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
-	if err := Download(nil, true, force, singleFormat); err != nil {
+	if err := UpdatePlaylistsNewVideos(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
-	if err := CleanupEnded(); err != nil {
+	if err := QueuePlaylistsNewVideos(rdx); err != nil {
+		return sa.EndWithError(err)
+	}
+
+	if err := Download(rdx, true, force, singleFormat); err != nil {
+		return sa.EndWithError(err)
+	}
+
+	if err := CleanupEnded(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
