@@ -1,22 +1,22 @@
 package paths
 
 import (
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 )
 
 const DefaultYetRootDir = "/usr/share/yet"
 
 const (
-	Backups  pasu.AbsDir = "backups"
-	Input    pasu.AbsDir = "input"
-	Metadata pasu.AbsDir = "metadata"
-	Videos   pasu.AbsDir = "videos"
-	Posters  pasu.AbsDir = "posters"
-	Captions pasu.AbsDir = "captions"
-	Players  pasu.AbsDir = "players"
+	Backups  pathways.AbsDir = "backups"
+	Input    pathways.AbsDir = "input"
+	Metadata pathways.AbsDir = "metadata"
+	Videos   pathways.AbsDir = "videos"
+	Posters  pathways.AbsDir = "posters"
+	Captions pathways.AbsDir = "captions"
+	Players  pathways.AbsDir = "players"
 )
 
-var AllAbsDirs = []pasu.AbsDir{
+var AllAbsDirs = []pathways.AbsDir{
 	Backups,
 	Input,
 	Metadata,

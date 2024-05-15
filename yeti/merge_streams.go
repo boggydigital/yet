@@ -3,7 +3,7 @@ package yeti
 import (
 	"errors"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/paths"
 	"os"
 	"os/exec"
@@ -11,7 +11,7 @@ import (
 )
 
 func MergeStreams(relFilename string, force bool) error {
-	absVideosDir, err := pasu.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -32,7 +32,7 @@ func GetPlaylistMetadata(rdx kvas.WriteableRedux, allVideos, force bool, ids ...
 
 	if rdx == nil {
 
-		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 		if err != nil {
 			return gpma.EndWithError(err)
 		}

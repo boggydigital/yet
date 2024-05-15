@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"github.com/boggydigital/clo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/cli"
 	"github.com/boggydigital/yet/paths"
 	"os"
@@ -28,7 +28,7 @@ func main() {
 	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.End()
 
-	if err := pasu.Setup(dirOverridesFilename,
+	if err := pathways.Setup(dirOverridesFilename,
 		paths.DefaultYetRootDir,
 		nil,
 		paths.AllAbsDirs...); err != nil {

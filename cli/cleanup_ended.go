@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -24,13 +24,13 @@ func CleanupEnded(rdx kvas.ReadableRedux) error {
 	cea := nod.NewProgress("cleaning up ended media...")
 	defer cea.End()
 
-	absVideosDir, err := pasu.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
 	if err != nil {
 		return cea.EndWithError(err)
 	}
 
 	if rdx == nil {
-		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 		if err != nil {
 			return cea.EndWithError(err)
 		}

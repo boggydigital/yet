@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -31,7 +31,7 @@ func GetVideoMetadata(forId string, force bool, ids ...string) error {
 
 	gvma.TotalInt(len(videoIds))
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return gvma.EndWithError(err)
 	}

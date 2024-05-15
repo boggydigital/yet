@@ -3,7 +3,7 @@ package paths
 import (
 	"errors"
 	"fmt"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yt_urls"
 	"os"
 	"path/filepath"
@@ -19,7 +19,7 @@ const (
 )
 
 func AbsCookiesPath() (string, error) {
-	idp, err := pasu.GetAbsDir(Input)
+	idp, err := pathways.GetAbsDir(Input)
 	return filepath.Join(idp, cookiesFilename), err
 }
 
@@ -29,7 +29,7 @@ func AbsCookiesPath() (string, error) {
 // /path/to/posters/v/i/videoId/quality.jpg
 func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, error) {
 
-	pdp, err := pasu.GetAbsDir(Posters)
+	pdp, err := pathways.GetAbsDir(Posters)
 	if err != nil {
 		return "", err
 	}
@@ -46,7 +46,7 @@ func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, er
 // first and second letters of video-id to product something like
 // /path/to/captions/f/s/fs_lang.jpg
 func AbsCaptionsTrackPath(videoId, lang string) (string, error) {
-	cdp, err := pasu.GetAbsDir(Captions)
+	cdp, err := pathways.GetAbsDir(Captions)
 	if err != nil {
 		return "", err
 	}
@@ -93,7 +93,7 @@ func mkdirAllVideoIdDirs(path, videoId string) (string, error) {
 }
 
 func AbsPlayerPath(version string) (string, error) {
-	pdp, err := pasu.GetAbsDir(Players)
+	pdp, err := pathways.GetAbsDir(Players)
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +102,7 @@ func AbsPlayerPath(version string) (string, error) {
 }
 
 func AbsNParamDecoderPath(version string) (string, error) {
-	pdp, err := pasu.GetAbsDir(Players)
+	pdp, err := pathways.GetAbsDir(Players)
 	if err != nil {
 		return "", err
 	}
@@ -111,7 +111,7 @@ func AbsNParamDecoderPath(version string) (string, error) {
 }
 
 func AbsSignatureCipherDecoderPath(version string) (string, error) {
-	pdp, err := pasu.GetAbsDir(Players)
+	pdp, err := pathways.GetAbsDir(Players)
 	if err != nil {
 		return "", err
 	}

@@ -4,7 +4,7 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
@@ -31,7 +31,7 @@ func Download(rdx kvas.WriteableRedux, queue, force, singleFormat bool, ids ...s
 
 	if rdx == nil {
 
-		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 		if err != nil {
 			return da.EndWithError(err)
 		}

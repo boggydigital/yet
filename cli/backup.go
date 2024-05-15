@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/konpo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
 )
@@ -18,12 +18,12 @@ func Backup() error {
 	ea := nod.NewProgress("backing up metadata...")
 	defer ea.End()
 
-	amp, err := pasu.GetAbsDir(paths.Metadata)
+	amp, err := pathways.GetAbsDir(paths.Metadata)
 	if err != nil {
 		return ea.EndWithError(err)
 	}
 
-	abp, err := pasu.GetAbsDir(paths.Backups)
+	abp, err := pathways.GetAbsDir(paths.Backups)
 	if err != nil {
 		return ea.EndWithError(err)
 	}

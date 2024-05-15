@@ -9,9 +9,9 @@ require (
 	github.com/boggydigital/konpo v0.1.2
 	github.com/boggydigital/kvas v0.4.8
 	github.com/boggydigital/nod v0.1.21
-	github.com/boggydigital/pasu v0.1.12
+	github.com/boggydigital/pathways v0.1.14
 	github.com/boggydigital/yt_urls v0.1.47
-	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
+	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
 )
 
 require (

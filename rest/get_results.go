@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/rest/view_models"
@@ -31,7 +31,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

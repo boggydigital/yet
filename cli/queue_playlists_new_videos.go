@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pasu"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"net/url"
@@ -19,7 +19,7 @@ func QueuePlaylistsNewVideos(rdx kvas.WriteableRedux) error {
 	defer qpnva.End()
 
 	if rdx == nil {
-		metadataDir, err := pasu.GetAbsDir(paths.Metadata)
+		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 		if err != nil {
 			return qpnva.EndWithError(err)
 		}
