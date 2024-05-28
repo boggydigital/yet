@@ -123,7 +123,7 @@ func getPlayOptions(videoId, p string) (*rutube_urls.PlayOptions, error) {
 		"title":  {strings.Replace(playOptions.Title, "\n", " ", -1)},
 	}
 
-	gpo.EndWithSummary("done", summary)
+	gpo.EndWithSummary("details:", summary)
 
 	return &playOptions, nil
 }
