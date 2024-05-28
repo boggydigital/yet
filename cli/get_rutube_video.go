@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
@@ -10,38 +11,33 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/rutube_urls"
-	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 )
 
-func GetRutubeVideoHandler(u *url.URL) error {
+func GetRuTubeVideoHandler(u *url.URL) error {
 	urls := strings.Split(u.Query().Get("url"), ",")
 	force := u.Query().Has("force")
-	return GetRutubeVideo(force, urls...)
+	return GetRuTubeVideo(force, urls...)
 }
 
-func GetRutubeVideo(force bool, urls ...string) error {
+func GetRuTubeVideo(force bool, urls ...string) error {
 
 	grva := nod.NewProgress("getting Rutube videos...")
 	defer grva.End()
 
 	grva.TotalInt(len(urls))
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
-	if err != nil {
-		return grva.EndWithError(err)
-	}
-
 	dc := dolo.DefaultClient
 
 	for _, u := range urls {
 
-		if err := downloadRutubeVideo(dc, u, absVideosDir, force); err != nil {
+		if err := getRuTubeVideo(dc, u, force); err != nil {
 			grva.Error(err)
 		}
 
@@ -53,7 +49,7 @@ func GetRutubeVideo(force bool, urls ...string) error {
 	return nil
 }
 
-func downloadRutubeVideo(dc *dolo.Client, u string, videosDir string, force bool) error {
+func getRuTubeVideo(dc *dolo.Client, u string, force bool) error {
 
 	ru, err := url.Parse(u)
 	if err != nil {
@@ -61,98 +57,56 @@ func downloadRutubeVideo(dc *dolo.Client, u string, videosDir string, force bool
 	}
 
 	videoId, p := path.Base(ru.Path), ru.Query().Get("p")
-	po := rutube_urls.PlayOptionsUrl(videoId, p)
 
-	playOptions, err := getPlayOptions(po)
+	grtva := nod.Begin("getting %s...", videoId)
+	defer grtva.End()
+
+	playOptions, err := getPlayOptions(videoId, p)
 	if err != nil {
-		return err
+		return grtva.EndWithError(err)
 	}
 
-	channel := playOptions.Author.Name
-	title := playOptions.Title
-	title = strings.Replace(title, "\n", " ", -1)
-
-	drva := nod.NewProgress(" %s", title)
-	defer drva.End()
-
-	formats, err := getVideoBalancerFormats(playOptions.VideoBalancer.Default)
+	formats, err := getVideoBalancerFormats(videoId, playOptions)
 	if err != nil {
-		return err
+		return grtva.EndWithError(err)
 	}
 
-	if len(formats) == 0 {
-		return fmt.Errorf("no formats found")
-	}
-
-	fu, err := url.Parse(formats[len(formats)-1])
+	segments, err := getVideoSegmentsPlaylist(videoId, formats)
 	if err != nil {
-		return err
+		return grtva.EndWithError(err)
 	}
 
-	segments, err := getVideoSegments(fu.String())
+	err = getVideoSegments(playOptions, formats, segments, dc, force)
 	if err != nil {
-		return err
+		return grtva.EndWithError(err)
 	}
 
-	drva.TotalInt(len(segments))
-
-	fuBase := path.Base(fu.Path)
-
-	for _, segment := range segments {
-
-		suStr := strings.Replace(fu.String(), fuBase, segment, 1)
-		su, err := url.Parse(suStr)
-		if err != nil {
-			drva.Error(err)
-			continue
-		}
-
-		fn := path.Base(su.Path)
-
-		if err := dc.Download(su, force, nil, videosDir, channel, fn); err != nil {
-			drva.Error(err)
-			continue
-		}
-
-		drva.Increment()
-	}
-
-	outputDirectory := filepath.Join(videosDir, channel)
-	outputFilename := filepath.Join(
-		videosDir,
-		yeti.ChannelTitleVideoIdFilename(channel, title, videoId))
-
-	tempOutputFilename, err := yeti.MergeSegments(videoId, outputDirectory, segments...)
+	err = generateMergeManifest(playOptions, segments, force)
 	if err != nil {
-		return err
+		return grtva.EndWithError(err)
 	}
 
-	if err := os.Rename(tempOutputFilename, outputFilename); err != nil {
-		if strings.Contains(err.Error(), "cross-device link") {
+	err = mergeVideoSegments(playOptions, force)
+	if err != nil {
+		return grtva.EndWithError(err)
+	}
 
-			if src, err := os.Open(tempOutputFilename); err == nil {
-				defer src.Close()
-				if dst, err := os.Create(outputFilename); err == nil {
-					defer dst.Close()
-					if _, err := io.Copy(dst, src); err != nil {
-						return err
-					}
-				} else {
-					return err
-				}
-			} else {
-				return err
-			}
-		} else {
-			return err
-		}
+	err = removeManifestSegments(playOptions, segments)
+	if err != nil {
+		return grtva.EndWithError(err)
 	}
 
 	return nil
 }
 
-func getPlayOptions(playerOptionsUrl *url.URL) (*rutube_urls.PlayOptions, error) {
-	resp, err := http.DefaultClient.Get(playerOptionsUrl.String())
+func getPlayOptions(videoId, p string) (*rutube_urls.PlayOptions, error) {
+
+	gpo := nod.Begin(" getting play options for %s...", videoId)
+	defer gpo.End()
+
+	pou := rutube_urls.PlayOptionsUrl(videoId, p)
+
+	resp, err := http.DefaultClient.Get(pou.String())
 	if err != nil {
 		return nil, err
 	}
@@ -164,11 +118,22 @@ func getPlayOptions(playerOptionsUrl *url.URL) (*rutube_urls.PlayOptions, error)
 		return nil, err
 	}
 
+	summary := map[string][]string{
+		"author": {playOptions.Author.Name},
+		"title":  {strings.Replace(playOptions.Title, "\n", " ", -1)},
+	}
+
+	gpo.EndWithSummary("done", summary)
+
 	return &playOptions, nil
 }
 
-func getVideoBalancerFormats(videoBalancerUrl string) ([]string, error) {
-	resp, err := http.DefaultClient.Get(videoBalancerUrl)
+func getVideoBalancerFormats(videoId string, playOptions *rutube_urls.PlayOptions) ([]string, error) {
+
+	gvbfa := nod.Begin(" getting video balancer formats for %s...", videoId)
+	defer gvbfa.End()
+
+	resp, err := http.DefaultClient.Get(playOptions.VideoBalancer.Default)
 	if err != nil {
 		return nil, err
 	}
@@ -185,11 +150,21 @@ func getVideoBalancerFormats(videoBalancerUrl string) ([]string, error) {
 		}
 	}
 
+	if len(formats) == 0 {
+		return nil, gvbfa.EndWithError(errors.New("no formats found"))
+	}
+
+	gvbfa.EndWithResult("done")
+
 	return formats, nil
 }
 
-func getVideoSegments(videoSegmentsUrl string) ([]string, error) {
-	resp, err := http.DefaultClient.Get(videoSegmentsUrl)
+func getVideoSegmentsPlaylist(videoId string, formats []string) ([]string, error) {
+
+	gvspa := nod.Begin(" getting video segments playlist for %s...", videoId)
+	defer gvspa.End()
+
+	resp, err := http.DefaultClient.Get(formats[len(formats)-1])
 	if err != nil {
 		return nil, err
 	}
@@ -206,5 +181,196 @@ func getVideoSegments(videoSegmentsUrl string) ([]string, error) {
 		}
 	}
 
+	gvspa.EndWithResult("done")
+
 	return segments, nil
+}
+
+func getVideoSegments(
+	playOptions *rutube_urls.PlayOptions,
+	formats []string,
+	segments []string,
+	dc *dolo.Client,
+	force bool) error {
+
+	videoId := playOptions.VideoId
+	channel := playOptions.Author.Name
+
+	gvsa := nod.NewProgress(" getting video segments for %s...", videoId)
+	defer gvsa.End()
+
+	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	if err != nil {
+		return gvsa.EndWithError(err)
+	}
+
+	gvsa.TotalInt(len(segments))
+
+	lastFormat := formats[len(formats)-1]
+	lfBase := path.Base(lastFormat)
+
+	for _, segment := range segments {
+
+		suStr := strings.Replace(lastFormat, lfBase, segment, 1)
+		su, err := url.Parse(suStr)
+		if err != nil {
+			gvsa.Error(err)
+			continue
+		}
+
+		if err := dc.Download(su, force, nil, absVideosDir, channel, segment); err != nil {
+			gvsa.Error(err)
+			gvsa.Increment()
+			continue
+		}
+
+		gvsa.Increment()
+	}
+
+	return nil
+}
+
+func relManifestFilename(videoId string) string {
+	return videoId + ".txt"
+}
+
+func absManifestFilename(playOptions *rutube_urls.PlayOptions) (string, error) {
+
+	videoId := playOptions.VideoId
+	channel := playOptions.Author.Name
+
+	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(absVideosDir, channel, relManifestFilename(videoId)), nil
+}
+
+func generateMergeManifest(playOptions *rutube_urls.PlayOptions, segments []string, force bool) error {
+
+	videoId := playOptions.VideoId
+
+	gmma := nod.Begin(" generating merge manifest for %s...", videoId)
+	defer gmma.End()
+
+	amf, err := absManifestFilename(playOptions)
+	if err != nil {
+		return gmma.EndWithError(err)
+	}
+
+	if _, err := os.Stat(amf); err == nil && force {
+		if err := os.Remove(amf); err != nil {
+			return gmma.EndWithError(err)
+		}
+	}
+
+	manifestFile, err := os.Create(amf)
+	if err != nil {
+		return gmma.EndWithError(err)
+	}
+
+	for _, segment := range segments {
+		line := fmt.Sprintf("file '%s'\n", segment)
+		if _, err := manifestFile.WriteString(line); err != nil {
+			return gmma.EndWithError(err)
+		}
+	}
+
+	gmma.EndWithResult("done")
+
+	return nil
+}
+
+func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error {
+
+	videoId := playOptions.VideoId
+	channel := playOptions.Author.Name
+	title := playOptions.Title
+
+	title = strings.Replace(title, "\n", " ", -1)
+
+	mvsa := nod.Begin(" merging video segments for %s, this can take a while...", videoId)
+	defer mvsa.End()
+
+	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	if err != nil {
+		return mvsa.EndWithError(err)
+	}
+
+	absOutputDir := filepath.Join(absVideosDir, channel)
+
+	relOutputFilename := yeti.ChannelTitleVideoIdFilename("", title, videoId)
+	absOutputFilename := filepath.Join(absVideosDir, channel, relOutputFilename)
+
+	if _, err := os.Stat(absOutputFilename); err == nil && force {
+		if err := os.Remove(absOutputFilename); err != nil {
+			return mvsa.EndWithError(err)
+		}
+	}
+
+	ffmb := yeti.GetBinary(yeti.FFMpegBin)
+	if ffmb == "" {
+		return errors.New("ffmpeg not available")
+	}
+
+	args := []string{
+		"-f", "concat",
+		"-i", relManifestFilename(videoId),
+		"-c", "copy", relOutputFilename}
+
+	cmd := exec.Command(ffmb, args...)
+	cmd.Dir = absOutputDir
+	if err := cmd.Run(); err != nil {
+		return mvsa.EndWithError(err)
+	}
+
+	return nil
+}
+
+func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []string) error {
+
+	videoId := playOptions.VideoId
+	channel := playOptions.Author.Name
+
+	rmsa := nod.NewProgress(" removing manifest, segments for %s...", videoId)
+	defer rmsa.End()
+
+	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	if err != nil {
+		return rmsa.EndWithError(err)
+	}
+
+	absOutputDir := filepath.Join(absVideosDir, channel)
+
+	amf, err := absManifestFilename(playOptions)
+	if err != nil {
+		return rmsa.EndWithError(err)
+	}
+
+	if err := os.Remove(amf); err != nil {
+		return rmsa.EndWithError(err)
+	}
+
+	rmsa.TotalInt(len(segments))
+
+	dir := ""
+
+	for _, segment := range segments {
+
+		dir = path.Dir(segment)
+
+		absSegmentFilename := filepath.Join(absOutputDir, segment)
+		if err := os.Remove(absSegmentFilename); err != nil {
+			return rmsa.EndWithError(err)
+		}
+
+		rmsa.Increment()
+	}
+
+	if err := os.Remove(dir); err != nil {
+		return rmsa.EndWithError(err)
+	}
+
+	return nil
 }
