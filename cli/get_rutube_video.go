@@ -269,6 +269,7 @@ func generateMergeManifest(playOptions *rutube_urls.PlayOptions, segments []stri
 	if err != nil {
 		return gmma.EndWithError(err)
 	}
+	defer manifestFile.Close()
 
 	for _, segment := range segments {
 		line := fmt.Sprintf("file '%s'\n", segment)
@@ -368,7 +369,7 @@ func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []str
 		rmsa.Increment()
 	}
 
-	if err := os.Remove(dir); err != nil {
+	if err := os.Remove(filepath.Join(absOutputDir, dir)); err != nil {
 		return rmsa.EndWithError(err)
 	}
 
