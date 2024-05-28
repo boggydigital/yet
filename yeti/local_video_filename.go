@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-const mp4Ext = ".mp4"
-
 func DefaultFilenameDelegate(videoId string, videoPage *youtube_urls.InitialPlayerResponse) string {
 	channel, title := "", ""
 	if videoPage != nil {
@@ -40,7 +38,7 @@ func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
 
 	// channel, video titles might contain characters that would be problematic for
 	// modern operating system filesystems - removing those
-	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|", "\""} {
+	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|", "\"", "\n"} {
 		fn = strings.ReplaceAll(fn, ch, "")
 		channel = strings.ReplaceAll(channel, ch, "")
 	}

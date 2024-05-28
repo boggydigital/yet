@@ -10,7 +10,7 @@ require (
 	github.com/boggydigital/kvas v0.4.10
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pathways v0.1.14
-	github.com/boggydigital/yet_urls v0.1.48
+	github.com/boggydigital/yet_urls v0.1.49
 	golang.org/x/exp v0.0.0-20240525044651-4c93da0ed11d
 )
 

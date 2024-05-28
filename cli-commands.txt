@@ -53,6 +53,10 @@ get-url-data
     last-downloaded
     force
 
+get-rutube-video
+    url&^
+    force
+
 get-playlist-metadata
     id&^
     force

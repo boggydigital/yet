@@ -59,6 +59,7 @@ func main() {
 		"get-url-file":                cli.GetUrlFileHandler,
 		"get-playlist-metadata":       cli.GetPlaylistMetadataHandler,
 		"get-poster":                  cli.GetPosterHandler,
+		"get-rutube-video":            cli.GetRutubeVideoHandler,
 		"get-video-metadata":          cli.GetVideoMetadataHandler,
 		"get-video-file":              cli.GetVideoFileHandler,
 		"queue-playlists-new-videos":  cli.QueuePlaylistsNewVideosHandler,
