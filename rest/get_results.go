@@ -6,7 +6,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/rest/view_models"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"strings"
 )
@@ -25,7 +25,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	terms := strings.Split(searchQuery, " ")
 
-	sid, err := yt_urls.GetSearchResultsPage(http.DefaultClient, terms...)
+	sid, err := youtube_urls.GetSearchResultsPage(http.DefaultClient, terms...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -117,7 +117,7 @@ var extractedSearchChannelProperties = []string{
 	data.ChannelDescriptionProperty,
 }
 
-func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[string][]string {
+func extractSearchVideosMetadata(svrs []youtube_urls.VideoRenderer) map[string]map[string][]string {
 	pkv := make(map[string]map[string][]string)
 
 	for _, property := range extractedSearchVideosProperties {
@@ -145,7 +145,7 @@ func extractSearchVideosMetadata(svrs []yt_urls.VideoRenderer) map[string]map[st
 	return pkv
 }
 
-func extractSearchPlaylistMetadata(sprs []yt_urls.PlaylistRenderer) map[string]map[string][]string {
+func extractSearchPlaylistMetadata(sprs []youtube_urls.PlaylistRenderer) map[string]map[string][]string {
 	pkv := make(map[string]map[string][]string)
 
 	for _, property := range extractedSearchPlaylistProperties {
@@ -167,7 +167,7 @@ func extractSearchPlaylistMetadata(sprs []yt_urls.PlaylistRenderer) map[string]m
 	return pkv
 }
 
-func extractSearchChannelMetadata(scrs []yt_urls.ChannelRenderer) map[string]map[string][]string {
+func extractSearchChannelMetadata(scrs []youtube_urls.ChannelRenderer) map[string]map[string][]string {
 	pkv := make(map[string]map[string][]string)
 
 	for _, property := range extractedSearchChannelProperties {

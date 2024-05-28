@@ -8,7 +8,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"strings"
 )
@@ -56,7 +56,7 @@ func GetCaptions(force bool, ids ...string) error {
 }
 
 func getVideoPageCaptions(
-	videoPage *yt_urls.InitialPlayerResponse,
+	videoPage *youtube_urls.InitialPlayerResponse,
 	videoId string,
 	rdx kvas.WriteableRedux,
 	dl *dolo.Client,

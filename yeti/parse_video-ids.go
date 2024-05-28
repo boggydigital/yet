@@ -2,7 +2,7 @@ package yeti
 
 import (
 	"fmt"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"path"
 	"strings"
@@ -41,7 +41,7 @@ func ParseVideoIds(args ...string) ([]string, error) {
 			}
 		} else if strings.Contains(urlOrId, "v=") {
 			//currently, YouTube video URLs contain v=video-id parameter
-			videoId, err := yt_urls.VideoId(urlOrId)
+			videoId, err := youtube_urls.VideoId(urlOrId)
 			if err != nil {
 				return videoIds, err
 			}

@@ -34,7 +34,7 @@ func MergeStreams(relFilename string, force bool) error {
 	}
 
 	//merge streams into a single file
-	//since yt_urls filters to mp4 formats only, we don't need to do any transcoding
+	//since youtube_urls filters to mp4 formats only, we don't need to do any transcoding
 	//and can quickly merge by copying streams:
 	//ffmpeg -i video.mp4 -i audio.wav -c copy output.mp4
 	ma := nod.Begin("merging streams for %s...", relFilename)

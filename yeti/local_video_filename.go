@@ -2,14 +2,14 @@ package yeti
 
 import (
 	"fmt"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"path/filepath"
 	"strings"
 )
 
 const mp4Ext = ".mp4"
 
-func DefaultFilenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerResponse) string {
+func DefaultFilenameDelegate(videoId string, videoPage *youtube_urls.InitialPlayerResponse) string {
 	channel, title := "", ""
 	if videoPage != nil {
 		title = videoPage.VideoDetails.Title
@@ -27,7 +27,7 @@ func DefaultFilenameDelegate(videoId string, videoPage *yt_urls.InitialPlayerRes
 // characters not suitable for file names.
 func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
 
-	if strings.HasSuffix(videoId, yt_urls.DefaultVideoExt) {
+	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
 		return videoId
 	}
 
@@ -53,5 +53,5 @@ func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
 	//relative file paths (e.g. "../../title"), cleaning that up
 	fn = filepath.Clean(fn)
 
-	return fn + yt_urls.DefaultVideoExt
+	return fn + youtube_urls.DefaultVideoExt
 }

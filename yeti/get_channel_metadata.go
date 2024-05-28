@@ -4,7 +4,7 @@ import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 )
 
@@ -12,14 +12,14 @@ const (
 	videosPerTab = 12
 )
 
-func GetChannelPageMetadata(channelPage *yt_urls.ChannelInitialData, channelId string, rdx kvas.WriteableRedux) error {
+func GetChannelPageMetadata(channelPage *youtube_urls.ChannelInitialData, channelId string, rdx kvas.WriteableRedux) error {
 
 	gchpma := nod.NewProgress(" metadata for %s", channelId)
 	defer gchpma.End()
 
 	var err error
 	if channelPage == nil {
-		channelPage, err = yt_urls.GetChannelPage(http.DefaultClient, channelId)
+		channelPage, err = youtube_urls.GetChannelPage(http.DefaultClient, channelId)
 		if err != nil {
 			return gchpma.EndWithError(err)
 		}

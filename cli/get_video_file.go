@@ -10,7 +10,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"net/url"
 	"os"
@@ -114,7 +114,7 @@ func GetVideoFile(force, singleFormat bool, ids ...string) error {
 func downloadVideo(
 	dl *dolo.Client,
 	videoId string,
-	videoPage *yt_urls.InitialPlayerResponse,
+	videoPage *youtube_urls.InitialPlayerResponse,
 	force bool,
 	singleFormat bool) error {
 
@@ -161,7 +161,7 @@ func downloadVideo(
 func downloadSingleFormat(
 	dl *dolo.Client,
 	relFilename string,
-	format *yt_urls.Format,
+	format *youtube_urls.Format,
 	playerUrl string,
 	force bool) error {
 
@@ -211,7 +211,7 @@ func downloadSingleFormat(
 	return nil
 }
 
-func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, vp *yt_urls.InitialPlayerResponse, force bool) error {
+func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, vp *youtube_urls.InitialPlayerResponse, force bool) error {
 
 	rvfn, rafn := yeti.VideoAudioFilenames(relFilename)
 

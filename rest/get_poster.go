@@ -6,7 +6,7 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
 	"net/http"
 	"os"
@@ -27,13 +27,13 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 	videoId := r.URL.Query().Get("v")
 	tq := r.URL.Query().Get("q")
 
-	quality := yt_urls.ParseThumbnailQuality(tq)
+	quality := youtube_urls.ParseThumbnailQuality(tq)
 
 	if videoId == "" {
 		return
 	}
 
-	for q := quality; q != yt_urls.ThumbnailQualityUnknown; q = yt_urls.LowerQuality(q) {
+	for q := quality; q != youtube_urls.ThumbnailQualityUnknown; q = youtube_urls.LowerQuality(q) {
 
 		absPosterFilename, err := paths.AbsPosterPath(videoId, q)
 		if err != nil {
@@ -44,7 +44,7 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 		// attempt to fetch posters from the origin if they don't exist locally
 		// unless that's a URL file
 		if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) &&
-			!strings.Contains(videoId, yt_urls.DefaultVideoExt) {
+			!strings.Contains(videoId, youtube_urls.DefaultVideoExt) {
 			if err := yeti.GetPosters(videoId, dolo.DefaultClient, false, q); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -62,7 +62,7 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 	filename := ""
 
 	switch quality {
-	case yt_urls.ThumbnailQualityMaxRes:
+	case youtube_urls.ThumbnailQualityMaxRes:
 		filename = "yet_maxresdefault.png"
 		br = bytes.NewReader(yetPosterMaxResDefault)
 	default:

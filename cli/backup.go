@@ -8,8 +8,6 @@ import (
 	"net/url"
 )
 
-const daysToPreserveFiles = 30
-
 func BackupHandler(_ *url.URL) error {
 	return Backup()
 }

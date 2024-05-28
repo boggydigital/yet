@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/paths"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
 	"net/http"
 	"net/url"
@@ -25,7 +25,7 @@ var (
 	ErrSignatureCipherObjectNotFound   = errors.New("signature cipher object not found")
 )
 
-func DecodeSignatureCiphers(hc *http.Client, ipr *yt_urls.InitialPlayerResponse) error {
+func DecodeSignatureCiphers(hc *http.Client, ipr *youtube_urls.InitialPlayerResponse) error {
 	if !ipr.SignatureCipher() {
 		return nil
 	}
@@ -49,7 +49,7 @@ func DecodeSignatureCiphers(hc *http.Client, ipr *yt_urls.InitialPlayerResponse)
 	}
 
 	// decoding three formats most likely to be used by yet
-	formats := []*yt_urls.Format{
+	formats := []*youtube_urls.Format{
 		ipr.BestFormat(), ipr.BestAdaptiveVideoFormat(), ipr.BestAdaptiveAudioFormat(),
 	}
 

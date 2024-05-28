@@ -3,7 +3,7 @@ package view_models
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"strings"
 )
 
@@ -35,7 +35,7 @@ func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManag
 	return &VideoManagementViewModel{
 		VideoId:         videoId,
 		VideoTitle:      videoTitle,
-		CanViewAtOrigin: !strings.Contains(videoId, yt_urls.DefaultVideoExt),
+		CanViewAtOrigin: !strings.Contains(videoId, youtube_urls.DefaultVideoExt),
 		CurrentTime:     currentTime,
 		Progress:        rdx.HasKey(data.VideoProgressProperty, videoId),
 		Ended:           rdx.HasKey(data.VideoEndedProperty, videoId),

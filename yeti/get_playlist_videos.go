@@ -3,7 +3,7 @@ package yeti
 import (
 	"fmt"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"os"
 )
@@ -22,7 +22,7 @@ func GetPlaylistVideos(httpClient *http.Client, playlistId string, newVideos boo
 
 	playlistHasVideos := false
 
-	playlist, err := yt_urls.GetPlaylistPage(httpClient, playlistId)
+	playlist, err := youtube_urls.GetPlaylistPage(httpClient, playlistId)
 	if err != nil {
 		return nil, dp.EndWithError(err)
 	}

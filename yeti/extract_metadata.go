@@ -2,10 +2,10 @@ package yeti
 
 import (
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
-func ExtractMetadata(ipr *yt_urls.InitialPlayerResponse) map[string][]string {
+func ExtractMetadata(ipr *youtube_urls.InitialPlayerResponse) map[string][]string {
 	vpm := make(map[string][]string)
 
 	vpm[data.VideoTitleProperty] = []string{ipr.VideoDetails.Title}

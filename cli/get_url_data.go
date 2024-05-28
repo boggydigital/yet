@@ -7,7 +7,7 @@ import (
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"strings"
 )
@@ -67,7 +67,7 @@ func lastDownloadedId() (string, error) {
 	}
 
 	for _, sid := range ids {
-		if strings.HasSuffix(sid, yt_urls.DefaultVideoExt) {
+		if strings.HasSuffix(sid, youtube_urls.DefaultVideoExt) {
 			return sid, nil
 		}
 	}

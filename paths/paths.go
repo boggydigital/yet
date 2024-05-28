@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"os"
 	"path/filepath"
 )
@@ -27,7 +27,7 @@ func AbsCookiesPath() (string, error) {
 // first and second letters of video-id, video-id itself
 // and finally poster quality to get something like:
 // /path/to/posters/v/i/videoId/quality.jpg
-func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, error) {
+func AbsPosterPath(videoId string, quality youtube_urls.ThumbnailQuality) (string, error) {
 
 	pdp, err := pathways.GetAbsDir(Posters)
 	if err != nil {
@@ -39,7 +39,7 @@ func AbsPosterPath(videoId string, quality yt_urls.ThumbnailQuality) (string, er
 		return "", err
 	}
 
-	return filepath.Join(spdp, quality.String()+yt_urls.DefaultThumbnailExt), nil
+	return filepath.Join(spdp, quality.String()+youtube_urls.DefaultThumbnailExt), nil
 }
 
 // AbsCaptionsTrackPath constructs caption track path using captions directory,

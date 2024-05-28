@@ -2,7 +2,7 @@ package yeti
 
 import (
 	"fmt"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"strings"
 )
 
@@ -22,7 +22,7 @@ func ParsePlaylistIds(args ...string) ([]string, error) {
 			playlistIds = append(playlistIds, urlOrId)
 		} else if strings.Contains(urlOrId, "list=") {
 			//currently, YouTube playlist URLs contain list=playlist-id parameter
-			playlistId, err := yt_urls.PlaylistId(urlOrId)
+			playlistId, err := youtube_urls.PlaylistId(urlOrId)
 			if err != nil {
 				return playlistIds, err
 			}

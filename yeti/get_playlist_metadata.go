@@ -4,18 +4,18 @@ import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 )
 
-func GetPlaylistPageMetadata(playlistPage *yt_urls.PlaylistInitialData, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
+func GetPlaylistPageMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
 	defer gppma.End()
 
 	var err error
 	if playlistPage == nil {
-		playlistPage, err = yt_urls.GetPlaylistPage(http.DefaultClient, playlistId)
+		playlistPage, err = youtube_urls.GetPlaylistPage(http.DefaultClient, playlistId)
 		if err != nil {
 			return gppma.EndWithError(err)
 		}

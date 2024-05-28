@@ -8,7 +8,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"net/url"
 	"strings"
@@ -81,7 +81,7 @@ func Download(rdx kvas.WriteableRedux, queue, force, singleFormat bool, ids ...s
 			da.Error(err)
 		}
 
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, yt_urls.AllThumbnailQualities()...); err != nil {
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, youtube_urls.AllThumbnailQualities()...); err != nil {
 			da.Error(err)
 		}
 

@@ -2,7 +2,7 @@ package yeti
 
 import (
 	"github.com/boggydigital/yet/paths"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
 	"net/http"
 	"os"
@@ -39,7 +39,7 @@ func GetPlayerContent(hc *http.Client, playerUrl string) (io.ReadCloser, error) 
 
 	// local player doesn't exist - download and cache it
 
-	pu := yt_urls.PlayerUrl(playerUrl)
+	pu := youtube_urls.PlayerUrl(playerUrl)
 
 	resp, err := hc.Get(pu.String())
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"os"
 	"strings"
@@ -32,7 +32,7 @@ func GetPoster(forId string, force bool, ids ...string) error {
 
 	for _, videoId := range videoIds {
 
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, yt_urls.AllThumbnailQualities()...); err != nil {
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, youtube_urls.AllThumbnailQualities()...); err != nil {
 			gpa.Error(err)
 		} else {
 			if err := renamePosters(videoId, forId); err != nil {
@@ -54,7 +54,7 @@ func renamePosters(videoId, forId string) error {
 		return nil
 	}
 
-	for _, q := range yt_urls.AllThumbnailQualities() {
+	for _, q := range youtube_urls.AllThumbnailQualities() {
 		app, err := paths.AbsPosterPath(videoId, q)
 		if err != nil {
 			return err

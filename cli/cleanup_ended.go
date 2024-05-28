@@ -7,7 +7,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
 	"net/url"
 	"os"
@@ -98,7 +98,7 @@ func removeVideoFile(videoId, absVideosDir string, rdx kvas.ReadableRedux) error
 
 	relVideoFilename := ""
 
-	if strings.HasSuffix(videoId, yt_urls.DefaultVideoExt) {
+	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
 		relVideoFilename = videoId
 	} else {
 		relVideoFilename = yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
@@ -121,7 +121,7 @@ func removeVideoFile(videoId, absVideosDir string, rdx kvas.ReadableRedux) error
 
 func removePosters(videoId string) error {
 
-	for _, tq := range yt_urls.AllThumbnailQualities() {
+	for _, tq := range youtube_urls.AllThumbnailQualities() {
 		if app, err := paths.AbsPosterPath(videoId, tq); err == nil {
 			if _, err := os.Stat(app); err == nil {
 				if err = os.Remove(app); err != nil {

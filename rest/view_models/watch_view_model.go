@@ -7,7 +7,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yt_urls"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"net/url"
 	"os"
@@ -57,17 +57,17 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
 	audioUrl := ""
-	//var videoCaptionTracks []yt_urls.CaptionTrack
+	//var videoCaptionTracks []youtube_urls.CaptionTrack
 	localPlayback := false
 
-	if strings.HasSuffix(videoId, yt_urls.DefaultVideoExt) {
+	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
 		// TODO: check if that local file exists first
 		localPlayback = true
 		videoUrl = "/video?file=" + videoId
 		//videoTitle = videoId
 	}
 
-	videoPoster := fmt.Sprintf("/poster?v=%s&q=%s", videoId, yt_urls.ThumbnailQualityMaxRes)
+	videoPoster := fmt.Sprintf("/poster?v=%s&q=%s", videoId, youtube_urls.ThumbnailQualityMaxRes)
 
 	var rem, dur int64
 
@@ -251,7 +251,7 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 	return u, nil
 }
 
-func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]yt_urls.CaptionTrack, error) {
+func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]youtube_urls.CaptionTrack, error) {
 
 	if err := rdx.MustHave(
 		data.VideoCaptionsNamesProperty,
@@ -264,7 +264,7 @@ func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]yt_urls.Ca
 	captionsKinds, _ := rdx.GetAllValues(data.VideoCaptionsKindsProperty, videoId)
 	captionsLanguages, _ := rdx.GetAllValues(data.VideoCaptionsLanguagesProperty, videoId)
 
-	cts := make([]yt_urls.CaptionTrack, 0, len(captionsLanguages))
+	cts := make([]youtube_urls.CaptionTrack, 0, len(captionsLanguages))
 	for i := 0; i < len(captionsLanguages); i++ {
 
 		cn, ck, cl := "", "", captionsLanguages[i]
@@ -275,7 +275,7 @@ func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]yt_urls.Ca
 			ck = captionsKinds[i]
 		}
 
-		ct := yt_urls.CaptionTrack{
+		ct := youtube_urls.CaptionTrack{
 			BaseUrl:      "/captions?v=" + videoId + "&l=" + cl,
 			LanguageCode: cl,
 			Kind:         ck,
