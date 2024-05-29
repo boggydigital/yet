@@ -5,10 +5,6 @@ import (
 	"github.com/boggydigital/yet/data"
 )
 
-const (
-	showImagesLimit = 24
-)
-
 type PlaylistViewModel struct {
 	PlaylistId           string
 	PlaylistTitle        string
@@ -77,15 +73,11 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		SingleFormat:         singleFormat,
 	}
 
+	defaultOptions := []VideoOptions{ShowPoster, ShowViewCount, ShowDuration, ShowPublishedDate}
+
 	if videoIds, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok && len(videoIds) > 0 {
-		for i, videoId := range videoIds {
-			var options []VideoOptions
-			if i+1 <= showImagesLimit {
-				options = []VideoOptions{ShowPoster, ShowViewCount, ShowDuration, ShowPublishedDate}
-			} else {
-				options = []VideoOptions{ShowViewCount, ShowPublishedDate}
-			}
-			plvm.Videos = append(plvm.Videos, GetVideoViewModel(videoId, rdx, options...))
+		for _, videoId := range videoIds {
+			plvm.Videos = append(plvm.Videos, GetVideoViewModel(videoId, rdx, defaultOptions...))
 		}
 	}
 	return plvm
