@@ -83,8 +83,6 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 
 	flag := u.Query().Has(flagStr)
 
-	var err error
-
 	if flag {
 		if !rdx.HasKey(property, videoId) {
 			value := data.TrueValue
@@ -107,14 +105,21 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 			if err := rdx.AddValues(property, videoId, value); err != nil {
 				return err
 			}
-			// removing video from new playlist videos
-			err = rmVideoFromPlaylistNewVideos(videoId, rdx)
+
+			if property == data.VideoSkippedProperty || property == data.VideoEndedProperty {
+				// if ended or skipped - remove video from new playlist videos
+				if err := rmVideoFromPlaylistNewVideos(videoId, rdx); err != nil {
+					return err
+				}
+			}
 		}
 	} else {
 		if rdx.HasKey(property, videoId) {
-			err = rdx.CutKeys(property, videoId)
+			if err := rdx.CutKeys(property, videoId); err != nil {
+				return err
+			}
 		}
 	}
 
-	return err
+	return nil
 }
