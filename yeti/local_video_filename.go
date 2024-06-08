@@ -2,6 +2,7 @@ package yeti
 
 import (
 	"fmt"
+	"github.com/boggydigital/busan"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"path/filepath"
 	"strings"
@@ -24,6 +25,29 @@ func DefaultFilenameDelegate(videoId string, videoPage *youtube_urls.InitialPlay
 // "video-id.mp4". In either case, the resulting filename is sanitized to remove
 // characters not suitable for file names.
 func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
+
+	// files downloaded by URL
+	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
+		return videoId
+	}
+
+	// channel, video titles might contain characters that would be problematic for
+	// modern operating system filesystems - removing those
+	channel = busan.Sanitize(channel)
+	title = busan.Sanitize(title)
+
+	fn := videoId
+	if title != "" {
+		fn = fmt.Sprintf("%s-%s", title, videoId)
+	}
+	if channel != "" {
+		fn = filepath.Join(channel, fn)
+	}
+
+	return fn + youtube_urls.DefaultVideoExt
+}
+
+func OldChannelTitleVideoIdFilename(channel, title, videoId string) string {
 
 	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
 		return videoId

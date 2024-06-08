@@ -77,6 +77,8 @@ get-video-metadata
     for-id
     force
 
+migrate
+
 queue-playlists-new-videos
 
 remove-playlists

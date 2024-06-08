@@ -1,6 +1,6 @@
 module github.com/boggydigital/yet
 
-go 1.22.3
+go 1.22.4
 
 require (
 	github.com/boggydigital/backups v0.1.3
@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/boggydigital/busan v0.1.0 // indirect
 	github.com/boggydigital/match_node v0.1.16 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
 	golang.org/x/net v0.25.0 // indirect
