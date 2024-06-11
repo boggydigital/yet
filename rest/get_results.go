@@ -86,6 +86,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	for _, vr := range sid.VideoRenderers() {
 		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, wRdx,
+			view_models.ShowPoster,
 			view_models.ShowOwnerChannel,
 			view_models.ShowPublishedDate,
 			view_models.ShowViewCount))
