@@ -24,6 +24,12 @@
                 background-color: var(--color-brown);
             }
 
+            a.link {
+                background: none;
+                color: var(--color-blue);
+                margin-block: var(--large)
+            }
+
         </style>
     </head>
     <body>
@@ -104,7 +110,7 @@
     {{if .HasHistory}}
         <details open>
             <summary>{{template "plus_icon"}}<h1>History</h1></summary>
-            <a class='action' href='/history'>Check out your watch history</a>
+            <a class='link' href='/history'>Check out your watch history</a>
         </details>
     {{end}}
 
