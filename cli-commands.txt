@@ -11,11 +11,12 @@ add-urls
     watchlist&
     ended&
 
-add-playlists
-    download-queue&
-    watchlist&
-    single-format&
-    all-videos
+add-playlist
+    playlist-id^*
+    refresh
+    download
+    single-format
+    expand
 
 add-videos
     download-queue&

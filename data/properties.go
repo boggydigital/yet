@@ -19,30 +19,38 @@ const (
 	VideoEndedProperty             = "video-ended"
 	VideoSkippedProperty           = "video-skipped"
 	VideoErrorsProperty            = "video-errors"
+	VideoFavoriteProperty          = "video-favorite"
 
-	VideosDownloadQueueProperty       = "videos-download-queue"
 	VideoForcedDownloadProperty       = "video-forced-download"
 	VideoSingleFormatDownloadProperty = "video-single-format-download"
-	VideosWatchlistProperty           = "videos-watchlist"
+
+	VideoDownloadQueuedProperty    = "video-download-queued"
+	VideoDownloadStartedProperty   = "video-download-started"
+	VideoDownloadCompletedProperty = "video-download-completed"
+
+	VideoWatchlistQueuedProperty   = "video-watchlist-queued"
+	VideoWatchlistDequeuedProperty = "video-watchlist-dequeued"
 
 	VideoCaptionsLanguagesProperty = "video-captions-languages"
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
 	VideoCaptionsNamesProperty     = "video-captions-names"
 
-	PlaylistWatchlistProperty            = "playlist-watchlist"
-	PlaylistDownloadQueueProperty        = "playlist-download-queue"
-	PlaylistNewVideosProperty            = "playlist-new-videos"
-	PlaylistChannelProperty              = "playlist-channel"
-	PlaylistTitleProperty                = "playlist-title"
-	PlaylistVideosProperty               = "playlist-videos"
+	PlaylistChannelProperty = "playlist-channel"
+	PlaylistTitleProperty   = "playlist-title"
+	PlaylistVideosProperty  = "playlist-videos"
+
+	PlaylistRefreshProperty              = "playlist-refresh"
+	PlaylistDownloadProperty             = "playlist-download"
 	PlaylistSingleFormatDownloadProperty = "playlist-single-format"
+
+	PlaylistQueuedDownloadsProperty = "playlist-queued-downloads"
 
 	ChannelTitleProperty       = "channel-title"
 	ChannelDescriptionProperty = "channel-description"
 	ChannelPlaylistsProperty   = "channel-playlists"
 )
 
-func AllProperties() []string {
+func VideoProperties() []string {
 	return []string{
 		VideoTitleProperty,
 		VideoThumbnailUrlsProperty,
@@ -57,29 +65,49 @@ func AllProperties() []string {
 		VideoPublishTimeTextProperty,
 		VideoUploadDateProperty,
 		VideoDownloadedDateProperty,
-		VideoForcedDownloadProperty,
-		VideoSingleFormatDownloadProperty,
 		VideoProgressProperty,
 		VideoDurationProperty,
 		VideoEndedProperty,
 		VideoSkippedProperty,
 		VideoErrorsProperty,
-		VideosDownloadQueueProperty,
-		VideosWatchlistProperty,
+		VideoFavoriteProperty,
+		VideoForcedDownloadProperty,
+		VideoSingleFormatDownloadProperty,
+		VideoDownloadQueuedProperty,
+		VideoDownloadStartedProperty,
+		VideoDownloadCompletedProperty,
+		VideoWatchlistQueuedProperty,
+		VideoWatchlistDequeuedProperty,
 		VideoCaptionsLanguagesProperty,
 		VideoCaptionsKindsProperty,
 		VideoCaptionsNamesProperty,
+	}
+}
 
-		PlaylistWatchlistProperty,
-		PlaylistDownloadQueueProperty,
-		PlaylistSingleFormatDownloadProperty,
-		PlaylistNewVideosProperty,
+func PlaylistProperties() []string {
+	return []string{
 		PlaylistChannelProperty,
 		PlaylistTitleProperty,
 		PlaylistVideosProperty,
+		PlaylistRefreshProperty,
+		PlaylistDownloadProperty,
+		PlaylistSingleFormatDownloadProperty,
+		PlaylistQueuedDownloadsProperty,
+	}
+}
 
+func ChannelProperties() []string {
+	return []string{
 		ChannelTitleProperty,
 		ChannelDescriptionProperty,
 		ChannelPlaylistsProperty,
 	}
+}
+
+func AllProperties() []string {
+	properties := make([]string, 0)
+	properties = append(properties, VideoProperties()...)
+	properties = append(properties, PlaylistProperties()...)
+	properties = append(properties, ChannelProperties()...)
+	return properties
 }
