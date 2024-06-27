@@ -13,10 +13,12 @@ add-urls
 
 add-playlist
     playlist-id^*
-    refresh
-    download
-    single-format
+    auto-refresh
+    auto-download
+    download-policy={^playlist-download-policies}
+    prefer-single-format
     expand
+    force
 
 add-videos
     download-queue&

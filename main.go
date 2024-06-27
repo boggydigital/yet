@@ -47,7 +47,7 @@ func main() {
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
-		"add-playlists":               cli.AddPlaylistsHandler,
+		"add-playlist":                cli.AddPlaylistHandler,
 		"add-videos":                  cli.AddVideosHandler,
 		"add-urls":                    cli.AddUrlsHandler,
 		"backup":                      cli.BackupHandler,

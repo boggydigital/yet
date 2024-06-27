@@ -16,8 +16,8 @@ const (
 	VideoDownloadedDateProperty    = "video-downloaded-date"
 	VideoProgressProperty          = "video-progress"
 	VideoDurationProperty          = "video-duration"
-	VideoEndedProperty             = "video-ended"
-	VideoSkippedProperty           = "video-skipped"
+	VideoEndedDateProperty         = "video-ended-date"
+	VideoEndedReasonProperty       = "video-ended-reason"
 	VideoErrorsProperty            = "video-errors"
 	VideoFavoriteProperty          = "video-favorite"
 
@@ -39,9 +39,10 @@ const (
 	PlaylistTitleProperty   = "playlist-title"
 	PlaylistVideosProperty  = "playlist-videos"
 
-	PlaylistRefreshProperty              = "playlist-refresh"
-	PlaylistDownloadProperty             = "playlist-download"
-	PlaylistSingleFormatDownloadProperty = "playlist-single-format"
+	PlaylistAutoRefreshProperty        = "playlist-auto-refresh"
+	PlaylistAutoDownloadProperty       = "playlist-auto-download"
+	PlaylistDownloadPolicyProperty     = "playlist-download-policy"
+	PlaylistPreferSingleFormatProperty = "playlist-prefer-single-format"
 
 	PlaylistQueuedDownloadsProperty = "playlist-queued-downloads"
 
@@ -67,8 +68,8 @@ func VideoProperties() []string {
 		VideoDownloadedDateProperty,
 		VideoProgressProperty,
 		VideoDurationProperty,
-		VideoEndedProperty,
-		VideoSkippedProperty,
+		VideoEndedDateProperty,
+		VideoEndedReasonProperty,
 		VideoErrorsProperty,
 		VideoFavoriteProperty,
 		VideoForcedDownloadProperty,
@@ -89,9 +90,10 @@ func PlaylistProperties() []string {
 		PlaylistChannelProperty,
 		PlaylistTitleProperty,
 		PlaylistVideosProperty,
-		PlaylistRefreshProperty,
-		PlaylistDownloadProperty,
-		PlaylistSingleFormatDownloadProperty,
+		PlaylistAutoRefreshProperty,
+		PlaylistAutoDownloadProperty,
+		PlaylistDownloadPolicyProperty,
+		PlaylistPreferSingleFormatProperty,
 		PlaylistQueuedDownloadsProperty,
 	}
 }
