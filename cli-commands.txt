@@ -6,11 +6,6 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
-add-urls
-    download-queue&
-    watchlist&
-    ended&
-
 add-playlist
     playlist-id^*
     auto-refresh
@@ -20,13 +15,14 @@ add-playlist
     expand
     force
 
-add-videos
-    download-queue&
-    watchlist&
-    ended&
-    skipped&
-    forced-download&
-    single-format&
+add-video
+    video-id^*
+    download-queue
+    ended
+    reason={^video-ended-reasons}
+    prefer-single-format
+    source
+    force
 
 backup
 
@@ -44,16 +40,6 @@ get-captions
 
 get-channel-metadata
     id&^
-    force
-
-get-url-file
-    url&^
-    force
-
-get-url-data
-    id
-    video-id*
-    last-downloaded
     force
 
 get-rutube-video
@@ -77,7 +63,6 @@ get-video-file
 
 get-video-metadata
     id&^
-    for-id
     force
 
 queue-playlists-new-videos
@@ -94,13 +79,6 @@ remove-videos
     ended&
     forced-download&
     single-format&
-
-remove-urls
-    download-queue&
-    watchlist&
-    progress&
-    ended&
-    skipped&
 
 serve
     port$*

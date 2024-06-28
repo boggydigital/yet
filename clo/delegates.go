@@ -11,7 +11,6 @@ func PlaylistDownloadPolicies() []string {
 
 func VideoEndedReasons() []string {
 	return []string{
-		string(data.Complete),
 		string(data.Skipped),
 		string(data.SeenEnough),
 	}

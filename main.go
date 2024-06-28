@@ -48,15 +48,12 @@ func main() {
 
 	clo.HandleFuncs(map[string]clo.Handler{
 		"add-playlist":                cli.AddPlaylistHandler,
-		"add-videos":                  cli.AddVideosHandler,
-		"add-urls":                    cli.AddUrlsHandler,
+		"add-video":                   cli.AddVideoHandler,
 		"backup":                      cli.BackupHandler,
 		"cleanup-ended":               cli.CleanupEndedHandler,
 		"download":                    cli.DownloadHandler,
 		"get-captions":                cli.GetCaptionsHandler,
 		"get-channel-metadata":        cli.GetChannelMetadataHandler,
-		"get-url-data":                cli.GetUrlDataHandler,
-		"get-url-file":                cli.GetUrlFileHandler,
 		"get-playlist-metadata":       cli.GetPlaylistMetadataHandler,
 		"get-poster":                  cli.GetPosterHandler,
 		"get-rutube-video":            cli.GetRuTubeVideoHandler,

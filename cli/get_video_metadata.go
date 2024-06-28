@@ -15,12 +15,11 @@ import (
 func GetVideoMetadataHandler(u *url.URL) error {
 	q := u.Query()
 	ids := strings.Split(q.Get("id"), ",")
-	forId := q.Get("for-id")
 	force := q.Has("force")
-	return GetVideoMetadata(forId, force, ids...)
+	return GetVideoMetadata(force, ids...)
 }
 
-func GetVideoMetadata(forId string, force bool, ids ...string) error {
+func GetVideoMetadata(force bool, ids ...string) error {
 	gvma := nod.NewProgress("getting video metadata...")
 	defer gvma.End()
 
@@ -49,10 +48,6 @@ func GetVideoMetadata(forId string, force bool, ids ...string) error {
 
 		if err := getVideoPageMetadata(nil, videoId, rdx); err != nil {
 			gvma.Error(err)
-		} else {
-			if err := copyMetadata(videoId, forId, rdx); err != nil {
-				return gvma.EndWithError(err)
-			}
 		}
 
 		gvma.Increment()

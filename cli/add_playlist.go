@@ -11,7 +11,7 @@ import (
 	"net/url"
 )
 
-type playlistOptions struct {
+type addPlaylistOptions struct {
 	autoRefresh        bool
 	autoDownload       bool
 	downloadPolicy     data.PlaylistDownloadPolicy
@@ -20,8 +20,8 @@ type playlistOptions struct {
 	force              bool
 }
 
-func defaultPlaylistOptions() *playlistOptions {
-	return &playlistOptions{
+func defaultAddPlaylistOptions() *addPlaylistOptions {
+	return &addPlaylistOptions{
 		autoRefresh:        false,
 		autoDownload:       false,
 		downloadPolicy:     data.Recent,
@@ -35,42 +35,26 @@ func AddPlaylistHandler(u *url.URL) error {
 	q := u.Query()
 
 	playlistId := q.Get("playlist-id")
-	autoRefresh := q.Has("auto-refresh")
-	autoDownload := q.Has("auto-download")
-	downloadPolicy := data.ParsePlaylistDownloadPolicy(q.Get("download-policy"))
-	preferSingleFormat := q.Has("prefer-single-format")
-	expand := q.Has("expand")
-	force := q.Has("force")
 
-	options := &playlistOptions{
-		autoRefresh:        autoRefresh,
-		autoDownload:       autoDownload,
-		downloadPolicy:     downloadPolicy,
-		preferSingleFormat: preferSingleFormat,
-		expand:             expand,
-		force:              force,
+	options := &addPlaylistOptions{
+		autoRefresh:        q.Has("auto-refresh"),
+		autoDownload:       q.Has("auto-download"),
+		downloadPolicy:     data.ParsePlaylistDownloadPolicy(q.Get("download-policy")),
+		preferSingleFormat: q.Has("prefer-single-format"),
+		expand:             q.Has("expand"),
+		force:              q.Has("force"),
 	}
 
 	return AddPlaylist(nil, playlistId, options)
 }
 
-func AddPlaylist(rdx kvas.WriteableRedux, playlistId string, options *playlistOptions) error {
+func AddPlaylist(rdx kvas.WriteableRedux, playlistId string, options *addPlaylistOptions) error {
 
 	apa := nod.Begin("adding playlist %s...", playlistId)
 	defer apa.End()
 
 	if options == nil {
-		options = defaultPlaylistOptions()
-	}
-
-	parsedPlaylistIds, err := yeti.ParsePlaylistIds(playlistId)
-	if err != nil {
-		return apa.EndWithError(err)
-	}
-	if len(parsedPlaylistIds) > 0 {
-		playlistId = parsedPlaylistIds[0]
-	} else {
-		return apa.EndWithError(fmt.Errorf("invalid playlist id: %s", playlistId))
+		options = defaultAddPlaylistOptions()
 	}
 
 	if rdx == nil {
@@ -83,6 +67,18 @@ func AddPlaylist(rdx kvas.WriteableRedux, playlistId string, options *playlistOp
 		if err != nil {
 			return apa.EndWithError(err)
 		}
+	} else if err := rdx.MustHave(data.PlaylistProperties()...); err != nil {
+		return apa.EndWithError(err)
+	}
+
+	parsedPlaylistIds, err := yeti.ParsePlaylistIds(playlistId)
+	if err != nil {
+		return apa.EndWithError(err)
+	}
+	if len(parsedPlaylistIds) > 0 {
+		playlistId = parsedPlaylistIds[0]
+	} else {
+		return apa.EndWithError(fmt.Errorf("invalid playlist id: %s", playlistId))
 	}
 
 	propertyValues := make(map[string]map[string][]string)

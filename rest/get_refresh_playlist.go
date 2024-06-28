@@ -33,7 +33,7 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := yeti.GetPlaylistPageMetadata(nil, playlistId, false, plRdx); err != nil {
+	if err := yeti.GetPlaylistMetadata(nil, playlistId, false, plRdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

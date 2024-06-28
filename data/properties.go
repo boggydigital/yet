@@ -21,8 +21,9 @@ const (
 	VideoErrorsProperty            = "video-errors"
 	VideoFavoriteProperty          = "video-favorite"
 
-	VideoForcedDownloadProperty       = "video-forced-download"
-	VideoSingleFormatDownloadProperty = "video-single-format-download"
+	VideoSourceProperty             = "video-source"
+	VideoForcedDownloadProperty     = "video-forced-download"
+	VideoPreferSingleFormatProperty = "video-prefer-single-format"
 
 	VideoDownloadQueuedProperty    = "video-download-queued"
 	VideoDownloadStartedProperty   = "video-download-started"

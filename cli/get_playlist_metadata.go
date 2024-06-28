@@ -49,7 +49,7 @@ func GetPlaylistMetadata(rdx kvas.WriteableRedux, allVideos, force bool, ids ...
 			continue
 		}
 
-		if err := yeti.GetPlaylistPageMetadata(nil, playlistId, allVideos, rdx); err != nil {
+		if err := yeti.GetPlaylistMetadata(nil, playlistId, allVideos, rdx); err != nil {
 			gpma.Error(err)
 		}
 
