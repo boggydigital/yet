@@ -92,6 +92,4 @@ test-dependencies
 
 update-playlists-metadata
 
-update-playlists-new-videos
-
 version

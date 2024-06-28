@@ -34,10 +34,6 @@ func Sync(force, singleFormat bool) error {
 		return sa.EndWithError(err)
 	}
 
-	if err := UpdatePlaylistsNewVideos(rdx); err != nil {
-		return sa.EndWithError(err)
-	}
-
 	if err := QueuePlaylistsNewVideos(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
