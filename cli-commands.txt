@@ -28,11 +28,15 @@ backup
 
 cleanup-ended
 
-download
-    id&^
+download-video
+    video-id^*
+    prefer-single-format
+    source
     force
-    single-format
-    queue
+
+download-queue
+    prefer-single-format
+    force
 
 get-captions
     id&^
@@ -55,11 +59,6 @@ get-poster
     id&^
     for-id
     force
-
-get-video-file
-    id&^
-    force
-    single-format
 
 get-video-metadata
     id&^
@@ -85,8 +84,8 @@ serve
     stderr$
 
 sync
+    prefer-single-format
     force
-    single-format
 
 test-dependencies
 

@@ -58,3 +58,15 @@ func ParseVideoIds(args ...string) ([]string, error) {
 	}
 	return videoIds, nil
 }
+
+func ParseVideoId(videoId string) (string, error) {
+	parsedVideoIds, err := ParseVideoIds(videoId)
+	if err != nil {
+		return "", err
+	}
+	if len(parsedVideoIds) > 0 {
+		return parsedVideoIds[0], nil
+	} else {
+		return "", fmt.Errorf("invalid video id: %s", videoId)
+	}
+}

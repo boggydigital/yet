@@ -13,7 +13,6 @@ const (
 	VideoPublishDateProperty       = "video-publish-date"
 	VideoPublishTimeTextProperty   = "video-publish-time-text"
 	VideoUploadDateProperty        = "video-upload-date"
-	VideoDownloadedDateProperty    = "video-downloaded-date"
 	VideoProgressProperty          = "video-progress"
 	VideoDurationProperty          = "video-duration"
 	VideoEndedDateProperty         = "video-ended-date"
@@ -28,6 +27,7 @@ const (
 	VideoDownloadQueuedProperty    = "video-download-queued"
 	VideoDownloadStartedProperty   = "video-download-started"
 	VideoDownloadCompletedProperty = "video-download-completed"
+	VideoDownloadCleanedUpProperty = "video-download-cleaned-up"
 
 	VideoWatchlistQueuedProperty   = "video-watchlist-queued"
 	VideoWatchlistDequeuedProperty = "video-watchlist-dequeued"
@@ -73,11 +73,13 @@ func VideoProperties() []string {
 		VideoEndedReasonProperty,
 		VideoErrorsProperty,
 		VideoFavoriteProperty,
+		VideoSourceProperty,
 		VideoForcedDownloadProperty,
-		VideoSingleFormatDownloadProperty,
+		VideoPreferSingleFormatProperty,
 		VideoDownloadQueuedProperty,
 		VideoDownloadStartedProperty,
 		VideoDownloadCompletedProperty,
+		VideoDownloadCleanedUpProperty,
 		VideoWatchlistQueuedProperty,
 		VideoWatchlistDequeuedProperty,
 		VideoCaptionsLanguagesProperty,

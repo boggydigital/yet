@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
@@ -9,7 +8,6 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
-	"time"
 )
 
 type addVideoOptions struct {
@@ -27,7 +25,7 @@ func defaultAddVideoOptions() *addVideoOptions {
 		ended:              false,
 		reason:             data.Unspecified,
 		source:             "",
-		preferSingleFormat: false,
+		preferSingleFormat: true,
 		force:              false,
 	}
 }
@@ -36,7 +34,6 @@ func AddVideoHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoId := q.Get("video-id")
-
 	options := &addVideoOptions{
 		downloadQueue:      q.Has("download-queue"),
 		ended:              q.Has("ended"),
@@ -73,26 +70,22 @@ func AddVideo(rdx kvas.WriteableRedux, videoId string, options *addVideoOptions)
 		return ava.EndWithError(err)
 	}
 
-	parsedVideoIds, err := yeti.ParseVideoIds(videoId)
+	var err error
+	videoId, err = yeti.ParseVideoId(videoId)
 	if err != nil {
 		return ava.EndWithError(err)
-	}
-	if len(parsedVideoIds) > 0 {
-		videoId = parsedVideoIds[0]
-	} else {
-		return ava.EndWithError(fmt.Errorf("invalid video id: %s", videoId))
 	}
 
 	propertyValues := make(map[string]map[string][]string)
 
 	if options.downloadQueue {
 		propertyValues[data.VideoDownloadQueuedProperty] = map[string][]string{
-			videoId: {data.TrueValue},
+			videoId: {yeti.FmtNow()},
 		}
 	}
 	if options.ended {
 		propertyValues[data.VideoEndedDateProperty] = map[string][]string{
-			videoId: {time.Now().Format(time.RFC3339)},
+			videoId: {yeti.FmtNow()},
 		}
 	}
 	if options.reason != data.Unspecified {

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 	"net/http"
-	"time"
 )
 
 type EndedRequest struct {
@@ -33,8 +33,7 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store completion timestamp
-	currentTime := time.Now().Format(time.RFC3339)
-	if err := progressRdx.ReplaceValues(data.VideoEndedProperty, er.VideoId, currentTime); err != nil {
+	if err := progressRdx.ReplaceValues(data.VideoEndedProperty, er.VideoId, yeti.FmtNow()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

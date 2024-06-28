@@ -10,15 +10,23 @@ import (
 )
 
 func SyncHandler(u *url.URL) error {
-	force := u.Query().Has("force")
-	singleFormat := u.Query().Has("single-format")
-	return Sync(force, singleFormat)
+	q := u.Query()
+
+	options := &DownloadVideoOptions{
+		PreferSingleFormat: q.Has("prefer-single-format"),
+		Force:              q.Has("force"),
+	}
+	return Sync(options)
 }
 
-func Sync(force, singleFormat bool) error {
+func Sync(options *DownloadVideoOptions) error {
 
 	sa := nod.Begin("syncing playlists subscriptions...")
 	defer sa.End()
+
+	if options == nil {
+		options = DefaultDownloadVideoOptions()
+	}
 
 	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
 	if err != nil {
@@ -38,7 +46,7 @@ func Sync(force, singleFormat bool) error {
 		return sa.EndWithError(err)
 	}
 
-	if err := Download(rdx, true, force, singleFormat); err != nil {
+	if err := DownloadQueue(rdx, options); err != nil {
 		return sa.EndWithError(err)
 	}
 

@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
@@ -35,7 +34,6 @@ func AddPlaylistHandler(u *url.URL) error {
 	q := u.Query()
 
 	playlistId := q.Get("playlist-id")
-
 	options := &addPlaylistOptions{
 		autoRefresh:        q.Has("auto-refresh"),
 		autoDownload:       q.Has("auto-download"),
@@ -71,14 +69,10 @@ func AddPlaylist(rdx kvas.WriteableRedux, playlistId string, options *addPlaylis
 		return apa.EndWithError(err)
 	}
 
-	parsedPlaylistIds, err := yeti.ParsePlaylistIds(playlistId)
+	var err error
+	playlistId, err = yeti.ParsePlaylistId(playlistId)
 	if err != nil {
 		return apa.EndWithError(err)
-	}
-	if len(parsedPlaylistIds) > 0 {
-		playlistId = parsedPlaylistIds[0]
-	} else {
-		return apa.EndWithError(fmt.Errorf("invalid playlist id: %s", playlistId))
 	}
 
 	propertyValues := make(map[string]map[string][]string)
