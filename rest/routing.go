@@ -17,7 +17,6 @@ func HandleFuncs() {
 		"GET /captions": Log(http.HandlerFunc(GetCaptions)),
 
 		"GET /watch":        Log(http.HandlerFunc(GetWatch)),
-		"GET /listen":       Log(http.HandlerFunc(GetListen)),
 		"GET /manage_video": http.HandlerFunc(GetManageVideo),
 		"GET /update_video": http.HandlerFunc(GetUpdateVideo),
 		"GET /video_error":  http.HandlerFunc(GetVideoError),

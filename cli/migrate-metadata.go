@@ -87,5 +87,7 @@ func MigrateMetadata(rdx kvas.WriteableRedux) error {
 		}
 	}
 
+	mma.EndWithResult("done")
+
 	return nil
 }
