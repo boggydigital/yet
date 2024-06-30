@@ -124,6 +124,9 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 
 		for _, id := range dqKeys {
+			if dcd, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && dcd != "" {
+				continue
+			}
 			lvm.Downloads = append(lvm.Downloads, GetVideoViewModel(id, rdx,
 				ShowPoster,
 				ShowDuration,
