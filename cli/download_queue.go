@@ -23,8 +23,8 @@ func DownloadQueueHandler(u *url.URL) error {
 }
 
 // DownloadQueue processes download queue using the following rules:
-// - download is not already completed
-// - download is not in progress since less than 48 hours ago
+// - download has not been completed after queue time
+// - download is not in progress since queue time and less than 48 hours ago
 func DownloadQueue(rdx kvas.WriteableRedux, opt *VideoDownloadOptions) error {
 
 	dqa := nod.NewProgress("downloading queued videos...")
