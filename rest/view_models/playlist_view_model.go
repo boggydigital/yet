@@ -25,22 +25,22 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 
 	nvc := 0
 
-	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok {
-		nvc = len(nv)
-	}
+	//if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok {
+	//	nvc = len(nv)
+	//}
 
 	watching := false
-	if pwl, ok := rdx.GetLastVal(data.PlaylistWatchlistProperty, playlistId); ok && pwl == data.TrueValue {
+	if pwl, ok := rdx.GetLastVal(data.PlaylistAutoRefreshProperty, playlistId); ok && pwl == data.TrueValue {
 		watching = true
 	}
 
 	downloading := false
-	if pdq, ok := rdx.GetLastVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
+	if pdq, ok := rdx.GetLastVal(data.PlaylistAutoDownloadProperty, playlistId); ok && pdq == data.TrueValue {
 		downloading = true
 	}
 
 	singleFormat := false
-	if psf, ok := rdx.GetLastVal(data.PlaylistSingleFormatDownloadProperty, playlistId); ok && psf == data.TrueValue {
+	if psf, ok := rdx.GetLastVal(data.PlaylistPreferSingleFormatProperty, playlistId); ok && psf == data.TrueValue {
 		singleFormat = true
 	}
 

@@ -8,6 +8,10 @@ const (
 	All    PlaylistDownloadPolicy = "all"
 )
 
+const (
+	RecentDownloadsLimit = 5
+)
+
 func ParsePlaylistDownloadPolicy(policy string) PlaylistDownloadPolicy {
 	switch policy {
 	case string(Recent):

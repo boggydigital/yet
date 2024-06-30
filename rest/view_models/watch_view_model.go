@@ -38,19 +38,18 @@ type WatchViewModel struct {
 }
 
 var propertyTitles = map[string]string{
-	data.VideoViewCountProperty:            "Views",
-	data.VideoKeywordsProperty:             "Keywords",
-	data.VideoCategoryProperty:             "Category",
-	data.VideoUploadDateProperty:           " Uploaded",
-	data.VideoPublishDateProperty:          "Published",
-	data.VideoDownloadedDateProperty:       "Downloaded",
-	data.VideoDurationProperty:             "Duration",
-	data.VideoEndedProperty:                "Last Ended",
-	data.VideoSkippedProperty:              "Skipped",
-	data.VideosWatchlistProperty:           "In Watchlist",
-	data.VideosDownloadQueueProperty:       "In Download Queue",
-	data.VideoForcedDownloadProperty:       "Forced Download",
-	data.VideoSingleFormatDownloadProperty: "Single Format Download",
+	data.VideoViewCountProperty:          "Views",
+	data.VideoKeywordsProperty:           "Keywords",
+	data.VideoCategoryProperty:           "Category",
+	data.VideoUploadDateProperty:         " Uploaded",
+	data.VideoPublishDateProperty:        "Published",
+	data.VideoDownloadCompletedProperty:  "Downloaded",
+	data.VideoDurationProperty:           "Duration",
+	data.VideoEndedDateProperty:          "Last Ended",
+	data.VideoEndedReasonProperty:        "Ended Reason",
+	data.VideoDownloadQueuedProperty:     "Download Queued",
+	data.VideoForcedDownloadProperty:     "Forced Download",
+	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
 
 func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audioOnly bool) (*WatchViewModel, error) {
@@ -153,10 +152,10 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 	}
 
 	lastEndedTime := ""
-	if et, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && et != "" {
+	if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && et != "" {
 		lastEndedTime = et
 		titlePrefix := "☑️ "
-		if rdx.HasKey(data.VideoSkippedProperty, videoId) {
+		if rdx.HasKey(data.VideoEndedReasonProperty, videoId) {
 			titlePrefix = "⏭️ "
 		}
 		videoTitle = titlePrefix + videoTitle
@@ -172,14 +171,13 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 		data.VideoCategoryProperty,
 		data.VideoUploadDateProperty,
 		data.VideoPublishDateProperty,
-		data.VideoDownloadedDateProperty,
+		data.VideoDownloadCompletedProperty,
 		data.VideoDurationProperty,
-		data.VideoEndedProperty,
-		data.VideoSkippedProperty,
-		data.VideosWatchlistProperty,
-		data.VideosDownloadQueueProperty,
+		data.VideoEndedDateProperty,
+		data.VideoEndedReasonProperty,
+		data.VideoDownloadQueuedProperty,
 		data.VideoForcedDownloadProperty,
-		data.VideoSingleFormatDownloadProperty,
+		data.VideoPreferSingleFormatProperty,
 	}
 
 	videoProperties := make(map[string]string)
@@ -302,9 +300,9 @@ func fmtPropertyValue(property, value string) string {
 		fallthrough
 	case data.VideoPublishDateProperty:
 		fallthrough
-	case data.VideoDownloadedDateProperty:
+	case data.VideoDownloadCompletedProperty:
 		fallthrough
-	case data.VideoEndedProperty:
+	case data.VideoEndedDateProperty:
 		if dt, err := time.Parse(time.RFC3339, value); err == nil {
 			return dt.Format(time.RFC1123)
 		}

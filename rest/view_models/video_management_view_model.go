@@ -38,11 +38,12 @@ func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManag
 		CanViewAtOrigin: !strings.Contains(videoId, youtube_urls.DefaultVideoExt),
 		CurrentTime:     currentTime,
 		Progress:        rdx.HasKey(data.VideoProgressProperty, videoId),
-		Ended:           rdx.HasKey(data.VideoEndedProperty, videoId),
-		Skipped:         rdx.HasKey(data.VideoSkippedProperty, videoId),
-		Watchlist:       rdx.HasKey(data.VideosWatchlistProperty, videoId),
-		DownloadQueue:   rdx.HasKey(data.VideosDownloadQueueProperty, videoId),
-		ForcedDownload:  rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
-		SingleFormat:    rdx.HasKey(data.VideoSingleFormatDownloadProperty, videoId),
+		Ended:           rdx.HasKey(data.VideoEndedDateProperty, videoId),
+		//TODO: update to reason
+		Skipped: rdx.HasKey(data.VideoEndedReasonProperty, videoId),
+		//Watchlist:      rdx.HasKey(data.VideosWatchlistProperty, videoId),
+		DownloadQueue:  rdx.HasKey(data.VideoDownloadQueuedProperty, videoId),
+		ForcedDownload: rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
+		SingleFormat:   rdx.HasKey(data.VideoPreferSingleFormatProperty, videoId),
 	}
 }

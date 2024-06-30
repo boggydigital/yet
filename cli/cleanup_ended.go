@@ -21,35 +21,18 @@ func CleanupEndedHandler(_ *url.URL) error {
 	return CleanupEnded(nil)
 }
 
-// CleanupEnded removes downloads for ended videos that match the following conditions:
+// CleanupEnded removes downloads for Ended videos that match the following conditions:
 // - video download has not been downloaded earlier
-// - at least 48 hours have passed since the ended date
+// - at least 48 hours have passed since the Ended date
 func CleanupEnded(rdx kvas.WriteableRedux) error {
 
-	cea := nod.NewProgress("cleaning up ended media...")
+	cea := nod.NewProgress("cleaning up Ended media...")
 	defer cea.End()
 
-	requiredProperties := []string{
-		data.VideoEndedDateProperty,
-		data.VideoDownloadCleanedUpProperty,
-		data.VideoTitleProperty,
-		data.VideoOwnerChannelNameProperty,
-	}
-
-	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return cea.EndWithError(err)
-		}
-
-		rdx, err = kvas.NewReduxWriter(metadataDir, requiredProperties...)
-		if err != nil {
-			return cea.EndWithError(err)
-		}
-	} else {
-		if err := rdx.MustHave(requiredProperties...); err != nil {
-			return cea.EndWithError(err)
-		}
+	var err error
+	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
+	if err != nil {
+		return cea.EndWithError(err)
 	}
 
 	absVideosDir, err := pathways.GetAbsDir(paths.Videos)

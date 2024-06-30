@@ -3,9 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
@@ -14,35 +12,30 @@ import (
 
 func GetVideoMetadataHandler(u *url.URL) error {
 	q := u.Query()
-	ids := strings.Split(q.Get("id"), ",")
-	force := q.Has("force")
-	return GetVideoMetadata(force, ids...)
+	videoIds := strings.Split(q.Get("video-id"), ",")
+	options := &VideoOptions{
+		Force: q.Has("force"),
+	}
+	return GetVideoMetadata(nil, options, videoIds...)
 }
 
-func GetVideoMetadata(force bool, ids ...string) error {
+func GetVideoMetadata(rdx kvas.WriteableRedux, opt *VideoOptions, videoIds ...string) error {
 	gvma := nod.NewProgress("getting video metadata...")
 	defer gvma.End()
 
-	videoIds, err := yeti.ParseVideoIds(ids...)
+	var err error
+	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
+
+	parsedVideoIds, err := yeti.ParseVideoIds(videoIds...)
 	if err != nil {
 		return gvma.EndWithError(err)
 	}
 
-	gvma.TotalInt(len(videoIds))
+	gvma.TotalInt(len(parsedVideoIds))
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		return gvma.EndWithError(err)
-	}
+	for _, videoId := range parsedVideoIds {
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-	if err != nil {
-		return gvma.EndWithError(err)
-	}
-
-	for _, videoId := range videoIds {
-
-		if rdx.HasKey(data.VideoTitleProperty, videoId) && !force {
+		if rdx.HasKey(data.VideoTitleProperty, videoId) && !opt.Force {
 			continue
 		}
 

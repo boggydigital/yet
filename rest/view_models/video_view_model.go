@@ -67,7 +67,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 				publishedDate = ptts
 			}
 		}
-		if dts, ok := rdx.GetLastVal(data.VideoDownloadedDateProperty, videoId); ok && dts != "" {
+		if dts, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); ok && dts != "" {
 			downloadedDate = parseAndFormat(dts)
 		}
 	}
@@ -85,15 +85,16 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	ended := false
 	endedDate := ""
-	if ets, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && ets != "" {
+	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
 		ended = true
 		if optShowEndedDate {
 			endedDate = parseAndFormat(ets)
 		}
 	}
 
+	//TODO: update to reasons
 	skipped := false
-	if s, ok := rdx.GetLastVal(data.VideoSkippedProperty, videoId); ok && s != "" {
+	if s, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok && s != "" {
 		skipped = true
 	}
 

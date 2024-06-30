@@ -3,74 +3,42 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
 )
-
-type addVideoOptions struct {
-	downloadQueue      bool
-	ended              bool
-	reason             data.VideoEndedReason
-	source             string
-	preferSingleFormat bool
-	force              bool
-}
-
-func defaultAddVideoOptions() *addVideoOptions {
-	return &addVideoOptions{
-		downloadQueue:      true,
-		ended:              false,
-		reason:             data.Unspecified,
-		source:             "",
-		preferSingleFormat: true,
-		force:              false,
-	}
-}
 
 func AddVideoHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoId := q.Get("video-id")
-	options := &addVideoOptions{
-		downloadQueue:      q.Has("download-queue"),
-		ended:              q.Has("ended"),
-		reason:             data.ParseVideoEndedReason(q.Get("reason")),
-		source:             q.Get("source"),
-		preferSingleFormat: q.Has("prefer-single-format"),
-		force:              q.Has("force"),
+	options := &VideoOptions{
+		DownloadQueue:      q.Has("download-queue"),
+		Ended:              q.Has("ended"),
+		Reason:             data.ParseVideoEndedReason(q.Get("reason")),
+		Source:             q.Get("source"),
+		PreferSingleFormat: q.Has("prefer-single-format"),
+		Force:              q.Has("force"),
 	}
 
 	return AddVideo(nil, videoId, options)
 }
 
-func AddVideo(rdx kvas.WriteableRedux, videoId string, options *addVideoOptions) error {
+func AddVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) error {
 
 	ava := nod.Begin("adding video %s...", videoId)
 	defer ava.End()
 
-	if options == nil {
-		options = defaultAddVideoOptions()
-	}
-
-	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return ava.EndWithError(err)
-		}
-
-		rdx, err = kvas.NewReduxWriter(metadataDir, data.VideoProperties()...)
-		if err != nil {
-			return ava.EndWithError(err)
-		}
-
-	} else if err := rdx.MustHave(data.VideoProperties()...); err != nil {
-		return ava.EndWithError(err)
+	if opt == nil {
+		opt = DefaultVideoOptions()
 	}
 
 	var err error
+	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
+	if err != nil {
+		return ava.EndWithError(err)
+	}
+
 	videoId, err = yeti.ParseVideoId(videoId)
 	if err != nil {
 		return ava.EndWithError(err)
@@ -78,32 +46,32 @@ func AddVideo(rdx kvas.WriteableRedux, videoId string, options *addVideoOptions)
 
 	propertyValues := make(map[string]map[string][]string)
 
-	if options.downloadQueue {
+	if opt.DownloadQueue {
 		propertyValues[data.VideoDownloadQueuedProperty] = map[string][]string{
 			videoId: {yeti.FmtNow()},
 		}
 	}
-	if options.ended {
+	if opt.Ended {
 		propertyValues[data.VideoEndedDateProperty] = map[string][]string{
 			videoId: {yeti.FmtNow()},
 		}
 	}
-	if options.reason != data.Unspecified {
+	if opt.Reason != data.Unspecified {
 		propertyValues[data.VideoEndedReasonProperty] = map[string][]string{
-			videoId: {string(options.reason)},
+			videoId: {string(opt.Reason)},
 		}
 	}
-	if options.source != "" {
+	if opt.Source != "" {
 		propertyValues[data.VideoSourceProperty] = map[string][]string{
-			videoId: {options.source},
+			videoId: {opt.Source},
 		}
 	}
-	if options.preferSingleFormat {
+	if opt.PreferSingleFormat {
 		propertyValues[data.VideoPreferSingleFormatProperty] = map[string][]string{
 			videoId: {data.TrueValue},
 		}
 	}
-	if options.force {
+	if opt.Force {
 		propertyValues[data.VideoForcedDownloadProperty] = map[string][]string{
 			videoId: {data.TrueValue},
 		}
@@ -115,7 +83,7 @@ func AddVideo(rdx kvas.WriteableRedux, videoId string, options *addVideoOptions)
 		}
 	}
 
-	if err := GetVideoMetadata(options.force, videoId); err != nil {
+	if err := GetVideoMetadata(rdx, opt, videoId); err != nil {
 		return ava.EndWithError(err)
 	}
 

@@ -39,11 +39,11 @@ download-queue
     force
 
 get-captions
-    id&^
+    video-id&^
     force
 
 get-channel-metadata
-    id&^
+    channel-id&^
     force
 
 get-rutube-video
@@ -51,33 +51,36 @@ get-rutube-video
     force
 
 get-playlist-metadata
-    id&^
+    playlist-id&^
+    expand
     force
-    all-videos
 
 get-poster
-    id&^
-    for-id
+    video-id&^
     force
 
 get-video-metadata
-    id&^
+    video-id&^
     force
 
-queue-playlists-new-videos
+queue-playlists-downloads
 
-remove-playlists
-    download-queue&
-    watchlist&
-    single-format&
+remove-playlist
+    playlist-id^*
+    auto-refresh
+    auto-download
+    prefer-single-format
+    expand
+    force
 
 remove-videos
-    download-queue&
-    watchlist&
-    progress&
-    ended&
-    forced-download&
-    single-format&
+    video-id^*
+    download-queue
+    progress
+    ended
+    prefer-single-format
+    source
+    force
 
 serve
     port$*
@@ -89,6 +92,6 @@ sync
 
 test-dependencies
 
-update-playlists-metadata
+refresh-playlists-metadata
 
 version

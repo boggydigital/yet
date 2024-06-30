@@ -59,14 +59,13 @@ func main() {
 		"get-poster":                 cli.GetPosterHandler,
 		"get-rutube-video":           cli.GetRuTubeVideoHandler,
 		"get-video-metadata":         cli.GetVideoMetadataHandler,
-		"queue-playlists-new-videos": cli.QueuePlaylistsNewVideosHandler,
-		"remove-playlists":           cli.RemovePlaylistsHandler,
+		"queue-playlists-new-videos": cli.QueuePlaylistsDownloadsHandler,
+		"remove-playlist":            cli.RemovePlaylistHandler,
 		"remove-videos":              cli.RemoveVideosHandler,
-		"remove-urls":                cli.RemoveUrlsHandler,
 		"serve":                      cli.ServeHandler,
 		"sync":                       cli.SyncHandler,
 		"test-dependencies":          cli.TestDependenciesHandler,
-		"update-playlists-metadata":  cli.UpdatePlaylistsMetadataHandler,
+		"refresh-playlists-metadata": cli.RefreshPlaylistsMetadataHandler,
 		"version":                    cli.VersionHandler,
 	})
 

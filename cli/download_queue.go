@@ -3,9 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
 	"time"
@@ -14,9 +12,11 @@ import (
 func DownloadQueueHandler(u *url.URL) error {
 	q := u.Query()
 
-	options := &DownloadVideoOptions{
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Force:              q.Has("force"),
+	options := &VideoDownloadOptions{
+		VideoOptions: &VideoOptions{
+			PreferSingleFormat: q.Has("prefer-single-format"),
+			Force:              q.Has("force"),
+		},
 	}
 
 	return DownloadQueue(nil, options)
@@ -25,26 +25,18 @@ func DownloadQueueHandler(u *url.URL) error {
 // DownloadQueue processes download queue using the following rules:
 // - download is not already completed
 // - download is not in progress since less than 48 hours ago
-func DownloadQueue(rdx kvas.WriteableRedux, options *DownloadVideoOptions) error {
+func DownloadQueue(rdx kvas.WriteableRedux, opt *VideoDownloadOptions) error {
 
 	dqa := nod.NewProgress("downloading queued videos...")
 	defer dqa.End()
 
-	if options == nil {
-		options = DefaultDownloadVideoOptions()
+	if opt == nil {
+		opt = DefaultVideoDownloadOptions()
 	}
 
-	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return dqa.EndWithError(err)
-		}
-
-		rdx, err = kvas.NewReduxWriter(metadataDir, data.VideoProperties()...)
-		if err != nil {
-			return dqa.EndWithError(err)
-		}
-	} else if err := rdx.MustHave(data.VideoProperties()...); err != nil {
+	var err error
+	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
+	if err != nil {
 		return dqa.EndWithError(err)
 	}
 
@@ -52,7 +44,7 @@ func DownloadQueue(rdx kvas.WriteableRedux, options *DownloadVideoOptions) error
 
 	for _, id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
 		// don't re-download completed videos
-		if rdx.HasKey(data.VideoDownloadCompletedProperty, id) && !options.Force {
+		if rdx.HasKey(data.VideoDownloadCompletedProperty, id) && !opt.Force {
 			continue
 		}
 		// don't re-download videos that started download less than 48 hours ago
@@ -70,7 +62,7 @@ func DownloadQueue(rdx kvas.WriteableRedux, options *DownloadVideoOptions) error
 	}
 
 	for _, videoId := range queuedVideoIds {
-		if err := DownloadVideo(rdx, videoId, options); err != nil {
+		if err := DownloadVideo(rdx, videoId, opt); err != nil {
 			return dqa.EndWithError(err)
 		}
 	}

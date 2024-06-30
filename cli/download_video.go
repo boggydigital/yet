@@ -16,63 +16,42 @@ import (
 	"path/filepath"
 )
 
-type DownloadVideoOptions struct {
-	PreferSingleFormat bool
-	Source             string
-	Force              bool
-}
-
-func DefaultDownloadVideoOptions() *DownloadVideoOptions {
-	return &DownloadVideoOptions{
-		PreferSingleFormat: true,
-		Source:             "",
-		Force:              false,
-	}
-}
-
 func DownloadVideoHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoId := q.Get("video-id")
-	options := &DownloadVideoOptions{
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Source:             q.Get("source"),
-		Force:              q.Has("force"),
+	options := &VideoDownloadOptions{
+		VideoOptions: &VideoOptions{
+			PreferSingleFormat: q.Has("prefer-single-format"),
+			Force:              q.Has("force"),
+		},
+		Source: q.Get("source"),
 	}
 
 	return DownloadVideo(nil, videoId, options)
 }
 
-func DownloadVideo(rdx kvas.WriteableRedux, videoId string, options *DownloadVideoOptions) error {
+func DownloadVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoDownloadOptions) error {
 
 	da := nod.Begin("downloading video %s...", videoId)
 	defer da.End()
 
-	if options == nil {
-		options = DefaultDownloadVideoOptions()
-	}
-
-	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return da.EndWithError(err)
-		}
-
-		rdx, err = kvas.NewReduxWriter(metadataDir, data.VideoProperties()...)
-		if err != nil {
-			return da.EndWithError(err)
-		}
-	} else if err := rdx.MustHave(data.VideoProperties()...); err != nil {
-		return da.EndWithError(err)
+	if opt == nil {
+		opt = DefaultVideoDownloadOptions()
 	}
 
 	var err error
+	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
+	if err != nil {
+		return da.EndWithError(err)
+	}
+
 	videoId, err = yeti.ParseVideoId(videoId)
 	if err != nil {
 		return da.EndWithError(err)
 	}
 
-	force := rdx.HasKey(data.VideoForcedDownloadProperty, videoId) || options.Force
+	force := rdx.HasKey(data.VideoForcedDownloadProperty, videoId) || opt.Force
 	errors := false
 
 	videoPage, err := yeti.GetVideoPage(videoId)
@@ -101,7 +80,7 @@ func DownloadVideo(rdx kvas.WriteableRedux, videoId string, options *DownloadVid
 		return da.EndWithError(err)
 	}
 
-	if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, options); err != nil {
+	if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, opt); err != nil {
 		da.Error(err)
 		errors = true
 	}
@@ -137,7 +116,7 @@ func downloadVideo(
 	dl *dolo.Client,
 	videoId string,
 	videoPage *youtube_urls.InitialPlayerResponse,
-	options *DownloadVideoOptions) error {
+	options *VideoDownloadOptions) error {
 
 	relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 

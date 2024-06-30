@@ -44,8 +44,7 @@ const (
 	PlaylistAutoDownloadProperty       = "playlist-auto-download"
 	PlaylistDownloadPolicyProperty     = "playlist-download-policy"
 	PlaylistPreferSingleFormatProperty = "playlist-prefer-single-format"
-
-	PlaylistQueuedDownloadsProperty = "playlist-queued-downloads"
+	PlaylistExpandProperty             = "playlist-expand"
 
 	ChannelTitleProperty       = "channel-title"
 	ChannelDescriptionProperty = "channel-description"
@@ -66,7 +65,6 @@ func VideoProperties() []string {
 		VideoPublishDateProperty,
 		VideoPublishTimeTextProperty,
 		VideoUploadDateProperty,
-		VideoDownloadedDateProperty,
 		VideoProgressProperty,
 		VideoDurationProperty,
 		VideoEndedDateProperty,
@@ -97,7 +95,7 @@ func PlaylistProperties() []string {
 		PlaylistAutoDownloadProperty,
 		PlaylistDownloadPolicyProperty,
 		PlaylistPreferSingleFormatProperty,
-		PlaylistQueuedDownloadsProperty,
+		PlaylistExpandProperty,
 	}
 }
 

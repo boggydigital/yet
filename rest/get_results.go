@@ -105,7 +105,7 @@ var extractedSearchVideosProperties = []string{
 	data.VideoOwnerChannelNameProperty,
 	data.VideoViewCountProperty,
 	data.VideoPublishTimeTextProperty,
-	data.VideoEndedProperty,
+	data.VideoEndedDateProperty,
 }
 
 var extractedSearchPlaylistProperties = []string{

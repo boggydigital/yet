@@ -3,50 +3,46 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"net/url"
 )
 
 func SyncHandler(u *url.URL) error {
 	q := u.Query()
 
-	options := &DownloadVideoOptions{
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Force:              q.Has("force"),
+	options := &VideoDownloadOptions{
+		VideoOptions: &VideoOptions{
+			PreferSingleFormat: q.Has("prefer-single-format"),
+			Force:              q.Has("Force"),
+		},
 	}
-	return Sync(options)
+	return Sync(nil, options)
 }
 
-func Sync(options *DownloadVideoOptions) error {
+func Sync(rdx kvas.WriteableRedux, opt *VideoDownloadOptions) error {
 
-	sa := nod.Begin("syncing playlists subscriptions...")
+	sa := nod.Begin("syncing playlists...")
 	defer sa.End()
 
-	if options == nil {
-		options = DefaultDownloadVideoOptions()
+	if opt == nil {
+		opt = DefaultVideoDownloadOptions()
 	}
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
+	var err error
+	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
 		return sa.EndWithError(err)
 	}
 
-	rdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-	if err != nil {
+	if err := RefreshPlaylistsMetadata(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
-	if err := UpdatePlaylistsMetadata(rdx); err != nil {
+	if err := QueuePlaylistsDownloads(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
-	if err := QueuePlaylistsNewVideos(rdx); err != nil {
-		return sa.EndWithError(err)
-	}
-
-	if err := DownloadQueue(rdx, options); err != nil {
+	if err := DownloadQueue(rdx, opt); err != nil {
 		return sa.EndWithError(err)
 	}
 

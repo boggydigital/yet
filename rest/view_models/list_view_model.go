@@ -3,8 +3,6 @@ package view_models
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
-	"math/rand"
-	"slices"
 )
 
 type ListViewModel struct {
@@ -41,7 +39,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 			return nil, err
 		}
 		for _, id := range cwKeys {
-			if ended, ok := rdx.GetLastVal(data.VideoEndedProperty, id); !ok || ended == "" {
+			if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); !ok || et == "" {
 				lvm.Continue = append(lvm.Continue, GetVideoViewModel(id, rdx,
 					ShowPoster,
 					ShowPublishedDate,
@@ -51,66 +49,67 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 	}
 
-	if len(lvm.Continue) == 0 {
-		// add random video to suggest watching
-		pool := make([]string, 0)
-		for _, id := range rdx.Keys(data.PlaylistNewVideosProperty) {
-			if pnv, ok := rdx.GetLastVal(data.PlaylistNewVideosProperty, id); ok {
-				pool = append(pool, pnv)
-			}
-		}
+	// TODO: figure out what to do here
+	//if len(lvm.Continue) == 0 {
+	//	// add random video to suggest watching
+	//	pool := make([]string, 0)
+	//	for _, id := range rdx.Keys(data.PlaylistNewVideosProperty) {
+	//		if pnv, ok := rdx.GetLastVal(data.PlaylistNewVideosProperty, id); ok {
+	//			pool = append(pool, pnv)
+	//		}
+	//	}
+	//
+	//	if len(pool) > 0 {
+	//		lvm.Random = GetVideoViewModel(pool[rand.Intn(len(pool))], rdx, ShowPoster, ShowPublishedDate, ShowDuration)
+	//	}
+	//}
 
-		if len(pool) > 0 {
-			lvm.Random = GetVideoViewModel(pool[rand.Intn(len(pool))], rdx, ShowPoster, ShowPublishedDate, ShowDuration)
-		}
-	}
+	//pldq := rdx.Keys(data.PlaylistAutoDownloadProperty)
+	//newPlaylistVideos := make([]string, 0, len(pldq))
 
-	pldq := rdx.Keys(data.PlaylistDownloadQueueProperty)
-	newPlaylistVideos := make([]string, 0, len(pldq))
+	//for _, pl := range pldq {
+	//	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, pl); ok {
+	//		newPlaylistVideos = append(newPlaylistVideos, nv...)
+	//	}
+	//}
 
-	for _, pl := range pldq {
-		if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, pl); ok {
-			newPlaylistVideos = append(newPlaylistVideos, nv...)
-		}
-	}
+	//wlKeys := rdx.Keys(data.VideosWatchlistProperty)
+	//if len(wlKeys) > 0 {
+	//
+	//	wlKeys, err = rdx.Sort(wlKeys, false, data.VideoTitleProperty)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	for _, id := range wlKeys {
+	//		if slices.Contains(newPlaylistVideos, id) {
+	//			continue
+	//		}
+	//		if le, ok := rdx.GetLastVal(data.VideoEndedProperty, id); ok && le != "" {
+	//			continue
+	//		}
+	//		if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, id); ok || ct != "" {
+	//			continue
+	//		}
+	//		lvm.Videos = append(lvm.Videos, GetVideoViewModel(id, rdx,
+	//			ShowPoster,
+	//			ShowPublishedDate,
+	//			ShowDuration))
+	//	}
+	//}
 
-	wlKeys := rdx.Keys(data.VideosWatchlistProperty)
-	if len(wlKeys) > 0 {
-
-		wlKeys, err = rdx.Sort(wlKeys, false, data.VideoTitleProperty)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, id := range wlKeys {
-			if slices.Contains(newPlaylistVideos, id) {
-				continue
-			}
-			if le, ok := rdx.GetLastVal(data.VideoEndedProperty, id); ok && le != "" {
-				continue
-			}
-			if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, id); ok || ct != "" {
-				continue
-			}
-			lvm.Videos = append(lvm.Videos, GetVideoViewModel(id, rdx,
-				ShowPoster,
-				ShowPublishedDate,
-				ShowDuration))
-		}
-	}
-
-	plKeys := rdx.Keys(data.PlaylistWatchlistProperty)
+	plKeys := rdx.Keys(data.PlaylistAutoRefreshProperty)
 	if len(plKeys) > 0 {
 
 		plNewVideos, plNoNewVideos := make([]string, 0, len(plKeys)), make([]string, 0, len(plKeys))
 
-		for _, playlistId := range plKeys {
-			if newVideos, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok && len(newVideos) > 0 {
-				plNewVideos = append(plNewVideos, playlistId)
-			} else {
-				plNoNewVideos = append(plNoNewVideos, playlistId)
-			}
-		}
+		//for _, playlistId := range plKeys {
+		//	if newVideos, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok && len(newVideos) > 0 {
+		//		plNewVideos = append(plNewVideos, playlistId)
+		//	} else {
+		//		plNoNewVideos = append(plNoNewVideos, playlistId)
+		//	}
+		//}
 
 		plNewVideos, err = rdx.Sort(plNewVideos, false, data.PlaylistChannelProperty, data.PlaylistTitleProperty)
 		if err != nil {
@@ -131,7 +130,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 	}
 
-	dqKeys := rdx.Keys(data.VideosDownloadQueueProperty)
+	dqKeys := rdx.Keys(data.VideoDownloadQueuedProperty)
 	if len(dqKeys) > 0 {
 
 		dqKeys, err = rdx.Sort(dqKeys, false, data.VideoTitleProperty)
@@ -147,7 +146,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 	}
 
-	lvm.HasHistory = len(rdx.Keys(data.VideoEndedProperty)) > 0
+	lvm.HasHistory = len(rdx.Keys(data.VideoEndedDateProperty)) > 0
 
 	return lvm, nil
 }

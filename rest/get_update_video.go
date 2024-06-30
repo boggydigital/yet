@@ -30,13 +30,13 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
 	properties := []string{
 		data.VideoProgressProperty,
-		data.VideoEndedProperty,
-		data.VideoSkippedProperty,
-		data.VideosWatchlistProperty,
-		data.VideosDownloadQueueProperty,
+		data.VideoEndedDateProperty,
+		data.VideoEndedReasonProperty,
+		//data.VideosWatchlistProperty,
+		data.VideoDownloadQueuedProperty,
 		data.VideoForcedDownloadProperty,
-		data.VideoSingleFormatDownloadProperty,
-		data.PlaylistNewVideosProperty,
+		data.VideoPreferSingleFormatProperty,
+		//data.PlaylistNewVideosProperty,
 	}
 
 	vRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
@@ -46,14 +46,13 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, p := range properties {
-		if p == data.PlaylistNewVideosProperty {
-			continue
-		}
+		//if p == data.PlaylistNewVideosProperty {
+		//	continue
+		//}
 		if err := updateVideoProperty(videoId, p, r.URL, vRdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
 	}
 
 	http.Redirect(w, r, "/watch?v="+videoId, http.StatusTemporaryRedirect)
@@ -65,17 +64,17 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 	switch property {
 	case data.VideoProgressProperty:
 		flagStr = "progress"
-	case data.VideoEndedProperty:
+	case data.VideoEndedDateProperty:
 		flagStr = "ended"
-	case data.VideoSkippedProperty:
-		flagStr = "skipped"
-	case data.VideosWatchlistProperty:
-		flagStr = "watchlist"
-	case data.VideosDownloadQueueProperty:
+	case data.VideoEndedReasonProperty:
+		flagStr = "ended-reason"
+	//case data.VideosWatchlistProperty:
+	//	flagStr = "watchlist"
+	case data.VideoDownloadQueuedProperty:
 		flagStr = "download"
 	case data.VideoForcedDownloadProperty:
 		flagStr = "forced-download"
-	case data.VideoSingleFormatDownloadProperty:
+	case data.VideoPreferSingleFormatProperty:
 		flagStr = "single-format"
 	default:
 		return fmt.Errorf("unsupported property %s", property)
@@ -90,15 +89,15 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 			case data.VideoProgressProperty:
 				// setting progress requires current time - users should be encouraged to scrub video instead
 				return nil
-			case data.VideoSkippedProperty:
+			case data.VideoEndedReasonProperty:
 				// skipped video must also make sure the video is set as ended
-				if !rdx.HasKey(data.VideoEndedProperty, videoId) {
+				if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
 					t := time.Now().Format(time.RFC3339)
-					if err := rdx.AddValues(data.VideoEndedProperty, videoId, t); err != nil {
+					if err := rdx.AddValues(data.VideoEndedDateProperty, videoId, t); err != nil {
 						return err
 					}
 				}
-			case data.VideoEndedProperty:
+			case data.VideoEndedDateProperty:
 				// ended requires current time as a value to set
 				value = time.Now().Format(time.RFC3339)
 			}
@@ -106,7 +105,7 @@ func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.W
 				return err
 			}
 
-			if property == data.VideoSkippedProperty || property == data.VideoEndedProperty {
+			if property == data.VideoEndedReasonProperty || property == data.VideoEndedDateProperty {
 				// if ended or skipped - remove video from new playlist videos
 				if err := rmVideoFromPlaylistNewVideos(videoId, rdx); err != nil {
 					return err
