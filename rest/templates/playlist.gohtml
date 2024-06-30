@@ -1,7 +1,7 @@
 {{define "playlist"}}
     {{$class := ""}}
-    {{if eq .BadgeCount 0}}{{$class = print $class "ended"}}{{end}}
-    {{if .AutoDownload}}{{$class = print $class "downloading"}}{{end}}
+    {{if eq .BadgeCount 0}}{{$class = print $class " ended"}}{{end}}
+    {{if .AutoDownload}}{{$class = print $class " downloading"}}{{end}}
     <li class="playlist-container">
         <a class="playlist {{$class}}" href='/playlist?list={{.PlaylistId}}'>
             <span class='title'>{{.PlaylistChannelTitle}}</span>

@@ -3,11 +3,11 @@ package view_models
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 )
 
 type ListViewModel struct {
 	Continue       []*VideoViewModel
-	Random         *VideoViewModel
 	Videos         []*VideoViewModel
 	Downloads      []*VideoViewModel
 	PlaylistsOrder []string
@@ -49,21 +49,6 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 	}
 
-	// TODO: figure out what to do here
-	//if len(lvm.Continue) == 0 {
-	//	// add random video to suggest watching
-	//	pool := make([]string, 0)
-	//	for _, id := range rdx.Keys(data.PlaylistNewVideosProperty) {
-	//		if pnv, ok := rdx.GetLastVal(data.PlaylistNewVideosProperty, id); ok {
-	//			pool = append(pool, pnv)
-	//		}
-	//	}
-	//
-	//	if len(pool) > 0 {
-	//		lvm.Random = GetVideoViewModel(pool[rand.Intn(len(pool))], rdx, ShowPoster, ShowPublishedDate, ShowDuration)
-	//	}
-	//}
-
 	//pldq := rdx.Keys(data.PlaylistAutoDownloadProperty)
 	//newPlaylistVideos := make([]string, 0, len(pldq))
 
@@ -103,13 +88,13 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 
 		plNewVideos, plNoNewVideos := make([]string, 0, len(plKeys)), make([]string, 0, len(plKeys))
 
-		//for _, playlistId := range plKeys {
-		//	if newVideos, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok && len(newVideos) > 0 {
-		//		plNewVideos = append(plNewVideos, playlistId)
-		//	} else {
-		//		plNoNewVideos = append(plNoNewVideos, playlistId)
-		//	}
-		//}
+		for _, playlistId := range plKeys {
+			if newVideos := yeti.PlaylistNotEndedVideos(playlistId, rdx); len(newVideos) > 0 {
+				plNewVideos = append(plNewVideos, playlistId)
+			} else {
+				plNoNewVideos = append(plNoNewVideos, playlistId)
+			}
+		}
 
 		plNewVideos, err = rdx.Sort(plNewVideos, false, data.PlaylistChannelProperty, data.PlaylistTitleProperty)
 		if err != nil {
