@@ -11,6 +11,11 @@
         <title>{{.PlaylistTitle}}</title>
         {{template "css-shared"}}
         <style id="css-playlists">
+
+            li {
+                list-style: none;
+            }
+
             .titles {
                 display: flex;
                 flex-direction: column;
@@ -37,10 +42,7 @@
 
     {{template "back"}}
 
-    <section class="titles">
-        <h1 class='playlist'>{{.PlaylistChannelTitle}}</h1>
-        <h2 class='playlist'>{{.PlaylistTitle}}</h2>
-    </section>
+    {{template "playlist" .}}
 
     <ul class='info horizontal'>
         {{if .AutoRefresh}}
