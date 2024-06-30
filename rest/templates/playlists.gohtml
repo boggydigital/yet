@@ -33,14 +33,14 @@
     {{template "back"}}
 
     <section class="titles">
-        <h1 class='playlist {{.PlaylistClass}}'>{{.PlaylistChannelTitle}}</h1>
-        <h2 class='playlist {{.PlaylistClass}}'>{{.PlaylistTitle}}</h2>
+        <h1 class='playlist'>{{.PlaylistChannelTitle}}</h1>
+        <h2 class='playlist'>{{.PlaylistTitle}}</h2>
     </section>
 
     <div class='info'>
-        {{if .Downloading}}
+        {{if .AutoDownload}}
             Automatically refreshing playlist and downloading new videos
-        {{else if .Watching}}
+        {{else if .AutoRefresh}}
             Automatically refreshing playlist
         {{else}}
             This playlist is not refreshed and videos are not downloaded automatically

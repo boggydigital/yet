@@ -1,10 +1,10 @@
 {{define "playlist"}}
     <li class="playlist-container">
-        <a class="playlist {{.PlaylistClass}}" href='/playlist?list={{.PlaylistId}}'>
+        <a class="playlist" href='/playlist?list={{.PlaylistId}}'>
             <span class='title'>{{.PlaylistChannelTitle}}</span>
             <span class='subtitle'>{{.PlaylistTitle}}</span>
-            {{if gt .NewVideos 0}}
-                <span class='new_videos'>{{.NewVideos}}</span>
+            {{if gt .BadgeCount 0}}
+                <span class='new_videos'>{{.BadgeCount}}</span>
             {{end}}
         </a>
     </li>

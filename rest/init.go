@@ -31,7 +31,6 @@ func Init() error {
 	if progressRdx, err = kvas.NewReduxWriter(metadataDir,
 		data.VideoProgressProperty,
 		data.VideoEndedDateProperty,
-		//data.PlaylistNewVideosProperty,
 	); err != nil {
 		return err
 	}

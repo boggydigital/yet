@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
@@ -45,30 +44,9 @@ func QueuePlaylistsDownloads(rdx kvas.WriteableRedux) error {
 // skips ended and previously queued videos and queues the rest
 func queuePlaylistDownloads(rdx kvas.WriteableRedux, playlistId string) error {
 
-	playlistVideos, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId)
-	if !ok {
-		return fmt.Errorf("cannot queue downloads for an empty playlist %s", playlistId)
-	}
-
-	policy := data.Unset
-	if dp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
-		policy = data.ParsePlaylistDownloadPolicy(dp)
-	}
-
-	limitVideos := data.RecentDownloadsLimit
-	if policy == data.All || limitVideos > len(playlistVideos) {
-		limitVideos = len(playlistVideos)
-	}
-
 	queue := make(map[string][]string)
 
-	for ii := 0; ii < limitVideos; ii++ {
-
-		videoId := playlistVideos[ii]
-
-		if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
-			continue
-		}
+	for _, videoId := range yeti.PlaylistNotEndedVideos(playlistId, rdx) {
 		if rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
 			continue
 		}
