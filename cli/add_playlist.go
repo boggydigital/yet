@@ -56,7 +56,7 @@ func AddPlaylist(rdx kvas.WriteableRedux, playlistId string, opt *PlaylistOption
 			playlistId: {data.TrueValue},
 		}
 	}
-	if opt.DownloadPolicy != data.Unset {
+	if opt.DownloadPolicy != data.DefaultDownloadPolicy {
 		propertyValues[data.PlaylistDownloadPolicyProperty] = map[string][]string{
 			playlistId: {string(opt.DownloadPolicy)},
 		}

@@ -51,7 +51,7 @@ func RemovePlaylist(rdx kvas.WriteableRedux, playlistId string, opt *PlaylistOpt
 	if opt.AutoDownload {
 		propertyKeys[data.PlaylistAutoDownloadProperty] = playlistId
 	}
-	if opt.DownloadPolicy != data.Unset {
+	if opt.DownloadPolicy != data.DefaultDownloadPolicy {
 		propertyKeys[data.PlaylistDownloadPolicyProperty] = playlistId
 	}
 	if opt.Expand {

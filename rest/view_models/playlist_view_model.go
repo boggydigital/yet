@@ -14,6 +14,7 @@ type PlaylistViewModel struct {
 	AutoRefresh          bool
 	AutoDownload         bool
 	DownloadPolicy       data.PlaylistDownloadPolicy
+	AllDownloadPolicies  []data.PlaylistDownloadPolicy
 	Expand               bool
 	PreferSingleFormat   bool
 	Videos               []*VideoViewModel
@@ -38,7 +39,7 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		autoDownload = true
 	}
 
-	downloadPolicy := data.Unset
+	downloadPolicy := data.DefaultDownloadPolicy
 	if pdp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
 		downloadPolicy = data.ParsePlaylistDownloadPolicy(pdp)
 	}
@@ -71,6 +72,7 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		AutoRefresh:          autoRefresh,
 		AutoDownload:         autoDownload,
 		DownloadPolicy:       downloadPolicy,
+		AllDownloadPolicies:  data.AllPlaylistDownloadPolicies(),
 		Expand:               expand,
 		PreferSingleFormat:   preferSingleFormat,
 	}

@@ -48,7 +48,7 @@ func RemoveVideos(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) er
 	if opt.Ended {
 		propertyKeys[data.VideoEndedDateProperty] = videoId
 	}
-	if opt.Reason != data.Unspecified {
+	if opt.Reason != data.DefaultEndedReason {
 		propertyKeys[data.VideoEndedReasonProperty] = videoId
 	}
 	if opt.Source != "" {

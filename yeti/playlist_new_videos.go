@@ -12,7 +12,7 @@ func PlaylistNotEndedVideos(playlistId string, rdx kvas.ReadableRedux) []string 
 		return nil
 	}
 
-	policy := data.Unset
+	policy := data.DefaultDownloadPolicy
 	if dp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
 		policy = data.ParsePlaylistDownloadPolicy(dp)
 	}

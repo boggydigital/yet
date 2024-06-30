@@ -3,9 +3,9 @@ package data
 type PlaylistDownloadPolicy string
 
 const (
-	Unset  PlaylistDownloadPolicy = "unset"
-	Recent PlaylistDownloadPolicy = "recent"
-	All    PlaylistDownloadPolicy = "all"
+	Recent                PlaylistDownloadPolicy = "recent"
+	All                   PlaylistDownloadPolicy = "all"
+	DefaultDownloadPolicy                        = Recent
 )
 
 const (
@@ -19,6 +19,13 @@ func ParsePlaylistDownloadPolicy(policy string) PlaylistDownloadPolicy {
 	case string(All):
 		return All
 	default:
-		return Unset
+		return DefaultDownloadPolicy
+	}
+}
+
+func AllPlaylistDownloadPolicies() []PlaylistDownloadPolicy {
+	return []PlaylistDownloadPolicy{
+		Recent,
+		All,
 	}
 }

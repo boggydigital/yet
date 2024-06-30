@@ -56,7 +56,7 @@ func AddVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) error 
 			videoId: {yeti.FmtNow()},
 		}
 	}
-	if opt.Reason != data.Unspecified {
+	if opt.Reason != data.DefaultEndedReason {
 		propertyValues[data.VideoEndedReasonProperty] = map[string][]string{
 			videoId: {string(opt.Reason)},
 		}

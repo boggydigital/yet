@@ -17,7 +17,7 @@ func DefaultVideoOptions() *VideoOptions {
 		DownloadQueue:      true,
 		Progress:           false,
 		Ended:              false,
-		Reason:             data.Unspecified,
+		Reason:             data.DefaultEndedReason,
 		Source:             "",
 		PreferSingleFormat: true,
 		Force:              false,

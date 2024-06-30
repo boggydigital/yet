@@ -23,7 +23,7 @@
        href="https://www.youtube.com/playlist?list={{.PlaylistId}}">Browse at origin</a>
 
     <form method="get" action="/update_playlist">
-        <input type="hidden" id="list" name="list" value="{{.PlaylistId}}" />
+        <input type="hidden" id="list" name="list" value="{{.PlaylistId}}"/>
         <input type="submit" value='Update'/>
         <ul class="management">
             <li>
@@ -42,24 +42,31 @@
 
             </li>
             <li>
-                <input id="auto-download" type="checkbox" switch name="auto-download" {{if .AutoDownload}}checked{{end}} />
+                <input id="auto-download" type="checkbox" switch name="auto-download"
+                       {{if .AutoDownload}}checked{{end}} />
                 <label for="auto-download">
                     <span class="title">Auto download videos</span>
                     <span class="subtitle subtle">Download unwatched videos.</span>
                 </label>
             </li>
             <li>
-            <input id="download-policy-all" type="checkbox" switch name="download-policy-all" {{if eq .DownloadPolicy "all"}}checked{{end}} />
-            <label for="download-policy-all">
-                <span class="title">Download all videos</span>
-                <span class="subtitle subtle">On: All (unwatched) videos will be downloaded. Off: Recent (unwatched) videos will be downloaded.</span>
-            </label>
+                <select id="download-policy" name="download-policy">
+                    {{$policy := .DownloadPolicy}}
+                    {{range .AllDownloadPolicies}}
+                        <option {{if eq . $policy}}selected{{end}}>{{.}}</option>
+                    {{end}}
+                </select>
+                <label for="download-policy">
+                    <span class="title">Download policy</span>
+                    <span class="subtitle subtle">Recent - limit to the last 10 videos. All - no download limits.</span>
+                </label>
             </li>
             <li>
             </li>
             <li><h2>Download options</h2></li>
             <li>
-                <input id="prefer-single-format" type="checkbox" switch name="prefer-single-format" {{if .PreferSingleFormat}}checked{{end}} />
+                <input id="prefer-single-format" type="checkbox" switch name="prefer-single-format"
+                       {{if .PreferSingleFormat}}checked{{end}} />
                 <label for="single-format">
                     <span class="title">Prefer single format</span>
                     <span class="subtitle subtle">Download mobile format videos. 720p quality.</span>

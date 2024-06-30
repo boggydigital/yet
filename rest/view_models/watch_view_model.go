@@ -45,7 +45,7 @@ var propertyTitles = map[string]string{
 	data.VideoPublishDateProperty:        "Published",
 	data.VideoDownloadCompletedProperty:  "Downloaded",
 	data.VideoDurationProperty:           "Duration",
-	data.VideoEndedDateProperty:          "Last Ended",
+	data.VideoEndedDateProperty:          "Ended Date",
 	data.VideoEndedReasonProperty:        "Ended Reason",
 	data.VideoDownloadQueuedProperty:     "Download Queued",
 	data.VideoForcedDownloadProperty:     "Forced Download",
@@ -222,11 +222,10 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 		VideoDescription:     videoDescription,
 		VideoPropertiesOrder: titles,
 		VideoProperties:      videoProperties,
-		//CurrentTime:          currentTime,
-		LastEndedTime:     lastEndedTime,
-		ChannelId:         channelId,
-		ChannelTitle:      channelTitle,
-		PlaylistViewModel: GetPlaylistViewModel(playlistId, rdx),
+		LastEndedTime:        lastEndedTime,
+		ChannelId:            channelId,
+		ChannelTitle:         channelTitle,
+		PlaylistViewModel:    GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }
 

@@ -28,15 +28,19 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	propertyInputs := map[string]string{
+	boolPropertyInputs := map[string]string{
 		data.PlaylistAutoRefreshProperty:        "auto-refresh",
 		data.PlaylistExpandProperty:             "expand",
 		data.PlaylistAutoDownloadProperty:       "auto-download",
 		data.PlaylistPreferSingleFormatProperty: "prefer-single-format",
 	}
 
-	properties := maps.Keys(propertyInputs)
-	properties = append(properties, data.PlaylistDownloadPolicyProperty)
+	specialProperties := map[string]string{
+		data.PlaylistDownloadPolicyProperty: "download-policy",
+	}
+
+	properties := maps.Keys(boolPropertyInputs)
+	properties = append(properties, maps.Keys(specialProperties)...)
 
 	plRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
 	if err != nil {
@@ -44,34 +48,40 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for property, input := range propertyInputs {
+	for property, input := range boolPropertyInputs {
 		if err := toggleProperty(playlistId, property, q.Has(input), plRdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
 
-	// download policy requires special non-binary handling
-	policy := data.Unset
-	if q.Has("download-policy-all") {
-		policy = data.All
-	} else {
-		policy = data.Unset
-	}
-
-	if err := plRdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	for property, input := range specialProperties {
+		switch property {
+		case data.PlaylistDownloadPolicyProperty:
+			policy := data.DefaultDownloadPolicy
+			if dp := q.Get(input); dp != "" {
+				policy = data.ParsePlaylistDownloadPolicy(dp)
+			}
+			if err := plRdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
 	}
 
 	http.Redirect(w, r, "/playlist?list="+playlistId, http.StatusTemporaryRedirect)
 
 }
 
-func toggleProperty(playlistId, property string, condition bool, rdx kvas.WriteableRedux) error {
+func toggleProperty(id, property string, condition bool, rdx kvas.WriteableRedux) error {
 	if condition {
-		return rdx.ReplaceValues(property, playlistId, data.TrueValue)
+		if !rdx.HasValue(property, id, data.TrueValue) {
+			return rdx.ReplaceValues(property, id, data.TrueValue)
+		}
 	} else {
-		return rdx.CutKeys(property, playlistId)
+		if rdx.HasKey(property, id) {
+			return rdx.CutKeys(property, id)
+		}
 	}
+	return nil
 }
