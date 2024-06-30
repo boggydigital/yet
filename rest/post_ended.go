@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/http"
@@ -18,7 +17,7 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	// {v}
 
 	var err error
-	progressRdx, err = progressRdx.RefreshWriter()
+	rdx, err = rdx.RefreshWriter()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -33,29 +32,8 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store completion timestamp
-	if err := progressRdx.ReplaceValues(data.VideoEndedDateProperty, er.VideoId, yeti.FmtNow()); err != nil {
+	if err := rdx.ReplaceValues(data.VideoEndedDateProperty, er.VideoId, yeti.FmtNow()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// remove the video from playlist new videos
-	if err := rmVideoFromPlaylistNewVideos(er.VideoId, progressRdx); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func rmVideoFromPlaylistNewVideos(videoId string, rdx kvas.WriteableRedux) error {
-	// TODO: revisit this logic as needed
-	//if err := rdx.MustHave(data.PlaylistNewVideosProperty); err != nil {
-	//	return err
-	//}
-	//for _, playlistId := range progressRdx.Keys(data.PlaylistNewVideosProperty) {
-	//	if progressRdx.HasValue(data.PlaylistNewVideosProperty, playlistId, videoId) {
-	//		if err := progressRdx.CutValues(data.PlaylistNewVideosProperty, playlistId, videoId); err != nil {
-	//			return err
-	//		}
-	//	}
-	//}
-	return nil
 }

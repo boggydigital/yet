@@ -2,9 +2,7 @@ package rest
 
 import (
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"golang.org/x/exp/maps"
 	"net/http"
@@ -14,18 +12,19 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
 	// GET /update_video?v
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	q := r.URL.Query()
 
 	videoId := q.Get("video-id")
 
 	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
-		return
-	}
-
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -48,21 +47,15 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	properties = append(properties, maps.Keys(timePropertyInputs)...)
 	properties = append(properties, maps.Keys(specialProperties)...)
 
-	vRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	for property, input := range boolPropertyInputs {
-		if err := toggleProperty(videoId, property, q.Has(input), vRdx); err != nil {
+		if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
 
 	for property, input := range timePropertyInputs {
-		if err := toggleTimeProperty(videoId, property, q.Has(input), vRdx); err != nil {
+		if err := toggleTimeProperty(videoId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -74,7 +67,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			if q.Has(input) {
 				// do nothing, progress cannot be set
 			} else {
-				if err := toggleProperty(videoId, property, q.Has(input), vRdx); err != nil {
+				if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
@@ -84,7 +77,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			if er := q.Get(input); er != "" {
 				reason = data.ParseVideoEndedReason(er)
 			}
-			if err := vRdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, string(reason)); err != nil {
+			if err := rdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, string(reason)); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}

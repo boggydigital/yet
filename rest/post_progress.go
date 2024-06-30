@@ -18,7 +18,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	// {v, t}
 
 	var err error
-	progressRdx, err = progressRdx.RefreshWriter()
+	rdx, err = rdx.RefreshWriter()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,7 +32,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := progressRdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
+	if err := rdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

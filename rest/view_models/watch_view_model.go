@@ -52,7 +52,7 @@ var propertyTitles = map[string]string{
 	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
 
-func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audioOnly bool) (*WatchViewModel, error) {
+func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, audioOnly bool) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
 	audioUrl := ""
@@ -117,18 +117,8 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 			return nil, err
 		}
 
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return nil, err
-		}
-
-		mdRdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-		if err != nil {
-			return nil, err
-		}
-
 		for p, values := range yeti.ExtractMetadata(videoPage) {
-			if err := mdRdx.AddValues(p, videoId, values...); err != nil {
+			if err := rdx.AddValues(p, videoId, values...); err != nil {
 				return nil, err
 			}
 		}

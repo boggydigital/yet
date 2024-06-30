@@ -10,7 +10,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 	// GET /manage_video?v
 
 	var err error
-	rdx, err = rdx.RefreshReader()
+	rdx, err = rdx.RefreshWriter()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

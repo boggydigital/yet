@@ -1,10 +1,7 @@
 package rest
 
 import (
-	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/rest/view_models"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
@@ -21,6 +18,13 @@ type ResultsViewModel struct {
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	searchQuery := r.URL.Query().Get("search_query")
 
 	terms := strings.Split(searchQuery, " ")
@@ -31,25 +35,9 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	extractedProperties := extractedSearchVideosProperties
-	extractedProperties = append(extractedProperties, extractedSearchPlaylistProperties...)
-	extractedProperties = append(extractedProperties, extractedSearchChannelProperties...)
-
-	wRdx, err := kvas.NewReduxWriter(metadataDir, extractedProperties...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	propertyValues := extractSearchVideosMetadata(sid.VideoRenderers())
 	for property, keyValues := range propertyValues {
-		if err := wRdx.BatchAddValues(property, keyValues); err != nil {
+		if err := rdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -57,7 +45,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	propertyValues = extractSearchPlaylistMetadata(sid.PlaylistRenderers())
 	for property, keyValues := range propertyValues {
-		if err := wRdx.BatchAddValues(property, keyValues); err != nil {
+		if err := rdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -65,7 +53,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	propertyValues = extractSearchChannelMetadata(sid.ChannelRenderers())
 	for property, keyValues := range propertyValues {
-		if err := wRdx.BatchAddValues(property, keyValues); err != nil {
+		if err := rdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -77,15 +65,15 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, chr := range sid.ChannelRenderers() {
-		rvm.Channels = append(rvm.Channels, view_models.GetChannelViewModel(chr.ChannelId, wRdx))
+		rvm.Channels = append(rvm.Channels, view_models.GetChannelViewModel(chr.ChannelId, rdx))
 	}
 
 	for _, plr := range sid.PlaylistRenderers() {
-		rvm.Playlists = append(rvm.Playlists, view_models.GetPlaylistViewModel(plr.PlaylistId, wRdx))
+		rvm.Playlists = append(rvm.Playlists, view_models.GetPlaylistViewModel(plr.PlaylistId, rdx))
 	}
 
 	for _, vr := range sid.VideoRenderers() {
-		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, wRdx,
+		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, rdx,
 			view_models.ShowPoster,
 			view_models.ShowOwnerChannel,
 			view_models.ShowPublishedDate,

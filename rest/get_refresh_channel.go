@@ -1,10 +1,6 @@
 package rest
 
 import (
-	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"net/http"
 )
@@ -13,6 +9,13 @@ func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 
 	// GET /refresh_channel?id
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	channelId := r.URL.Query().Get("id")
 
 	if channelId == "" {
@@ -20,20 +23,7 @@ func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	chRdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := yeti.GetChannelPageMetadata(nil, channelId, chRdx); err != nil {
+	if err := yeti.GetChannelPageMetadata(nil, channelId, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

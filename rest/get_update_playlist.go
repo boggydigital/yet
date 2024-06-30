@@ -2,9 +2,7 @@ package rest
 
 import (
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"golang.org/x/exp/maps"
 	"net/http"
 )
@@ -13,18 +11,19 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// GET /update_playlist?list
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	q := r.URL.Query()
 
 	playlistId := q.Get("list")
 
 	if playlistId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
-		return
-	}
-
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -42,14 +41,8 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 	properties := maps.Keys(boolPropertyInputs)
 	properties = append(properties, maps.Keys(specialProperties)...)
 
-	plRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	for property, input := range boolPropertyInputs {
-		if err := toggleProperty(playlistId, property, q.Has(input), plRdx); err != nil {
+		if err := toggleProperty(playlistId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -62,7 +55,7 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 			if dp := q.Get(input); dp != "" {
 				policy = data.ParsePlaylistDownloadPolicy(dp)
 			}
-			if err := plRdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
+			if err := rdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}

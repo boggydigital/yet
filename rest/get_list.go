@@ -14,7 +14,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	// GET /list
 
 	var err error
-	rdx, err = rdx.RefreshReader()
+	rdx, err = rdx.RefreshWriter()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

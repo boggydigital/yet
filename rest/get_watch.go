@@ -12,7 +12,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	// GET /watch?v&t
 
 	var err error
-	rdx, err = rdx.RefreshReader()
+	rdx, err = rdx.RefreshWriter()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
