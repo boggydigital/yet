@@ -63,6 +63,8 @@ get-video-metadata
     video-id&^
     force
 
+migrate-metadata
+
 queue-playlists-downloads
 
 remove-playlist
