@@ -26,6 +26,11 @@
                 }
             }
 
+            .info.horizontal {
+                column-gap: var(--x-small);
+                flex-wrap: wrap;
+            }
+
         </style>
     </head>
     <body>
@@ -37,15 +42,21 @@
         <h2 class='playlist'>{{.PlaylistTitle}}</h2>
     </section>
 
-    <div class='info'>
-        {{if .AutoDownload}}
-            Automatically refreshing playlist and downloading new videos
-        {{else if .AutoRefresh}}
-            Automatically refreshing playlist
+    <ul class='info horizontal'>
+        {{if .AutoRefresh}}
+            <span>This playlist will automatically refresh metadata and {{if .Expand}}all{{else}}the latest 100{{end}} videos.</span>
+            {{if .AutoDownload}}
+                <span>
+                    {{if eq .DownloadPolicy "recent"}}Recent{{else if eq .DownloadPolicy "all"}}All{{end}} new videos will be downloaded
+                    {{if .PreferSingleFormat}}in mobile quality (720p), faster{{else}}in high quality (1080p), slower{{end}}.
+                </span>
+            {{else}}
+                <span>New videos will be streamed from the origin.</span>
+            {{end}}
         {{else}}
-            This playlist is not refreshed and videos are not downloaded automatically
+            <span>This playlist is not refreshed and videos are not downloaded automatically.</span>
         {{end}}
-    </div>
+    </ul>
     <ul class="horizontal">
         <li>
             <a class="action" href="https://www.youtube.com/feeds/videos.xml?playlist_id={{.PlaylistId}}">RSS</a>
