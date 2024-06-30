@@ -43,12 +43,18 @@ func DownloadQueue(rdx kvas.WriteableRedux, opt *VideoDownloadOptions) error {
 	queuedVideoIds := make([]string, 0)
 
 	for _, id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
-		// don't re-download completed videos
-		if rdx.HasKey(data.VideoDownloadCompletedProperty, id) && !opt.Force {
+
+		vdqTime := ""
+		if vdq, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, id); ok && vdq != "" {
+			vdqTime = vdq
+		}
+
+		// don't re-download videos that have download completed _after_ queue time
+		if vdc, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && vdc > vdqTime && !opt.Force {
 			continue
 		}
-		// don't re-download videos that started download less than 48 hours ago
-		if dss, ok := rdx.GetLastVal(data.VideoDownloadStartedProperty, id); ok {
+		// don't re-download videos that started download _after_ queue time and less than 48 hours ago
+		if dss, ok := rdx.GetLastVal(data.VideoDownloadStartedProperty, id); ok && dss > vdqTime {
 			if ds, err := time.Parse(time.RFC3339, dss); err == nil {
 				dur := time.Now().Sub(ds)
 				if dur < yeti.DefaultDelay {

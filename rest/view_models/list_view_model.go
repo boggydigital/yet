@@ -49,39 +49,45 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 		}
 	}
 
-	//pldq := rdx.Keys(data.PlaylistAutoDownloadProperty)
-	//newPlaylistVideos := make([]string, 0, len(pldq))
+	// videos is all downloaded videos that are not:
+	// - in history (ended)
+	// - in continue (have progress)
+	// - in any auto-refreshing playlist
+	dcKeys := rdx.Keys(data.VideoDownloadCompletedProperty)
+	if len(dcKeys) > 0 {
 
-	//for _, pl := range pldq {
-	//	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, pl); ok {
-	//		newPlaylistVideos = append(newPlaylistVideos, nv...)
-	//	}
-	//}
+		notPlaylistDcKeys := make([]string, 0, len(dcKeys))
 
-	//wlKeys := rdx.Keys(data.VideosWatchlistProperty)
-	//if len(wlKeys) > 0 {
-	//
-	//	wlKeys, err = rdx.Sort(wlKeys, false, data.VideoTitleProperty)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	for _, id := range wlKeys {
-	//		if slices.Contains(newPlaylistVideos, id) {
-	//			continue
-	//		}
-	//		if le, ok := rdx.GetLastVal(data.VideoEndedProperty, id); ok && le != "" {
-	//			continue
-	//		}
-	//		if ct, ok := rdx.GetLastVal(data.VideoProgressProperty, id); ok || ct != "" {
-	//			continue
-	//		}
-	//		lvm.Videos = append(lvm.Videos, GetVideoViewModel(id, rdx,
-	//			ShowPoster,
-	//			ShowPublishedDate,
-	//			ShowDuration))
-	//	}
-	//}
+		for _, id := range dcKeys {
+
+			if rdx.HasKey(data.VideoEndedDateProperty, id) {
+				continue
+			}
+			if rdx.HasKey(data.VideoProgressProperty, id) {
+				continue
+			}
+
+			for _, playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
+				if rdx.HasValue(data.PlaylistVideosProperty, playlistId, id) {
+					continue
+				}
+			}
+
+			notPlaylistDcKeys = append(notPlaylistDcKeys, id)
+		}
+
+		notPlaylistDcKeys, err = rdx.Sort(notPlaylistDcKeys, false, data.VideoTitleProperty)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, id := range notPlaylistDcKeys {
+			lvm.Videos = append(lvm.Videos, GetVideoViewModel(id, rdx,
+				ShowPoster,
+				ShowPublishedDate,
+				ShowDuration))
+		}
+	}
 
 	plKeys := rdx.Keys(data.PlaylistAutoRefreshProperty)
 	if len(plKeys) > 0 {
@@ -118,15 +124,29 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 	dqKeys := rdx.Keys(data.VideoDownloadQueuedProperty)
 	if len(dqKeys) > 0 {
 
-		dqKeys, err = rdx.Sort(dqKeys, false, data.VideoTitleProperty)
+		activeDqKeys := make([]string, 0, len(dqKeys))
+
+		for _, id := range dqKeys {
+
+			dqTime := ""
+			if dqt, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, id); ok {
+				dqTime = dqt
+			}
+
+			// only continue if download was completed _after_ it was queued,
+			// meaning it wasn't re-queued again after completion
+			if dcd, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && dcd > dqTime {
+				continue
+			}
+			activeDqKeys = append(activeDqKeys, id)
+		}
+
+		activeDqKeys, err = rdx.Sort(activeDqKeys, false, data.VideoTitleProperty)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, id := range dqKeys {
-			if dcd, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && dcd != "" {
-				continue
-			}
+		for _, id := range activeDqKeys {
 			lvm.Downloads = append(lvm.Downloads, GetVideoViewModel(id, rdx,
 				ShowPoster,
 				ShowDuration,
