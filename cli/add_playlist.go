@@ -34,7 +34,7 @@ func AddPlaylist(rdx kvas.WriteableRedux, playlistId string, opt *PlaylistOption
 	}
 
 	var err error
-	rdx, err = validateWritableRedux(rdx, data.PlaylistProperties()...)
+	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
 		return apa.EndWithError(err)
 	}

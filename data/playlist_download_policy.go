@@ -9,7 +9,7 @@ const (
 )
 
 const (
-	RecentDownloadsLimit = 5
+	RecentDownloadsLimit = 10
 )
 
 func ParsePlaylistDownloadPolicy(policy string) PlaylistDownloadPolicy {

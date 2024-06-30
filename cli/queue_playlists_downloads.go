@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 	"net/url"
 )
 
@@ -34,48 +36,44 @@ func QueuePlaylistsDownloads(rdx kvas.WriteableRedux) error {
 		qpda.Increment()
 	}
 
-	//notNewIndicatorProperties := []string{
-	//	data.VideosDownloadQueueProperty,
-	//	data.VideosWatchlistProperty,
-	//	data.VideoEndedProperty,
-	//	data.VideoProgressProperty}
-	//
-	//for _, pdq := range rdx.Keys(data.PlaylistDownloadQueueProperty) {
-	//	if newVideos, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, pdq); ok && len(newVideos) > 0 {
-	//		for _, videoId := range newVideos {
-	//
-	//			skipVideo := false
-	//			// don't add videos already in download queue, watch, Ended, in progress
-	//			for _, nnip := range notNewIndicatorProperties {
-	//				if rdx.HasKey(nnip, videoId) {
-	//					skipVideo = true
-	//					break
-	//				}
-	//			}
-	//
-	//			if skipVideo {
-	//				break
-	//			}
-	//
-	//			if err := rdx.AddValues(data.VideosDownloadQueueProperty, videoId, data.TrueValue); err != nil {
-	//				return qpda.EndWithError(err)
-	//			}
-	//
-	//			// set video to download as single format if playlist has that flag set
-	//			if rdx.HasKey(data.PlaylistSingleFormatDownloadProperty, pdq) {
-	//				if err := rdx.AddValues(data.VideoSingleFormatDownloadProperty, videoId, data.TrueValue); err != nil {
-	//					return qpda.EndWithError(err)
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
-
 	qpda.EndWithResult("done")
 
 	return nil
 }
 
+// queuePlaylistDownloads goes through playlist videos according to the download policy,
+// skips ended and previously queued videos and queues the rest
 func queuePlaylistDownloads(rdx kvas.WriteableRedux, playlistId string) error {
-	return nil
+
+	playlistVideos, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId)
+	if !ok {
+		return fmt.Errorf("cannot queue downloads for an empty playlist %s", playlistId)
+	}
+
+	policy := data.Unset
+	if dp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
+		policy = data.ParsePlaylistDownloadPolicy(dp)
+	}
+
+	limitVideos := data.RecentDownloadsLimit
+	if policy == data.All || limitVideos > len(playlistVideos) {
+		limitVideos = len(playlistVideos)
+	}
+
+	queue := make(map[string][]string)
+
+	for ii := 0; ii < limitVideos; ii++ {
+
+		videoId := playlistVideos[ii]
+
+		if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+			continue
+		}
+		if rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
+			continue
+		}
+		queue[videoId] = []string{yeti.FmtNow()}
+	}
+
+	return rdx.BatchAddValues(data.VideoDownloadQueuedProperty, queue)
 }

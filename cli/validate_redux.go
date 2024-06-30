@@ -3,7 +3,6 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 )
 
@@ -18,7 +17,8 @@ func validateWritableRedux(rdx kvas.WriteableRedux, properties ...string) (kvas.
 		if err != nil {
 			return nil, err
 		}
-	} else if err := rdx.MustHave(data.PlaylistProperties()...); err != nil {
+	}
+	if err := rdx.MustHave(properties...); err != nil {
 		return nil, err
 	}
 
