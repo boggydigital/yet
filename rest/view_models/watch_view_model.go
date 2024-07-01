@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -41,7 +42,7 @@ var propertyTitles = map[string]string{
 	data.VideoViewCountProperty:          "Views",
 	data.VideoKeywordsProperty:           "Keywords",
 	data.VideoCategoryProperty:           "Category",
-	data.VideoUploadDateProperty:         " Uploaded",
+	data.VideoUploadDateProperty:         "Uploaded",
 	data.VideoPublishDateProperty:        "Published",
 	data.VideoDurationProperty:           "Duration",
 	data.VideoEndedDateProperty:          "Ended Date",
@@ -49,6 +50,7 @@ var propertyTitles = map[string]string{
 	data.VideoDownloadQueuedProperty:     "Download Queued",
 	data.VideoDownloadStartedProperty:    "Download Started",
 	data.VideoDownloadCompletedProperty:  "Download Completed",
+	data.VideoDownloadCleanedUpProperty:  "Download Cleaned Up",
 	data.VideoForcedDownloadProperty:     "Forced Download",
 	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
@@ -172,25 +174,10 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux) (*W
 		data.VideoKeywordsProperty,
 		data.VideoCategoryProperty,
 	}
-	properties := []string{
-		data.VideoViewCountProperty,
-		data.VideoKeywordsProperty,
-		data.VideoCategoryProperty,
-		data.VideoUploadDateProperty,
-		data.VideoPublishDateProperty,
-		data.VideoDownloadCompletedProperty,
-		data.VideoDurationProperty,
-		data.VideoEndedDateProperty,
-		data.VideoEndedReasonProperty,
-		data.VideoDownloadQueuedProperty,
-		data.VideoForcedDownloadProperty,
-		data.VideoPreferSingleFormatProperty,
-	}
-
 	videoProperties := make(map[string]string)
-	titles := make([]string, 0, len(properties))
+	titles := make([]string, 0, len(propertyTitles))
 
-	for _, p := range properties {
+	for p := range propertyTitles {
 		title := propertyTitles[p]
 		titles = append(titles, title)
 		if slices.Contains(joinProperties, p) {
@@ -203,6 +190,8 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux) (*W
 			}
 		}
 	}
+
+	sort.Strings(titles)
 
 	playlistId := ""
 	if playlistIds := rdx.MatchAsset(data.PlaylistVideosProperty, []string{videoId}, nil); len(playlistIds) > 0 {
@@ -306,7 +295,13 @@ func fmtPropertyValue(property, value string) string {
 		fallthrough
 	case data.VideoPublishDateProperty:
 		fallthrough
+	case data.VideoDownloadQueuedProperty:
+		fallthrough
+	case data.VideoDownloadStartedProperty:
+		fallthrough
 	case data.VideoDownloadCompletedProperty:
+		fallthrough
+	case data.VideoDownloadCleanedUpProperty:
 		fallthrough
 	case data.VideoEndedDateProperty:
 		if dt, err := time.Parse(time.RFC3339, value); err == nil {

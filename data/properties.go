@@ -29,9 +29,6 @@ const (
 	VideoDownloadCompletedProperty = "video-download-completed"
 	VideoDownloadCleanedUpProperty = "video-download-cleaned-up"
 
-	VideoWatchlistQueuedProperty   = "video-watchlist-queued"
-	VideoWatchlistDequeuedProperty = "video-watchlist-dequeued"
-
 	VideoCaptionsLanguagesProperty = "video-captions-languages"
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
 	VideoCaptionsNamesProperty     = "video-captions-names"
@@ -78,8 +75,6 @@ func VideoProperties() []string {
 		VideoDownloadStartedProperty,
 		VideoDownloadCompletedProperty,
 		VideoDownloadCleanedUpProperty,
-		VideoWatchlistQueuedProperty,
-		VideoWatchlistDequeuedProperty,
 		VideoCaptionsLanguagesProperty,
 		VideoCaptionsKindsProperty,
 		VideoCaptionsNamesProperty,
