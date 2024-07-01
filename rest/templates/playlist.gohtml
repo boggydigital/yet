@@ -6,8 +6,10 @@
         <a class="playlist {{$class}}" href='/playlist?list={{.PlaylistId}}'>
             <span class='title'>{{.PlaylistChannelTitle}}</span>
             <span class='subtitle'>{{.PlaylistTitle}}</span>
-            {{if gt .BadgeCount 0}}
-                <span class='new_videos'>{{.BadgeCount}}</span>
+            {{if .AutoRefresh}}
+                {{if gt .BadgeCount 0}}
+                    <span class='new_videos'>{{.BadgeCount}}</span>
+                {{end}}
             {{end}}
         </a>
     </li>
