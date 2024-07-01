@@ -17,6 +17,7 @@ add-playlist
 
 add-video
     video-id^*
+    favorite
     download-queue
     ended
     reason={^video-ended-reasons}
@@ -77,6 +78,7 @@ remove-playlist
 
 remove-videos
     video-id^*
+    favorite
     download-queue
     progress
     ended

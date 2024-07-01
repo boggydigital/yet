@@ -28,6 +28,15 @@
         <input type="submit" value='Update'/>
         <ul class="management">
             <li>
+                <input id="favorite" type="checkbox" switch name="favorite" {{if .Favorite}}checked{{end}} />
+                <label for="favorite">
+                    <span class="title">Favorite</span>
+                    <span class='subtitle subtle'>
+                        On: Prevent video cleanup. Off: cleanup after ended.
+                    </span>
+                </label>
+            </li>
+            <li>
                 <input id="progress" type="checkbox" switch name="progress"
                        {{if .Progress}}checked{{else}}disabled{{end}} />
                 <label for="progress">
@@ -62,7 +71,8 @@
 
             </li>
             <li>
-                <input id="download-queued" type="checkbox" switch name="download-queued" {{if .DownloadQueued}}checked{{end}} />
+                <input id="download-queued" type="checkbox" switch name="download-queued"
+                       {{if .DownloadQueued}}checked{{end}} />
                 <label for="download">
                     <span class="title">Download queued</span>
                     <span class="subtitle subtle">

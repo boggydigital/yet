@@ -13,6 +13,7 @@ func AddVideoHandler(u *url.URL) error {
 
 	videoId := q.Get("video-id")
 	options := &VideoOptions{
+		Favorite:           q.Has("favorite"),
 		DownloadQueue:      q.Has("download-queue"),
 		Ended:              q.Has("ended"),
 		Reason:             data.ParseVideoEndedReason(q.Get("reason")),
@@ -46,6 +47,11 @@ func AddVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) error 
 
 	propertyValues := make(map[string]map[string][]string)
 
+	if opt.Favorite {
+		propertyValues[data.VideoFavoriteProperty] = map[string][]string{
+			videoId: {data.TrueValue},
+		}
+	}
 	if opt.DownloadQueue {
 		propertyValues[data.VideoDownloadQueuedProperty] = map[string][]string{
 			videoId: {yeti.FmtNow()},

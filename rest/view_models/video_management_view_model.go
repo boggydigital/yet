@@ -9,6 +9,7 @@ type VideoManagementViewModel struct {
 	VideoId            string
 	VideoTitle         string
 	CurrentTime        string
+	Favorite           bool
 	Progress           bool
 	Ended              bool
 	EndedReason        data.VideoEndedReason
@@ -38,6 +39,7 @@ func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManag
 		VideoId:            videoId,
 		VideoTitle:         videoTitle,
 		CurrentTime:        currentTime,
+		Favorite:           rdx.HasKey(data.VideoFavoriteProperty, videoId),
 		Progress:           rdx.HasKey(data.VideoProgressProperty, videoId),
 		Ended:              rdx.HasKey(data.VideoEndedDateProperty, videoId),
 		EndedReason:        endedReason,

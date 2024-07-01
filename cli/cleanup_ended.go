@@ -43,7 +43,19 @@ func CleanupEnded(rdx kvas.WriteableRedux) error {
 	endedVideoIds := make([]string, 0)
 
 	for _, id := range rdx.Keys(data.VideoEndedDateProperty) {
-		if rdx.HasKey(data.VideoDownloadCleanedUpProperty, id) {
+
+		// don't cleanup favorite videos
+		if rdx.HasKey(data.VideoFavoriteProperty, id) {
+			continue
+		}
+
+		dcTime := ""
+		if dct, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && dct != "" {
+			dcTime = dct
+		}
+
+		// skip video that have been cleaned up _after_ the latest download
+		if dcut, ok := rdx.GetLastVal(data.VideoDownloadCleanedUpProperty, id); ok && dcut > dcTime {
 			continue
 		}
 		if eds, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok {

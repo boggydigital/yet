@@ -3,6 +3,7 @@ package cli
 import "github.com/boggydigital/yet/data"
 
 type VideoOptions struct {
+	Favorite           bool
 	DownloadQueue      bool
 	Progress           bool
 	Ended              bool
@@ -14,7 +15,8 @@ type VideoOptions struct {
 
 func DefaultVideoOptions() *VideoOptions {
 	return &VideoOptions{
-		DownloadQueue:      true,
+		Favorite:           false,
+		DownloadQueue:      false,
 		Progress:           false,
 		Ended:              false,
 		Reason:             data.DefaultEndedReason,

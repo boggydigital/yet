@@ -24,6 +24,7 @@ type VideoViewModel struct {
 	VideoId            string
 	VideoUrl           string
 	VideoTitle         string
+	Favorite           bool
 	Class              string
 	ShowPoster         bool
 	ShowPublishedDate  bool
@@ -141,12 +142,18 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		videoTitle = titlePrefix + videoTitle
 	}
 
+	favorite := false
+	if rdx.HasKey(data.VideoFavoriteProperty, videoId) {
+		favorite = true
+	}
+
 	optShowPoster := slices.Contains(options, ShowPoster)
 
 	return &VideoViewModel{
 		VideoId:            videoId,
 		VideoUrl:           videoUrl,
 		VideoTitle:         videoTitle,
+		Favorite:           favorite,
 		Class:              class,
 		ShowPoster:         optShowPoster,
 		ShowPublishedDate:  optShowPublishedDate,

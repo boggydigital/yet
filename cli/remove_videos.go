@@ -39,6 +39,9 @@ func RemoveVideos(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) er
 
 	propertyKeys := make(map[string]string)
 
+	if opt.Favorite {
+		propertyKeys[data.VideoFavoriteProperty] = videoId
+	}
 	if opt.DownloadQueue {
 		propertyKeys[data.VideoDownloadQueuedProperty] = videoId
 	}
