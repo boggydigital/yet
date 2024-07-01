@@ -84,13 +84,9 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	optShowEndedDate := slices.Contains(options, ShowEndedDate)
 
-	//ended := false
 	endedDate := ""
 	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
-		//ended = true
-		if optShowEndedDate {
-			endedDate = parseAndFormat(ets)
-		}
+		endedDate = parseAndFormat(ets)
 	}
 
 	var rem, dur int64
