@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/http"
 )
@@ -23,7 +24,12 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := yeti.GetPlaylistMetadata(nil, playlistId, false, rdx); err != nil {
+	expand := false
+	if exp, ok := rdx.GetLastVal(data.PlaylistExpandProperty, playlistId); ok && exp == data.TrueValue {
+		expand = true
+	}
+
+	if err := yeti.GetPlaylistMetadata(nil, playlistId, expand, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

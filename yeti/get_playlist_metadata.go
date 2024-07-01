@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
+func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, expand bool, rdx kvas.WriteableRedux) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
 	defer gppma.End()
@@ -56,7 +56,7 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 			videoLengths[videoId] = []string{video.Length}
 		}
 
-		if allVideos && playlistPage.HasContinuation() {
+		if expand && playlistPage.HasContinuation() {
 			if err = playlistPage.Continue(http.DefaultClient); err != nil {
 				return gppma.EndWithError(err)
 			}
