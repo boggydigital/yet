@@ -23,7 +23,8 @@ type WatchViewModel struct {
 	VideoUrl             string
 	AudioUrl             string
 	CurrentTime          string
-	LastEndedTime        string
+	EndedTime            string
+	EndedReason          data.VideoEndedReason
 	VideoPoster          string
 	LocalPlayback        bool
 	CurrentTimeSeconds   string
@@ -43,11 +44,12 @@ var propertyTitles = map[string]string{
 	data.VideoCategoryProperty:           "Category",
 	data.VideoUploadDateProperty:         " Uploaded",
 	data.VideoPublishDateProperty:        "Published",
-	data.VideoDownloadCompletedProperty:  "Downloaded",
 	data.VideoDurationProperty:           "Duration",
 	data.VideoEndedDateProperty:          "Ended Date",
 	data.VideoEndedReasonProperty:        "Ended Reason",
 	data.VideoDownloadQueuedProperty:     "Download Queued",
+	data.VideoDownloadStartedProperty:    "Download Started",
+	data.VideoDownloadCompletedProperty:  "Download Completed",
 	data.VideoForcedDownloadProperty:     "Forced Download",
 	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
@@ -144,11 +146,16 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, aud
 	lastEndedTime := ""
 	if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && et != "" {
 		lastEndedTime = et
-		titlePrefix := "☑️ "
-		if rdx.HasKey(data.VideoEndedReasonProperty, videoId) {
-			titlePrefix = "⏭️ "
-		}
-		videoTitle = titlePrefix + videoTitle
+		//titlePrefix := "☑️ "
+		//if rdx.HasKey(data.VideoEndedReasonProperty, videoId) {
+		//	titlePrefix = "⏭️ "
+		//}
+		//videoTitle = titlePrefix + videoTitle
+	}
+
+	endedReason := data.DefaultEndedReason
+	if er, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+		endedReason = data.ParseVideoEndedReason(er)
 	}
 
 	joinProperties := []string{
@@ -212,7 +219,8 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, aud
 		VideoDescription:     videoDescription,
 		VideoPropertiesOrder: titles,
 		VideoProperties:      videoProperties,
-		LastEndedTime:        lastEndedTime,
+		EndedTime:            lastEndedTime,
+		EndedReason:          endedReason,
 		ChannelId:            channelId,
 		ChannelTitle:         channelTitle,
 		PlaylistViewModel:    GetPlaylistViewModel(playlistId, rdx),

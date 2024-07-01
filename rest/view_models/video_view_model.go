@@ -25,13 +25,13 @@ type VideoViewModel struct {
 	VideoUrl           string
 	VideoTitle         string
 	Favorite           bool
-	Class              string
 	ShowPoster         bool
 	ShowPublishedDate  bool
 	PublishedDate      string
 	DownloadedDate     string
-	ShowEndedDate      bool
-	EndedDate          string
+	ShowEndedTime      bool
+	EndedTime          string
+	EndedReason        data.VideoEndedReason
 	ShowDuration       bool
 	Duration           string
 	ShowProgress       bool
@@ -84,19 +84,13 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	optShowEndedDate := slices.Contains(options, ShowEndedDate)
 
-	ended := false
+	//ended := false
 	endedDate := ""
 	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
-		ended = true
+		//ended = true
 		if optShowEndedDate {
 			endedDate = parseAndFormat(ets)
 		}
-	}
-
-	//TODO: update to reasons
-	skipped := false
-	if s, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok && s != "" {
-		skipped = true
 	}
 
 	var rem, dur int64
@@ -131,15 +125,9 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		}
 	}
 
-	class := ""
-	if ended {
-		titlePrefix := "☑️ "
-		class += "ended "
-		if skipped {
-			titlePrefix = "⏭️ "
-			class += "skipped "
-		}
-		videoTitle = titlePrefix + videoTitle
+	endedReason := data.DefaultEndedReason
+	if er, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+		endedReason = data.ParseVideoEndedReason(er)
 	}
 
 	favorite := false
@@ -154,13 +142,13 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		VideoUrl:           videoUrl,
 		VideoTitle:         videoTitle,
 		Favorite:           favorite,
-		Class:              class,
 		ShowPoster:         optShowPoster,
 		ShowPublishedDate:  optShowPublishedDate,
 		PublishedDate:      publishedDate,
 		DownloadedDate:     downloadedDate,
-		ShowEndedDate:      optShowEndedDate,
-		EndedDate:          endedDate,
+		ShowEndedTime:      optShowEndedDate,
+		EndedTime:          endedDate,
+		EndedReason:        endedReason,
 		ShowDuration:       optShowDuration && dur > 0,
 		Duration:           formatSeconds(dur),
 		ShowProgress:       optShowProgress && rem > 0 && dur > 0,

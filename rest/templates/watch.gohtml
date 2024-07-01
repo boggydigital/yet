@@ -103,7 +103,7 @@
 
     {{if eq .CurrentTimeSeconds "0"}}
     {{else}}
-        {{if .LastEndedTime}}
+        {{if .EndedTime}}
         {{else}}
             <progress value="{{.CurrentTimeSeconds}}" max="{{.DurationSeconds}}"></progress>
         {{end}}
@@ -112,7 +112,7 @@
 
     <ul class="video_details_container">
 
-        <h1 class='video_title'>{{.VideoTitle}}</h1>
+        <h1 class='video_title'>{{template "video-title" .}}</h1>
 
         {{if .ChannelId}}
             {{if .ChannelTitle}}
@@ -167,7 +167,7 @@
     {{else}}
 
         {{if .CurrentTimeSeconds}}
-        {{if .LastEndedTime}}
+        {{if .EndedTime}}
         {{else}}
         <script>video.currentTime = {{.CurrentTimeSeconds}};</script>
         {{end}}
