@@ -12,6 +12,7 @@ type ListViewModel struct {
 	Downloads      []*VideoViewModel
 	PlaylistsOrder []string
 	Playlists      map[string][]*PlaylistViewModel
+	Favorites      []*VideoViewModel
 	HasHistory     bool
 }
 
@@ -52,6 +53,7 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 	// videos is all downloaded videos that are not:
 	// - in history (ended)
 	// - in continue (have progress)
+	// - is favorite
 	// - in any auto-refreshing playlist
 	dcKeys := rdx.Keys(data.VideoDownloadCompletedProperty)
 	if len(dcKeys) > 0 {
@@ -64,6 +66,9 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 				continue
 			}
 			if rdx.HasKey(data.VideoProgressProperty, id) {
+				continue
+			}
+			if rdx.HasKey(data.VideoFavoriteProperty, id) {
 				continue
 			}
 
@@ -157,6 +162,19 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 				ShowDuration,
 				ShowPublishedDate))
 		}
+	}
+
+	fvKeys := rdx.Keys(data.VideoFavoriteProperty)
+	fvKeys, err = rdx.Sort(fvKeys, false, data.VideoTitleProperty)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, id := range fvKeys {
+		lvm.Favorites = append(lvm.Favorites, GetVideoViewModel(id, rdx,
+			ShowPoster,
+			ShowDuration,
+			ShowPublishedDate))
 	}
 
 	lvm.HasHistory = len(rdx.Keys(data.VideoEndedDateProperty)) > 0

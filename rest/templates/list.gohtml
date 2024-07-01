@@ -47,66 +47,78 @@
 
     <section class="watchlist_container">
 
-    {{if .Continue}}
-        <details open>
-            <summary>{{template "plus_icon"}}<h1>Continue</h1></summary>
-            <ul class="videos resp-grid">
-            {{range .Continue}}
-                <li>{{template "video" .}}</li>
-            {{end}}
-            </ul>
-        </details>
-    {{end}}
+        {{if .Continue}}
+            <details open>
+                <summary>{{template "plus_icon"}}<h1>Continue</h1></summary>
+                <ul class="videos resp-grid">
+                    {{range .Continue}}
+                        <li>{{template "video" .}}</li>
+                    {{end}}
+                </ul>
+            </details>
+        {{end}}
 
-    {{if .Videos}}
-        <details>
-            <summary>{{template "plus_icon"}}<h1>Videos</h1></summary>
-            <ul class="videos resp-grid">
-            {{range .Videos}}
-                <li>{{template "video" .}}</li>
-            {{end}}
-            </ul>
-        </details>
-    {{end}}
+        {{if .Videos}}
+            <details>
+                <summary>{{template "plus_icon"}}<h1>Videos</h1></summary>
+                <ul class="videos resp-grid">
+                    {{range .Videos}}
+                        <li>{{template "video" .}}</li>
+                    {{end}}
+                </ul>
+            </details>
+        {{end}}
 
-    {{if .Playlists}}
-        <details>
-            <summary>{{template "plus_icon"}}<h1>Playlists</h1></summary>
-            <section class="playlists_container">
-            {{$playlists := .Playlists}}
-            {{range $ii, $playlistSection := .PlaylistsOrder}}
-                <details {{if eq $ii 0}}open{{end}}>
-                    <summary class="h2 {{$playlistSection}}">{{template "plus_icon"}}<h2>{{$playlistSection}}</h2></summary>
-                    <ul class='playlists resp-grid'>
-                        {{$playlist := index $playlists $playlistSection}}
-                        {{range $playlist}}
-                            {{template "playlist" .}}
-                        {{end}}
-                    </ul>
-                </details>
-            {{end}}
-            </section>
-        </details>
+        {{if .Playlists}}
+            <details>
+                <summary>{{template "plus_icon"}}<h1>Playlists</h1></summary>
+                <section class="playlists_container">
+                    {{$playlists := .Playlists}}
+                    {{range $ii, $playlistSection := .PlaylistsOrder}}
+                        <details {{if eq $ii 0}}open{{end}}>
+                            <summary class="h2 {{$playlistSection}}">{{template "plus_icon"}}
+                                <h2>{{$playlistSection}}</h2></summary>
+                            <ul class='playlists resp-grid'>
+                                {{$playlist := index $playlists $playlistSection}}
+                                {{range $playlist}}
+                                    {{template "playlist" .}}
+                                {{end}}
+                            </ul>
+                        </details>
+                    {{end}}
+                </section>
+            </details>
 
-    {{end}}
+        {{end}}
 
-    {{if .Downloads}}
-        <details>
-            <summary>{{template "plus_icon"}}<h1>Downloads</h1></summary>
-            <ul class="videos resp-grid">
-            {{range .Downloads}}
-                <li>{{template "video" .}}</li>
-            {{end}}
-            </ul>
-        </details>
-    {{end}}
+        {{if .Downloads}}
+            <details>
+                <summary>{{template "plus_icon"}}<h1>Downloads</h1></summary>
+                <ul class="videos resp-grid">
+                    {{range .Downloads}}
+                        <li>{{template "video" .}}</li>
+                    {{end}}
+                </ul>
+            </details>
+        {{end}}
 
-    {{if .HasHistory}}
-        <details open>
-            <summary>{{template "plus_icon"}}<h1>History</h1></summary>
-            <a class='link' href='/history'>Check out your watch history</a>
-        </details>
-    {{end}}
+        {{if .Favorites}}
+            <details>
+                <summary>{{template "plus_icon"}}<h1>Favorites</h1></summary>
+                <ul class="videos resp-grid">
+                    {{range .Favorites}}
+                        <li>{{template "video" .}}</li>
+                    {{end}}
+                </ul>
+            </details>
+        {{end}}
+
+        {{if .HasHistory}}
+            <details open>
+                <summary>{{template "plus_icon"}}<h1>History</h1></summary>
+                <a class='link' href='/history'>Check out your watch history</a>
+            </details>
+        {{end}}
 
     </section>
 
