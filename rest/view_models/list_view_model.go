@@ -67,10 +67,15 @@ func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
 				continue
 			}
 
+			skip := false
 			for _, playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 				if rdx.HasValue(data.PlaylistVideosProperty, playlistId, id) {
-					continue
+					skip = true
+					break
 				}
+			}
+			if skip {
+				continue
 			}
 
 			notPlaylistDcKeys = append(notPlaylistDcKeys, id)
