@@ -11,7 +11,7 @@
         <title>{{.VideoTitle}}</title>
         {{template "css-shared"}}
         <style id="css-watch">
-            video,audio {
+            video, audio {
                 width: 100%;
                 height: 100%;
                 aspect-ratio: 16/9;
@@ -91,15 +91,10 @@
         the {{if .LocalPlayback}}local{{else}}origin{{end}} server
     </div>
 
-    {{if .AudioUrl}}
-        <audio controls='controls' preload='metadata'>
-            <source src='{{.AudioUrl}}'/>
-        </audio>
-    {{else}}
-        <video controls='controls' preload='metadata' poster='{{.VideoPoster}}'>
-            <source src='{{.VideoUrl}}'/>
-        </video>
-    {{end}}
+    <video controls='controls' preload='metadata' poster='{{.VideoPoster}}'>
+        <source src='{{.VideoUrl}}'/>
+    </video>
+
 
     {{if eq .CurrentTimeSeconds "0"}}
     {{else}}
@@ -163,76 +158,72 @@
     </script>
 
 
-    {{if .AudioUrl}}
-    {{else}}
-
-        {{if .CurrentTimeSeconds}}
+    {{if .CurrentTimeSeconds}}
         {{if .EndedTime}}
         {{else}}
-        <script>video.currentTime = {{.CurrentTimeSeconds}};</script>
+            <script>video.currentTime = {{.CurrentTimeSeconds}};</script>
         {{end}}
 
-        {{end}}
+    {{end}}
 
-        <script>
-            let lastProgressUpdate = new Date();
+    <script>
+        let lastProgressUpdate = new Date();
 
-            let prg = document.getElementsByTagName('progress')[0]
-            video.addEventListener('timeupdate', (e) => {
-                let now = new Date();
-                let elapsed = now - lastProgressUpdate;
-                if (elapsed > 3000) {
-                if (prg) {prg.value = video.currentTime}
-                    fetch('/progress', {
-                        method: 'post',
-                        headers: {
-                            'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            v: '{{.VideoId}}',
+        let prg = document.getElementsByTagName('progress')[0]
+        video.addEventListener('timeupdate', (e) => {
+            let now = new Date();
+            let elapsed = now - lastProgressUpdate;
+            if (elapsed > 3000) {
+            if (prg) {prg.value = video.currentTime}
+                fetch('/progress', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        v: '{{.VideoId}}',
                         t: video.currentTime.toString()})
                 }).then((resp) => { if (resp && !resp.ok) {
                     console.log(resp)}
                 });
                 lastProgressUpdate = now;
             }});
-        </script>
+    </script>
 
-        <script>
-            video.addEventListener('ended', (e) => {
-            fetch('/ended', {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json'},
-                    body: JSON.stringify({v: '{{.VideoId}}'})
+    <script>
+        video.addEventListener('ended', (e) => {
+        fetch('/ended', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'},
+                body: JSON.stringify({v: '{{.VideoId}}'})
             }).then((resp) => { if (resp && !resp.ok) {
                 console.log(resp)}
             });
         if (prg) {prg.value = prg.max}
         });
-        </script>
+    </script>
 
-        <script>
-            document.body.addEventListener('keydown', (e) => {
-                switch (e.keyCode) {
-            // ArrowRight
-                    case 39:
-                    e.preventDefault();
-                    video.currentTime += 15;
-                    break;
-            // ArrowLeft
-                    case 37:
-                    e.preventDefault();
-                    video.currentTime -= 15;
-                    break;
-            // Space
-                    case 32:
-                    e.preventDefault();
-                    video.paused ? video.play() : video.pause();
-                    break;
-                };
-                });
-        </script>
-    {{end}}
+    <script>
+        document.body.addEventListener('keydown', (e) => {
+            switch (e.keyCode) {
+        // ArrowRight
+                case 39:
+                e.preventDefault();
+                video.currentTime += 15;
+                break;
+        // ArrowLeft
+                case 37:
+                e.preventDefault();
+                video.currentTime -= 15;
+                break;
+        // Space
+                case 32:
+                e.preventDefault();
+                video.paused ? video.play() : video.pause();
+                break;
+            };
+            });
+    </script>
 
     </body>
     </html>

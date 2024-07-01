@@ -21,7 +21,6 @@ import (
 type WatchViewModel struct {
 	VideoId              string
 	VideoUrl             string
-	AudioUrl             string
 	CurrentTime          string
 	EndedTime            string
 	EndedReason          data.VideoEndedReason
@@ -54,10 +53,9 @@ var propertyTitles = map[string]string{
 	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
 
-func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, audioOnly bool) (*WatchViewModel, error) {
+func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
-	audioUrl := ""
 	//var videoCaptionTracks []youtube_urls.CaptionTrack
 	localPlayback := false
 
@@ -108,14 +106,12 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, aud
 		}
 	}
 
-	if videoUrl == "" || videoTitle == "" {
+	var videoPage *youtube_urls.InitialPlayerResponse
+	var err error
 
-		videoPage, err := yeti.GetVideoPage(videoId)
+	if videoTitle == "" {
+		videoPage, err = yeti.GetVideoPage(videoId)
 		if err != nil {
-			return nil, err
-		}
-
-		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
 			return nil, err
 		}
 
@@ -125,22 +121,36 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, aud
 			}
 		}
 
-		if audioOnly {
-			au, err := decode(videoPage.BestAdaptiveAudioFormat().Url, videoPage.PlayerUrl)
-			if err != nil {
-				return nil, err
-			}
-			audioUrl = au.String()
-		} else {
-			vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
-			if err != nil {
-				return nil, err
-			}
-			videoUrl = vu.String()
-		}
-
 		videoTitle = videoPage.VideoDetails.Title
 		videoDescription = videoPage.VideoDetails.ShortDescription
+	}
+
+	// check if the video has source specified
+	if videoUrl == "" {
+		if src, ok := rdx.GetLastVal(data.VideoSourceProperty, videoId); ok && src != "" {
+			videoUrl = src
+		}
+	}
+
+	if videoUrl == "" || videoTitle == "" {
+
+		if videoPage == nil {
+			videoPage, err = yeti.GetVideoPage(videoId)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
+			return nil, err
+		}
+
+		vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
+		if err != nil {
+			return nil, err
+		}
+
+		videoUrl = vu.String()
 	}
 
 	lastEndedTime := ""
@@ -210,7 +220,6 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux, aud
 	return &WatchViewModel{
 		VideoId:              videoId,
 		VideoUrl:             videoUrl,
-		AudioUrl:             audioUrl,
 		VideoPoster:          videoPoster,
 		LocalPlayback:        localPlayback,
 		CurrentTimeSeconds:   strconv.FormatInt(dur-rem, 10),

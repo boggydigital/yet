@@ -42,6 +42,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	specialProperties := map[string]string{
 		data.VideoProgressProperty:    "progress",
 		data.VideoEndedReasonProperty: "ended-reason",
+		data.VideoSourceProperty:      "source",
 	}
 
 	properties := maps.Keys(boolPropertyInputs)
@@ -65,6 +66,11 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	for property, input := range specialProperties {
 		switch property {
 		case data.VideoProgressProperty:
+			// progress and source and handled in the same way:
+			// - nothing happens on set
+			// - the value is remove on clear
+			fallthrough
+		case data.VideoSourceProperty:
 			if q.Has(input) {
 				// do nothing, progress cannot be set
 			} else {
@@ -83,7 +89,6 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-
 	}
 
 	http.Redirect(w, r, "/watch?v="+videoId, http.StatusTemporaryRedirect)

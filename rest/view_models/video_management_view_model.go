@@ -17,6 +17,7 @@ type VideoManagementViewModel struct {
 	DownloadQueued     bool
 	ForcedDownload     bool
 	PreferSingleFormat bool
+	Source             bool
 }
 
 func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManagementViewModel {
@@ -47,5 +48,6 @@ func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManag
 		DownloadQueued:     rdx.HasKey(data.VideoDownloadQueuedProperty, videoId),
 		ForcedDownload:     rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
 		PreferSingleFormat: rdx.HasKey(data.VideoPreferSingleFormatProperty, videoId),
+		Source:             rdx.HasKey(data.VideoSourceProperty, videoId),
 	}
 }

@@ -42,7 +42,7 @@
                 <label for="progress">
                     <span class="title">Progress</span>
                     <span class='subtitle subtle'>
-                        Cannot be set.
+                        Cannot be set here, will be set during video playback.
                         Off: clear progress.
                     </span>
                 </label>
@@ -101,6 +101,17 @@
                     <span class="subtitle subtle">
                         On: prefer mobile 720p quality (much faster).
                         Off: download in the best quality (slower).
+                    </span>
+                </label>
+            </li>
+            <li>
+                <input id="source" type="checkbox" switch name="source"
+                       {{if .Source}}checked{{else}}disabled{{end}} />
+                <label for="source">
+                    <span class="title">Alternative source</span>
+                    <span class="subtitle subtle">
+                        Cannot be set here, will be set on paste with source.
+                        Off: clear alternative source.
                     </span>
                 </label>
             </li>
