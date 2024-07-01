@@ -64,7 +64,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	// set video source unless it's been set already
 	if source != "" && !rdx.HasValue(data.VideoSourceProperty, videoId, source) {
-		if err := rdx.AddValues(data.VideoSourceProperty, videoId, source); err != nil {
+		if err := rdx.ReplaceValues(data.VideoSourceProperty, videoId, source); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

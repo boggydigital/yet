@@ -10,22 +10,20 @@ import (
 func SyncHandler(u *url.URL) error {
 	q := u.Query()
 
-	options := &VideoDownloadOptions{
-		VideoOptions: &VideoOptions{
-			PreferSingleFormat: q.Has("prefer-single-format"),
-			Force:              q.Has("Force"),
-		},
+	options := &VideoOptions{
+		PreferSingleFormat: q.Has("prefer-single-format"),
+		Force:              q.Has("Force"),
 	}
 	return Sync(nil, options)
 }
 
-func Sync(rdx kvas.WriteableRedux, opt *VideoDownloadOptions) error {
+func Sync(rdx kvas.WriteableRedux, opt *VideoOptions) error {
 
 	sa := nod.Begin("syncing playlists...")
 	defer sa.End()
 
 	if opt == nil {
-		opt = DefaultVideoDownloadOptions()
+		opt = DefaultVideoOptions()
 	}
 
 	var err error

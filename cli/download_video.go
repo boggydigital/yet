@@ -20,25 +20,19 @@ func DownloadVideoHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoId := q.Get("video-id")
-	options := &VideoDownloadOptions{
-		VideoOptions: &VideoOptions{
-			PreferSingleFormat: q.Has("prefer-single-format"),
-			Force:              q.Has("force"),
-		},
-		Source: q.Get("source"),
+	options := &VideoOptions{
+		PreferSingleFormat: q.Has("prefer-single-format"),
+		Force:              q.Has("force"),
+		Source:             q.Get("source"),
 	}
 
 	return DownloadVideo(nil, videoId, options)
 }
 
-func DownloadVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoDownloadOptions) error {
+func DownloadVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) error {
 
 	da := nod.Begin("downloading video %s...", videoId)
 	defer da.End()
-
-	if opt == nil {
-		opt = DefaultVideoDownloadOptions()
-	}
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
@@ -51,7 +45,12 @@ func DownloadVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoDownloadOp
 		return da.EndWithError(err)
 	}
 
-	force := rdx.HasKey(data.VideoForcedDownloadProperty, videoId) || opt.Force
+	if opt == nil {
+		opt = DefaultVideoOptions()
+	}
+	// apply video specific options
+	opt = ApplyVideoDownloadOptions(opt, videoId, rdx)
+
 	errors := false
 
 	videoPage, err := yeti.GetVideoPage(videoId)
@@ -85,12 +84,12 @@ func DownloadVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoDownloadOp
 		errors = true
 	}
 
-	if err := yeti.GetPosters(videoId, dolo.DefaultClient, force, youtube_urls.AllThumbnailQualities()...); err != nil {
+	if err := yeti.GetPosters(videoId, dolo.DefaultClient, opt.Force, youtube_urls.AllThumbnailQualities()...); err != nil {
 		da.Error(err)
 		errors = true
 	}
 
-	if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, force); err != nil {
+	if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, opt.Force); err != nil {
 		da.Error(err)
 		errors = true
 	}
@@ -116,7 +115,7 @@ func downloadVideo(
 	dl *dolo.Client,
 	videoId string,
 	videoPage *youtube_urls.InitialPlayerResponse,
-	options *VideoDownloadOptions) error {
+	options *VideoOptions) error {
 
 	relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
 
@@ -133,9 +132,11 @@ func downloadVideo(
 	}
 
 	if options.Source != "" {
-		// download file by URL
-		panic("not implemented")
-
+		// download file by URL using single format download method and faking format
+		sourceFormat := &youtube_urls.Format{Url: options.Source}
+		if err := downloadSingleFormat(dl, relFilename, sourceFormat, videoPage.PlayerUrl, options.Force); err != nil {
+			return err
+		}
 	} else if yeti.GetBinary(yeti.FFMpegBin) == "" || options.PreferSingleFormat {
 		if err := downloadSingleFormat(dl, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl, options.Force); err != nil {
 			return err
@@ -185,8 +186,10 @@ func downloadSingleFormat(
 			if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
 				return tpw.EndWithError(err)
 			} else {
-				q.Set("n", dnp)
-				u.RawQuery = q.Encode()
+				if dnp != "" {
+					q.Set("n", dnp)
+					u.RawQuery = q.Encode()
+				}
 			}
 		}
 	}

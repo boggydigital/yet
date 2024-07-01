@@ -72,7 +72,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			fallthrough
 		case data.VideoSourceProperty:
 			if q.Has(input) {
-				// do nothing, progress cannot be set
+				// do nothing, progress & source cannot be set
 			} else {
 				if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)

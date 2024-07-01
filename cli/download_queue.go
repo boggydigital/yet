@@ -12,11 +12,9 @@ import (
 func DownloadQueueHandler(u *url.URL) error {
 	q := u.Query()
 
-	options := &VideoDownloadOptions{
-		VideoOptions: &VideoOptions{
-			PreferSingleFormat: q.Has("prefer-single-format"),
-			Force:              q.Has("force"),
-		},
+	options := &VideoOptions{
+		PreferSingleFormat: q.Has("prefer-single-format"),
+		Force:              q.Has("force"),
 	}
 
 	return DownloadQueue(nil, options)
@@ -25,13 +23,13 @@ func DownloadQueueHandler(u *url.URL) error {
 // DownloadQueue processes download queue using the following rules:
 // - download has not been completed after queue time
 // - download is not in progress since queue time and less than 48 hours ago
-func DownloadQueue(rdx kvas.WriteableRedux, opt *VideoDownloadOptions) error {
+func DownloadQueue(rdx kvas.WriteableRedux, opt *VideoOptions) error {
 
 	dqa := nod.NewProgress("downloading queued videos...")
 	defer dqa.End()
 
 	if opt == nil {
-		opt = DefaultVideoDownloadOptions()
+		opt = DefaultVideoOptions()
 	}
 
 	var err error
