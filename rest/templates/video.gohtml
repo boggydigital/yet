@@ -1,5 +1,5 @@
 {{define "video"}}
-    <a class='{{.Class}}' href='{{.VideoUrl}}'>
+    <a class='{{if .EndedTime}}ended{{end}}' href='{{.VideoUrl}}'>
         {{if .ShowPoster}}
             <img src='/poster?v={{.VideoId}}&q=hqdefault' loading='lazy' alt='{{.VideoTitle}}'/>
             {{if .ShowProgress}}
@@ -9,7 +9,7 @@
         {{if .ShowDuration}}
             <div class='duration'>{{.Duration}}</div>
         {{end}}
-        <span class='title'>{{.VideoTitle}}</span>
+        <span class='title'>{{template "video-title" .}}</span>
         {{if .ShowOwnerChannel}}
             <span class='subtitle'><b>Channel</b>: {{.OwnerChannel}}</span>
         {{end}}
@@ -22,8 +22,8 @@
                 {{end}}
             {{end}}
         {{end}}
-        {{if .ShowEndedDate}}
-            <span class='subtitle'><b>Ended</b>: {{.EndedDate}}</span>
+        {{if .ShowEndedTime}}
+            <span class='subtitle'><b>Ended</b>: {{.EndedTime}}</span>
         {{end}}
         {{if .ShowViewCount}}
             {{if .ViewCount}}

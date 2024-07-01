@@ -6,51 +6,45 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
-add-urls
-    download-queue&
-    watchlist&
-    ended&
+add-playlist
+    playlist-id^*
+    auto-refresh
+    auto-download
+    download-policy={^playlist-download-policies}
+    prefer-single-format
+    expand
+    force
 
-add-playlists
-    download-queue&
-    watchlist&
-    single-format&
-    all-videos
-
-add-videos
-    download-queue&
-    watchlist&
-    ended&
-    skipped&
-    forced-download&
-    single-format&
+add-video
+    video-id^*
+    favorite
+    download-queue
+    ended
+    reason={^video-ended-reasons}
+    prefer-single-format
+    source
+    force
 
 backup
 
 cleanup-ended
 
-download
-    id&^
+download-video
+    video-id^*
+    prefer-single-format
+    source
     force
-    single-format
-    queue
+
+download-queue
+    prefer-single-format
+    force
 
 get-captions
-    id&^
+    video-id&^
     force
 
 get-channel-metadata
-    id&^
-    force
-
-get-url-file
-    url&^
-    force
-
-get-url-data
-    id
-    video-id*
-    last-downloaded
+    channel-id&^
     force
 
 get-rutube-video
@@ -58,59 +52,50 @@ get-rutube-video
     force
 
 get-playlist-metadata
-    id&^
+    playlist-id&^
+    expand
     force
-    all-videos
 
 get-poster
-    id&^
-    for-id
+    video-id&^
     force
-
-get-video-file
-    id&^
-    force
-    single-format
 
 get-video-metadata
-    id&^
-    for-id
+    video-id&^
     force
 
-queue-playlists-new-videos
+migrate-metadata
 
-remove-playlists
-    download-queue&
-    watchlist&
-    single-format&
+queue-playlists-downloads
+
+remove-playlist
+    playlist-id^*
+    auto-refresh
+    auto-download
+    prefer-single-format
+    expand
+    force
 
 remove-videos
-    download-queue&
-    watchlist&
-    progress&
-    ended&
-    forced-download&
-    single-format&
-
-remove-urls
-    download-queue&
-    watchlist&
-    progress&
-    ended&
-    skipped&
+    video-id^*
+    favorite
+    download-queue
+    progress
+    ended
+    prefer-single-format
+    source
+    force
 
 serve
     port$*
     stderr$
 
 sync
+    prefer-single-format
     force
-    single-format
 
 test-dependencies
 
-update-playlists-metadata
-
-update-playlists-new-videos
+refresh-playlists-metadata
 
 version

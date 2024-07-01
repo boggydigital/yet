@@ -21,9 +21,9 @@ import (
 type WatchViewModel struct {
 	VideoId              string
 	VideoUrl             string
-	AudioUrl             string
 	CurrentTime          string
-	LastEndedTime        string
+	EndedTime            string
+	EndedReason          data.VideoEndedReason
 	VideoPoster          string
 	LocalPlayback        bool
 	CurrentTimeSeconds   string
@@ -38,25 +38,24 @@ type WatchViewModel struct {
 }
 
 var propertyTitles = map[string]string{
-	data.VideoViewCountProperty:            "Views",
-	data.VideoKeywordsProperty:             "Keywords",
-	data.VideoCategoryProperty:             "Category",
-	data.VideoUploadDateProperty:           " Uploaded",
-	data.VideoPublishDateProperty:          "Published",
-	data.VideoDownloadedDateProperty:       "Downloaded",
-	data.VideoDurationProperty:             "Duration",
-	data.VideoEndedProperty:                "Last Ended",
-	data.VideoSkippedProperty:              "Skipped",
-	data.VideosWatchlistProperty:           "In Watchlist",
-	data.VideosDownloadQueueProperty:       "In Download Queue",
-	data.VideoForcedDownloadProperty:       "Forced Download",
-	data.VideoSingleFormatDownloadProperty: "Single Format Download",
+	data.VideoViewCountProperty:          "Views",
+	data.VideoKeywordsProperty:           "Keywords",
+	data.VideoCategoryProperty:           "Category",
+	data.VideoUploadDateProperty:         " Uploaded",
+	data.VideoPublishDateProperty:        "Published",
+	data.VideoDurationProperty:           "Duration",
+	data.VideoEndedDateProperty:          "Ended Date",
+	data.VideoEndedReasonProperty:        "Ended Reason",
+	data.VideoDownloadQueuedProperty:     "Download Queued",
+	data.VideoDownloadStartedProperty:    "Download Started",
+	data.VideoDownloadCompletedProperty:  "Download Completed",
+	data.VideoForcedDownloadProperty:     "Forced Download",
+	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
 
-func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audioOnly bool) (*WatchViewModel, error) {
+func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
-	audioUrl := ""
 	//var videoCaptionTracks []youtube_urls.CaptionTrack
 	localPlayback := false
 
@@ -107,59 +106,66 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 		}
 	}
 
-	if videoUrl == "" || videoTitle == "" {
+	var videoPage *youtube_urls.InitialPlayerResponse
+	var err error
 
-		videoPage, err := yeti.GetVideoPage(videoId)
-		if err != nil {
-			return nil, err
-		}
-
-		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
-			return nil, err
-		}
-
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return nil, err
-		}
-
-		mdRdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
+	if videoTitle == "" {
+		videoPage, err = yeti.GetVideoPage(videoId)
 		if err != nil {
 			return nil, err
 		}
 
 		for p, values := range yeti.ExtractMetadata(videoPage) {
-			if err := mdRdx.AddValues(p, videoId, values...); err != nil {
+			if err := rdx.AddValues(p, videoId, values...); err != nil {
 				return nil, err
 			}
-		}
-
-		if audioOnly {
-			au, err := decode(videoPage.BestAdaptiveAudioFormat().Url, videoPage.PlayerUrl)
-			if err != nil {
-				return nil, err
-			}
-			audioUrl = au.String()
-		} else {
-			vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
-			if err != nil {
-				return nil, err
-			}
-			videoUrl = vu.String()
 		}
 
 		videoTitle = videoPage.VideoDetails.Title
 		videoDescription = videoPage.VideoDetails.ShortDescription
 	}
 
-	lastEndedTime := ""
-	if et, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && et != "" {
-		lastEndedTime = et
-		titlePrefix := "☑️ "
-		if rdx.HasKey(data.VideoSkippedProperty, videoId) {
-			titlePrefix = "⏭️ "
+	// check if the video has source specified
+	if videoUrl == "" {
+		if src, ok := rdx.GetLastVal(data.VideoSourceProperty, videoId); ok && src != "" {
+			videoUrl = src
 		}
-		videoTitle = titlePrefix + videoTitle
+	}
+
+	if videoUrl == "" || videoTitle == "" {
+
+		if videoPage == nil {
+			videoPage, err = yeti.GetVideoPage(videoId)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
+			return nil, err
+		}
+
+		vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
+		if err != nil {
+			return nil, err
+		}
+
+		videoUrl = vu.String()
+	}
+
+	lastEndedTime := ""
+	if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && et != "" {
+		lastEndedTime = et
+		//titlePrefix := "☑️ "
+		//if rdx.HasKey(data.VideoEndedReasonProperty, videoId) {
+		//	titlePrefix = "⏭️ "
+		//}
+		//videoTitle = titlePrefix + videoTitle
+	}
+
+	endedReason := data.DefaultEndedReason
+	if er, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+		endedReason = data.ParseVideoEndedReason(er)
 	}
 
 	joinProperties := []string{
@@ -172,14 +178,13 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 		data.VideoCategoryProperty,
 		data.VideoUploadDateProperty,
 		data.VideoPublishDateProperty,
-		data.VideoDownloadedDateProperty,
+		data.VideoDownloadCompletedProperty,
 		data.VideoDurationProperty,
-		data.VideoEndedProperty,
-		data.VideoSkippedProperty,
-		data.VideosWatchlistProperty,
-		data.VideosDownloadQueueProperty,
+		data.VideoEndedDateProperty,
+		data.VideoEndedReasonProperty,
+		data.VideoDownloadQueuedProperty,
 		data.VideoForcedDownloadProperty,
-		data.VideoSingleFormatDownloadProperty,
+		data.VideoPreferSingleFormatProperty,
 	}
 
 	videoProperties := make(map[string]string)
@@ -215,7 +220,6 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 	return &WatchViewModel{
 		VideoId:              videoId,
 		VideoUrl:             videoUrl,
-		AudioUrl:             audioUrl,
 		VideoPoster:          videoPoster,
 		LocalPlayback:        localPlayback,
 		CurrentTimeSeconds:   strconv.FormatInt(dur-rem, 10),
@@ -224,11 +228,11 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.ReadableRedux, audi
 		VideoDescription:     videoDescription,
 		VideoPropertiesOrder: titles,
 		VideoProperties:      videoProperties,
-		//CurrentTime:          currentTime,
-		LastEndedTime:     lastEndedTime,
-		ChannelId:         channelId,
-		ChannelTitle:      channelTitle,
-		PlaylistViewModel: GetPlaylistViewModel(playlistId, rdx),
+		EndedTime:            lastEndedTime,
+		EndedReason:          endedReason,
+		ChannelId:            channelId,
+		ChannelTitle:         channelTitle,
+		PlaylistViewModel:    GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }
 
@@ -302,9 +306,9 @@ func fmtPropertyValue(property, value string) string {
 		fallthrough
 	case data.VideoPublishDateProperty:
 		fallthrough
-	case data.VideoDownloadedDateProperty:
+	case data.VideoDownloadCompletedProperty:
 		fallthrough
-	case data.VideoEndedProperty:
+	case data.VideoEndedDateProperty:
 		if dt, err := time.Parse(time.RFC3339, value); err == nil {
 			return dt.Format(time.RFC1123)
 		}

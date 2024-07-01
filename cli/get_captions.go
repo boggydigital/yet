@@ -14,17 +14,17 @@ import (
 )
 
 func GetCaptionsHandler(u *url.URL) error {
-	ids := strings.Split(u.Query().Get("id"), ",")
+	videoIds := strings.Split(u.Query().Get("video-id"), ",")
 	force := u.Query().Has("force")
-	return GetCaptions(force, ids...)
+	return GetCaptions(force, videoIds...)
 }
 
-func GetCaptions(force bool, ids ...string) error {
+func GetCaptions(force bool, videoIds ...string) error {
 
 	gca := nod.NewProgress("getting captions...")
 	defer gca.End()
 
-	gca.TotalInt(len(ids))
+	gca.TotalInt(len(videoIds))
 
 	dl := dolo.DefaultClient
 
@@ -41,7 +41,7 @@ func GetCaptions(force bool, ids ...string) error {
 		return gca.EndWithError(err)
 	}
 
-	for _, videoId := range ids {
+	for _, videoId := range videoIds {
 
 		if err := getVideoPageCaptions(nil, videoId, rdx, dl, force); err != nil {
 			gca.Error(err)

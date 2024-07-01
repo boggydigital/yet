@@ -13,36 +13,45 @@ const (
 	VideoPublishDateProperty       = "video-publish-date"
 	VideoPublishTimeTextProperty   = "video-publish-time-text"
 	VideoUploadDateProperty        = "video-upload-date"
-	VideoDownloadedDateProperty    = "video-downloaded-date"
 	VideoProgressProperty          = "video-progress"
 	VideoDurationProperty          = "video-duration"
-	VideoEndedProperty             = "video-ended"
-	VideoSkippedProperty           = "video-skipped"
+	VideoEndedDateProperty         = "video-ended-date"
+	VideoEndedReasonProperty       = "video-ended-reason"
 	VideoErrorsProperty            = "video-errors"
+	VideoFavoriteProperty          = "video-favorite"
 
-	VideosDownloadQueueProperty       = "videos-download-queue"
-	VideoForcedDownloadProperty       = "video-forced-download"
-	VideoSingleFormatDownloadProperty = "video-single-format-download"
-	VideosWatchlistProperty           = "videos-watchlist"
+	VideoSourceProperty             = "video-source"
+	VideoForcedDownloadProperty     = "video-forced-download"
+	VideoPreferSingleFormatProperty = "video-prefer-single-format"
+
+	VideoDownloadQueuedProperty    = "video-download-queued"
+	VideoDownloadStartedProperty   = "video-download-started"
+	VideoDownloadCompletedProperty = "video-download-completed"
+	VideoDownloadCleanedUpProperty = "video-download-cleaned-up"
+
+	VideoWatchlistQueuedProperty   = "video-watchlist-queued"
+	VideoWatchlistDequeuedProperty = "video-watchlist-dequeued"
 
 	VideoCaptionsLanguagesProperty = "video-captions-languages"
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
 	VideoCaptionsNamesProperty     = "video-captions-names"
 
-	PlaylistWatchlistProperty            = "playlist-watchlist"
-	PlaylistDownloadQueueProperty        = "playlist-download-queue"
-	PlaylistNewVideosProperty            = "playlist-new-videos"
-	PlaylistChannelProperty              = "playlist-channel"
-	PlaylistTitleProperty                = "playlist-title"
-	PlaylistVideosProperty               = "playlist-videos"
-	PlaylistSingleFormatDownloadProperty = "playlist-single-format"
+	PlaylistChannelProperty = "playlist-channel"
+	PlaylistTitleProperty   = "playlist-title"
+	PlaylistVideosProperty  = "playlist-videos"
+
+	PlaylistAutoRefreshProperty        = "playlist-auto-refresh"
+	PlaylistAutoDownloadProperty       = "playlist-auto-download"
+	PlaylistDownloadPolicyProperty     = "playlist-download-policy"
+	PlaylistPreferSingleFormatProperty = "playlist-prefer-single-format"
+	PlaylistExpandProperty             = "playlist-expand"
 
 	ChannelTitleProperty       = "channel-title"
 	ChannelDescriptionProperty = "channel-description"
 	ChannelPlaylistsProperty   = "channel-playlists"
 )
 
-func AllProperties() []string {
+func VideoProperties() []string {
 	return []string{
 		VideoTitleProperty,
 		VideoThumbnailUrlsProperty,
@@ -56,30 +65,52 @@ func AllProperties() []string {
 		VideoPublishDateProperty,
 		VideoPublishTimeTextProperty,
 		VideoUploadDateProperty,
-		VideoDownloadedDateProperty,
-		VideoForcedDownloadProperty,
-		VideoSingleFormatDownloadProperty,
 		VideoProgressProperty,
 		VideoDurationProperty,
-		VideoEndedProperty,
-		VideoSkippedProperty,
+		VideoEndedDateProperty,
+		VideoEndedReasonProperty,
 		VideoErrorsProperty,
-		VideosDownloadQueueProperty,
-		VideosWatchlistProperty,
+		VideoFavoriteProperty,
+		VideoSourceProperty,
+		VideoForcedDownloadProperty,
+		VideoPreferSingleFormatProperty,
+		VideoDownloadQueuedProperty,
+		VideoDownloadStartedProperty,
+		VideoDownloadCompletedProperty,
+		VideoDownloadCleanedUpProperty,
+		VideoWatchlistQueuedProperty,
+		VideoWatchlistDequeuedProperty,
 		VideoCaptionsLanguagesProperty,
 		VideoCaptionsKindsProperty,
 		VideoCaptionsNamesProperty,
+	}
+}
 
-		PlaylistWatchlistProperty,
-		PlaylistDownloadQueueProperty,
-		PlaylistSingleFormatDownloadProperty,
-		PlaylistNewVideosProperty,
+func PlaylistProperties() []string {
+	return []string{
 		PlaylistChannelProperty,
 		PlaylistTitleProperty,
 		PlaylistVideosProperty,
+		PlaylistAutoRefreshProperty,
+		PlaylistAutoDownloadProperty,
+		PlaylistDownloadPolicyProperty,
+		PlaylistPreferSingleFormatProperty,
+		PlaylistExpandProperty,
+	}
+}
 
+func ChannelProperties() []string {
+	return []string{
 		ChannelTitleProperty,
 		ChannelDescriptionProperty,
 		ChannelPlaylistsProperty,
 	}
+}
+
+func AllProperties() []string {
+	properties := make([]string, 0)
+	properties = append(properties, VideoProperties()...)
+	properties = append(properties, PlaylistProperties()...)
+	properties = append(properties, ChannelProperties()...)
+	return properties
 }

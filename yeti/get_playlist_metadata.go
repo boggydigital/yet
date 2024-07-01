@@ -8,10 +8,20 @@ import (
 	"net/http"
 )
 
-func GetPlaylistPageMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
+func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, allVideos bool, rdx kvas.WriteableRedux) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
 	defer gppma.End()
+
+	if err := rdx.MustHave(
+		data.PlaylistTitleProperty,
+		data.PlaylistChannelProperty,
+		data.PlaylistVideosProperty,
+		data.VideoTitleProperty,
+		data.VideoDurationProperty,
+		data.VideoOwnerChannelNameProperty); err != nil {
+		return gppma.EndWithError(err)
+	}
 
 	var err error
 	if playlistPage == nil {

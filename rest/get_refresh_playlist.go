@@ -1,10 +1,6 @@
 package rest
 
 import (
-	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"net/http"
 )
@@ -13,6 +9,13 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// GET /refresh_playlist?list
 
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	playlistId := r.URL.Query().Get("list")
 
 	if playlistId == "" {
@@ -20,20 +23,7 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	plRdx, err := kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := yeti.GetPlaylistPageMetadata(nil, playlistId, false, plRdx); err != nil {
+	if err := yeti.GetPlaylistMetadata(nil, playlistId, false, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

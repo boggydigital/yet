@@ -24,13 +24,14 @@ type VideoViewModel struct {
 	VideoId            string
 	VideoUrl           string
 	VideoTitle         string
-	Class              string
+	Favorite           bool
 	ShowPoster         bool
 	ShowPublishedDate  bool
 	PublishedDate      string
 	DownloadedDate     string
-	ShowEndedDate      bool
-	EndedDate          string
+	ShowEndedTime      bool
+	EndedTime          string
+	EndedReason        data.VideoEndedReason
 	ShowDuration       bool
 	Duration           string
 	ShowProgress       bool
@@ -67,7 +68,7 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 				publishedDate = ptts
 			}
 		}
-		if dts, ok := rdx.GetLastVal(data.VideoDownloadedDateProperty, videoId); ok && dts != "" {
+		if dts, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); ok && dts != "" {
 			downloadedDate = parseAndFormat(dts)
 		}
 	}
@@ -83,18 +84,9 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 
 	optShowEndedDate := slices.Contains(options, ShowEndedDate)
 
-	ended := false
 	endedDate := ""
-	if ets, ok := rdx.GetLastVal(data.VideoEndedProperty, videoId); ok && ets != "" {
-		ended = true
-		if optShowEndedDate {
-			endedDate = parseAndFormat(ets)
-		}
-	}
-
-	skipped := false
-	if s, ok := rdx.GetLastVal(data.VideoSkippedProperty, videoId); ok && s != "" {
-		skipped = true
+	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
+		endedDate = parseAndFormat(ets)
 	}
 
 	var rem, dur int64
@@ -129,15 +121,14 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		}
 	}
 
-	class := ""
-	if ended {
-		titlePrefix := "☑️ "
-		class += "ended "
-		if skipped {
-			titlePrefix = "⏭️ "
-			class += "skipped "
-		}
-		videoTitle = titlePrefix + videoTitle
+	endedReason := data.DefaultEndedReason
+	if er, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+		endedReason = data.ParseVideoEndedReason(er)
+	}
+
+	favorite := false
+	if rdx.HasKey(data.VideoFavoriteProperty, videoId) {
+		favorite = true
 	}
 
 	optShowPoster := slices.Contains(options, ShowPoster)
@@ -146,13 +137,14 @@ func GetVideoViewModel(videoId string, rdx kvas.ReadableRedux, options ...VideoO
 		VideoId:            videoId,
 		VideoUrl:           videoUrl,
 		VideoTitle:         videoTitle,
-		Class:              class,
+		Favorite:           favorite,
 		ShowPoster:         optShowPoster,
 		ShowPublishedDate:  optShowPublishedDate,
 		PublishedDate:      publishedDate,
 		DownloadedDate:     downloadedDate,
-		ShowEndedDate:      optShowEndedDate,
-		EndedDate:          endedDate,
+		ShowEndedTime:      optShowEndedDate,
+		EndedTime:          endedDate,
+		EndedReason:        endedReason,
 		ShowDuration:       optShowDuration && dur > 0,
 		Duration:           formatSeconds(dur),
 		ShowProgress:       optShowProgress && rem > 0 && dur > 0,

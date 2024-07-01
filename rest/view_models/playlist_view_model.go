@@ -3,17 +3,20 @@ package view_models
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 )
 
 type PlaylistViewModel struct {
 	PlaylistId           string
 	PlaylistTitle        string
 	PlaylistChannelTitle string
-	PlaylistClass        string
-	NewVideos            int
-	Watching             bool
-	Downloading          bool
-	SingleFormat         bool
+	BadgeCount           int
+	AutoRefresh          bool
+	AutoDownload         bool
+	DownloadPolicy       data.PlaylistDownloadPolicy
+	AllDownloadPolicies  []data.PlaylistDownloadPolicy
+	Expand               bool
+	PreferSingleFormat   bool
 	Videos               []*VideoViewModel
 }
 
@@ -23,33 +26,32 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 		return nil
 	}
 
-	nvc := 0
+	pnev := yeti.PlaylistNotEndedVideos(playlistId, rdx)
+	badgeCount := len(pnev)
 
-	if nv, ok := rdx.GetAllValues(data.PlaylistNewVideosProperty, playlistId); ok {
-		nvc = len(nv)
+	autoRefresh := false
+	if par, ok := rdx.GetLastVal(data.PlaylistAutoRefreshProperty, playlistId); ok && par == data.TrueValue {
+		autoRefresh = true
 	}
 
-	watching := false
-	if pwl, ok := rdx.GetLastVal(data.PlaylistWatchlistProperty, playlistId); ok && pwl == data.TrueValue {
-		watching = true
+	autoDownload := false
+	if pad, ok := rdx.GetLastVal(data.PlaylistAutoDownloadProperty, playlistId); ok && pad == data.TrueValue {
+		autoDownload = true
 	}
 
-	downloading := false
-	if pdq, ok := rdx.GetLastVal(data.PlaylistDownloadQueueProperty, playlistId); ok && pdq == data.TrueValue {
-		downloading = true
+	downloadPolicy := data.DefaultDownloadPolicy
+	if pdp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
+		downloadPolicy = data.ParsePlaylistDownloadPolicy(pdp)
 	}
 
-	singleFormat := false
-	if psf, ok := rdx.GetLastVal(data.PlaylistSingleFormatDownloadProperty, playlistId); ok && psf == data.TrueValue {
-		singleFormat = true
+	expand := false
+	if pe, ok := rdx.GetLastVal(data.PlaylistExpandProperty, playlistId); ok && pe == data.TrueValue {
+		expand = true
 	}
 
-	pc := ""
-	if downloading {
-		pc += " downloading"
-	}
-	if nvc == 0 {
-		pc += " ended"
+	preferSingleFormat := false
+	if psf, ok := rdx.GetLastVal(data.PlaylistPreferSingleFormatProperty, playlistId); ok && psf == data.TrueValue {
+		preferSingleFormat = true
 	}
 
 	playlistTitle := ""
@@ -64,13 +66,15 @@ func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistVi
 
 	plvm := &PlaylistViewModel{
 		PlaylistId:           playlistId,
-		PlaylistClass:        pc,
-		NewVideos:            nvc,
+		BadgeCount:           badgeCount,
 		PlaylistTitle:        playlistTitle,
 		PlaylistChannelTitle: playlistChannelTitle,
-		Watching:             watching,
-		Downloading:          downloading,
-		SingleFormat:         singleFormat,
+		AutoRefresh:          autoRefresh,
+		AutoDownload:         autoDownload,
+		DownloadPolicy:       downloadPolicy,
+		AllDownloadPolicies:  data.AllPlaylistDownloadPolicies(),
+		Expand:               expand,
+		PreferSingleFormat:   preferSingleFormat,
 	}
 
 	defaultOptions := []VideoOptions{ShowPoster, ShowViewCount, ShowDuration, ShowPublishedDate}

@@ -38,3 +38,15 @@ func ParsePlaylistIds(args ...string) ([]string, error) {
 	}
 	return playlistIds, nil
 }
+
+func ParsePlaylistId(playlistId string) (string, error) {
+	parsedPlaylistIds, err := ParsePlaylistIds(playlistId)
+	if err != nil {
+		return "", err
+	}
+	if len(parsedPlaylistIds) > 0 {
+		return parsedPlaylistIds[0], nil
+	} else {
+		return "", fmt.Errorf("invalid playlist id: %s", playlistId)
+	}
+}

@@ -3,9 +3,7 @@ package cli
 import (
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
 	"strings"
@@ -13,43 +11,47 @@ import (
 
 func GetPlaylistMetadataHandler(u *url.URL) error {
 	q := u.Query()
-	ids := strings.Split(q.Get("id"), ",")
-	allVideos := q.Has("all-videos")
-	force := q.Has("force")
-	return GetPlaylistMetadata(nil, allVideos, force, ids...)
+	playlistIds := strings.Split(q.Get("playlist-id"), ",")
+	options := &PlaylistOptions{
+		Expand: q.Has("expand"),
+		Force:  q.Has("force"),
+	}
+	return GetPlaylistMetadata(nil, options, playlistIds...)
 }
 
-func GetPlaylistMetadata(rdx kvas.WriteableRedux, allVideos, force bool, ids ...string) error {
+func GetPlaylistMetadata(rdx kvas.WriteableRedux, opt *PlaylistOptions, playlistIds ...string) error {
 	gpma := nod.NewProgress("getting playlist metadata...")
 	defer gpma.End()
 
-	playlistIds, err := yeti.ParsePlaylistIds(ids...)
+	if opt == nil {
+		opt = DefaultPlaylistOptions()
+	}
+
+	var err error
+	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
 		return gpma.EndWithError(err)
 	}
 
-	gpma.TotalInt(len(playlistIds))
-
-	if rdx == nil {
-
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return gpma.EndWithError(err)
-		}
-
-		rdx, err = kvas.NewReduxWriter(metadataDir, data.AllProperties()...)
-		if err != nil {
-			return gpma.EndWithError(err)
-		}
+	parsedPlaylistIds, err := yeti.ParsePlaylistIds(playlistIds...)
+	if err != nil {
+		return gpma.EndWithError(err)
 	}
 
-	for _, playlistId := range playlistIds {
+	gpma.TotalInt(len(parsedPlaylistIds))
 
-		if rdx.HasKey(data.PlaylistTitleProperty, playlistId) && !force {
+	for _, playlistId := range parsedPlaylistIds {
+
+		if rdx.HasKey(data.PlaylistTitleProperty, playlistId) && !opt.Force {
 			continue
 		}
 
-		if err := yeti.GetPlaylistPageMetadata(nil, playlistId, allVideos, rdx); err != nil {
+		expand := opt.Expand
+		if re, ok := rdx.GetLastVal(data.PlaylistExpandProperty, playlistId); ok && re == data.TrueValue {
+			expand = true
+		}
+
+		if err := yeti.GetPlaylistMetadata(nil, playlistId, expand, rdx); err != nil {
 			gpma.Error(err)
 		}
 

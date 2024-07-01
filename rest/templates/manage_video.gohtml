@@ -19,24 +19,30 @@
 
     <div class="subtle"><b>VideoId:</b> {{.VideoId}}</div>
 
-    {{if .CanViewAtOrigin}}
-        <a class="action"
-           href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}&t={{.CurrentTime}}{{end}}{{end}}">
-            {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
-    {{else}}
-    {{end}}
+    <a class="action"
+       href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}&t={{.CurrentTime}}{{end}}{{end}}">
+        {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
 
     <form method="get" action="/update_video">
-        <input type="hidden" id="v" name="v" value="{{.VideoId}}"/>
+        <input type="hidden" id="video-id" name="video-id" value="{{.VideoId}}"/>
         <input type="submit" value='Update'/>
         <ul class="management">
+            <li>
+                <input id="favorite" type="checkbox" switch name="favorite" {{if .Favorite}}checked{{end}} />
+                <label for="favorite">
+                    <span class="title">Favorite</span>
+                    <span class='subtitle subtle'>
+                        On: Prevent video cleanup. Off: cleanup after ended.
+                    </span>
+                </label>
+            </li>
             <li>
                 <input id="progress" type="checkbox" switch name="progress"
                        {{if .Progress}}checked{{else}}disabled{{end}} />
                 <label for="progress">
                     <span class="title">Progress</span>
                     <span class='subtitle subtle'>
-                        Cannot be set.
+                        Cannot be set here, will be set during video playback.
                         Off: clear progress.
                     </span>
                 </label>
@@ -52,29 +58,23 @@
                 </label>
             </li>
             <li>
-                <input id="skipped" type="checkbox" switch name="skipped" {{if .Skipped}}checked{{end}} />
-                <label for="skipped">
-                    <span class="title">Skipped</span>
-                    <span class="subtitle subtle">
-                        On: mark as  skipped, ended.
-                        Off: remove skipped, keep ended.
-                    </span>
+                <select id="ended-reason" name="ended-reason">
+                    {{$reason := .EndedReason}}
+                    {{range .AllEndedReasons}}
+                        <option {{if eq . $reason}}selected{{end}}>{{.}}</option>
+                    {{end}}
+                </select>
+                <label for="ended-reason">
+                    <span class="title">Ended reason</span>
+                    <span class="subtitle subtle">Optional explanation why the video has ended.</span>
                 </label>
+
             </li>
             <li>
-                <input id="watchlist" type="checkbox" switch name="watchlist" {{if .Watchlist}}checked{{end}} />
-                <label for="watchlist">
-                    <span class="title">Watchlist</span>
-                    <span class="subtitle subtle">
-                        On: add to watchlist.
-                        Off: remove from watchlist.
-                    </span>
-                </label>
-            </li>
-            <li>
-                <input id="download" type="checkbox" switch name="download" {{if .DownloadQueue}}checked{{end}} />
+                <input id="download-queued" type="checkbox" switch name="download-queued"
+                       {{if .DownloadQueued}}checked{{end}} />
                 <label for="download">
-                    <span class="title">Download queue</span>
+                    <span class="title">Download queued</span>
                     <span class="subtitle subtle">
                         On: add to download queue.
                         Off: remove from download queue.
@@ -94,13 +94,24 @@
                 </label>
             </li>
             <li>
-                <input id="single-format" type="checkbox" switch name="single-format"
-                       {{if .SingleFormat}}checked{{end}} />
+                <input id="prefer-single-format" type="checkbox" switch name="prefer-single-format"
+                       {{if .PreferSingleFormat}}checked{{end}} />
                 <label for="single-format">
-                    <span class="title">Single format</span>
+                    <span class="title">Prefer single format</span>
                     <span class="subtitle subtle">
-                        On: limited to 720p.
-                        Off: download in the best quality.
+                        On: prefer mobile 720p quality (much faster).
+                        Off: download in the best quality (slower).
+                    </span>
+                </label>
+            </li>
+            <li>
+                <input id="source" type="checkbox" switch name="source"
+                       {{if .Source}}checked{{else}}disabled{{end}} />
+                <label for="source">
+                    <span class="title">Alternative source</span>
+                    <span class="subtitle subtle">
+                        Cannot be set here, will be set on paste with source.
+                        Off: clear alternative source.
                     </span>
                 </label>
             </li>

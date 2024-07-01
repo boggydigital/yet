@@ -1,125 +1,106 @@
 package rest
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/yeti"
+	"golang.org/x/exp/maps"
 	"net/http"
-	"net/url"
-	"time"
 )
 
 func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
 	// GET /update_video?v
 
-	videoId := r.URL.Query().Get("v")
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	q := r.URL.Query()
+
+	videoId := q.Get("video-id")
 
 	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
 	}
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	boolPropertyInputs := map[string]string{
+		data.VideoFavoriteProperty:           "favorite",
+		data.VideoForcedDownloadProperty:     "forced-download",
+		data.VideoPreferSingleFormatProperty: "prefer-single-format",
 	}
 
-	properties := []string{
-		data.VideoProgressProperty,
-		data.VideoEndedProperty,
-		data.VideoSkippedProperty,
-		data.VideosWatchlistProperty,
-		data.VideosDownloadQueueProperty,
-		data.VideoForcedDownloadProperty,
-		data.VideoSingleFormatDownloadProperty,
-		data.PlaylistNewVideosProperty,
+	timePropertyInputs := map[string]string{
+		data.VideoEndedDateProperty:      "ended",
+		data.VideoDownloadQueuedProperty: "download-queued",
 	}
 
-	vRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	specialProperties := map[string]string{
+		data.VideoProgressProperty:    "progress",
+		data.VideoEndedReasonProperty: "ended-reason",
+		data.VideoSourceProperty:      "source",
 	}
 
-	for _, p := range properties {
-		if p == data.PlaylistNewVideosProperty {
-			continue
-		}
-		if err := updateVideoProperty(videoId, p, r.URL, vRdx); err != nil {
+	properties := maps.Keys(boolPropertyInputs)
+	properties = append(properties, maps.Keys(timePropertyInputs)...)
+	properties = append(properties, maps.Keys(specialProperties)...)
+
+	for property, input := range boolPropertyInputs {
+		if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+	}
 
+	for property, input := range timePropertyInputs {
+		if err := toggleTimeProperty(videoId, property, q.Has(input), rdx); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	for property, input := range specialProperties {
+		switch property {
+		case data.VideoProgressProperty:
+			// progress and source and handled in the same way:
+			// - nothing happens on set
+			// - the value is remove on clear
+			fallthrough
+		case data.VideoSourceProperty:
+			if q.Has(input) {
+				// do nothing, progress & source cannot be set
+			} else {
+				if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+			}
+		case data.VideoEndedReasonProperty:
+			reason := data.DefaultEndedReason
+			if er := q.Get(input); er != "" {
+				reason = data.ParseVideoEndedReason(er)
+			}
+			if err := rdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, string(reason)); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+		}
 	}
 
 	http.Redirect(w, r, "/watch?v="+videoId, http.StatusTemporaryRedirect)
 }
 
-func updateVideoProperty(videoId string, property string, u *url.URL, rdx kvas.WriteableRedux) error {
-
-	flagStr := ""
-	switch property {
-	case data.VideoProgressProperty:
-		flagStr = "progress"
-	case data.VideoEndedProperty:
-		flagStr = "ended"
-	case data.VideoSkippedProperty:
-		flagStr = "skipped"
-	case data.VideosWatchlistProperty:
-		flagStr = "watchlist"
-	case data.VideosDownloadQueueProperty:
-		flagStr = "download"
-	case data.VideoForcedDownloadProperty:
-		flagStr = "forced-download"
-	case data.VideoSingleFormatDownloadProperty:
-		flagStr = "single-format"
-	default:
-		return fmt.Errorf("unsupported property %s", property)
-	}
-
-	flag := u.Query().Has(flagStr)
-
-	if flag {
-		if !rdx.HasKey(property, videoId) {
-			value := data.TrueValue
-			switch property {
-			case data.VideoProgressProperty:
-				// setting progress requires current time - users should be encouraged to scrub video instead
-				return nil
-			case data.VideoSkippedProperty:
-				// skipped video must also make sure the video is set as ended
-				if !rdx.HasKey(data.VideoEndedProperty, videoId) {
-					t := time.Now().Format(time.RFC3339)
-					if err := rdx.AddValues(data.VideoEndedProperty, videoId, t); err != nil {
-						return err
-					}
-				}
-			case data.VideoEndedProperty:
-				// ended requires current time as a value to set
-				value = time.Now().Format(time.RFC3339)
-			}
-			if err := rdx.AddValues(property, videoId, value); err != nil {
-				return err
-			}
-
-			if property == data.VideoSkippedProperty || property == data.VideoEndedProperty {
-				// if ended or skipped - remove video from new playlist videos
-				if err := rmVideoFromPlaylistNewVideos(videoId, rdx); err != nil {
-					return err
-				}
-			}
-		}
+func toggleTimeProperty(id, property string, condition bool, rdx kvas.WriteableRedux) error {
+	if condition {
+		return rdx.ReplaceValues(property, id, yeti.FmtNow())
 	} else {
-		if rdx.HasKey(property, videoId) {
-			if err := rdx.CutKeys(property, videoId); err != nil {
-				return err
-			}
+		if rdx.HasKey(property, id) {
+			return rdx.CutKeys(property, id)
 		}
 	}
-
 	return nil
 }

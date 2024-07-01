@@ -1,48 +1,64 @@
 package rest
 
 import (
-	"fmt"
 	"github.com/boggydigital/kvas"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
+	"golang.org/x/exp/maps"
 	"net/http"
-	"net/url"
 )
 
 func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// GET /update_playlist?list
 
-	playlistId := r.URL.Query().Get("list")
+	var err error
+	rdx, err = rdx.RefreshWriter()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	q := r.URL.Query()
+
+	playlistId := q.Get("list")
 
 	if playlistId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
 	}
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	boolPropertyInputs := map[string]string{
+		data.PlaylistAutoRefreshProperty:        "auto-refresh",
+		data.PlaylistExpandProperty:             "expand",
+		data.PlaylistAutoDownloadProperty:       "auto-download",
+		data.PlaylistPreferSingleFormatProperty: "prefer-single-format",
 	}
 
-	properties := []string{
-		data.PlaylistWatchlistProperty,
-		data.PlaylistDownloadQueueProperty,
-		data.PlaylistSingleFormatDownloadProperty,
+	specialProperties := map[string]string{
+		data.PlaylistDownloadPolicyProperty: "download-policy",
 	}
 
-	plRdx, err := kvas.NewReduxWriter(metadataDir, properties...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	properties := maps.Keys(boolPropertyInputs)
+	properties = append(properties, maps.Keys(specialProperties)...)
 
-	for _, p := range properties {
-		if err := updatePlaylistProperty(playlistId, p, r.URL, plRdx); err != nil {
+	for property, input := range boolPropertyInputs {
+		if err := toggleProperty(playlistId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
+		}
+	}
+
+	for property, input := range specialProperties {
+		switch property {
+		case data.PlaylistDownloadPolicyProperty:
+			policy := data.DefaultDownloadPolicy
+			if dp := q.Get(input); dp != "" {
+				policy = data.ParsePlaylistDownloadPolicy(dp)
+			}
+			if err := rdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
 		}
 	}
 
@@ -50,33 +66,15 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func updatePlaylistProperty(playlistId string, property string, u *url.URL, rdx kvas.WriteableRedux) error {
-
-	flagStr := ""
-	switch property {
-	case data.PlaylistWatchlistProperty:
-		flagStr = "refresh"
-	case data.PlaylistDownloadQueueProperty:
-		flagStr = "download"
-	case data.PlaylistSingleFormatDownloadProperty:
-		flagStr = "single-format"
-	default:
-		return fmt.Errorf("unsupported property %s", property)
-	}
-
-	flag := u.Query().Has(flagStr)
-
-	var err error
-
-	if flag {
-		if !rdx.HasKey(property, playlistId) {
-			err = rdx.AddValues(property, playlistId, data.TrueValue)
+func toggleProperty(id, property string, condition bool, rdx kvas.WriteableRedux) error {
+	if condition {
+		if !rdx.HasValue(property, id, data.TrueValue) {
+			return rdx.ReplaceValues(property, id, data.TrueValue)
 		}
 	} else {
-		if rdx.HasKey(property, playlistId) {
-			err = rdx.CutKeys(property, playlistId)
+		if rdx.HasKey(property, id) {
+			return rdx.CutKeys(property, id)
 		}
 	}
-
-	return err
+	return nil
 }

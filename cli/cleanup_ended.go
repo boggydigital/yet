@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/boggydigital/busan"
 	"github.com/boggydigital/kvas"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
@@ -13,52 +14,80 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
-func CleanupEndedHandler(u *url.URL) error {
+func CleanupEndedHandler(_ *url.URL) error {
 	return CleanupEnded(nil)
 }
 
-func CleanupEnded(rdx kvas.ReadableRedux) error {
+// CleanupEnded removes downloads for Ended videos that match the following conditions:
+// - video download has not been downloaded earlier
+// - at least 48 hours have passed since the Ended date
+func CleanupEnded(rdx kvas.WriteableRedux) error {
 
-	cea := nod.NewProgress("cleaning up ended media...")
+	cea := nod.NewProgress("cleaning up Ended media...")
 	defer cea.End()
+
+	var err error
+	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
+	if err != nil {
+		return cea.EndWithError(err)
+	}
 
 	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
 	if err != nil {
 		return cea.EndWithError(err)
 	}
 
-	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
-		if err != nil {
-			return cea.EndWithError(err)
+	endedVideoIds := make([]string, 0)
+
+	for _, id := range rdx.Keys(data.VideoEndedDateProperty) {
+
+		// don't cleanup favorite videos
+		if rdx.HasKey(data.VideoFavoriteProperty, id) {
+			continue
 		}
 
-		rdx, err = kvas.NewReduxReader(metadataDir,
-			data.VideoEndedProperty,
-			data.VideoTitleProperty,
-			data.VideoOwnerChannelNameProperty)
-		if err != nil {
-			return cea.EndWithError(err)
+		dcTime := ""
+		if dct, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && dct != "" {
+			dcTime = dct
 		}
+
+		// skip video that have been cleaned up _after_ the latest download
+		if dcut, ok := rdx.GetLastVal(data.VideoDownloadCleanedUpProperty, id); ok && dcut > dcTime {
+			continue
+		}
+		if eds, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok {
+			if ed, err := time.Parse(time.RFC3339, eds); err == nil {
+				dur := time.Now().Sub(ed)
+				if dur < yeti.DefaultDelay {
+					continue
+				}
+			} else {
+				return cea.EndWithError(err)
+			}
+		}
+		endedVideoIds = append(endedVideoIds, id)
 	}
 
-	videoIds := rdx.Keys(data.VideoEndedProperty)
+	cea.TotalInt(len(endedVideoIds))
 
-	cea.TotalInt(len(videoIds))
-
-	for _, videoId := range videoIds {
+	for _, videoId := range endedVideoIds {
 		if err := removeVideoFile(videoId, absVideosDir, rdx); err != nil {
 			return cea.EndWithError(err)
 		}
 		if err := removePosters(videoId); err != nil {
 			return cea.EndWithError(err)
 		}
-		cea.Increment()
+
+		if err := rdx.AddValues(data.VideoDownloadCleanedUpProperty, videoId, time.Now().Format(time.RFC3339)); err != nil {
+			return cea.EndWithError(err)
+		}
 
 		// checking and removing empty directories
 		if channelTitle, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && channelTitle != "" {
+			channelTitle = busan.Sanitize(channelTitle)
 			absDirName := filepath.Join(absVideosDir, channelTitle)
 			if ok, err := directoryIsEmpty(absDirName); ok && err == nil {
 				if err := os.Remove(absDirName); err != nil {
@@ -66,6 +95,8 @@ func CleanupEnded(rdx kvas.ReadableRedux) error {
 				}
 			}
 		}
+
+		cea.Increment()
 	}
 
 	cea.EndWithResult("done")
