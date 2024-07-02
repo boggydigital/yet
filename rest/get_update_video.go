@@ -80,6 +80,10 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		case data.VideoEndedReasonProperty:
+			// don't set ended reason unless the video has ended
+			if !q.Has("ended") {
+				break
+			}
 			reason := data.DefaultEndedReason
 			if er := q.Get(input); er != "" {
 				reason = data.ParseVideoEndedReason(er)
