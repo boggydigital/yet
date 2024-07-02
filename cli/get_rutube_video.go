@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/boggydigital/busan"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
@@ -194,7 +195,7 @@ func getVideoSegments(
 	force bool) error {
 
 	videoId := playOptions.VideoId
-	channel := playOptions.Author.Name
+	channel := busan.Sanitize(playOptions.Author.Name)
 
 	gvsa := nod.NewProgress(" getting video segments for %s...", videoId)
 	defer gvsa.End()
@@ -231,13 +232,13 @@ func getVideoSegments(
 }
 
 func relManifestFilename(videoId string) string {
-	return videoId + ".txt"
+	return busan.Sanitize(videoId) + ".txt"
 }
 
 func absManifestFilename(playOptions *rutube_urls.PlayOptions) (string, error) {
 
 	videoId := playOptions.VideoId
-	channel := playOptions.Author.Name
+	channel := busan.Sanitize(playOptions.Author.Name)
 
 	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
 	if err != nil {
@@ -286,7 +287,7 @@ func generateMergeManifest(playOptions *rutube_urls.PlayOptions, segments []stri
 func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error {
 
 	videoId := playOptions.VideoId
-	channel := playOptions.Author.Name
+	channel := busan.Sanitize(playOptions.Author.Name)
 	title := playOptions.Title
 
 	title = strings.Replace(title, "\n", " ", -1)
@@ -332,7 +333,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []string) error {
 
 	videoId := playOptions.VideoId
-	channel := playOptions.Author.Name
+	channel := busan.Sanitize(playOptions.Author.Name)
 
 	rmsa := nod.NewProgress(" removing manifest, segments for %s...", videoId)
 	defer rmsa.End()
