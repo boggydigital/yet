@@ -17,14 +17,15 @@ import (
 	"time"
 )
 
-func CleanupEndedHandler(_ *url.URL) error {
-	return CleanupEnded(nil)
+func CleanupEndedHandler(u *url.URL) error {
+	now := u.Query().Has("now")
+	return CleanupEnded(now, nil)
 }
 
 // CleanupEnded removes downloads for Ended videos that match the following conditions:
 // - video download has not been downloaded earlier
-// - at least 48 hours have passed since the Ended date
-func CleanupEnded(rdx kvas.WriteableRedux) error {
+// - at least 48 hours have passed since the ended date (unless no-delay was set)
+func CleanupEnded(now bool, rdx kvas.WriteableRedux) error {
 
 	cea := nod.NewProgress("cleaning up Ended media...")
 	defer cea.End()
@@ -40,7 +41,7 @@ func CleanupEnded(rdx kvas.WriteableRedux) error {
 		return cea.EndWithError(err)
 	}
 
-	endedVideoIds := make([]string, 0)
+	cleanupVideoIds := make([]string, 0)
 
 	for _, id := range rdx.Keys(data.VideoEndedDateProperty) {
 
@@ -58,22 +59,26 @@ func CleanupEnded(rdx kvas.WriteableRedux) error {
 		if dcut, ok := rdx.GetLastVal(data.VideoDownloadCleanedUpProperty, id); ok && dcut > dcTime {
 			continue
 		}
-		if eds, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok {
-			if ed, err := time.Parse(time.RFC3339, eds); err == nil {
-				dur := time.Now().Sub(ed)
-				if dur < yeti.DefaultDelay {
-					continue
+
+		if !now {
+			if eds, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok {
+				if ed, err := time.Parse(time.RFC3339, eds); err == nil {
+					dur := time.Now().Sub(ed)
+					if dur < yeti.DefaultDelay {
+						continue
+					}
+				} else {
+					return cea.EndWithError(err)
 				}
-			} else {
-				return cea.EndWithError(err)
 			}
 		}
-		endedVideoIds = append(endedVideoIds, id)
+
+		cleanupVideoIds = append(cleanupVideoIds, id)
 	}
 
-	cea.TotalInt(len(endedVideoIds))
+	cea.TotalInt(len(cleanupVideoIds))
 
-	for _, videoId := range endedVideoIds {
+	for _, videoId := range cleanupVideoIds {
 		if err := removeVideoFile(videoId, absVideosDir, rdx); err != nil {
 			return cea.EndWithError(err)
 		}

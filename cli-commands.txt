@@ -28,6 +28,7 @@ add-video
 backup
 
 cleanup-ended
+    now
 
 download-video
     video-id^*

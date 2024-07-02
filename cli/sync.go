@@ -44,7 +44,7 @@ func Sync(rdx kvas.WriteableRedux, opt *VideoOptions) error {
 		return sa.EndWithError(err)
 	}
 
-	if err := CleanupEnded(rdx); err != nil {
+	if err := CleanupEnded(false, rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
