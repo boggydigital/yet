@@ -153,19 +153,24 @@
             <li>
                 <a class='action' href="/manage_video?v={{.VideoId}}">Manage video</a>
             </li>
-            {{if eq .CurrentTimeSeconds "0"}}
-                <li>
-                    <a class='action shortcut' href="/update_video?v={{.VideoId}}&ended&ended-reason=skipped">Skip</a>
-                </li>
+            {{if .EndedTime}}
             {{else}}
-                <li>
-                    <a class='action shortcut' href="/update_video?v={{.VideoId}}&ended&ended-reason=seen-enough">Seen enough</a>
-                </li>
+                {{if eq .CurrentTimeSeconds "0"}}
+                    <li>
+                        <a class='action shortcut'
+                           href="/update_video?v={{.VideoId}}&ended&ended-reason=skipped">Skip</a>
+                    </li>
+                {{else}}
+                    <li>
+                        <a class='action shortcut' href="/update_video?v={{.VideoId}}&ended&ended-reason=seen-enough">Seen
+                            enough</a>
+                    </li>
+                {{end}}
             {{end}}
             {{if .LocalPlayback}}
             {{else}}
                 <li>
-                    <a class='action shortcut' href="/update_video?v={{.VideoId}}&download-queue">Queue download</a>
+                    <a class='action shortcut' href="/update_video?v={{.VideoId}}&download-queue">Queue</a>
                 </li>
             {{end}}
         </ul>
