@@ -24,7 +24,7 @@
         {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
 
     <form method="get" action="/update_video">
-        <input type="hidden" id="video-id" name="video-id" value="{{.VideoId}}"/>
+        <input type="hidden" id="v" name="v" value="{{.VideoId}}"/>
         <input type="submit" value='Update'/>
         <ul class="management">
             <li>

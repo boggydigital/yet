@@ -21,7 +21,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	videoId := q.Get("video-id")
+	videoId := q.Get("v")
 
 	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)

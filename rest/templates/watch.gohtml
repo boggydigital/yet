@@ -149,7 +149,17 @@
             </details>
         {{end}}
 
-        <a class='action' href="/manage_video?v={{.VideoId}}">Manage video</a>
+        <ul class="horizontal">
+            <li>
+                <a class='action' href="/manage_video?v={{.VideoId}}">Manage video</a>
+            </li>
+            <li>
+                <a class='action shortcut' href="/update_video?v={{.VideoId}}&ended&ended-reason=skipped">Skip video</a>
+            </li>
+            <li>
+                <a class='action shortcut' href="/update_video?v={{.VideoId}}&download-queue">Queue download</a>
+            </li>
+        </ul>
 
     </ul>
 
