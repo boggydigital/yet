@@ -32,12 +32,16 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 	}
 
 	phr := playlistPage.PlaylistHeaderRenderer()
-	if err := rdx.ReplaceValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
-		return gppma.EndWithError(err)
+	if phr.Title.SimpleText != "" {
+		if err := rdx.AddValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
+			return gppma.EndWithError(err)
+		}
 	}
 
-	if err := rdx.ReplaceValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
-		return gppma.EndWithError(err)
+	if playlistPage.PlaylistOwner() != "" {
+		if err := rdx.AddValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
+			return gppma.EndWithError(err)
+		}
 	}
 
 	playlistVideos := make([]string, 0)
