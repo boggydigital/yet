@@ -193,9 +193,16 @@ func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux) (*W
 
 	sort.Strings(titles)
 
+	allPlaylistsWithVideo := rdx.MatchAsset(data.PlaylistVideosProperty, []string{videoId}, nil)
 	playlistId := ""
-	if playlistIds := rdx.MatchAsset(data.PlaylistVideosProperty, []string{videoId}, nil); len(playlistIds) > 0 {
-		playlistId = playlistIds[0]
+	for _, pid := range allPlaylistsWithVideo {
+		if rdx.HasKey(data.PlaylistAutoRefreshProperty, pid) {
+			playlistId = pid
+			break
+		}
+	}
+	if playlistId == "" && len(allPlaylistsWithVideo) > 0 {
+		playlistId = allPlaylistsWithVideo[0]
 	}
 
 	channelId, channelTitle := "", ""
