@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"net/url"
@@ -22,7 +22,7 @@ func RemoveVideosHandler(u *url.URL) error {
 	return RemoveVideos(nil, videoId, options)
 }
 
-func RemoveVideos(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) error {
+func RemoveVideos(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) error {
 
 	rva := nod.Begin("removing video %s...", videoId)
 	defer rva.End()

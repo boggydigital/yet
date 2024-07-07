@@ -3,7 +3,7 @@ package cli
 import (
 	"errors"
 	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
@@ -29,7 +29,7 @@ func DownloadVideoHandler(u *url.URL) error {
 	return DownloadVideo(nil, videoId, options)
 }
 
-func DownloadVideo(rdx kvas.WriteableRedux, videoId string, opt *VideoOptions) error {
+func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) error {
 
 	da := nod.Begin("downloading video %s...", videoId)
 	defer da.End()

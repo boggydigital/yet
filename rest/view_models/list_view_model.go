@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 )
@@ -25,7 +25,7 @@ var (
 	playlistsOrder = []string{playlistsNewVideos, playlistsNoNewVideos}
 )
 
-func GetListViewModel(rdx kvas.ReadableRedux) (*ListViewModel, error) {
+func GetListViewModel(rdx kevlar.ReadableRedux) (*ListViewModel, error) {
 	lvm := &ListViewModel{
 		PlaylistsOrder: playlistsOrder,
 		Playlists:      make(map[string][]*PlaylistViewModel),

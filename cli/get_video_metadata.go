@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -19,7 +19,7 @@ func GetVideoMetadataHandler(u *url.URL) error {
 	return GetVideoMetadata(nil, options, videoIds...)
 }
 
-func GetVideoMetadata(rdx kvas.WriteableRedux, opt *VideoOptions, videoIds ...string) error {
+func GetVideoMetadata(rdx kevlar.WriteableRedux, opt *VideoOptions, videoIds ...string) error {
 	gvma := nod.NewProgress("getting video metadata...")
 	defer gvma.End()
 
@@ -51,7 +51,7 @@ func GetVideoMetadata(rdx kvas.WriteableRedux, opt *VideoOptions, videoIds ...st
 	return nil
 }
 
-func getVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId string, rdx kvas.WriteableRedux) error {
+func getVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId string, rdx kevlar.WriteableRedux) error {
 
 	gvpma := nod.Begin(" metadata for %s", videoId)
 	defer gvpma.End()
@@ -75,7 +75,7 @@ func getVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId
 	return nil
 }
 
-func copyMetadata(videoId, forId string, rdx kvas.WriteableRedux) error {
+func copyMetadata(videoId, forId string, rdx kevlar.WriteableRedux) error {
 
 	if forId == "" || forId == videoId {
 		return nil

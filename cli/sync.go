@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"net/url"
@@ -17,7 +17,7 @@ func SyncHandler(u *url.URL) error {
 	return Sync(nil, options)
 }
 
-func Sync(rdx kvas.WriteableRedux, opt *VideoOptions) error {
+func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 
 	sa := nod.Begin("syncing playlists...")
 	defer sa.End()

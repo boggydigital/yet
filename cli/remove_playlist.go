@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -23,7 +23,7 @@ func RemovePlaylistHandler(u *url.URL) error {
 	return RemovePlaylist(nil, playlistId, options)
 }
 
-func RemovePlaylist(rdx kvas.WriteableRedux, playlistId string, opt *PlaylistOptions) error {
+func RemovePlaylist(rdx kevlar.WriteableRedux, playlistId string, opt *PlaylistOptions) error {
 
 	rpa := nod.Begin("removing playlist %s...", playlistId)
 	defer rpa.End()

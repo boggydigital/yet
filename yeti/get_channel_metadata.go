@@ -1,7 +1,7 @@
 package yeti
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
@@ -12,7 +12,7 @@ const (
 	videosPerTab = 12
 )
 
-func GetChannelPageMetadata(channelPage *youtube_urls.ChannelInitialData, channelId string, rdx kvas.WriteableRedux) error {
+func GetChannelPageMetadata(channelPage *youtube_urls.ChannelInitialData, channelId string, rdx kevlar.WriteableRedux) error {
 
 	gchpma := nod.NewProgress(" metadata for %s", channelId)
 	defer gchpma.End()

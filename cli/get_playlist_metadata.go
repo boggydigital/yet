@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -19,7 +19,7 @@ func GetPlaylistMetadataHandler(u *url.URL) error {
 	return GetPlaylistMetadata(nil, options, playlistIds...)
 }
 
-func GetPlaylistMetadata(rdx kvas.WriteableRedux, opt *PlaylistOptions, playlistIds ...string) error {
+func GetPlaylistMetadata(rdx kevlar.WriteableRedux, opt *PlaylistOptions, playlistIds ...string) error {
 	gpma := nod.NewProgress("getting playlist metadata...")
 	defer gpma.End()
 

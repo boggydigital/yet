@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -12,7 +12,7 @@ func QueuePlaylistsDownloadsHandler(u *url.URL) error {
 	return QueuePlaylistsDownloads(nil)
 }
 
-func QueuePlaylistsDownloads(rdx kvas.WriteableRedux) error {
+func QueuePlaylistsDownloads(rdx kevlar.WriteableRedux) error {
 
 	qpda := nod.NewProgress("queueing playlists downloads...")
 	defer qpda.End()
@@ -42,7 +42,7 @@ func QueuePlaylistsDownloads(rdx kvas.WriteableRedux) error {
 
 // queuePlaylistDownloads goes through playlist videos according to the download policy,
 // skips ended and previously queued videos and queues the rest
-func queuePlaylistDownloads(rdx kvas.WriteableRedux, playlistId string) error {
+func queuePlaylistDownloads(rdx kevlar.WriteableRedux, playlistId string) error {
 
 	queue := make(map[string][]string)
 

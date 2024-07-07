@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
 )
 
@@ -14,7 +14,7 @@ type ChannelViewModel struct {
 	PlaylistsVideos    map[string][]*VideoViewModel
 }
 
-func GetChannelViewModel(channelId string, rdx kvas.ReadableRedux) *ChannelViewModel {
+func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelViewModel {
 	channelTitle := channelId
 	if ct, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
 		channelTitle = ct

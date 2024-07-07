@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/boggydigital/busan"
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
@@ -25,7 +25,7 @@ func CleanupEndedHandler(u *url.URL) error {
 // CleanupEnded removes downloads for Ended videos that match the following conditions:
 // - video download has not been downloaded earlier
 // - at least 48 hours have passed since the ended date (unless no-delay was set)
-func CleanupEnded(now bool, rdx kvas.WriteableRedux) error {
+func CleanupEnded(now bool, rdx kevlar.WriteableRedux) error {
 
 	cea := nod.NewProgress("cleaning up Ended media...")
 	defer cea.End()
@@ -124,7 +124,7 @@ func directoryIsEmpty(name string) (bool, error) {
 	return false, err
 }
 
-func removeVideoFile(videoId, absVideosDir string, rdx kvas.ReadableRedux) error {
+func removeVideoFile(videoId, absVideosDir string, rdx kevlar.ReadableRedux) error {
 	title, _ := rdx.GetLastVal(data.VideoTitleProperty, videoId)
 	channel, _ := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId)
 

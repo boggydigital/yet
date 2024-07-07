@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
 	"golang.org/x/exp/maps"
 	"net/http"
@@ -66,7 +66,7 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func toggleProperty(id, property string, condition bool, rdx kvas.WriteableRedux) error {
+func toggleProperty(id, property string, condition bool, rdx kevlar.WriteableRedux) error {
 	if condition {
 		if !rdx.HasValue(property, id, data.TrueValue) {
 			return rdx.ReplaceValues(property, id, data.TrueValue)

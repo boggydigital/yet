@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -23,7 +23,7 @@ func DownloadQueueHandler(u *url.URL) error {
 // DownloadQueue processes download queue using the following rules:
 // - download has not been completed after queue time
 // - download is not in progress since queue time and less than 48 hours ago
-func DownloadQueue(rdx kvas.WriteableRedux, opt *VideoOptions) error {
+func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 
 	dqa := nod.NewProgress("downloading queued videos...")
 	defer dqa.End()

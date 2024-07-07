@@ -2,7 +2,7 @@ package view_models
 
 import (
 	"fmt"
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
@@ -55,7 +55,7 @@ var propertyTitles = map[string]string{
 	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
 }
 
-func GetWatchViewModel(videoId, currentTime string, rdx kvas.WriteableRedux) (*WatchViewModel, error) {
+func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
 	//var videoCaptionTracks []youtube_urls.CaptionTrack
@@ -251,7 +251,7 @@ func decode(urlStr, playerUrl string) (*url.URL, error) {
 	return u, nil
 }
 
-func getLocalCaptionTracks(videoId string, rdx kvas.ReadableRedux) ([]youtube_urls.CaptionTrack, error) {
+func getLocalCaptionTracks(videoId string, rdx kevlar.ReadableRedux) ([]youtube_urls.CaptionTrack, error) {
 
 	if err := rdx.MustHave(
 		data.VideoCaptionsNamesProperty,

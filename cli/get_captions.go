@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
@@ -33,7 +33,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 		return gca.EndWithError(err)
 	}
 
-	rdx, err := kvas.NewReduxWriter(metadataDir,
+	rdx, err := kevlar.NewReduxWriter(metadataDir,
 		data.VideoCaptionsNamesProperty,
 		data.VideoCaptionsKindsProperty,
 		data.VideoCaptionsLanguagesProperty)
@@ -58,7 +58,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 func getVideoPageCaptions(
 	videoPage *youtube_urls.InitialPlayerResponse,
 	videoId string,
-	rdx kvas.WriteableRedux,
+	rdx kevlar.WriteableRedux,
 	dl *dolo.Client,
 	force bool) error {
 

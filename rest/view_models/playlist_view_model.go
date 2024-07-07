@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 )
@@ -20,7 +20,7 @@ type PlaylistViewModel struct {
 	Videos               []*VideoViewModel
 }
 
-func GetPlaylistViewModel(playlistId string, rdx kvas.ReadableRedux) *PlaylistViewModel {
+func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *PlaylistViewModel {
 
 	if playlistId == "" {
 		return nil

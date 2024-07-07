@@ -1,11 +1,11 @@
 package yeti
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
 )
 
-func PlaylistNotEndedVideos(playlistId string, rdx kvas.ReadableRedux) []string {
+func PlaylistNotEndedVideos(playlistId string, rdx kevlar.ReadableRedux) []string {
 
 	playlistVideos, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId)
 	if !ok {

@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kvas"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
 )
 
@@ -20,7 +20,7 @@ type VideoManagementViewModel struct {
 	Source             bool
 }
 
-func GetVideoManagementModel(videoId string, rdx kvas.ReadableRedux) *VideoManagementViewModel {
+func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoManagementViewModel {
 	videoTitle := ""
 	if vt, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vt != "" {
 		videoTitle = vt
