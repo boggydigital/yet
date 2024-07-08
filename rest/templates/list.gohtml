@@ -59,7 +59,7 @@
         {{end}}
 
         {{if .Videos}}
-            <details>
+            <details {{if .Continue}}{{else}}open{{end}}>
                 <summary>{{template "plus_icon"}}<h1>Videos</h1></summary>
                 <ul class="videos resp-grid">
                     {{range .Videos}}
