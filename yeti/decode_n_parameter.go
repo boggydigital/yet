@@ -84,15 +84,24 @@ func getNParamDecoder(playerUrl string) (string, error) {
 
 	bts := make([]byte, 0)
 	buf := bytes.NewBuffer(bts)
-	tr := io.TeeReader(playerContent, buf)
 
-	dfb, dfn, err := nParamDecodeFuncBodyName(nDecPfx["v1"], nDecSfx["v1"], tr)
-	if errors.Is(err, ErrDecoderCodeNotFound) {
-		dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx["v2"], nDecSfx["v2"], buf)
+	// buffer player code
+	if _, err := buf.ReadFrom(playerContent); err != nil {
+		return "", err
 	}
 
-	if err != nil {
-		return "", err
+	var dfb, dfn string
+	for ver := range nDecPfx {
+		dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx[ver], nDecSfx[ver], strings.NewReader(buf.String()))
+		if err == nil && dfb != "" && dfn != "" {
+			break
+		}
+		if errors.Is(err, ErrDecoderCodeNotFound) {
+			continue
+		}
+		if err != nil {
+			return "", err
+		}
 	}
 
 	if dfb == "" || dfn == "" {
