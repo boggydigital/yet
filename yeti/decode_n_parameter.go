@@ -2,6 +2,7 @@ package yeti
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/boggydigital/nod"
@@ -13,13 +14,20 @@ import (
 	"strings"
 )
 
-const (
-	nParamDecoderFuncStart = "function(a){var b=a.split(\"\"),"
-	nParamDecoderFuncEnd   = "return b.join(\"\")};"
+var (
+	nDecPfx = map[string]string{
+		"v1": "function(a){var b=a.split(\"\"),",
+		"v2": "function(a){var b=String.prototype.split.call(a,\"\"),",
+	}
+	nDecSfx = map[string]string{
+		"v1": "return b.join(\"\")};",
+		"v2": "return Array.prototype.join.call(b,\"\")};",
+	}
 )
 
 var (
 	ErrNodeJsRequired        = errors.New("node.js is required")
+	ErrDecoderCodeNotFound   = errors.New("decoder code not found")
 	ErrNParamDecoderNotFound = errors.New("n-param decoder not found")
 )
 
@@ -74,7 +82,15 @@ func getNParamDecoder(playerUrl string) (string, error) {
 	}
 	defer playerContent.Close()
 
-	dfb, dfn, err := nParamDecodeFuncBodyName(playerContent)
+	bts := make([]byte, 0)
+	buf := bytes.NewBuffer(bts)
+	tr := io.TeeReader(playerContent, buf)
+
+	dfb, dfn, err := nParamDecodeFuncBodyName(nDecPfx["v1"], nDecSfx["v1"], tr)
+	if errors.Is(err, ErrDecoderCodeNotFound) {
+		dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx["v2"], nDecSfx["v2"], buf)
+	}
+
 	if err != nil {
 		return "", err
 	}
@@ -96,7 +112,7 @@ func getNParamDecoder(playerUrl string) (string, error) {
 	return ndp, nil
 }
 
-func nParamDecodeFuncBodyName(r io.Reader) (string, string, error) {
+func nParamDecodeFuncBodyName(start, end string, r io.Reader) (string, string, error) {
 
 	scanner := bufio.NewScanner(r)
 	sb := &strings.Builder{}
@@ -105,7 +121,7 @@ func nParamDecodeFuncBodyName(r io.Reader) (string, string, error) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		if !ok && strings.Contains(line, nParamDecoderFuncStart) {
+		if !ok && strings.Contains(line, start) {
 			if str, _, ok := strings.Cut(line, "="); ok {
 				dfn = str
 			}
@@ -113,7 +129,7 @@ func nParamDecodeFuncBodyName(r io.Reader) (string, string, error) {
 		}
 		if ok {
 			sb.WriteString(line)
-			if strings.Contains(line, nParamDecoderFuncEnd) {
+			if strings.Contains(line, end) {
 				break
 			}
 		}
@@ -124,7 +140,7 @@ func nParamDecodeFuncBodyName(r io.Reader) (string, string, error) {
 	}
 
 	if sb.Len() == 0 {
-		return "", "", errors.New("decoder code not found")
+		return "", "", ErrDecoderCodeNotFound
 	}
 
 	return sb.String(), dfn, nil
