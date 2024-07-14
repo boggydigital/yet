@@ -57,7 +57,7 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 			playlistVideos = append(playlistVideos, videoId)
 			videoTitles[videoId] = []string{video.Title}
 			videoChannels[videoId] = []string{video.Channel}
-			videoLengths[videoId] = []string{video.Length}
+			videoLengths[videoId] = []string{video.LengthSeconds}
 		}
 
 		if expand && playlistPage.HasContinuation() {
