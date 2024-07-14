@@ -37,7 +37,7 @@ func GetListViewModel(rdx kevlar.ReadableRedux) (*ListViewModel, error) {
 	continueVideos := make([]string, 0)
 	if len(videoProgress) > 0 {
 		for _, id := range videoProgress {
-			if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); !ok || et != "" {
+			if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok && et != "" {
 				continue
 			}
 			continueVideos = append(continueVideos, id)
