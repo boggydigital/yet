@@ -1,33 +1,9 @@
 # yet
 yet is a minimalist YouTube video, playlist downloader. 
 
-Engineering design constraints lead to a simple application and code base. yet is built on top of `github.com/boggydigital/yt_urls`, similarly compact module, that provides low-level helpers to get and work with YouTube data.
+Engineering design constraints lead to a simple application and code base. yet is built on top of `github.com/boggydigital/yet_urls`, similarly compact module, that provides low-level helpers to get and work with YouTube data.
 
-yet can be run as a [Docker service](#using-yet-as-a-docker-service) or a [CLI tool](#using-yet-as-a-cli-tool).
-
-## Using yet as a CLI tool
-
-To download a video use the following command:
-
-```shell
-yet download <video-id> [, <another-video-id>...] | <playlist-id> [, <another-playlist-id>...]
-```
-
-yet supports individual video-ids or playlist-ids as args.
-
-Internally yet downloads videos using a list of video-ids, so any playlist-ids are expanded into video-ids for download.
-
-### What is video-id?
-
-Video-id is YouTube's video identifier. You can get it from a video URL : `https://www.youtube.com/watch?v=video-id`.
-
-### What is playlist-id?
-
-Playlist-id is YouTube's videos list identifier. You can get it from a list URL: `https://www.youtube.com/watch?v=video-id&list=playlist-id`.
-
-### Setting up directories
-
-yet requires several directories for operations - see [`directories-example.txt`](https://github.com/boggydigital/yet/blob/main/directories-example.txt) and replace default paths with desired values. Rename and place `directories.txt` in the same folder where `yet` binary is located.
+yet can be run as a [Docker service](#using-yet-as-a-docker-service).
 
 ## Using yet as a Docker service
 
@@ -67,11 +43,7 @@ yet Docker service is a work in progress and will be improved in the future to a
 
 ## Advanced scenarios
 
-All advanced scenarios are detailed below. 
-
-### Downloading all channel and user videos
-
-Most channels and user pages contain playlist links to all uploads. For example: on a channel page look for "Uploads" section and a "PLAY ALL" link - this link can be used as a playlist-id.
+All advanced scenarios are detailed below.
 
 ### Downloading videos that require authentication
 

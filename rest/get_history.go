@@ -94,7 +94,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 			if writtenVideos == endedVideosLimit && !showAll {
 				break
 			}
-			hvm.Groups[grp] = append(hvm.Groups[grp], view_models.GetVideoViewModel(id, rdx, view_models.ShowEndedDate))
+			hvm.Groups[grp] = append(hvm.Groups[grp], view_models.GetVideoViewModel(id, rdx, view_models.ShowEndedDate, view_models.ShowPoster))
 			writtenVideos++
 		}
 	}

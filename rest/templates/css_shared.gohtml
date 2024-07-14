@@ -26,6 +26,7 @@
             font-size: var(--fs-normal);
             font-weight: var(--fw-bolder);
             text-decoration: none;
+            position: relative;
             /*margin-block: var(--large);*/
         }
 
@@ -49,6 +50,17 @@
             border-top-left-radius: var(--border-radius);
             border-bottom-right-radius: var(--border-radius);
             color: var(--color);
+        }
+
+        a .ended {
+            position: absolute;
+            padding: var(--small);
+            font-size: var(--fs-x-smaller);
+            background: var(--highlight-color);
+            border-top-right-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+            color: var(--color);
+            right: 0;
         }
 
         a.ended {
