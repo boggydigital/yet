@@ -29,7 +29,7 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 	var channelVideos []*VideoViewModel
 	if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); ok && len(chvs) > 0 {
 		for _, videoId := range chvs {
-			channelVideos = append(channelVideos, GetVideoViewModel(videoId, rdx, ShowPoster, ShowPublishedDate, ShowViewCount))
+			channelVideos = append(channelVideos, GetVideoViewModel(videoId, rdx, ShowPoster, ShowDuration, ShowPublishedDate, ShowViewCount))
 		}
 	}
 
