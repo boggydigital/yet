@@ -16,6 +16,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 	if err := rdx.MustHave(
 		data.ChannelTitleProperty,
 		data.ChannelVideosProperty,
+		data.ChannelDescriptionProperty,
 		data.VideoTitleProperty,
 		data.VideoDurationProperty,
 		data.VideoOwnerChannelNameProperty); err != nil {
@@ -31,7 +32,13 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 	}
 
 	if channelTitle := channelVideosPage.Metadata.ChannelMetadataRenderer.Title; channelTitle != "" {
-		if err := rdx.AddValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
+		if err := rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
+			return gcvma.EndWithError(err)
+		}
+	}
+
+	if description := channelVideosPage.Metadata.ChannelMetadataRenderer.Description; description != "" {
+		if err := rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
 			return gcvma.EndWithError(err)
 		}
 	}
