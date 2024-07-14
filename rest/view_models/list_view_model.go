@@ -33,20 +33,25 @@ func GetListViewModel(rdx kevlar.ReadableRedux) (*ListViewModel, error) {
 
 	var err error
 
-	cwKeys := rdx.Keys(data.VideoProgressProperty)
-	if len(cwKeys) > 0 {
-		cwKeys, err = rdx.Sort(cwKeys, false, data.VideoTitleProperty)
+	videoProgress := rdx.Keys(data.VideoProgressProperty)
+	continueVideos := make([]string, 0)
+	if len(videoProgress) > 0 {
+		for _, id := range videoProgress {
+			if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); !ok || et != "" {
+				continue
+			}
+			continueVideos = append(continueVideos, id)
+		}
+		continueVideos, err = rdx.Sort(continueVideos, false, data.VideoTitleProperty)
 		if err != nil {
 			return nil, err
 		}
-		for _, id := range cwKeys {
-			if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); !ok || et == "" {
-				lvm.Continue = append(lvm.Continue, GetVideoViewModel(id, rdx,
-					ShowPoster,
-					ShowPublishedDate,
-					ShowDuration,
-					ShowProgress))
-			}
+		for _, id := range continueVideos {
+			lvm.Continue = append(lvm.Continue, GetVideoViewModel(id, rdx,
+				ShowPoster,
+				ShowPublishedDate,
+				ShowDuration,
+				ShowProgress))
 		}
 	}
 
