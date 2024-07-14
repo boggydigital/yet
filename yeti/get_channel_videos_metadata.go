@@ -39,7 +39,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 	channelVideos := make([]string, 0)
 	videoTitles := make(map[string][]string)
 	videoLengthsSeconds := make(map[string][]string)
-	videoChannels := make(map[string][]string)
+	videoOwnerChannels := make(map[string][]string)
 
 	for channelVideosPage != nil &&
 		len(channelVideosPage.Videos()) > 0 {
@@ -48,7 +48,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 			videoId := video.VideoId
 			channelVideos = append(channelVideos, videoId)
 			videoTitles[videoId] = []string{video.Title}
-			videoChannels[videoId] = []string{channelId}
+			videoOwnerChannels[videoId] = []string{channelVideosPage.Metadata.ChannelMetadataRenderer.Title}
 			videoLengthsSeconds[videoId] = []string{video.LengthSeconds}
 		}
 
@@ -65,7 +65,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 		return gcvma.EndWithError(err)
 	}
 
-	if err := rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
+	if err := rdx.BatchReplaceValues(data.VideoTitleProperty, videoTitles); err != nil {
 		return gcvma.EndWithError(err)
 	}
 
@@ -73,7 +73,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 		return gcvma.EndWithError(err)
 	}
 
-	if err := rdx.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
+	if err := rdx.BatchReplaceValues(data.VideoOwnerChannelNameProperty, videoOwnerChannels); err != nil {
 		return gcvma.EndWithError(err)
 	}
 
