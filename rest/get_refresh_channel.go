@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/http"
 )
@@ -23,7 +24,12 @@ func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := yeti.GetChannelPageMetadata(nil, channelId, rdx); err != nil {
+	expand := false
+	if exp, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && exp == data.TrueValue {
+		expand = true
+	}
+
+	if err := yeti.GetChannelVideosMetadata(nil, channelId, expand, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

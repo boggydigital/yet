@@ -11,8 +11,8 @@ require (
 	github.com/boggydigital/kevlar v0.5.15
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pathways v0.1.14
-	github.com/boggydigital/yet_urls v0.1.49
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
+	github.com/boggydigital/yet_urls v0.1.51
+	golang.org/x/exp v0.0.0-20240707233637-46b078467d37
 )
 
 require (

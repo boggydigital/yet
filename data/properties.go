@@ -45,7 +45,9 @@ const (
 
 	ChannelTitleProperty       = "channel-title"
 	ChannelDescriptionProperty = "channel-description"
+	ChannelVideosProperty      = "channel-videos"
 	ChannelPlaylistsProperty   = "channel-playlists"
+	ChannelExpandProperty      = "channel-expand"
 )
 
 func VideoProperties() []string {
@@ -98,6 +100,7 @@ func ChannelProperties() []string {
 	return []string{
 		ChannelTitleProperty,
 		ChannelDescriptionProperty,
+		ChannelVideosProperty,
 		ChannelPlaylistsProperty,
 	}
 }

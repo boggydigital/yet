@@ -75,6 +75,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	//channelId := "UCp-XZhyQLcJ8X65eT1T3XyQ"
+	//
+	//cvp, err := youtube_urls.GetChannelVideosPage(http.DefaultClient, channelId)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//for _, video := range cvp.Videos() {
+	//	fmt.Println(video.VideoId)
+	//}
+
 	if err := defs.Serve(os.Args[1:]); err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)

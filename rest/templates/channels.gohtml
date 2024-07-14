@@ -32,24 +32,11 @@
         </li>
     </ul>
 
-    <section class="playlists_container">
-    {{$playlists := .Playlists}}
-    {{$playlistsVideos := .PlaylistsVideos}}
-    {{range $playlistId := .PlaylistsOrder}}
-        {{if $playlistId}}
-            <details class="channel_playlist">
-                <summary>{{template "plus_icon"}}<h2>{{index $playlists $playlistId}}</h2></summary>
-                <a class='playlist' href='/playlist?list={{$playlistId}}'>View playlist</a>
-                {{$videos := index $playlistsVideos $playlistId}}
-                <ul class="videos resp-grid">
-                {{range $video := $videos}}
-                    <li>{{template "video" $video}}</li>
-                {{end}}
-                </ul>
-            </details>
+    <ul class="videos resp-grid">
+        {{range .Videos}}
+            <li>{{template "video" .}}</li>
         {{end}}
-    {{end}}
-    </section>
+    </ul>
 
     </body>
     </html>
