@@ -208,7 +208,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 	channelId, channelTitle := "", ""
 	if ci, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, videoId); ok && ci != "" {
 		channelId = ci
-		if ct, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && ct != "" {
+		if ct, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
 			channelTitle = ct
 		}
 	}
