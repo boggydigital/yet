@@ -42,7 +42,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	specialProperties := map[string]string{
 		data.VideoProgressProperty:    "progress",
 		data.VideoEndedReasonProperty: "ended-reason",
-		data.VideoSourceProperty:      "source",
+		data.VideoSourceProperty:      "clear-source",
 	}
 
 	properties := maps.Keys(boolPropertyInputs)
@@ -72,12 +72,12 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			fallthrough
 		case data.VideoSourceProperty:
 			if q.Has(input) {
-				// do nothing, progress & source cannot be set
-			} else {
-				if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
+				if err := toggleProperty(videoId, property, false, rdx); err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
+			} else {
+				// do nothing, clear source if only for clearing sources
 			}
 		case data.VideoEndedReasonProperty:
 			// don't set ended reason unless the video has ended
