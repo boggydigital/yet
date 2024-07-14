@@ -97,6 +97,7 @@
             margin-block: var(--large)
         }
 
+        .channel-container,
         .playlist-container {
             background: var(--highlight-color);
             border-radius: var(--border-radius-large);
@@ -104,6 +105,7 @@
         }
 
         @media only screen and (max-width: 700px) {
+            .channel-container,
             .playlist-container {
                 width: calc(100%);
             }
@@ -128,10 +130,6 @@
             text-decoration: none;
             margin-block: initial;
             position: relative;
-        }
-
-        a.channel {
-            padding-inline: 0;
         }
 
         .channel_playlist a.playlist {

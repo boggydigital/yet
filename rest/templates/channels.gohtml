@@ -10,13 +10,25 @@
         <meta name='color-scheme' content='dark light'>
         <title>{{.ChannelTitle}}</title>
         {{template "css-shared"}}
+        <style>
+            a.channel {
+                margin-block-start: var(--large);
+            }
+            .channelDescription {
+                margin-block: var(--large);
+            }
+        </style>
     </head>
     <body>
 
     {{template "icons"}}
     {{template "back"}}
 
-    <h1 class='channel'><span>{{.ChannelTitle}}</span></h1>
+{{/*    <h1 class='channel'><span>{{.ChannelTitle}}</span></h1>*/}}
+    <ul class="channels">
+        {{template "channel" .}}
+    </ul>
+
     {{if .ChannelDescription}}
         <div class="channelDescription subtle">{{.ChannelDescription}}</div>
     {{end}}

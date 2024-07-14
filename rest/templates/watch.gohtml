@@ -111,7 +111,10 @@
 
         {{if .ChannelId}}
             {{if .ChannelTitle}}
-                <a class="channel" href="/channel?id={{.ChannelId}}">Channel: {{.ChannelTitle}}</a>
+                <ul class="channels">
+                    {{template "channel" .}}
+                </ul>
+{{/*                <a class="channel" href="/channel?id={{.ChannelId}}">Channel: {{.ChannelTitle}}</a>*/}}
             {{end}}
         {{end}}
 
