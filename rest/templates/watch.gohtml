@@ -140,7 +140,7 @@
         {{end}}
 
         {{if .PlaylistViewModel}}
-            <details open>
+            <details {{if .ChannelViewModel.ChannelAutoRefresh}}{{else}}open{{end}}>
                 <summary>{{template "plus_icon"}}<h2>Playlist</h2></summary>
                 <ul class="playlists">
                     {{template "playlist" .PlaylistViewModel}}
