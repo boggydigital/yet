@@ -26,14 +26,14 @@
         <input type="submit" value='Update'/>
         <ul class="management">
             <li>
-                <input id="auto-refresh" type="checkbox" switch name="auto-refresh" {{if .AutoRefresh}}checked{{end}} />
+                <input id="auto-refresh" type="checkbox" switch name="auto-refresh" {{if .ChannelAutoRefresh}}checked{{end}} />
                 <label for="auto-refresh">
                     <span class="title">Auto refresh</span>
                     <span class="subtitle subtle">Update metadata, videos.</span>
                 </label>
             </li>
             <li>
-                <input id="expand" type="checkbox" switch name="expand" {{if .Expand}}checked{{end}} />
+                <input id="expand" type="checkbox" switch name="expand" {{if .ChannelExpand}}checked{{end}} />
                 <label for="expand">
                     <span class="title">Expand channel videos</span>
                     <span class="subtitle subtle">On: Get all videos in a channel. Off: Only get the latest 30 videos.</span>
@@ -42,7 +42,7 @@
             </li>
             <li>
                 <input id="auto-download" type="checkbox" switch name="auto-download"
-                       {{if .AutoDownload}}checked{{end}} />
+                       {{if .ChannelAutoDownload}}checked{{end}} />
                 <label for="auto-download">
                     <span class="title">Auto download videos</span>
                     <span class="subtitle subtle">Download unwatched videos.</span>
@@ -50,7 +50,7 @@
             </li>
             <li>
                 <select id="download-policy" name="download-policy">
-                    {{$policy := .DownloadPolicy}}
+                    {{$policy := .ChannelDownloadPolicy}}
                     {{range .AllDownloadPolicies}}
                         <option {{if eq . $policy}}selected{{end}}>{{.}}</option>
                     {{end}}
@@ -65,7 +65,7 @@
             <li><h2>Download options</h2></li>
             <li>
                 <input id="prefer-single-format" type="checkbox" switch name="prefer-single-format"
-                       {{if .PreferSingleFormat}}checked{{end}} />
+                       {{if .ChannelPreferSingleFormat}}checked{{end}} />
                 <label for="single-format">
                     <span class="title">Prefer single format</span>
                     <span class="subtitle subtle">Download mobile format videos. 720p quality.</span>
