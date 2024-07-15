@@ -62,6 +62,7 @@ func main() {
 		"get-video-metadata":         cli.GetVideoMetadataHandler,
 		"migrate":                    cli.MigrateHandler,
 		"queue-playlists-downloads":  cli.QueuePlaylistsDownloadsHandler,
+		"remove-channel":             cli.RemoveChannelHandler,
 		"remove-playlist":            cli.RemovePlaylistHandler,
 		"remove-videos":              cli.RemoveVideosHandler,
 		"serve":                      cli.ServeHandler,

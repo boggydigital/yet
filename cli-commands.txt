@@ -78,6 +78,14 @@ migrate
 
 queue-playlists-downloads
 
+remove-channel
+    channel-id^*
+    auto-refresh
+    auto-download
+    prefer-single-format
+    expand
+    force
+
 remove-playlist
     playlist-id^*
     auto-refresh

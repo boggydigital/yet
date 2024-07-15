@@ -43,7 +43,9 @@ func GetChannelMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channelI
 			gchma.Error(err)
 		}
 
-		// TODO: add get channel playlist metadata
+		if err := yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
+			gchma.Error(err)
+		}
 
 		gchma.Increment()
 	}
