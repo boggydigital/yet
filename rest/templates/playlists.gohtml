@@ -49,12 +49,12 @@
     {{template "playlist" .}}
 
     <ul class='info horizontal'>
-        {{if .AutoRefresh}}
-            <span>This playlist will automatically refresh metadata and {{if .Expand}}all{{else}}the latest 100{{end}} videos.</span>
-            {{if .AutoDownload}}
+        {{if .PlaylistAutoRefresh}}
+            <span>This playlist will automatically refresh metadata and {{if .PlaylistExpand}}all{{else}}the latest 100{{end}} videos.</span>
+            {{if .PlaylistAutoDownload}}
                 <span>
-                    {{if eq .DownloadPolicy "recent"}}Recent{{else if eq .DownloadPolicy "all"}}All{{end}} new videos will be downloaded
-                    {{if .PreferSingleFormat}}in mobile quality (720p), faster{{else}}in high quality (1080p), slower{{end}}.
+                    {{if eq .PlaylistDownloadPolicy "recent"}}Recent{{else if eq .PlaylistDownloadPolicy "all"}}All{{end}} new videos will be downloaded
+                    {{if .PlaylistPreferSingleFormat}}in mobile quality (720p), faster{{else}}in high quality (1080p), slower{{end}}.
                 </span>
             {{else}}
                 <span>New videos will be streamed from the origin.</span>
