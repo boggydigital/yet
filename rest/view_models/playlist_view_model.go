@@ -7,17 +7,17 @@ import (
 )
 
 type PlaylistViewModel struct {
-	PlaylistId           string
-	PlaylistTitle        string
-	PlaylistChannelTitle string
-	BadgeCount           int
-	AutoRefresh          bool
-	AutoDownload         bool
-	DownloadPolicy       data.DownloadPolicy
-	AllDownloadPolicies  []data.DownloadPolicy
-	Expand               bool
-	PreferSingleFormat   bool
-	Videos               []*VideoViewModel
+	PlaylistId                 string
+	PlaylistTitle              string
+	PlaylistChannelTitle       string
+	PlaylistBadgeCount         int
+	PlaylistAutoRefresh        bool
+	PlaylistAutoDownload       bool
+	PlaylistDownloadPolicy     data.DownloadPolicy
+	AllDownloadPolicies        []data.DownloadPolicy
+	PlaylistExpand             bool
+	PlaylistPreferSingleFormat bool
+	Videos                     []*VideoViewModel
 }
 
 func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *PlaylistViewModel {
@@ -65,16 +65,16 @@ func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *Playlist
 	}
 
 	plvm := &PlaylistViewModel{
-		PlaylistId:           playlistId,
-		BadgeCount:           badgeCount,
-		PlaylistTitle:        playlistTitle,
-		PlaylistChannelTitle: playlistChannelTitle,
-		AutoRefresh:          autoRefresh,
-		AutoDownload:         autoDownload,
-		DownloadPolicy:       downloadPolicy,
-		AllDownloadPolicies:  data.AllDownloadPolicies(),
-		Expand:               expand,
-		PreferSingleFormat:   preferSingleFormat,
+		PlaylistId:                 playlistId,
+		PlaylistBadgeCount:         badgeCount,
+		PlaylistTitle:              playlistTitle,
+		PlaylistChannelTitle:       playlistChannelTitle,
+		PlaylistAutoRefresh:        autoRefresh,
+		PlaylistAutoDownload:       autoDownload,
+		PlaylistDownloadPolicy:     downloadPolicy,
+		AllDownloadPolicies:        data.AllDownloadPolicies(),
+		PlaylistExpand:             expand,
+		PlaylistPreferSingleFormat: preferSingleFormat,
 	}
 
 	defaultOptions := []VideoOptions{ShowPoster, ShowViewCount, ShowDuration, ShowPublishedDate}

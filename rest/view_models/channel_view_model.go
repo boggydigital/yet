@@ -3,21 +3,23 @@ package view_models
 import (
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 )
 
 type ChannelViewModel struct {
-	ChannelId           string
-	ChannelTitle        string
-	ChannelDescription  string
-	Videos              []*VideoViewModel
-	PlaylistsOrder      []string
-	Playlists           map[string]string
-	AutoRefresh         bool
-	AutoDownload        bool
-	DownloadPolicy      data.DownloadPolicy
-	AllDownloadPolicies []data.DownloadPolicy
-	PreferSingleFormat  bool
-	Expand              bool
+	ChannelId                 string
+	ChannelTitle              string
+	ChannelDescription        string
+	ChannelBadgeCount         int
+	Videos                    []*VideoViewModel
+	PlaylistsOrder            []string
+	Playlists                 map[string]string
+	ChannelAutoRefresh        bool
+	ChannelAutoDownload       bool
+	ChannelDownloadPolicy     data.DownloadPolicy
+	AllDownloadPolicies       []data.DownloadPolicy
+	ChannelPreferSingleFormat bool
+	ChannelExpand             bool
 }
 
 func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelViewModel {
@@ -30,6 +32,9 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 	if cd, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
 		channelDescription = cd
 	}
+
+	cnev := yeti.ChannelNotEndedVideos(channelId, rdx)
+	badgeCount := len(cnev)
 
 	var channelVideos []*VideoViewModel
 	if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); ok && len(chvs) > 0 {
@@ -76,17 +81,18 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 	}
 
 	return &ChannelViewModel{
-		ChannelId:           channelId,
-		ChannelTitle:        channelTitle,
-		ChannelDescription:  channelDescription,
-		Videos:              channelVideos,
-		AutoRefresh:         autoRefresh,
-		AutoDownload:        autoDownload,
-		DownloadPolicy:      downloadPolicy,
-		AllDownloadPolicies: data.AllDownloadPolicies(),
-		PreferSingleFormat:  preferSingleFormat,
-		Expand:              expand,
-		PlaylistsOrder:      playlistsOrder,
-		Playlists:           playlists,
+		ChannelId:                 channelId,
+		ChannelTitle:              channelTitle,
+		ChannelDescription:        channelDescription,
+		ChannelBadgeCount:         badgeCount,
+		Videos:                    channelVideos,
+		ChannelAutoRefresh:        autoRefresh,
+		ChannelAutoDownload:       autoDownload,
+		ChannelDownloadPolicy:     downloadPolicy,
+		AllDownloadPolicies:       data.AllDownloadPolicies(),
+		ChannelPreferSingleFormat: preferSingleFormat,
+		ChannelExpand:             expand,
+		PlaylistsOrder:            playlistsOrder,
+		Playlists:                 playlists,
 	}
 }

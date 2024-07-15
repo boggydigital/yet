@@ -2,6 +2,11 @@
     <li class="channel-container">
         <a class='channel' href='/channel?id={{.ChannelId}}'>
             <span class='channelTitle'>{{.ChannelTitle}}</span>
+            {{if .ChannelAutoRefresh}}
+                {{if gt .ChannelBadgeCount 0}}
+                    <span class='new_videos'>{{.ChannelBadgeCount}}</span>
+                {{end}}
+            {{end}}
         </a>
     </li>
 {{end}}

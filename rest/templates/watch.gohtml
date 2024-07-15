@@ -109,13 +109,10 @@
 
         <h1 class='video_title'>{{.VideoTitle}}</h1>
 
-        {{if .ChannelId}}
-            {{if .ChannelTitle}}
-                <ul class="channels">
-                    {{template "channel" .}}
-                </ul>
-{{/*                <a class="channel" href="/channel?id={{.ChannelId}}">Channel: {{.ChannelTitle}}</a>*/}}
-            {{end}}
+        {{if .ChannelViewModel}}
+            <ul class="channels">
+                {{template "channel" .ChannelViewModel}}
+            </ul>
         {{end}}
 
         {{if .VideoDescription}}
