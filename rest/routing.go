@@ -38,8 +38,12 @@ func HandleFuncs() {
 		"GET /manage_playlist":  Log(http.HandlerFunc(GetManagePlaylist)),
 		"GET /update_playlist":  Log(http.HandlerFunc(GetUpdatePlaylist)),
 
-		"GET /channel":         Log(http.HandlerFunc(GetChannel)),
-		"GET /refresh_channel": Log(http.HandlerFunc(GetRefreshChannel)),
+		"GET /channel":                   Log(http.HandlerFunc(GetChannel)),
+		"GET /channel_playlists":         Log(http.HandlerFunc(GetChannelPlaylists)),
+		"GET /refresh_channel_videos":    Log(http.HandlerFunc(GetRefreshChannelVideos)),
+		"GET /refresh_channel_playlists": Log(http.HandlerFunc(GetRefreshChannelPlaylists)),
+		"GET /manage_channel":            http.HandlerFunc(GetManageChannel),
+		"GET /update_channel":            http.HandlerFunc(GetUpdateChannel),
 
 		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}

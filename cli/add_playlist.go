@@ -15,7 +15,7 @@ func AddPlaylistHandler(u *url.URL) error {
 	options := &PlaylistOptions{
 		AutoRefresh:        q.Has("auto-refresh"),
 		AutoDownload:       q.Has("auto-download"),
-		DownloadPolicy:     data.ParsePlaylistDownloadPolicy(q.Get("download-policy")),
+		DownloadPolicy:     data.ParseDownloadPolicy(q.Get("download-policy")),
 		PreferSingleFormat: q.Has("prefer-single-format"),
 		Expand:             q.Has("expand"),
 		Force:              q.Has("force"),

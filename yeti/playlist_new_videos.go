@@ -14,7 +14,7 @@ func PlaylistNotEndedVideos(playlistId string, rdx kevlar.ReadableRedux) []strin
 
 	policy := data.DefaultDownloadPolicy
 	if dp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
-		policy = data.ParsePlaylistDownloadPolicy(dp)
+		policy = data.ParseDownloadPolicy(dp)
 	}
 
 	limitVideos := data.RecentDownloadsLimit

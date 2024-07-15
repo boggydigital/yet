@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
+func GetRefreshChannelVideos(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_channel?id
+	// GET /refresh_channel_videos?id
 
 	var err error
 	rdx, err = rdx.RefreshWriter()

@@ -6,10 +6,17 @@ import (
 )
 
 type ChannelViewModel struct {
-	ChannelId          string
-	ChannelTitle       string
-	ChannelDescription string
-	Videos             []*VideoViewModel
+	ChannelId           string
+	ChannelTitle        string
+	ChannelDescription  string
+	Videos              []*VideoViewModel
+	AutoRefresh         bool
+	AutoDownload        bool
+	DownloadPolicy      data.DownloadPolicy
+	AllDownloadPolicies []data.DownloadPolicy
+	PreferSingleFormat  bool
+	Expand              bool
+
 	//PlaylistsOrder     []string
 	//Playlists          map[string]string
 	//PlaylistsVideos    map[string][]*VideoViewModel
@@ -31,6 +38,31 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 		for _, videoId := range chvs {
 			channelVideos = append(channelVideos, GetVideoViewModel(videoId, rdx, ShowPoster, ShowDuration, ShowPublishedDate, ShowViewCount))
 		}
+	}
+
+	autoRefresh := false
+	if par, ok := rdx.GetLastVal(data.ChannelAutoRefreshProperty, channelId); ok && par == data.TrueValue {
+		autoRefresh = true
+	}
+
+	autoDownload := false
+	if pad, ok := rdx.GetLastVal(data.ChannelAutoDownloadProperty, channelId); ok && pad == data.TrueValue {
+		autoDownload = true
+	}
+
+	downloadPolicy := data.DefaultDownloadPolicy
+	if pdp, ok := rdx.GetLastVal(data.ChannelDownloadPolicyProperty, channelId); ok {
+		downloadPolicy = data.ParseDownloadPolicy(pdp)
+	}
+
+	preferSingleFormat := false
+	if psf, ok := rdx.GetLastVal(data.ChannelPreferSingleFormatProperty, channelId); ok && psf == data.TrueValue {
+		preferSingleFormat = true
+	}
+
+	expand := false
+	if pe, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && pe == data.TrueValue {
+		expand = true
 	}
 
 	//var playlistsOrder []string
@@ -55,12 +87,19 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 	//}
 
 	return &ChannelViewModel{
-		ChannelId:          channelId,
-		ChannelTitle:       channelTitle,
-		ChannelDescription: channelDescription,
-		Videos:             channelVideos,
+		ChannelId:           channelId,
+		ChannelTitle:        channelTitle,
+		ChannelDescription:  channelDescription,
+		Videos:              channelVideos,
+		AutoRefresh:         autoRefresh,
+		AutoDownload:        autoDownload,
+		DownloadPolicy:      downloadPolicy,
+		AllDownloadPolicies: data.AllDownloadPolicies(),
+		PreferSingleFormat:  preferSingleFormat,
+		Expand:              expand,
 		//PlaylistsOrder:     playlistsOrder,
 		//Playlists:          playlists,
 		//PlaylistsVideos:    playlistVideos,
+
 	}
 }

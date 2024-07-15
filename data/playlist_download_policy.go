@@ -1,18 +1,18 @@
 package data
 
-type PlaylistDownloadPolicy string
+type DownloadPolicy string
 
 const (
-	Recent                PlaylistDownloadPolicy = "recent"
-	All                   PlaylistDownloadPolicy = "all"
-	DefaultDownloadPolicy                        = Recent
+	Recent                DownloadPolicy = "recent"
+	All                   DownloadPolicy = "all"
+	DefaultDownloadPolicy                = Recent
 )
 
 const (
 	RecentDownloadsLimit = 10
 )
 
-func ParsePlaylistDownloadPolicy(policy string) PlaylistDownloadPolicy {
+func ParseDownloadPolicy(policy string) DownloadPolicy {
 	switch policy {
 	case string(Recent):
 		return Recent
@@ -23,8 +23,8 @@ func ParsePlaylistDownloadPolicy(policy string) PlaylistDownloadPolicy {
 	}
 }
 
-func AllPlaylistDownloadPolicies() []PlaylistDownloadPolicy {
-	return []PlaylistDownloadPolicy{
+func AllDownloadPolicies() []DownloadPolicy {
+	return []DownloadPolicy{
 		Recent,
 		All,
 	}

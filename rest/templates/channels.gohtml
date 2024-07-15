@@ -24,7 +24,6 @@
     {{template "icons"}}
     {{template "back"}}
 
-{{/*    <h1 class='channel'><span>{{.ChannelTitle}}</span></h1>*/}}
     <ul class="channels">
         {{template "channel" .}}
     </ul>
@@ -34,13 +33,16 @@
     {{end}}
     <ul class="horizontal">
         <li>
-            <a class='action' href='https://www.youtube.com/channel/{{.ChannelId}}'>Origin</a>
-        </li>
-        <li>
             <a class='action' href='https://www.youtube.com/feeds/videos.xml?channel_id={{.ChannelId}}'>RSS</a>
         </li>
         <li>
-            <a class='action' href='/refresh_channel?id={{.ChannelId}}'>Refresh</a>
+            <a class='action' href='/channel_playlists?id={{.ChannelId}}'>Playlists</a>
+        </li>
+        <li>
+            <a class='action' href='/refresh_channel_videos?id={{.ChannelId}}'>Refresh</a>
+        </li>
+        <li>
+            <a class='action' href='/manage_channel?id={{.ChannelId}}'>Manage</a>
         </li>
     </ul>
 

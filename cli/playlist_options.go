@@ -5,7 +5,7 @@ import "github.com/boggydigital/yet/data"
 type PlaylistOptions struct {
 	AutoRefresh        bool
 	AutoDownload       bool
-	DownloadPolicy     data.PlaylistDownloadPolicy
+	DownloadPolicy     data.DownloadPolicy
 	PreferSingleFormat bool
 	Expand             bool
 	Force              bool

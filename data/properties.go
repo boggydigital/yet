@@ -33,8 +33,8 @@ const (
 	VideoCaptionsKindsProperty     = "video-captions-kinds"
 	VideoCaptionsNamesProperty     = "video-captions-names"
 
-	PlaylistChannelProperty = "playlist-channel"
 	PlaylistTitleProperty   = "playlist-title"
+	PlaylistChannelProperty = "playlist-channel"
 	PlaylistVideosProperty  = "playlist-videos"
 
 	PlaylistAutoRefreshProperty        = "playlist-auto-refresh"
@@ -47,7 +47,12 @@ const (
 	ChannelDescriptionProperty = "channel-description"
 	ChannelVideosProperty      = "channel-videos"
 	ChannelPlaylistsProperty   = "channel-playlists"
-	ChannelExpandProperty      = "channel-expand"
+
+	ChannelAutoRefreshProperty        = "channel-auto-refresh"
+	ChannelAutoDownloadProperty       = "channel-auto-download"
+	ChannelDownloadPolicyProperty     = "channel-download-policy"
+	ChannelPreferSingleFormatProperty = "channel-prefer-single-format"
+	ChannelExpandProperty             = "channel-expand"
 )
 
 func VideoProperties() []string {
@@ -102,6 +107,11 @@ func ChannelProperties() []string {
 		ChannelDescriptionProperty,
 		ChannelVideosProperty,
 		ChannelPlaylistsProperty,
+		ChannelAutoRefreshProperty,
+		ChannelAutoDownloadProperty,
+		ChannelDownloadPolicyProperty,
+		ChannelPreferSingleFormatProperty,
+		ChannelExpandProperty,
 	}
 }
 

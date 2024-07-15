@@ -5,10 +5,6 @@ import (
 	"net/http"
 )
 
-const (
-	maxPlaylistVideosWatchlist = 3
-)
-
 func GetList(w http.ResponseWriter, r *http.Request) {
 
 	// GET /list

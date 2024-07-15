@@ -13,8 +13,8 @@ type PlaylistViewModel struct {
 	BadgeCount           int
 	AutoRefresh          bool
 	AutoDownload         bool
-	DownloadPolicy       data.PlaylistDownloadPolicy
-	AllDownloadPolicies  []data.PlaylistDownloadPolicy
+	DownloadPolicy       data.DownloadPolicy
+	AllDownloadPolicies  []data.DownloadPolicy
 	Expand               bool
 	PreferSingleFormat   bool
 	Videos               []*VideoViewModel
@@ -41,17 +41,17 @@ func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *Playlist
 
 	downloadPolicy := data.DefaultDownloadPolicy
 	if pdp, ok := rdx.GetLastVal(data.PlaylistDownloadPolicyProperty, playlistId); ok {
-		downloadPolicy = data.ParsePlaylistDownloadPolicy(pdp)
-	}
-
-	expand := false
-	if pe, ok := rdx.GetLastVal(data.PlaylistExpandProperty, playlistId); ok && pe == data.TrueValue {
-		expand = true
+		downloadPolicy = data.ParseDownloadPolicy(pdp)
 	}
 
 	preferSingleFormat := false
 	if psf, ok := rdx.GetLastVal(data.PlaylistPreferSingleFormatProperty, playlistId); ok && psf == data.TrueValue {
 		preferSingleFormat = true
+	}
+
+	expand := false
+	if pe, ok := rdx.GetLastVal(data.PlaylistExpandProperty, playlistId); ok && pe == data.TrueValue {
+		expand = true
 	}
 
 	playlistTitle := ""
@@ -72,7 +72,7 @@ func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *Playlist
 		AutoRefresh:          autoRefresh,
 		AutoDownload:         autoDownload,
 		DownloadPolicy:       downloadPolicy,
-		AllDownloadPolicies:  data.AllPlaylistDownloadPolicies(),
+		AllDownloadPolicies:  data.AllDownloadPolicies(),
 		Expand:               expand,
 		PreferSingleFormat:   preferSingleFormat,
 	}

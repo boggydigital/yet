@@ -53,7 +53,7 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		case data.PlaylistDownloadPolicyProperty:
 			policy := data.DefaultDownloadPolicy
 			if dp := q.Get(input); dp != "" {
-				policy = data.ParsePlaylistDownloadPolicy(dp)
+				policy = data.ParseDownloadPolicy(dp)
 			}
 			if err := rdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)

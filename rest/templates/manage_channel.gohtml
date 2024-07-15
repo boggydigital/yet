@@ -1,4 +1,4 @@
-{{define "manage_playlist"}}
+{{define "manage_channel"}}
     <!doctype html>
     <html lang="en">
     <head>
@@ -8,22 +8,21 @@
               type='image/svg+xml'/>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <meta name='color-scheme' content='dark light'>
-        <title>Manage {{.PlaylistTitle}}</title>
+        <title>Manage {{.ChannelTitle}}</title>
         {{template "css-shared"}}
     </head>
     <body>
 
     {{template "back"}}
 
-    <h1 class='playlist'>{{.PlaylistTitle}}</h1>
+    <h1 class='channel'>{{.ChannelTitle}}</h1>
 
-    <div class="subtle"><b>PlaylistId:</b> {{.PlaylistId}}</div>
+    <div class="subtle"><b>ChannelId:</b> {{.ChannelId}}</div>
 
-    <a class="action"
-       href="https://www.youtube.com/playlist?list={{.PlaylistId}}">Origin</a>
+    <a class='action' href='https://www.youtube.com/channel/{{.ChannelId}}'>Origin</a>
 
-    <form method="get" action="/update_playlist">
-        <input type="hidden" id="list" name="list" value="{{.PlaylistId}}"/>
+    <form method="get" action="/update_channel">
+        <input type="hidden" id="id" name="id" value="{{.ChannelId}}"/>
         <input type="submit" value='Update'/>
         <ul class="management">
             <li>
@@ -36,8 +35,8 @@
             <li>
                 <input id="expand" type="checkbox" switch name="expand" {{if .Expand}}checked{{end}} />
                 <label for="expand">
-                    <span class="title">Expand playlist</span>
-                    <span class="subtitle subtle">On: Get all videos in a playlist. Off: Only get the latest 100 videos.</span>
+                    <span class="title">Expand channel videos</span>
+                    <span class="subtitle subtle">On: Get all videos in a channel. Off: Only get the latest 30 videos.</span>
                 </label>
 
             </li>
