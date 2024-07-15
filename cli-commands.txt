@@ -6,6 +6,15 @@
 # {} - placeholder values
 # {^} - placeholder values, first value is default
 
+add-channel
+    channel-id^*
+    auto-refresh
+    auto-download
+    download-policy={^playlist-download-policies}
+    prefer-single-format
+    expand
+    force
+
 add-playlist
     playlist-id^*
     auto-refresh

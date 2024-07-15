@@ -10,7 +10,7 @@ import (
 
 func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosInitialData, channelId string, expand bool, rdx kevlar.WriteableRedux) error {
 
-	gcvma := nod.Begin(" metadata for %s", channelId)
+	gcvma := nod.Begin(" channel videos metadata for %s", channelId)
 	defer gcvma.End()
 
 	if err := rdx.MustHave(

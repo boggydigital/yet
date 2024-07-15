@@ -10,16 +10,14 @@ type ChannelViewModel struct {
 	ChannelTitle        string
 	ChannelDescription  string
 	Videos              []*VideoViewModel
+	PlaylistsOrder      []string
+	Playlists           map[string]string
 	AutoRefresh         bool
 	AutoDownload        bool
 	DownloadPolicy      data.DownloadPolicy
 	AllDownloadPolicies []data.DownloadPolicy
 	PreferSingleFormat  bool
 	Expand              bool
-
-	//PlaylistsOrder     []string
-	//Playlists          map[string]string
-	//PlaylistsVideos    map[string][]*VideoViewModel
 }
 
 func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelViewModel {
@@ -61,30 +59,21 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 	}
 
 	expand := false
-	if pe, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && pe == data.TrueValue {
+	if ce, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && ce == data.TrueValue {
 		expand = true
 	}
 
-	//var playlistsOrder []string
-	//if chpls, ok := rdx.GetAllValues(data.ChannelPlaylistsProperty, channelId); ok && len(chpls) > 0 {
-	//	playlistsOrder = chpls
-	//}
-	//
-	//playlists := make(map[string]string, len(playlistsOrder))
-	//for _, playlistId := range playlistsOrder {
-	//	if plt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
-	//		playlists[playlistId] = plt
-	//	}
-	//}
-	//
-	//playlistVideos := make(map[string][]*VideoViewModel, len(playlistsOrder))
-	//for _, playlistId := range playlistsOrder {
-	//	if plvs, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok {
-	//		for _, videoId := range plvs {
-	//			playlistVideos[playlistId] = append(playlistVideos[playlistId], GetVideoViewModel(videoId, rdx, ShowPublishedDate, ShowViewCount))
-	//		}
-	//	}
-	//}
+	var playlistsOrder []string
+	if chpls, ok := rdx.GetAllValues(data.ChannelPlaylistsProperty, channelId); ok && len(chpls) > 0 {
+		playlistsOrder = chpls
+	}
+
+	playlists := make(map[string]string, len(playlistsOrder))
+	for _, playlistId := range playlistsOrder {
+		if plt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && plt != "" {
+			playlists[playlistId] = plt
+		}
+	}
 
 	return &ChannelViewModel{
 		ChannelId:           channelId,
@@ -97,9 +86,7 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 		AllDownloadPolicies: data.AllDownloadPolicies(),
 		PreferSingleFormat:  preferSingleFormat,
 		Expand:              expand,
-		//PlaylistsOrder:     playlistsOrder,
-		//Playlists:          playlists,
-		//PlaylistsVideos:    playlistVideos,
-
+		PlaylistsOrder:      playlistsOrder,
+		Playlists:           playlists,
 	}
 }

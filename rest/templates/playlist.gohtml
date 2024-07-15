@@ -4,8 +4,8 @@
     {{if .AutoDownload}}{{$class = print $class " downloading"}}{{end}}
     <li class="playlist-container">
         <a class="playlist {{$class}}" href='/playlist?list={{.PlaylistId}}'>
-            <span class='title'>{{.PlaylistChannelTitle}}</span>
-            <span class='subtitle'>{{.PlaylistTitle}}</span>
+            <span class='title'>{{.PlaylistTitle}}</span>
+            <span class='subtitle'>{{.PlaylistChannelTitle}}</span>
             {{if .AutoRefresh}}
                 {{if gt .BadgeCount 0}}
                     <span class='new_videos'>{{.BadgeCount}}</span>

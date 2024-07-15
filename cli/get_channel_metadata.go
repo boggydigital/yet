@@ -34,9 +34,16 @@ func GetChannelMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channelI
 			continue
 		}
 
-		if err := yeti.GetChannelPageMetadata(nil, channelId, rdx); err != nil {
+		expand := false
+		if ce, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && ce == data.TrueValue {
+			expand = true
+		}
+
+		if err := yeti.GetChannelVideosMetadata(nil, channelId, expand, rdx); err != nil {
 			gchma.Error(err)
 		}
+
+		// TODO: add get channel playlist metadata
 
 		gchma.Increment()
 	}
