@@ -63,7 +63,7 @@
             right: 0;
         }
 
-        a.ended {
+        .video.ended {
             filter: grayscale(1.0);
             color: var(--subtle-color)
         }
@@ -162,16 +162,6 @@
             color: var(--color-light-green)
         }
 
-        .playlist.downloading.ended {
-            color: var(--color-brown);
-        }
-
-        .playlist.ended {
-            color: var(--color-deep-purple);
-            filter: none;
-            font-weight: normal;
-        }
-
         .channel {
             color: var(--color-pink)
         }
@@ -199,6 +189,12 @@
             border-top-right-radius: var(--border-radius);
             border-bottom-left-radius: var(--border-radius);
         }
+
+        a.channel.ended .new_videos,
+        a.playlist.ended .new_videos {
+            background-color: var(--color-brown);
+        }
+
 
         .title {
             margin-block: var(--small)

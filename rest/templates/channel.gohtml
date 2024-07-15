@@ -1,11 +1,18 @@
 {{define "channel"}}
     <li class="channel-container">
-        <a class='channel' href='/channel?id={{.ChannelId}}'>
+        {{$class := ""}}
+        {{if .ChannelAutoRefresh}}{{if eq .ChannelBadgeCount 0}}{{$class = print $class " ended"}}{{end}}{{end}}
+        {{if .ChannelAutoDownload}}{{$class = print $class " downloading"}}{{end}}
+        <a class='channel {{$class}}' href='/channel?id={{.ChannelId}}'>
             <span class='channelTitle'>{{.ChannelTitle}}</span>
             {{if .ChannelAutoRefresh}}
-                {{if gt .ChannelBadgeCount 0}}
-                    <span class='new_videos'>{{.ChannelBadgeCount}}</span>
-                {{end}}
+                <span class='new_videos'>
+                    {{if gt .ChannelBadgeCount 0}}
+                        {{.ChannelBadgeCount}}
+                    {{else}}
+                        ☑️
+                    {{end}}
+                </span>
             {{end}}
         </a>
     </li>
