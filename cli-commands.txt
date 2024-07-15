@@ -53,15 +53,11 @@ get-captions
     video-id&^
     force
 
-get-channel-metadata
+get-channels-metadata
     channel-id&^
     force
 
-get-rutube-video
-    url&^
-    force
-
-get-playlist-metadata
+get-playlists-metadata
     playlist-id&^
     expand
     force
@@ -70,13 +66,23 @@ get-poster
     video-id&^
     force
 
+get-rutube-video
+    url&^
+    force
+
 get-video-metadata
     video-id&^
     force
 
 migrate
 
+queue-channels-downloads
+
 queue-playlists-downloads
+
+refresh-channels-metadata
+
+refresh-playlists-metadata
 
 remove-channel
     channel-id^*
@@ -113,7 +119,5 @@ sync
     force
 
 test-dependencies
-
-refresh-playlists-metadata
 
 version

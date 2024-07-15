@@ -9,14 +9,14 @@ import (
 	"strings"
 )
 
-func GetChannelMetadataHandler(u *url.URL) error {
+func GetChannelsMetadataHandler(u *url.URL) error {
 	q := u.Query()
 	channelIds := strings.Split(q.Get("channel-id"), ",")
 	options := &ChannelOptions{Force: q.Has("force")}
-	return GetChannelMetadata(nil, options, channelIds...)
+	return GetChannelsMetadata(nil, options, channelIds...)
 }
 
-func GetChannelMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channelIds ...string) error {
+func GetChannelsMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channelIds ...string) error {
 	gchma := nod.NewProgress("getting channel metadata...")
 	defer gchma.End()
 

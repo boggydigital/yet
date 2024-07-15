@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-func RefreshPlaylistsMetadataHandler(u *url.URL) error {
+func RefreshPlaylistsMetadataHandler(_ *url.URL) error {
 	return RefreshPlaylistsMetadata(nil)
 }
 
@@ -32,7 +32,7 @@ func RefreshPlaylistsMetadata(rdx kevlar.WriteableRedux) error {
 
 	for _, playlistId := range playlistIds {
 
-		if err := GetPlaylistMetadata(rdx, refreshOptions, playlistId); err != nil {
+		if err := GetPlaylistsMetadata(rdx, refreshOptions, playlistId); err != nil {
 			return upma.EndWithError(err)
 		}
 

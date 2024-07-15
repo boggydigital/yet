@@ -32,10 +32,16 @@ func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		return sa.EndWithError(err)
 	}
 
-	if err := RefreshPlaylistsMetadata(rdx); err != nil {
+	if err := RefreshChannelsMetadata(rdx); err != nil {
+		return sa.EndWithError(err)
+	}
+	if err := QueueChannelsDownloads(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
 
+	if err := RefreshPlaylistsMetadata(rdx); err != nil {
+		return sa.EndWithError(err)
+	}
 	if err := QueuePlaylistsDownloads(rdx); err != nil {
 		return sa.EndWithError(err)
 	}

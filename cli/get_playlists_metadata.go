@@ -9,17 +9,17 @@ import (
 	"strings"
 )
 
-func GetPlaylistMetadataHandler(u *url.URL) error {
+func GetPlaylistsMetadataHandler(u *url.URL) error {
 	q := u.Query()
 	playlistIds := strings.Split(q.Get("playlist-id"), ",")
 	options := &PlaylistOptions{
 		Expand: q.Has("expand"),
 		Force:  q.Has("force"),
 	}
-	return GetPlaylistMetadata(nil, options, playlistIds...)
+	return GetPlaylistsMetadata(nil, options, playlistIds...)
 }
 
-func GetPlaylistMetadata(rdx kevlar.WriteableRedux, opt *PlaylistOptions, playlistIds ...string) error {
+func GetPlaylistsMetadata(rdx kevlar.WriteableRedux, opt *PlaylistOptions, playlistIds ...string) error {
 	gpma := nod.NewProgress("getting playlist metadata...")
 	defer gpma.End()
 

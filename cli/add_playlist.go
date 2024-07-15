@@ -78,7 +78,7 @@ func AddPlaylist(rdx kevlar.WriteableRedux, playlistId string, opt *PlaylistOpti
 		}
 	}
 
-	if err := GetPlaylistMetadata(rdx, opt, playlistId); err != nil {
+	if err := GetPlaylistsMetadata(rdx, opt, playlistId); err != nil {
 		return apa.EndWithError(err)
 	}
 
