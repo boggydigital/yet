@@ -69,9 +69,30 @@
             </details>
         {{end}}
 
+        {{if .Channels}}
+            <details>
+                <summary>{{template "plus_icon"}}<h1>Channels</h1></summary>
+                <section class="channels_container">
+                    {{$channels := .Channels}}
+                    {{range $ii, $channelSection := .ChannelsOrder}}
+                        <details {{if eq $ii 0}}open{{end}}>
+                            <summary class="h2 {{$channelSection}}">{{template "plus_icon"}}
+                                <h2>{{$channelSection}}</h2></summary>
+                            <ul class='channels resp-grid'>
+                                {{$channel := index $channels $channelSection}}
+                                {{range $channel}}
+                                    {{template "channel" .}}
+                                {{end}}
+                            </ul>
+                        </details>
+                    {{end}}
+                </section>
+            </details>
+        {{end}}
+
         {{if .Playlists}}
             <details>
-                <summary>{{template "plus_icon"}}<h1>Subscriptions</h1></summary>
+                <summary>{{template "plus_icon"}}<h1>Playlists</h1></summary>
                 <section class="playlists_container">
                     {{$playlists := .Playlists}}
                     {{range $ii, $playlistSection := .PlaylistsOrder}}
@@ -88,7 +109,6 @@
                     {{end}}
                 </section>
             </details>
-
         {{end}}
 
         {{if .Downloads}}
