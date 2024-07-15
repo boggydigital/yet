@@ -1,5 +1,5 @@
 {{define "video"}}
-    <a class='{{if .EndedTime}}ended{{end}}' href='{{.VideoUrl}}'>
+    <a class='video {{if .EndedTime}}ended{{end}}' href='{{.VideoUrl}}'>
         {{if .ShowPoster}}
             <img src='/poster?v={{.VideoId}}&q=hqdefault' loading='lazy' alt='{{.VideoTitle}}'/>
             {{if .ShowProgress}}
