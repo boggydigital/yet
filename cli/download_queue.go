@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
@@ -38,7 +39,45 @@ func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		return dqa.EndWithError(err)
 	}
 
-	queuedVideoIds := make([]string, 0)
+	processedVideoIds := make(map[string]any)
+
+	for {
+		videoId, err := getNextQueuedDownload(rdx, opt.Force)
+		if err != nil {
+			return dqa.EndWithError(err)
+		}
+		if videoId == "" {
+			break
+		}
+		// this will serve as the final line of defence:
+		// for some reason that would indicate that we're getting
+		// the same videoId as earlier
+		// it safer to break here to avoid infinite loop
+		// returning error to allow to get to the root cause if that happens
+		if _, ok := processedVideoIds[videoId]; ok {
+			return dqa.EndWithError(fmt.Errorf("already processed video %s", videoId))
+		}
+		processedVideoIds[videoId] = nil
+		if err := DownloadVideo(rdx, videoId, opt); err != nil {
+			return dqa.EndWithError(err)
+		}
+	}
+
+	dqa.EndWithResult("done")
+
+	return nil
+}
+
+// getNextQueuedDownload goes through queued downloads and returns the first one that:
+// - was not completed after download was queued (earlier is fine, means it was added again)
+// - has not started within the last 24 hours (allegedly in progress)
+func getNextQueuedDownload(rdx kevlar.ReadableRedux, force bool) (string, error) {
+
+	var err error
+	rdx, err = rdx.RefreshReader()
+	if err != nil {
+		return "", err
+	}
 
 	for _, id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
 
@@ -48,7 +87,7 @@ func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		}
 
 		// don't re-download videos that have download completed _after_ queue time
-		if vdc, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && vdc > vdqTime && !opt.Force {
+		if vdc, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && vdc > vdqTime && !force {
 			continue
 		}
 		// don't re-download videos that started download _after_ queue time and less than 48 hours ago
@@ -59,19 +98,11 @@ func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 					continue
 				}
 			} else {
-				return dqa.EndWithError(err)
+				return "", err
 			}
 		}
-		queuedVideoIds = append(queuedVideoIds, id)
+		return id, nil
 	}
 
-	for _, videoId := range queuedVideoIds {
-		if err := DownloadVideo(rdx, videoId, opt); err != nil {
-			return dqa.EndWithError(err)
-		}
-	}
-
-	dqa.EndWithResult("done")
-
-	return nil
+	return "", nil
 }

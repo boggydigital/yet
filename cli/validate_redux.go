@@ -22,5 +22,10 @@ func validateWritableRedux(rdx kevlar.WriteableRedux, properties ...string) (kev
 		return nil, err
 	}
 
+	var err error
+	if rdx, err = rdx.RefreshWriter(); err != nil {
+		return nil, err
+	}
+
 	return rdx, nil
 }
