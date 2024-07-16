@@ -27,7 +27,7 @@ func CleanupEndedHandler(u *url.URL) error {
 // - at least 48 hours have passed since the ended date (unless no-delay was set)
 func CleanupEnded(now bool, rdx kevlar.WriteableRedux) error {
 
-	cea := nod.NewProgress("cleaning up Ended media...")
+	cea := nod.NewProgress("cleaning up ended media...")
 	defer cea.End()
 
 	var err error

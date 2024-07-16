@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/rest/view_models"
 	"net/http"
 )
@@ -20,6 +21,13 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	if channelId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
+		return
+	}
+
+	// check if the channel has no videos and refresh automatically
+	if videos, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); !ok || len(videos) == 0 {
+		url := "/refresh_channel_videos?id=" + channelId
+		http.Redirect(w, r, url, http.StatusPermanentRedirect)
 		return
 	}
 
