@@ -12,7 +12,11 @@ import (
 func GetChannelsMetadataHandler(u *url.URL) error {
 	q := u.Query()
 	channelIds := strings.Split(q.Get("channel-id"), ",")
-	options := &ChannelOptions{Force: q.Has("force")}
+	options := &ChannelOptions{
+		Playlists: q.Has("playlists"),
+		Expand:    q.Has("expand"),
+		Force:     q.Has("force"),
+	}
 	return GetChannelsMetadata(nil, options, channelIds...)
 }
 
@@ -34,7 +38,7 @@ func GetChannelsMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channel
 			continue
 		}
 
-		expand := false
+		expand := opt.Expand
 		if ce, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && ce == data.TrueValue {
 			expand = true
 		}
@@ -43,8 +47,10 @@ func GetChannelsMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channel
 			gchma.Error(err)
 		}
 
-		if err := yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
-			gchma.Error(err)
+		if opt.Playlists {
+			if err := yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
+				gchma.Error(err)
+			}
 		}
 
 		gchma.Increment()

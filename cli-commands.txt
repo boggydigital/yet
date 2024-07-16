@@ -55,6 +55,8 @@ get-captions
 
 get-channels-metadata
     channel-id&^
+    playlists
+    expand
     force
 
 get-playlists-metadata

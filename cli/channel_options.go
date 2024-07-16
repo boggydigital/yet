@@ -3,6 +3,7 @@ package cli
 import "github.com/boggydigital/yet/data"
 
 type ChannelOptions struct {
+	Playlists          bool
 	AutoRefresh        bool
 	AutoDownload       bool
 	DownloadPolicy     data.DownloadPolicy
