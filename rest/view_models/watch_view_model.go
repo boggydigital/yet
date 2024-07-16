@@ -20,18 +20,16 @@ import (
 )
 
 type WatchViewModel struct {
-	VideoId            string
-	VideoUrl           string
-	CurrentTime        string
-	EndedTime          string
-	EndedReason        data.VideoEndedReason
-	VideoPoster        string
-	LocalPlayback      bool
-	CurrentTimeSeconds string
-	DurationSeconds    string
-	VideoTitle         string
-	//ChannelId            string
-	//ChannelTitle         string
+	VideoId              string
+	VideoUrl             string
+	CurrentTime          string
+	EndedTime            string
+	EndedReason          data.VideoEndedReason
+	VideoPoster          string
+	LocalPlayback        bool
+	CurrentTimeSeconds   string
+	DurationSeconds      string
+	VideoTitle           string
 	VideoDescription     string
 	VideoPropertiesOrder []string
 	VideoProperties      map[string]string
@@ -118,9 +116,22 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 			return nil, err
 		}
 
-		for p, values := range yeti.ExtractMetadata(videoPage) {
+		videoMetadata := yeti.ExtractMetadata(videoPage)
+
+		for p, values := range videoMetadata {
 			if err := rdx.AddValues(p, videoId, values...); err != nil {
 				return nil, err
+			}
+		}
+
+		// also set channel title, since ChannelViewModel expects it
+		if cids := videoMetadata[data.VideoExternalChannelIdProperty]; len(cids) > 0 {
+			if cts := videoMetadata[data.VideoOwnerChannelNameProperty]; len(cts) > 0 {
+				channelId := cids[0]
+				channelTitle := cts[0]
+				if err := rdx.AddValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
+					return nil, err
+				}
 			}
 		}
 
