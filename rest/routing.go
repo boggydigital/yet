@@ -30,8 +30,9 @@ func HandleFuncs() {
 		"GET /search":  Log(http.HandlerFunc(GetSearch)),
 		"GET /results": Log(http.HandlerFunc(GetResults)),
 
-		"POST /progress": Log(http.HandlerFunc(PostProgress)),
-		"POST /ended":    Log(http.HandlerFunc(PostEnded)),
+		"POST /progress":       Log(http.HandlerFunc(PostProgress)),
+		"POST /ended":          Log(http.HandlerFunc(PostEnded)),
+		"POST /queue_download": Log(http.HandlerFunc(PostQueueDownload)),
 
 		"GET /playlist":         Log(http.HandlerFunc(GetPlaylist)),
 		"GET /refresh_playlist": Log(http.HandlerFunc(GetRefreshPlaylist)),

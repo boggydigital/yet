@@ -9,12 +9,13 @@ import (
 
 type EndedRequest struct {
 	VideoId string `json:"v"`
+	Reason  string `json:"r"`
 }
 
 func PostEnded(w http.ResponseWriter, r *http.Request) {
 
 	// POST /ended
-	// {v}
+	// {v, r}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -31,9 +32,19 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	reason := data.ParseVideoEndedReason(er.Reason)
+
 	// store completion timestamp
 	if err := rdx.ReplaceValues(data.VideoEndedDateProperty, er.VideoId, yeti.FmtNow()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// store ended reason if not-default
+	if reason != data.DefaultEndedReason {
+		if err := rdx.ReplaceValues(data.VideoEndedReasonProperty, er.VideoId, string(reason)); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }

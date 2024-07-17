@@ -105,13 +105,13 @@
                 </label>
             </li>
             <li>
-                <input id="clear-source" type="checkbox" switch name="clear-source"
-                       {{if .Source}}{{else}}disabled{{end}} />
-                <label for="clear-source">
-                    <span class="title">Clear alternative source</span>
+                <input id="source" type="checkbox" switch name="source"
+                       {{if .Source}}checked{{else}}disabled{{end}} />
+                <label for="source">
+                    <span class="title">Alternative source</span>
                     <span class="subtitle subtle">
-                        On: clear alternative source provided on paste.
-                        Off: do nothing.
+                        On: Keep alternative source provided on paste.
+                        Off: Remove alternative source.
                     </span>
                 </label>
             </li>

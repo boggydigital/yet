@@ -66,11 +66,15 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	for property, input := range specialProperties {
 		switch property {
 		case data.VideoProgressProperty:
-			// progress and source and handled in the same way:
-			// - nothing happens on set
-			// - the value is remove on clear
-			fallthrough
+			// progress is cleared (condition: false) when flag IS NOT present in input
+			if !q.Has(input) {
+				if err := toggleProperty(videoId, property, false, rdx); err != nil {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+			}
 		case data.VideoSourceProperty:
+			// alternative source is cleared (condition: false) when flag IS present in input
 			if q.Has(input) {
 				if err := toggleProperty(videoId, property, false, rdx); err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
