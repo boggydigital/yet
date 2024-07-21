@@ -70,7 +70,7 @@
         {{end}}
 
         {{if .Channels}}
-            <details>
+            <details open>
                 <summary>{{template "plus_icon"}}<h1>Channels</h1></summary>
                 <section class="channels_container">
                     {{$channels := .Channels}}
@@ -91,7 +91,7 @@
         {{end}}
 
         {{if .Playlists}}
-            <details>
+            <details open>
                 <summary>{{template "plus_icon"}}<h1>Playlists</h1></summary>
                 <section class="playlists_container">
                     {{$playlists := .Playlists}}
