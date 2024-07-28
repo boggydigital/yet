@@ -176,7 +176,7 @@ func execNodeDecode(decoderPath, n string) (string, error) {
 
 	cmd.Stdout = sb
 	if err := cmd.Run(); err != nil {
-		return "", err
+		return "", errors.New(decoderPath + ": " + err.Error())
 	}
 
 	return strings.TrimSuffix(sb.String(), "\n"), nil
