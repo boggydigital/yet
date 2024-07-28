@@ -130,20 +130,21 @@ func nParamDecodeFuncBodyName(start, end string, r io.Reader) (string, string, e
 
 	scanner := bufio.NewScanner(r)
 	sb := &strings.Builder{}
-	ok := false
+	okStart, okEnd := false, false
 	dfn := ""
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		if !ok && strings.Contains(line, start) {
-			if str, _, ok := strings.Cut(line, "="); ok {
+		if !okStart && strings.Contains(line, start) {
+			if str, _, sure := strings.Cut(line, "="); sure {
 				dfn = str
 			}
-			ok = true
+			okStart = true
 		}
-		if ok {
+		if okStart {
 			sb.WriteString(line)
 			if strings.Contains(line, end) {
+				okEnd = true
 				break
 			}
 		}
@@ -153,7 +154,7 @@ func nParamDecodeFuncBodyName(start, end string, r io.Reader) (string, string, e
 		return "", "", err
 	}
 
-	if sb.Len() == 0 {
+	if sb.Len() == 0 || !okEnd {
 		return "", "", ErrDecoderCodeNotFound
 	}
 
