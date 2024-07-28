@@ -72,7 +72,7 @@ func decodeSignatureCipher(signatureCipher, decoderPath string) (*url.URL, error
 		return nil, err
 	}
 
-	decodedSignature, err := execNodeDecodeNParam(decoderPath, scq.Get("s"))
+	decodedSignature, err := execNodeDecode(decoderPath, scq.Get("s"))
 	if err != nil {
 		return nil, err
 	}

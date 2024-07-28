@@ -16,12 +16,12 @@ import (
 
 var (
 	nDecPfx = map[string]string{
-		"v1": "function(a){var b=a.split(\"\"),",
-		"v2": "function(a){var b=String.prototype.split.call(a,\"\"),",
+		"1": "function(a){var b=a.split(\"\"),",
+		"2": "function(a){var b=String.prototype.split.call(a,\"\"),",
 	}
 	nDecSfx = map[string]string{
-		"v1": "return b.join(\"\")};",
-		"v2": "return Array.prototype.join.call(b,\"\")};",
+		"1": "return b.join(\"\")};",
+		"2": "return Array.prototype.join.call(b,\"\")};",
 	}
 )
 
@@ -58,7 +58,7 @@ func DecodeNParam(n, playerUrl string) (string, error) {
 		return "", dpa.EndWithError(err)
 	}
 
-	nDecoded, err := execNodeDecodeNParam(ndp, n)
+	nDecoded, err := execNodeDecode(ndp, n)
 	if err != nil {
 		return "", dpa.EndWithError(err)
 	}
@@ -94,16 +94,18 @@ func getNParamDecoder(playerUrl string) (string, error) {
 	}
 
 	var dfb, dfn string
-	for ver := range nDecPfx {
-		dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx[ver], nDecSfx[ver], strings.NewReader(buf.String()))
-		if err == nil && dfb != "" && dfn != "" {
-			break
-		}
-		if errors.Is(err, ErrDecoderCodeNotFound) {
-			continue
-		}
-		if err != nil {
-			return "", err
+	for pfxVer := range nDecPfx {
+		for sfxVer := range nDecSfx {
+			dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx[pfxVer], nDecSfx[sfxVer], strings.NewReader(buf.String()))
+			if err == nil && dfb != "" && dfn != "" {
+				break
+			}
+			if errors.Is(err, ErrDecoderCodeNotFound) {
+				continue
+			}
+			if err != nil {
+				return "", err
+			}
 		}
 	}
 
@@ -166,7 +168,7 @@ func writeNDecoder(w io.Writer, decodeFuncBody, decodeFuncName string) error {
 	return nil
 }
 
-func execNodeDecodeNParam(decoderPath, n string) (string, error) {
+func execNodeDecode(decoderPath, n string) (string, error) {
 	sb := &strings.Builder{}
 
 	cmd := exec.Command(GetBinary(NodeBin), decoderPath, n)
