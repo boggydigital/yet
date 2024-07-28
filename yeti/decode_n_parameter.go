@@ -59,6 +59,9 @@ func DecodeNParam(n, playerUrl string) (string, error) {
 	}
 
 	nDecoded, err := execNodeDecodeNParam(ndp, n)
+	if err != nil {
+		return "", dpa.EndWithError(err)
+	}
 
 	dpa.EndWithResult("done (n=%s)", nDecoded)
 
