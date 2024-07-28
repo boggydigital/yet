@@ -53,6 +53,18 @@ func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions)
 
 	errors := false
 
+	// adding to download queue (if not there already)
+	if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
+		if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
+			return da.EndWithError(err)
+		}
+	}
+
+	// setting download started timestamp
+	if err := rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
+		return da.EndWithError(err)
+	}
+
 	videoPage, err := yeti.GetVideoPage(videoId)
 	if err != nil {
 		return da.EndWithError(err)
@@ -65,18 +77,6 @@ func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions)
 	if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
 		da.Error(err)
 		errors = true
-	}
-
-	// adding to download queue (if not there already)
-	if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
-		if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
-			return da.EndWithError(err)
-		}
-	}
-
-	// setting download started timestamp
-	if err := rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
-		return da.EndWithError(err)
 	}
 
 	if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, opt); err != nil {

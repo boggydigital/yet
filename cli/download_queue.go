@@ -71,10 +71,10 @@ func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 // getNextQueuedDownload goes through queued downloads and returns the first one that:
 // - was not completed after download was queued (earlier is fine, means it was added again)
 // - has not started within the last 24 hours (allegedly in progress)
-func getNextQueuedDownload(rdx kevlar.ReadableRedux, force bool) (string, error) {
+func getNextQueuedDownload(rdx kevlar.WriteableRedux, force bool) (string, error) {
 
 	var err error
-	rdx, err = rdx.RefreshReader()
+	rdx, err = rdx.RefreshWriter()
 	if err != nil {
 		return "", err
 	}
@@ -86,6 +86,14 @@ func getNextQueuedDownload(rdx kevlar.ReadableRedux, force bool) (string, error)
 			vdqTime = vdq
 		}
 
+		// don't download videos that have ended _after_ queue time
+		// instead, remove them from the queue
+		if ved, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok && ved > vdqTime && !force {
+			if err := rdx.CutKeys(data.VideoDownloadQueuedProperty, id); err != nil {
+				return "", err
+			}
+			continue
+		}
 		// don't re-download videos that have download completed _after_ queue time
 		if vdc, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && vdc > vdqTime && !force {
 			continue
