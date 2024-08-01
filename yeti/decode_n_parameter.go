@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/paths"
+	"golang.org/x/exp/maps"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
+	"sort"
 	"strings"
 )
 
@@ -18,10 +20,12 @@ var (
 	nDecPfx = map[string]string{
 		"1": "function(a){var b=a.split(\"\"),",
 		"2": "function(a){var b=String.prototype.split.call(a,\"\"),",
+		"3": "function(a){var b=String.prototype.split.call(a,(\"\",\"\")),",
 	}
 	nDecSfx = map[string]string{
 		"1": "return b.join(\"\")};",
 		"2": "return Array.prototype.join.call(b,\"\")};",
+		"3": "return Array.prototype.join.call(b,(\"\",\"\"))};",
 	}
 )
 
@@ -93,9 +97,15 @@ func getNParamDecoder(playerUrl string) (string, error) {
 		return "", err
 	}
 
+	pfxKeys := maps.Keys(nDecPfx)
+	sort.Strings(pfxKeys)
+
+	sfxKeys := maps.Keys(nDecSfx)
+	sort.Strings(sfxKeys)
+
 	var dfb, dfn string
-	for pfxVer := range nDecPfx {
-		for sfxVer := range nDecSfx {
+	for _, pfxVer := range pfxKeys {
+		for _, sfxVer := range sfxKeys {
 			dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx[pfxVer], nDecSfx[sfxVer], strings.NewReader(buf.String()))
 			if err == nil && dfb != "" && dfn != "" {
 				break
