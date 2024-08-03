@@ -8,11 +8,11 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/paths"
 	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
-	"sort"
 	"strings"
 )
 
@@ -98,16 +98,23 @@ func getNParamDecoder(playerUrl string) (string, error) {
 	}
 
 	pfxKeys := maps.Keys(nDecPfx)
-	sort.Strings(pfxKeys)
+	slices.Sort(pfxKeys)
+	slices.Reverse(pfxKeys)
 
 	sfxKeys := maps.Keys(nDecSfx)
-	sort.Strings(sfxKeys)
+	slices.Sort(sfxKeys)
+	slices.Reverse(sfxKeys)
 
+	found := false
 	var dfb, dfn string
 	for _, pfxVer := range pfxKeys {
+		if found {
+			break
+		}
 		for _, sfxVer := range sfxKeys {
 			dfb, dfn, err = nParamDecodeFuncBodyName(nDecPfx[pfxVer], nDecSfx[sfxVer], strings.NewReader(buf.String()))
 			if err == nil && dfb != "" && dfn != "" {
+				found = true
 				break
 			}
 			if errors.Is(err, ErrDecoderCodeNotFound) {
