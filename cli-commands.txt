@@ -45,10 +45,6 @@ download-video
     source
     force
 
-download-queue
-    prefer-single-format
-    force
-
 get-captions
     video-id&^
     force
@@ -77,6 +73,10 @@ get-video-metadata
     force
 
 migrate
+
+process-queue
+    prefer-single-format
+    force
 
 queue-channels-downloads
 

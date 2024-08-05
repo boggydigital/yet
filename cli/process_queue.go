@@ -12,7 +12,7 @@ import (
 
 const maxAttempts = 3
 
-func DownloadQueueHandler(u *url.URL) error {
+func ProcessQueueHandler(u *url.URL) error {
 	q := u.Query()
 
 	options := &VideoOptions{
@@ -20,15 +20,15 @@ func DownloadQueueHandler(u *url.URL) error {
 		Force:              q.Has("force"),
 	}
 
-	return DownloadQueue(nil, options)
+	return ProcessQueue(nil, options)
 }
 
-// DownloadQueue processes download queue using the following rules:
+// ProcessQueue processes download queue using the following rules:
 // - download has not been completed after queue time
 // - download is not in progress since queue time and less than 48 hours ago
-func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
+func ProcessQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 
-	dqa := nod.NewProgress("downloading queued videos...")
+	dqa := nod.NewProgress("processing videos queued for download...")
 	defer dqa.End()
 
 	if opt == nil {

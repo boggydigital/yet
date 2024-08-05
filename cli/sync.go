@@ -46,7 +46,7 @@ func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		return sa.EndWithError(err)
 	}
 
-	if err := DownloadQueue(rdx, opt); err != nil {
+	if err := ProcessQueue(rdx, opt); err != nil {
 		return sa.EndWithError(err)
 	}
 
