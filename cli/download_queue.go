@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+const maxAttempts = 3
+
 func DownloadQueueHandler(u *url.URL) error {
 	q := u.Query()
 
@@ -39,7 +41,7 @@ func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		return dqa.EndWithError(err)
 	}
 
-	processedVideoIds := make(map[string]any)
+	processedVideoIds := make(map[string]int)
 
 	for {
 		videoId, err := getNextQueuedDownload(rdx, opt.Force)
@@ -51,13 +53,14 @@ func DownloadQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		}
 		// this will serve as the final line of defence:
 		// for some reason that would indicate that we're getting
-		// the same videoId as earlier
-		// it safer to break here to avoid infinite loop
+		// the same videoId as earlier - which might happen (e.g. origin
+		// server refused to serve video initially)
+		// we'll attempt up to maxAttempts and break to avoid infinite loop
 		// returning error to allow to get to the root cause if that happens
-		if _, ok := processedVideoIds[videoId]; ok {
-			return dqa.EndWithError(fmt.Errorf("already processed video %s", videoId))
+		if att, ok := processedVideoIds[videoId]; ok && att >= maxAttempts {
+			return dqa.EndWithError(fmt.Errorf("exceeded max attempts for video %s", videoId))
 		}
-		processedVideoIds[videoId] = nil
+		processedVideoIds[videoId]++
 		if err := DownloadVideo(rdx, videoId, opt); err != nil {
 			return dqa.EndWithError(err)
 		}
