@@ -16,6 +16,12 @@ import (
 	"strings"
 )
 
+const (
+
+	//exceptEnhancedStr = "enhanced_except"
+	maxNCodeLength = 10000
+)
+
 var (
 	nDecPfx = map[string]string{
 		"1": "function(a){var b=a.split(\"\"),",
@@ -32,6 +38,7 @@ var (
 var (
 	ErrNodeJsRequired        = errors.New("node.js is required")
 	ErrDecoderCodeNotFound   = errors.New("decoder code not found")
+	ErrDecoderCodeTooLong    = errors.New("decoder code too long")
 	ErrNParamDecoderNotFound = errors.New("n-param decoder not found")
 )
 
@@ -117,7 +124,7 @@ func getNParamDecoder(playerUrl string) (string, error) {
 				found = true
 				break
 			}
-			if errors.Is(err, ErrDecoderCodeNotFound) {
+			if errors.Is(err, ErrDecoderCodeNotFound) || errors.Is(err, ErrDecoderCodeTooLong) {
 				continue
 			}
 			if err != nil {
@@ -173,6 +180,9 @@ func nParamDecodeFuncBodyName(start, end string, r io.Reader) (string, string, e
 
 	if sb.Len() == 0 || !okEnd {
 		return "", "", ErrDecoderCodeNotFound
+	}
+	if sb.Len() > maxNCodeLength {
+		return "", "", ErrDecoderCodeTooLong
 	}
 
 	return sb.String(), dfn, nil
