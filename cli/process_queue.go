@@ -28,7 +28,7 @@ func ProcessQueueHandler(u *url.URL) error {
 // - download is not in progress since queue time and less than 48 hours ago
 func ProcessQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 
-	dqa := nod.NewProgress("processing videos queued for download...")
+	dqa := nod.Begin("processing videos queued for download...")
 	defer dqa.End()
 
 	if opt == nil {

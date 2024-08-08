@@ -27,6 +27,7 @@ var (
 		"1": "function(a){var b=a.split(\"\"),",
 		"2": "function(a){var b=String.prototype.split.call(a,\"\"),",
 		"3": "function(a){var b=String.prototype.split.call(a,(\"\",\"\")),",
+		"4": "function(a){var b=a.split(a.slice(0,0)),",
 	}
 	nDecSfx = map[string]string{
 		"1": "return b.join(\"\")};",
