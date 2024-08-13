@@ -11,7 +11,10 @@ func SyncHandler(u *url.URL) error {
 	q := u.Query()
 
 	options := &VideoOptions{
-		PreferSingleFormat: q.Has("prefer-single-format"),
+		// TODO: remove this if better options are available
+		// (temporary?) workaround - force single format for all videos
+		// to mitigate new visitorData, poToken requirements at the cost of video quality
+		PreferSingleFormat: true, //q.Has("prefer-single-format"),
 		Force:              q.Has("Force"),
 	}
 	return Sync(nil, options)
