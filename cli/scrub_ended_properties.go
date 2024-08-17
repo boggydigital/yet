@@ -16,6 +16,7 @@ var preserveVideoProperties = []string{
 	data.VideoFavoriteProperty,          // required for cleanup
 	data.VideoDownloadCompletedProperty, // required for cleanup
 	data.VideoDownloadCleanedUpProperty, // required for cleanup
+	data.VideoExternalChannelIdProperty, // required for watch
 }
 
 func ScrubEndedPropertiesHandler(_ *url.URL) error {
