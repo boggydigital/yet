@@ -18,24 +18,24 @@ var preserveVideoProperties = []string{
 	data.VideoDownloadCleanedUpProperty, // required for cleanup
 }
 
-func CleanupPropertiesHandler(u *url.URL) error {
-	return CleanupProperties(nil)
+func ScrubEndedPropertiesHandler(u *url.URL) error {
+	return ScrubEndedProperties(nil)
 }
 
-func CleanupProperties(rdx kevlar.WriteableRedux) error {
+func ScrubEndedProperties(rdx kevlar.WriteableRedux) error {
 
-	cpa := nod.NewProgress("cleaning up video properties...")
-	defer cpa.End()
+	sevpa := nod.NewProgress("scrubbing ended videos properties...")
+	defer sevpa.End()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return cpa.EndWithError(err)
+		return sevpa.EndWithError(err)
 	}
 
 	endedVideos := rdx.Keys(data.VideoEndedDateProperty)
 
-	cpa.TotalInt(len(endedVideos))
+	sevpa.TotalInt(len(endedVideos))
 
 	for _, videoId := range endedVideos {
 
@@ -46,15 +46,15 @@ func CleanupProperties(rdx kevlar.WriteableRedux) error {
 
 			if rdx.HasKey(vp, videoId) {
 				if err := rdx.CutKeys(vp, videoId); err != nil {
-					return cpa.EndWithError(err)
+					return sevpa.EndWithError(err)
 				}
 			}
 		}
 
-		cpa.Increment()
+		sevpa.Increment()
 	}
 
-	cpa.EndWithResult("done")
+	sevpa.EndWithResult("done")
 
 	return nil
 }

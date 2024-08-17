@@ -39,7 +39,7 @@ backup
 cleanup-ended-videos
     now
 
-cleanup-properties
+scrub-ended-properties
 
 download-video
     video-id^*
