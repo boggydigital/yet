@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 )
@@ -25,6 +26,7 @@ func CleanupEndedHandler(u *url.URL) error {
 // CleanupEnded removes downloads for Ended videos that match the following conditions:
 // - video download has not been downloaded earlier
 // - at least 48 hours have passed since the ended date (unless no-delay was set)
+// Additionally CleanupEnded will remove video properties (except for title) for ended videos
 func CleanupEnded(now bool, rdx kevlar.WriteableRedux) error {
 
 	cea := nod.NewProgress("cleaning up ended media...")
@@ -79,6 +81,12 @@ func CleanupEnded(now bool, rdx kevlar.WriteableRedux) error {
 	cea.TotalInt(len(cleanupVideoIds))
 
 	for _, videoId := range cleanupVideoIds {
+
+		// cleanup properties
+		if err := cleanupProperties(videoId, rdx); err != nil {
+			return cea.EndWithError(err)
+		}
+
 		if err := removeVideoFile(videoId, absVideosDir, rdx); err != nil {
 			return cea.EndWithError(err)
 		}
@@ -167,6 +175,29 @@ func removePosters(videoId string) error {
 		} else {
 			return err
 
+		}
+	}
+	return nil
+}
+
+var preserveVideoPropertiesEnded = []string{
+	data.VideoTitleProperty,             // required for history
+	data.VideoOwnerChannelNameProperty,  // required for checking empty videos directories
+	data.VideoEndedDateProperty,         // required for cleanup
+	data.VideoEndedReasonProperty,       // required for history
+	data.VideoFavoriteProperty,          // required for cleanup
+	data.VideoDownloadCompletedProperty, // required for cleanup
+	data.VideoDownloadCleanedUpProperty, // required for cleanup
+}
+
+func cleanupProperties(videoId string, rdx kevlar.WriteableRedux) error {
+	for _, vp := range data.VideoProperties() {
+		if slices.Contains(preserveVideoPropertiesEnded, vp) {
+			continue
+		}
+
+		if err := rdx.CutKeys(vp, videoId); err != nil {
+			return err
 		}
 	}
 	return nil
