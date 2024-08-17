@@ -44,8 +44,10 @@ func CleanupProperties(rdx kevlar.WriteableRedux) error {
 				continue
 			}
 
-			if err := rdx.CutKeys(vp, videoId); err != nil {
-				return cpa.EndWithError(err)
+			if rdx.HasKey(vp, videoId) {
+				if err := rdx.CutKeys(vp, videoId); err != nil {
+					return cpa.EndWithError(err)
+				}
 			}
 		}
 
