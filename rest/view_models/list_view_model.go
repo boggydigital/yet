@@ -105,6 +105,7 @@ func GetListViewModel(rdx kevlar.ReadableRedux) (*ListViewModel, error) {
 }
 
 func getVideosProgress(rdx kevlar.ReadableRedux) ([]string, error) {
+
 	vpKeys := rdx.Keys(data.VideoProgressProperty)
 	cvs := make([]string, 0)
 	var err error

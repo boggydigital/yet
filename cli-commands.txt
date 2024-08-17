@@ -36,8 +36,10 @@ add-video
 
 backup
 
-cleanup-ended
+cleanup-ended-videos
     now
+
+cleanup-properties
 
 download-video
     video-id^*
