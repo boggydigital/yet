@@ -56,6 +56,9 @@ func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 	if err := ScrubEndedProperties(rdx); err != nil {
 		return sa.EndWithError(err)
 	}
+	if err := ScrubDepositionProperties(rdx); err != nil {
+		return sa.EndWithError(err)
+	}
 	if err := CleanupEndedVideos(false, rdx); err != nil {
 		return sa.EndWithError(err)
 	}

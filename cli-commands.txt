@@ -39,8 +39,6 @@ backup
 cleanup-ended-videos
     now
 
-scrub-ended-properties
-
 download-video
     video-id^*
     prefer-single-format
@@ -113,6 +111,10 @@ remove-videos
     prefer-single-format
     source
     force
+
+scrub-deposition-properties
+
+scrub-ended-properties
 
 serve
     port$*

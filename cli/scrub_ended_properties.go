@@ -18,12 +18,13 @@ var preserveVideoProperties = []string{
 	data.VideoDownloadCleanedUpProperty, // required for cleanup
 }
 
-func ScrubEndedPropertiesHandler(u *url.URL) error {
+func ScrubEndedPropertiesHandler(_ *url.URL) error {
 	return ScrubEndedProperties(nil)
 }
 
+// ScrubEndedProperties will remove all non-preserved properties for ended videos.
+// Preserved properties are required for core functionality - history, cleanup, etc.
 func ScrubEndedProperties(rdx kevlar.WriteableRedux) error {
-
 	sevpa := nod.NewProgress("scrubbing ended videos properties...")
 	defer sevpa.End()
 
