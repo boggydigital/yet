@@ -51,7 +51,7 @@ func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions)
 	// apply video specific options
 	opt = ApplyVideoDownloadOptions(opt, videoId, rdx)
 
-	errors := false
+	errs := false
 
 	// adding to download queue (if not there already)
 	if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
@@ -76,25 +76,25 @@ func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions)
 
 	if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
 		da.Error(err)
-		errors = true
+		errs = true
 	}
 
 	if err := downloadVideo(dolo.DefaultClient, videoId, videoPage, opt); err != nil {
 		da.Error(err)
-		errors = true
+		errs = true
 	}
 
 	if err := yeti.GetPosters(videoId, dolo.DefaultClient, opt.Force, youtube_urls.AllThumbnailQualities()...); err != nil {
 		da.Error(err)
-		errors = true
+		errs = true
 	}
 
 	if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, opt.Force); err != nil {
 		da.Error(err)
-		errors = true
+		errs = true
 	}
 
-	if !errors {
+	if !errs {
 		// set downloaded date if no errors were encountered
 		if err := rdx.AddValues(data.VideoDownloadCompletedProperty, videoId, yeti.FmtNow()); err != nil {
 			return da.EndWithError(err)

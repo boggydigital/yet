@@ -8,7 +8,7 @@ require (
 	github.com/boggydigital/clo v1.0.4
 	github.com/boggydigital/coost v0.3.9
 	github.com/boggydigital/dolo v0.2.17
-	github.com/boggydigital/kevlar v0.5.15
+	github.com/boggydigital/kevlar v0.5.18
 	github.com/boggydigital/nod v0.1.21
 	github.com/boggydigital/pathways v0.1.14
 	github.com/boggydigital/yet_urls v0.1.54
