@@ -198,7 +198,7 @@
         video.addEventListener('timeupdate', (e) => {
             let now = new Date();
             let elapsed = now - lastProgressUpdate;
-            if (elapsed > 3000) {
+            if (elapsed > 5000) {
             if (prg) {prg.value = video.currentTime}
                 fetch('/progress', {
                     method: 'post',
