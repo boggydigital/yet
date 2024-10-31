@@ -94,16 +94,6 @@
         <source src='{{.VideoUrl}}'/>
     </video>
 
-
-    {{if eq .CurrentTimeSeconds "0"}}
-    {{else}}
-        {{if .EndedTime}}
-        {{else}}
-            <progress value="{{.CurrentTimeSeconds}}" max="{{.DurationSeconds}}"></progress>
-        {{end}}
-    {{end}}
-
-
     <ul class="video_details_container">
 
         <h1 class='video_title'>{{.VideoTitle}}</h1>
@@ -193,13 +183,10 @@
 
     <script>
         let lastProgressUpdate = new Date();
-
-        let prg = document.getElementsByTagName('progress')[0]
         video.addEventListener('timeupdate', (e) => {
             let now = new Date();
             let elapsed = now - lastProgressUpdate;
             if (elapsed > 5000) {
-            if (prg) {prg.value = video.currentTime}
                 fetch('/progress', {
                     method: 'post',
                     headers: {
