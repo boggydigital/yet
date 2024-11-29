@@ -46,6 +46,10 @@
                 }
             }
 
+            pre {
+                white-space: pre-wrap;
+            }
+
             .video_description,
             .properties {
                 margin-block: var(--large);
@@ -107,7 +111,7 @@
         {{if .VideoDescription}}
             <details>
                 <summary>{{template "plus_icon"}}<h2>Description</h2></summary>
-                <div class='video_description'>{{.VideoDescription}}</div>
+                <pre class='video_description'>{{.VideoDescription}}</pre>
             </details>
         {{end}}
 
