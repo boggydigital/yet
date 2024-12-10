@@ -7,6 +7,8 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet_urls/youtube_urls"
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 	"io"
 	"net/http"
 	"net/url"
@@ -15,10 +17,15 @@ import (
 )
 
 const (
-	signatureCipherFuncBodyStart = "a=a.split(\"\")"
-	objectStartTemplate          = "var %s={"
-	objectEnd                    = "};"
+	//signatureCipherFuncBodyStart =
+	objectStartTemplate = "var %s={"
+	objectEnd           = "};"
 )
+
+var signatureCiperFuncBodyStarts = map[string]string{
+	"1": "a=a.split(\"\")",
+	"2": "J=J.split(\"\")",
+}
 
 var (
 	ErrSignatureCipherFunctionNotFound = errors.New("signature cipher function not found")
@@ -106,9 +113,28 @@ func getSignatureCipherDecoder(playerUrl string) (string, error) {
 	}
 	defer playerContent.Close()
 
-	scfb, scfn, err := signatureCipherFuncBodyName(playerContent)
-	if err != nil {
-		return "", err
+	found := false
+	var scfb, scfn string
+
+	scfbsKeys := maps.Keys(signatureCiperFuncBodyStarts)
+	slices.Sort(scfbsKeys)
+	slices.Reverse(scfbsKeys)
+
+	for _, key := range scfbsKeys {
+
+		if found {
+			break
+		}
+
+		scfb, scfn, err = signatureCipherFuncBodyName(signatureCiperFuncBodyStarts[key], playerContent)
+		if err != nil {
+			return "", err
+		}
+
+		if scfb != "" && scfn != "" {
+			found = true
+		}
+
 	}
 
 	if scfb == "" || scfn == "" {
@@ -134,13 +160,14 @@ func getSignatureCipherDecoder(playerUrl string) (string, error) {
 	return scdp, nil
 }
 
-func signatureCipherFuncBodyName(r io.Reader) (string, string, error) {
+func signatureCipherFuncBodyName(key string, r io.Reader) (string, string, error) {
 
 	scanner := bufio.NewScanner(r)
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.Contains(line, signatureCipherFuncBodyStart) {
+
+		if strings.Contains(line, key) {
 			if scfn, _, ok := strings.Cut(line, "="); ok {
 				return line, scfn, nil
 			}
