@@ -81,6 +81,12 @@ func UpdateYtDlp(force bool) error {
 		return uyda.EndWithError(err)
 	}
 
+	ytDlpBinaryFilename := filepath.Join(ytDlpDir, ytDlpAsset)
+
+	if err := os.Chmod(ytDlpBinaryFilename, 0555); err != nil {
+		return uyda.EndWithError(err)
+	}
+
 	// update yt-dlp-get-pot
 
 	latestYtDlpGetPotRelease, err := getLatestGitHubRelease(ytDlpGetPotOwnerRepo)
