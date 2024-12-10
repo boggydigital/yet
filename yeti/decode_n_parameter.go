@@ -28,11 +28,13 @@ var (
 		"2": "function(a){var b=String.prototype.split.call(a,\"\"),",
 		"3": "function(a){var b=String.prototype.split.call(a,(\"\",\"\")),",
 		"4": "function(a){var b=a.split(a.slice(0,0)),",
+		"5": "function(J){var R=J.split(J.slice(0,0)),",
 	}
 	nDecSfx = map[string]string{
 		"1": "return b.join(\"\")};",
 		"2": "return Array.prototype.join.call(b,\"\")};",
 		"3": "return Array.prototype.join.call(b,(\"\",\"\"))};",
+		"4": "}return R.join(\"\")};",
 	}
 )
 
