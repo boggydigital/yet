@@ -73,6 +73,7 @@ func main() {
 		"serve":                       cli.ServeHandler,
 		"sync":                        cli.SyncHandler,
 		"test-dependencies":           cli.TestDependenciesHandler,
+		"update-yt-dlp":               cli.UpdateYtDlpHandler,
 		"version":                     cli.VersionHandler,
 	})
 

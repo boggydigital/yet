@@ -126,4 +126,7 @@ sync
 
 test-dependencies
 
+update-yt-dlp
+    force
+
 version

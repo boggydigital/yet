@@ -14,6 +14,7 @@ const (
 	Posters  pathways.AbsDir = "posters"
 	Captions pathways.AbsDir = "captions"
 	Players  pathways.AbsDir = "players"
+	YtDlp    pathways.AbsDir = "yt-dlp"
 )
 
 var AllAbsDirs = []pathways.AbsDir{
@@ -24,4 +25,5 @@ var AllAbsDirs = []pathways.AbsDir{
 	Posters,
 	Captions,
 	Players,
+	YtDlp,
 }

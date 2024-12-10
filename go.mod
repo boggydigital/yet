@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/arelate/southern_light v0.1.52 // indirect
 	github.com/boggydigital/match_node v0.1.17 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
 	golang.org/x/net v0.32.0 // indirect
