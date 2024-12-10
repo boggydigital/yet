@@ -12,7 +12,7 @@ RUN go build \
 # starting with Node.js runtime
 FROM node:alpine
 # adding ffmpeg
-# RUN apk update && apk add && apk add ffmpeg
+RUN apk update && apk add && apk add ffmpeg
 # adding yet
 COPY --from=build /go/src/app/yet /usr/bin/yet
 
