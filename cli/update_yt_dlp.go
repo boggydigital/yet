@@ -19,7 +19,7 @@ import (
 
 const (
 	ytDlpOwnerRepo     = "yt-dlp/yt-dlp"
-	ytDlpLinuxAsset    = "yt-dlp_linux_aarch64"
+	ytDlpLinuxAsset    = "yt-dlp_linux"
 	ytDlpMacOsAsset    = "yt-dlp_macos"
 	relYtDlpPluginsDir = ".yt-dlp/plugins"
 )
