@@ -123,9 +123,15 @@ func downloadVideo(
 
 	absFilename := filepath.Join(absVideosDir, relFilename)
 
-	if _, err := os.Stat(absFilename); !options.Force && err == nil {
-		//local file already exists - won't attempt to download again
-		return nil
+	if _, err := os.Stat(absFilename); err == nil {
+		if !options.Force {
+			if err := os.Remove(absFilename); err != nil {
+				return err
+			}
+		} else {
+			//local file already exists - won't attempt to download again
+			return nil
+		}
 	}
 
 	if err := downloadWithYtDlp(videoId, absFilename); err != nil {
