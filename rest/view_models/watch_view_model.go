@@ -3,14 +3,11 @@ package view_models
 import (
 	"fmt"
 	"github.com/boggydigital/kevlar"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"os"
-	"path/filepath"
 	"slices"
 	"sort"
 	"strconv"
@@ -88,12 +85,14 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 
 	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
 		if channel, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
-			localVideoFilename := yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
-			if absVideosDir, err := pathways.GetAbsDir(paths.Videos); err == nil {
-				absLocalVideoFilename := filepath.Join(absVideosDir, localVideoFilename)
+			if absLocalVideoFilename, err := yeti.LocateLocalVideo(videoId); os.IsNotExist(err) {
+				// do nothing
+			} else if err != nil {
+				return nil, err
+			} else {
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
 					localPlayback = true
-					videoUrl = "/video?file=" + url.QueryEscape(localVideoFilename)
+					videoUrl = "/video?file=" + url.QueryEscape(absLocalVideoFilename)
 					videoTitle = title
 					videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
 

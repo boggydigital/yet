@@ -1,35 +1,28 @@
 package yeti
 
 import (
+	"errors"
 	"fmt"
 	"github.com/boggydigital/busan"
+	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet_urls/youtube_urls"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
-func DefaultFilenameDelegate(videoId string, videoPage *youtube_urls.InitialPlayerResponse) string {
-	channel, title := "", ""
-	if videoPage != nil {
-		title = videoPage.VideoDetails.Title
-		channel = videoPage.VideoDetails.Author
-	}
+const (
+	globTemplate = "*/*-{video-id}" + youtube_urls.DefaultVideoExt
+)
 
-	return ChannelTitleVideoIdFilename(channel, title, videoId)
-}
-
-// ChannelTitleVideoIdFilename constructs a filename based on video-id and
+// RelLocalVideoFilename constructs a filename based on video-id and
 // optional channel and video title.
 // If the channel or video title are available, the filename would be
-// "channel/title-video-id.mp4". If the channel, title are not available, the filename would be
-// "video-id.mp4". In either case, the resulting filename is sanitized to remove
-// characters not suitable for file names.
-func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
-
-	// files downloaded by URL
-	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
-		return videoId
-	}
+// "channel/title-video-id.mp4". If the channel, title are not available,
+// the filename would be "video-id.mp4". In either case, the resulting
+// filename is sanitized to remove characters not suitable for file names.
+func RelLocalVideoFilename(channel, title, videoId string) string {
 
 	// channel, video titles might contain characters that would be problematic for
 	// modern operating system filesystems - removing those
@@ -47,33 +40,32 @@ func ChannelTitleVideoIdFilename(channel, title, videoId string) string {
 	return fn + youtube_urls.DefaultVideoExt
 }
 
-func OldChannelTitleVideoIdFilename(channel, title, videoId string) string {
+// LocateLocalVideo looks for local video files for a given video-id
+// previously we'd use RelLocalVideoFilename func above and check that name,
+// however as it turns out - it's not uncommon for videos to change the title
+// which leads to existing local files seemingly missing - as we've downloaded
+// them under different title previously. Using LocateLocalVideo should
+// mitigate this problem.
+func LocateLocalVideo(videoId string) (string, error) {
 
-	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
-		return videoId
+	videosDir, err := pathways.GetAbsDir(paths.Videos)
+	if err != nil {
+		return "", err
 	}
 
-	var fn string
-	if title != "" {
-		fn = fmt.Sprintf("%s-%s", title, videoId)
+	pattern := strings.Replace(globTemplate, "{video-id}", videoId, 1)
+	pattern = filepath.Join(videosDir, pattern)
+
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		return "", err
+	}
+
+	if len(matches) == 1 {
+		return matches[0], nil
+	} else if len(matches) == 0 {
+		return "", os.ErrNotExist
 	} else {
-		fn = fmt.Sprintf("%s", videoId)
+		return "", errors.New("several local files match video-id " + videoId)
 	}
-
-	// channel, video titles might contain characters that would be problematic for
-	// modern operating system filesystems - removing those
-	for _, ch := range []string{"/", ":", "?", "*", "<", ">", "\\", "|", "\"", "\n"} {
-		fn = strings.ReplaceAll(fn, ch, "")
-		channel = strings.ReplaceAll(channel, ch, "")
-	}
-
-	if channel != "" {
-		fn = filepath.Join(channel, fn)
-	}
-
-	//while unlikely, it's possible for videos to be titled like
-	//relative file paths (e.g. "../../title"), cleaning that up
-	fn = filepath.Clean(fn)
-
-	return fn + youtube_urls.DefaultVideoExt
 }

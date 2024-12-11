@@ -13,7 +13,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -81,7 +80,7 @@ func CleanupEndedVideos(now bool, rdx kevlar.WriteableRedux) error {
 
 	for _, videoId := range cleanupVideoIds {
 
-		if err := removeVideoFile(videoId, absVideosDir, rdx); err != nil {
+		if err := removeVideoFile(videoId, rdx); err != nil {
 			return cea.EndWithError(err)
 		}
 		if err := removePosters(videoId); err != nil {
@@ -126,7 +125,7 @@ func directoryIsEmpty(name string) (bool, error) {
 	return false, err
 }
 
-func removeVideoFile(videoId, absVideosDir string, rdx kevlar.ReadableRedux) error {
+func removeVideoFile(videoId string, rdx kevlar.ReadableRedux) error {
 	title, _ := rdx.GetLastVal(data.VideoTitleProperty, videoId)
 	channel, _ := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId)
 
@@ -134,19 +133,19 @@ func removeVideoFile(videoId, absVideosDir string, rdx kevlar.ReadableRedux) err
 		return nil
 	}
 
-	relVideoFilename := ""
+	var absVideoFilename string
 
-	if strings.HasSuffix(videoId, youtube_urls.DefaultVideoExt) {
-		relVideoFilename = videoId
+	if afv, err := yeti.LocateLocalVideo(videoId); os.IsNotExist(err) {
+		// do nothing - file doesn't exist
+	} else if err != nil {
+		return err
 	} else {
-		relVideoFilename = yeti.ChannelTitleVideoIdFilename(channel, title, videoId)
+		absVideoFilename = afv
 	}
 
-	if relVideoFilename == "" {
+	if absVideoFilename == "" {
 		return nil
 	}
-
-	absVideoFilename := filepath.Join(absVideosDir, relVideoFilename)
 
 	if _, err := os.Stat(absVideoFilename); err == nil {
 		if err = os.Remove(absVideoFilename); err != nil {

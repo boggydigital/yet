@@ -121,7 +121,13 @@ func downloadVideo(
 	videoPage *youtube_urls.InitialPlayerResponse,
 	options *VideoOptions) error {
 
-	relFilename := yeti.DefaultFilenameDelegate(videoId, videoPage)
+	var title, channel string
+	if videoPage != nil {
+		title = videoPage.VideoDetails.Title
+		channel = videoPage.VideoDetails.Author
+	}
+
+	relFilename := yeti.RelLocalVideoFilename(channel, title, videoId)
 
 	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
 	if err != nil {

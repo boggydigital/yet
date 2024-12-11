@@ -302,7 +302,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 
 	absOutputDir := filepath.Join(absVideosDir, channel)
 
-	relOutputFilename := yeti.ChannelTitleVideoIdFilename("", title, videoId)
+	relOutputFilename := yeti.RelLocalVideoFilename("", title, videoId)
 	absOutputFilename := filepath.Join(absVideosDir, channel, relOutputFilename)
 
 	if _, err := os.Stat(absOutputFilename); err == nil && force {
