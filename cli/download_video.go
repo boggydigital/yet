@@ -124,7 +124,7 @@ func downloadVideo(
 	absFilename := filepath.Join(absVideosDir, relFilename)
 
 	if _, err := os.Stat(absFilename); err == nil {
-		if !options.Force {
+		if options.Force {
 			if err := os.Remove(absFilename); err != nil {
 				return err
 			}
