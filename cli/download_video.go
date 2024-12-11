@@ -149,10 +149,13 @@ func downloadVideo(
 
 func downloadWithYtDlp(videoId, absFilename string) error {
 
+	dyda := nod.Begin(" downloading %s with yt-dlp, please wait...", videoId)
+	defer dyda.EndWithResult("done")
+
 	absDir, _ := path.Split(absFilename)
 	if _, err := os.Stat(absDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(absDir, 0755); err != nil {
-			return err
+			return dyda.EndWithError(err)
 		}
 	}
 
@@ -167,7 +170,7 @@ func downloadWithYtDlp(videoId, absFilename string) error {
 
 	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
 	if err != nil {
-		return err
+		return dyda.EndWithError(err)
 	}
 
 	absYtDlpFilename := filepath.Join(ytDlpDir, yeti.GetYtDlpBinary())
