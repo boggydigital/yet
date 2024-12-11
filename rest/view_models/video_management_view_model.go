@@ -16,7 +16,6 @@ type VideoManagementViewModel struct {
 	AllEndedReasons []data.VideoEndedReason
 	DownloadQueued  bool
 	ForcedDownload  bool
-	Source          bool
 }
 
 func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoManagementViewModel {
@@ -46,6 +45,5 @@ func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoMan
 		AllEndedReasons: data.AllVideoEndedReasons(),
 		DownloadQueued:  rdx.HasKey(data.VideoDownloadQueuedProperty, videoId),
 		ForcedDownload:  rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
-		Source:          rdx.HasKey(data.VideoSourceProperty, videoId),
 	}
 }

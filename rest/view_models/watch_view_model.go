@@ -8,7 +8,6 @@ import (
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
-	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -138,33 +137,26 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 		videoDescription = videoPage.VideoDetails.ShortDescription
 	}
 
-	// check if the video has source specified
-	if videoUrl == "" {
-		if src, ok := rdx.GetLastVal(data.VideoSourceProperty, videoId); ok && src != "" {
-			videoUrl = src
-		}
-	}
-
-	if videoUrl == "" || videoTitle == "" {
-
-		if videoPage == nil {
-			videoPage, err = yeti.GetVideoPage(videoId)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
-			return nil, err
-		}
-
-		vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
-		if err != nil {
-			return nil, err
-		}
-
-		videoUrl = vu.String()
-	}
+	//if videoUrl == "" || videoTitle == "" {
+	//
+	//	if videoPage == nil {
+	//		videoPage, err = yeti.GetVideoPage(videoId)
+	//		if err != nil {
+	//			return nil, err
+	//		}
+	//	}
+	//
+	//	if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	videoUrl = vu.String()
+	//}
 
 	lastEndedTime := ""
 	if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && et != "" {
@@ -234,24 +226,24 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 	}, nil
 }
 
-func decode(urlStr, playerUrl string) (*url.URL, error) {
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return nil, err
-	}
-
-	q := u.Query()
-	if np := q.Get("n"); np != "" {
-		if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
-			return nil, err
-		} else {
-			q.Set("n", dnp)
-			u.RawQuery = q.Encode()
-		}
-	}
-
-	return u, nil
-}
+//func decode(urlStr, playerUrl string) (*url.URL, error) {
+//	u, err := url.Parse(urlStr)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	q := u.Query()
+//	if np := q.Get("n"); np != "" {
+//		if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
+//			return nil, err
+//		} else {
+//			q.Set("n", dnp)
+//			u.RawQuery = q.Encode()
+//		}
+//	}
+//
+//	return u, nil
+//}
 
 func getLocalCaptionTracks(videoId string, rdx kevlar.ReadableRedux) ([]youtube_urls.CaptionTrack, error) {
 

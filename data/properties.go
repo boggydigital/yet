@@ -20,7 +20,6 @@ const (
 	VideoErrorsProperty            = "video-errors"
 	VideoFavoriteProperty          = "video-favorite"
 
-	VideoSourceProperty         = "video-source"
 	VideoForcedDownloadProperty = "video-forced-download"
 
 	VideoDownloadQueuedProperty    = "video-download-queued"
@@ -72,7 +71,6 @@ func VideoProperties() []string {
 		VideoEndedReasonProperty,
 		VideoErrorsProperty,
 		VideoFavoriteProperty,
-		VideoSourceProperty,
 		VideoForcedDownloadProperty,
 		VideoDownloadQueuedProperty,
 		VideoDownloadStartedProperty,

@@ -72,7 +72,6 @@ func main() {
 		"scrub-ended-properties":      cli.ScrubEndedPropertiesHandler,
 		"serve":                       cli.ServeHandler,
 		"sync":                        cli.SyncHandler,
-		"test-dependencies":           cli.TestDependenciesHandler,
 		"update-yt-dlp":               cli.UpdateYtDlpHandler,
 		"version":                     cli.VersionHandler,
 	})

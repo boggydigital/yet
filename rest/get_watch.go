@@ -23,7 +23,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	v := q.Get("v")
 	t := q.Get("t")
-	source := q.Get("source")
 	queueDownload := q.Has("queue-download")
 
 	if v == "" {
@@ -45,9 +44,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			return
 		} else if len(videoIds) > 0 {
 			redirectUrl := "/watch?v=" + videoIds[0]
-			if source != "" {
-				redirectUrl += "&source=" + source
-			}
 			if queueDownload {
 				redirectUrl += "&queue-download"
 			}
@@ -68,14 +64,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	if queueDownload {
 		if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
-
-	// set video source unless it's been set already
-	if source != "" && !rdx.HasValue(data.VideoSourceProperty, videoId, source) {
-		if err := rdx.ReplaceValues(data.VideoSourceProperty, videoId, source); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

@@ -28,7 +28,6 @@ add-video
     download-queue
     ended
     reason={^video-ended-reasons}
-    source
     force
 
 backup
@@ -38,7 +37,6 @@ cleanup-ended-videos
 
 download-video
     video-id^*
-    source
     force
 
 get-captions
@@ -101,7 +99,6 @@ remove-videos
     download-queue
     progress
     ended
-    source
     force
 
 scrub-deposition-properties
@@ -114,8 +111,6 @@ serve
 
 sync
     force
-
-test-dependencies
 
 update-yt-dlp
     force

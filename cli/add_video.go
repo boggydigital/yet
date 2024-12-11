@@ -17,7 +17,6 @@ func AddVideoHandler(u *url.URL) error {
 		DownloadQueue: q.Has("download-queue"),
 		Ended:         q.Has("ended"),
 		Reason:        data.ParseVideoEndedReason(q.Get("reason")),
-		Source:        q.Get("source"),
 		Force:         q.Has("force"),
 	}
 
@@ -64,11 +63,6 @@ func AddVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) erro
 	if opt.Reason != data.DefaultEndedReason {
 		propertyValues[data.VideoEndedReasonProperty] = map[string][]string{
 			videoId: {string(opt.Reason)},
-		}
-	}
-	if opt.Source != "" {
-		propertyValues[data.VideoSourceProperty] = map[string][]string{
-			videoId: {opt.Source},
 		}
 	}
 	if opt.Force {

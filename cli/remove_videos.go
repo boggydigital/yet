@@ -53,9 +53,6 @@ func RemoveVideos(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) 
 	if opt.Reason != data.DefaultEndedReason {
 		propertyKeys[data.VideoEndedReasonProperty] = videoId
 	}
-	if opt.Source != "" {
-		propertyKeys[data.VideoSourceProperty] = videoId
-	}
 	if opt.Force {
 		propertyKeys[data.VideoForcedDownloadProperty] = videoId
 	}

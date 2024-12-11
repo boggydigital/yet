@@ -311,9 +311,9 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 		}
 	}
 
-	ffmb := yeti.GetBinary(yeti.FFMpegBin)
-	if ffmb == "" {
-		return errors.New("ffmpeg not available")
+	ffmb, err := exec.LookPath("ffmpeg")
+	if err != nil {
+		return mvsa.EndWithError(err)
 	}
 
 	args := []string{

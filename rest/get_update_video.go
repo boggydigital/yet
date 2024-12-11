@@ -41,7 +41,6 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	specialProperties := map[string]string{
 		data.VideoProgressProperty:    "progress",
 		data.VideoEndedReasonProperty: "ended-reason",
-		data.VideoSourceProperty:      "clear-source",
 	}
 
 	properties := maps.Keys(boolPropertyInputs)
@@ -71,16 +70,6 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
-			}
-		case data.VideoSourceProperty:
-			// alternative source is cleared (condition: false) when flag IS present in input
-			if q.Has(input) {
-				if err := toggleProperty(videoId, property, false, rdx); err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
-			} else {
-				// do nothing, clear source if only for clearing sources
 			}
 		case data.VideoEndedReasonProperty:
 			// don't set ended reason unless the video has ended
