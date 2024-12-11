@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 )
 
@@ -148,6 +149,13 @@ func downloadVideo(
 
 func downloadWithYtDlp(videoId, absFilename string) error {
 
+	absDir, _ := path.Split(absFilename)
+	if _, err := os.Stat(absDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(absDir, 0755); err != nil {
+			return err
+		}
+	}
+
 	options := make([]string, 0)
 
 	options = append(options, videoId)
@@ -157,6 +165,13 @@ func downloadWithYtDlp(videoId, absFilename string) error {
 		options = append(options, flag, value)
 	}
 
-	cmd := exec.Command(yeti.GetYtDlpBinary(), options...)
+	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
+	if err != nil {
+		return err
+	}
+
+	absYtDlpFilename := filepath.Join(ytDlpDir, yeti.GetYtDlpBinary())
+
+	cmd := exec.Command(absYtDlpFilename, options...)
 	return cmd.Run()
 }
