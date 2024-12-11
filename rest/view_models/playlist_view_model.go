@@ -7,17 +7,16 @@ import (
 )
 
 type PlaylistViewModel struct {
-	PlaylistId                 string
-	PlaylistTitle              string
-	PlaylistChannelTitle       string
-	PlaylistBadgeCount         int
-	PlaylistAutoRefresh        bool
-	PlaylistAutoDownload       bool
-	PlaylistDownloadPolicy     data.DownloadPolicy
-	AllDownloadPolicies        []data.DownloadPolicy
-	PlaylistExpand             bool
-	PlaylistPreferSingleFormat bool
-	Videos                     []*VideoViewModel
+	PlaylistId             string
+	PlaylistTitle          string
+	PlaylistChannelTitle   string
+	PlaylistBadgeCount     int
+	PlaylistAutoRefresh    bool
+	PlaylistAutoDownload   bool
+	PlaylistDownloadPolicy data.DownloadPolicy
+	AllDownloadPolicies    []data.DownloadPolicy
+	PlaylistExpand         bool
+	Videos                 []*VideoViewModel
 }
 
 func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *PlaylistViewModel {
@@ -44,11 +43,6 @@ func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *Playlist
 		downloadPolicy = data.ParseDownloadPolicy(pdp)
 	}
 
-	preferSingleFormat := false
-	if psf, ok := rdx.GetLastVal(data.PlaylistPreferSingleFormatProperty, playlistId); ok && psf == data.TrueValue {
-		preferSingleFormat = true
-	}
-
 	expand := false
 	if pe, ok := rdx.GetLastVal(data.PlaylistExpandProperty, playlistId); ok && pe == data.TrueValue {
 		expand = true
@@ -65,16 +59,15 @@ func GetPlaylistViewModel(playlistId string, rdx kevlar.ReadableRedux) *Playlist
 	}
 
 	plvm := &PlaylistViewModel{
-		PlaylistId:                 playlistId,
-		PlaylistBadgeCount:         badgeCount,
-		PlaylistTitle:              playlistTitle,
-		PlaylistChannelTitle:       playlistChannelTitle,
-		PlaylistAutoRefresh:        autoRefresh,
-		PlaylistAutoDownload:       autoDownload,
-		PlaylistDownloadPolicy:     downloadPolicy,
-		AllDownloadPolicies:        data.AllDownloadPolicies(),
-		PlaylistExpand:             expand,
-		PlaylistPreferSingleFormat: preferSingleFormat,
+		PlaylistId:             playlistId,
+		PlaylistBadgeCount:     badgeCount,
+		PlaylistTitle:          playlistTitle,
+		PlaylistChannelTitle:   playlistChannelTitle,
+		PlaylistAutoRefresh:    autoRefresh,
+		PlaylistAutoDownload:   autoDownload,
+		PlaylistDownloadPolicy: downloadPolicy,
+		AllDownloadPolicies:    data.AllDownloadPolicies(),
+		PlaylistExpand:         expand,
 	}
 
 	defaultOptions := []VideoOptions{ShowPoster, ShowViewCount, ShowDuration, ShowPublishedDate}

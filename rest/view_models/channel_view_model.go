@@ -7,19 +7,18 @@ import (
 )
 
 type ChannelViewModel struct {
-	ChannelId                 string
-	ChannelTitle              string
-	ChannelDescription        string
-	ChannelBadgeCount         int
-	Videos                    []*VideoViewModel
-	PlaylistsOrder            []string
-	Playlists                 map[string]string
-	ChannelAutoRefresh        bool
-	ChannelAutoDownload       bool
-	ChannelDownloadPolicy     data.DownloadPolicy
-	AllDownloadPolicies       []data.DownloadPolicy
-	ChannelPreferSingleFormat bool
-	ChannelExpand             bool
+	ChannelId             string
+	ChannelTitle          string
+	ChannelDescription    string
+	ChannelBadgeCount     int
+	Videos                []*VideoViewModel
+	PlaylistsOrder        []string
+	Playlists             map[string]string
+	ChannelAutoRefresh    bool
+	ChannelAutoDownload   bool
+	ChannelDownloadPolicy data.DownloadPolicy
+	AllDownloadPolicies   []data.DownloadPolicy
+	ChannelExpand         bool
 }
 
 func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelViewModel {
@@ -58,11 +57,6 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 		downloadPolicy = data.ParseDownloadPolicy(pdp)
 	}
 
-	preferSingleFormat := false
-	if psf, ok := rdx.GetLastVal(data.ChannelPreferSingleFormatProperty, channelId); ok && psf == data.TrueValue {
-		preferSingleFormat = true
-	}
-
 	expand := false
 	if ce, ok := rdx.GetLastVal(data.ChannelExpandProperty, channelId); ok && ce == data.TrueValue {
 		expand = true
@@ -81,18 +75,17 @@ func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelVie
 	}
 
 	return &ChannelViewModel{
-		ChannelId:                 channelId,
-		ChannelTitle:              channelTitle,
-		ChannelDescription:        channelDescription,
-		ChannelBadgeCount:         badgeCount,
-		Videos:                    channelVideos,
-		ChannelAutoRefresh:        autoRefresh,
-		ChannelAutoDownload:       autoDownload,
-		ChannelDownloadPolicy:     downloadPolicy,
-		AllDownloadPolicies:       data.AllDownloadPolicies(),
-		ChannelPreferSingleFormat: preferSingleFormat,
-		ChannelExpand:             expand,
-		PlaylistsOrder:            playlistsOrder,
-		Playlists:                 playlists,
+		ChannelId:             channelId,
+		ChannelTitle:          channelTitle,
+		ChannelDescription:    channelDescription,
+		ChannelBadgeCount:     badgeCount,
+		Videos:                channelVideos,
+		ChannelAutoRefresh:    autoRefresh,
+		ChannelAutoDownload:   autoDownload,
+		ChannelDownloadPolicy: downloadPolicy,
+		AllDownloadPolicies:   data.AllDownloadPolicies(),
+		ChannelExpand:         expand,
+		PlaylistsOrder:        playlistsOrder,
+		Playlists:             playlists,
 	}
 }

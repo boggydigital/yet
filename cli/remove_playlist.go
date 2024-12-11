@@ -13,11 +13,10 @@ func RemovePlaylistHandler(u *url.URL) error {
 
 	playlistId := q.Get("playlist-id")
 	options := &PlaylistOptions{
-		AutoRefresh:        q.Has("auto-refresh"),
-		AutoDownload:       q.Has("auto-download"),
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Expand:             q.Has("expand"),
-		Force:              q.Has("force"),
+		AutoRefresh:  q.Has("auto-refresh"),
+		AutoDownload: q.Has("auto-download"),
+		Expand:       q.Has("expand"),
+		Force:        q.Has("force"),
 	}
 
 	return RemovePlaylist(nil, playlistId, options)
@@ -56,9 +55,6 @@ func RemovePlaylist(rdx kevlar.WriteableRedux, playlistId string, opt *PlaylistO
 	}
 	if opt.Expand {
 		propertyKeys[data.PlaylistExpandProperty] = playlistId
-	}
-	if opt.PreferSingleFormat {
-		propertyKeys[data.PlaylistPreferSingleFormatProperty] = playlistId
 	}
 
 	for property, key := range propertyKeys {

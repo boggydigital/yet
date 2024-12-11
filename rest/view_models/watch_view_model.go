@@ -38,20 +38,19 @@ type WatchViewModel struct {
 }
 
 var propertyTitles = map[string]string{
-	data.VideoViewCountProperty:          "Views",
-	data.VideoKeywordsProperty:           "Keywords",
-	data.VideoCategoryProperty:           "Category",
-	data.VideoUploadDateProperty:         "Uploaded",
-	data.VideoPublishDateProperty:        "Published",
-	data.VideoDurationProperty:           "Duration",
-	data.VideoEndedDateProperty:          "Ended Date",
-	data.VideoEndedReasonProperty:        "Ended Reason",
-	data.VideoDownloadQueuedProperty:     "Download Queued",
-	data.VideoDownloadStartedProperty:    "Download Started",
-	data.VideoDownloadCompletedProperty:  "Download Completed",
-	data.VideoDownloadCleanedUpProperty:  "Download Cleaned Up",
-	data.VideoForcedDownloadProperty:     "Forced Download",
-	data.VideoPreferSingleFormatProperty: "Prefer Single Format",
+	data.VideoViewCountProperty:         "Views",
+	data.VideoKeywordsProperty:          "Keywords",
+	data.VideoCategoryProperty:          "Category",
+	data.VideoUploadDateProperty:        "Uploaded",
+	data.VideoPublishDateProperty:       "Published",
+	data.VideoDurationProperty:          "Duration",
+	data.VideoEndedDateProperty:         "Ended Date",
+	data.VideoEndedReasonProperty:       "Ended Reason",
+	data.VideoDownloadQueuedProperty:    "Download Queued",
+	data.VideoDownloadStartedProperty:   "Download Started",
+	data.VideoDownloadCompletedProperty: "Download Completed",
+	data.VideoDownloadCleanedUpProperty: "Download Cleaned Up",
+	data.VideoForcedDownloadProperty:    "Forced Download",
 }
 
 func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (*WatchViewModel, error) {

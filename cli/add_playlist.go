@@ -13,12 +13,11 @@ func AddPlaylistHandler(u *url.URL) error {
 
 	playlistId := q.Get("playlist-id")
 	options := &PlaylistOptions{
-		AutoRefresh:        q.Has("auto-refresh"),
-		AutoDownload:       q.Has("auto-download"),
-		DownloadPolicy:     data.ParseDownloadPolicy(q.Get("download-policy")),
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Expand:             q.Has("expand"),
-		Force:              q.Has("force"),
+		AutoRefresh:    q.Has("auto-refresh"),
+		AutoDownload:   q.Has("auto-download"),
+		DownloadPolicy: data.ParseDownloadPolicy(q.Get("download-policy")),
+		Expand:         q.Has("expand"),
+		Force:          q.Has("force"),
 	}
 
 	return AddPlaylist(nil, playlistId, options)
@@ -63,11 +62,6 @@ func AddPlaylist(rdx kevlar.WriteableRedux, playlistId string, opt *PlaylistOpti
 	}
 	if opt.Expand {
 		propertyValues[data.PlaylistExpandProperty] = map[string][]string{
-			playlistId: {data.TrueValue},
-		}
-	}
-	if opt.PreferSingleFormat {
-		propertyValues[data.PlaylistPreferSingleFormatProperty] = map[string][]string{
 			playlistId: {data.TrueValue},
 		}
 	}

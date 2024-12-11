@@ -13,13 +13,12 @@ func AddVideoHandler(u *url.URL) error {
 
 	videoId := q.Get("video-id")
 	options := &VideoOptions{
-		Favorite:           q.Has("favorite"),
-		DownloadQueue:      q.Has("download-queue"),
-		Ended:              q.Has("ended"),
-		Reason:             data.ParseVideoEndedReason(q.Get("reason")),
-		Source:             q.Get("source"),
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Force:              q.Has("force"),
+		Favorite:      q.Has("favorite"),
+		DownloadQueue: q.Has("download-queue"),
+		Ended:         q.Has("ended"),
+		Reason:        data.ParseVideoEndedReason(q.Get("reason")),
+		Source:        q.Get("source"),
+		Force:         q.Has("force"),
 	}
 
 	return AddVideo(nil, videoId, options)
@@ -70,11 +69,6 @@ func AddVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) erro
 	if opt.Source != "" {
 		propertyValues[data.VideoSourceProperty] = map[string][]string{
 			videoId: {opt.Source},
-		}
-	}
-	if opt.PreferSingleFormat {
-		propertyValues[data.VideoPreferSingleFormatProperty] = map[string][]string{
-			videoId: {data.TrueValue},
 		}
 	}
 	if opt.Force {

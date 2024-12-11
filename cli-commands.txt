@@ -11,7 +11,6 @@ add-channel
     auto-refresh
     auto-download
     download-policy={^playlist-download-policies}
-    prefer-single-format
     expand
     force
 
@@ -20,7 +19,6 @@ add-playlist
     auto-refresh
     auto-download
     download-policy={^playlist-download-policies}
-    prefer-single-format
     expand
     force
 
@@ -30,7 +28,6 @@ add-video
     download-queue
     ended
     reason={^video-ended-reasons}
-    prefer-single-format
     source
     force
 
@@ -41,7 +38,6 @@ cleanup-ended-videos
 
 download-video
     video-id^*
-    prefer-single-format
     source
     force
 
@@ -75,7 +71,6 @@ get-video-metadata
 migrate
 
 process-queue
-    prefer-single-format
     force
 
 queue-channels-downloads
@@ -90,7 +85,6 @@ remove-channel
     channel-id^*
     auto-refresh
     auto-download
-    prefer-single-format
     expand
     force
 
@@ -98,7 +92,6 @@ remove-playlist
     playlist-id^*
     auto-refresh
     auto-download
-    prefer-single-format
     expand
     force
 
@@ -108,7 +101,6 @@ remove-videos
     download-queue
     progress
     ended
-    prefer-single-format
     source
     force
 
@@ -121,7 +113,6 @@ serve
     stderr$
 
 sync
-    prefer-single-format
     force
 
 test-dependencies

@@ -16,11 +16,7 @@ func ProcessQueueHandler(u *url.URL) error {
 	q := u.Query()
 
 	options := &VideoOptions{
-		// TODO: remove this if better options are available
-		// (temporary?) workaround - force single format for all videos
-		// to mitigate new visitorData, poToken requirements at the cost of video quality
-		PreferSingleFormat: true, //q.Has("prefer-single-format"),
-		Force:              q.Has("force"),
+		Force: q.Has("force"),
 	}
 
 	return ProcessQueue(nil, options)

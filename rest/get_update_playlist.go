@@ -28,10 +28,9 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	boolPropertyInputs := map[string]string{
-		data.PlaylistAutoRefreshProperty:        "auto-refresh",
-		data.PlaylistExpandProperty:             "expand",
-		data.PlaylistAutoDownloadProperty:       "auto-download",
-		data.PlaylistPreferSingleFormatProperty: "prefer-single-format",
+		data.PlaylistAutoRefreshProperty:  "auto-refresh",
+		data.PlaylistExpandProperty:       "expand",
+		data.PlaylistAutoDownloadProperty: "auto-download",
 	}
 
 	specialProperties := map[string]string{

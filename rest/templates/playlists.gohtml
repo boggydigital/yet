@@ -53,8 +53,7 @@
             <span>This playlist will automatically refresh metadata and {{if .PlaylistExpand}}all{{else}}the latest 100{{end}} videos.</span>
             {{if .PlaylistAutoDownload}}
                 <span>
-                    {{if eq .PlaylistDownloadPolicy "recent"}}Recent{{else if eq .PlaylistDownloadPolicy "all"}}All{{end}} new videos will be downloaded
-                    {{if .PlaylistPreferSingleFormat}}in mobile quality (720p), faster{{else}}in high quality (1080p), slower{{end}}.
+                    {{if eq .PlaylistDownloadPolicy "recent"}}Recent{{else if eq .PlaylistDownloadPolicy "all"}}All{{end}} new videos will be downloaded.
                 </span>
             {{else}}
                 <span>New videos will be streamed from the origin.</span>

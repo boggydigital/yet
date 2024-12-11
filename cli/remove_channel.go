@@ -12,11 +12,10 @@ func RemoveChannelHandler(u *url.URL) error {
 
 	channelId := q.Get("channel-id")
 	options := &ChannelOptions{
-		AutoRefresh:        q.Has("auto-refresh"),
-		AutoDownload:       q.Has("auto-download"),
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Expand:             q.Has("expand"),
-		Force:              q.Has("force"),
+		AutoRefresh:  q.Has("auto-refresh"),
+		AutoDownload: q.Has("auto-download"),
+		Expand:       q.Has("expand"),
+		Force:        q.Has("force"),
 	}
 
 	return RemoveChannel(nil, channelId, options)
@@ -50,9 +49,6 @@ func RemoveChannel(rdx kevlar.WriteableRedux, channelId string, opt *ChannelOpti
 	}
 	if opt.Expand {
 		propertyKeys[data.ChannelExpandProperty] = channelId
-	}
-	if opt.PreferSingleFormat {
-		propertyKeys[data.ChannelPreferSingleFormatProperty] = channelId
 	}
 
 	for property, key := range propertyKeys {

@@ -20,9 +20,8 @@ const (
 	VideoErrorsProperty            = "video-errors"
 	VideoFavoriteProperty          = "video-favorite"
 
-	VideoSourceProperty             = "video-source"
-	VideoForcedDownloadProperty     = "video-forced-download"
-	VideoPreferSingleFormatProperty = "video-prefer-single-format"
+	VideoSourceProperty         = "video-source"
+	VideoForcedDownloadProperty = "video-forced-download"
 
 	VideoDownloadQueuedProperty    = "video-download-queued"
 	VideoDownloadStartedProperty   = "video-download-started"
@@ -37,22 +36,20 @@ const (
 	PlaylistChannelProperty = "playlist-channel"
 	PlaylistVideosProperty  = "playlist-videos"
 
-	PlaylistAutoRefreshProperty        = "playlist-auto-refresh"
-	PlaylistAutoDownloadProperty       = "playlist-auto-download"
-	PlaylistDownloadPolicyProperty     = "playlist-download-policy"
-	PlaylistPreferSingleFormatProperty = "playlist-prefer-single-format"
-	PlaylistExpandProperty             = "playlist-expand"
+	PlaylistAutoRefreshProperty    = "playlist-auto-refresh"
+	PlaylistAutoDownloadProperty   = "playlist-auto-download"
+	PlaylistDownloadPolicyProperty = "playlist-download-policy"
+	PlaylistExpandProperty         = "playlist-expand"
 
 	ChannelTitleProperty       = "channel-title"
 	ChannelDescriptionProperty = "channel-description"
 	ChannelVideosProperty      = "channel-videos"
 	ChannelPlaylistsProperty   = "channel-playlists"
 
-	ChannelAutoRefreshProperty        = "channel-auto-refresh"
-	ChannelAutoDownloadProperty       = "channel-auto-download"
-	ChannelDownloadPolicyProperty     = "channel-download-policy"
-	ChannelPreferSingleFormatProperty = "channel-prefer-single-format"
-	ChannelExpandProperty             = "channel-expand"
+	ChannelAutoRefreshProperty    = "channel-auto-refresh"
+	ChannelAutoDownloadProperty   = "channel-auto-download"
+	ChannelDownloadPolicyProperty = "channel-download-policy"
+	ChannelExpandProperty         = "channel-expand"
 )
 
 func VideoProperties() []string {
@@ -77,7 +74,6 @@ func VideoProperties() []string {
 		VideoFavoriteProperty,
 		VideoSourceProperty,
 		VideoForcedDownloadProperty,
-		VideoPreferSingleFormatProperty,
 		VideoDownloadQueuedProperty,
 		VideoDownloadStartedProperty,
 		VideoDownloadCompletedProperty,
@@ -96,7 +92,6 @@ func PlaylistProperties() []string {
 		PlaylistAutoRefreshProperty,
 		PlaylistAutoDownloadProperty,
 		PlaylistDownloadPolicyProperty,
-		PlaylistPreferSingleFormatProperty,
 		PlaylistExpandProperty,
 	}
 }
@@ -110,7 +105,6 @@ func ChannelProperties() []string {
 		ChannelAutoRefreshProperty,
 		ChannelAutoDownloadProperty,
 		ChannelDownloadPolicyProperty,
-		ChannelPreferSingleFormatProperty,
 		ChannelExpandProperty,
 	}
 }

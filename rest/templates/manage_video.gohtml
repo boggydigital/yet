@@ -94,17 +94,6 @@
                 </label>
             </li>
             <li>
-                <input id="prefer-single-format" type="checkbox" switch name="prefer-single-format"
-                       {{if .PreferSingleFormat}}checked{{end}} />
-                <label for="single-format">
-                    <span class="title">Prefer single format</span>
-                    <span class="subtitle subtle">
-                        On: prefer mobile 720p quality (much faster).
-                        Off: download in the best quality (slower).
-                    </span>
-                </label>
-            </li>
-            <li>
                 <input id="source" type="checkbox" switch name="source"
                        {{if .Source}}checked{{else}}disabled{{end}} />
                 <label for="source">

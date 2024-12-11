@@ -21,9 +21,8 @@ func DownloadVideoHandler(u *url.URL) error {
 
 	videoId := q.Get("video-id")
 	options := &VideoOptions{
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Force:              q.Has("force"),
-		Source:             q.Get("source"),
+		Force:  q.Has("force"),
+		Source: q.Get("source"),
 	}
 
 	return DownloadVideo(nil, videoId, options)
@@ -137,7 +136,7 @@ func downloadVideo(
 		if err := downloadSingleFormat(dl, relFilename, sourceFormat, videoPage.PlayerUrl, options.Force); err != nil {
 			return err
 		}
-	} else if yeti.GetBinary(yeti.FFMpegBin) == "" || options.PreferSingleFormat {
+	} else if yeti.GetBinary(yeti.FFMpegBin) == "" {
 		if err := downloadSingleFormat(dl, relFilename, videoPage.BestFormat(), videoPage.PlayerUrl, options.Force); err != nil {
 			return err
 		}

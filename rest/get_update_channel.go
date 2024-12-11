@@ -27,10 +27,9 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	boolPropertyInputs := map[string]string{
-		data.ChannelAutoRefreshProperty:        "auto-refresh",
-		data.ChannelExpandProperty:             "expand",
-		data.ChannelAutoDownloadProperty:       "auto-download",
-		data.ChannelPreferSingleFormatProperty: "prefer-single-format",
+		data.ChannelAutoRefreshProperty:  "auto-refresh",
+		data.ChannelExpandProperty:       "expand",
+		data.ChannelAutoDownloadProperty: "auto-download",
 	}
 
 	specialProperties := map[string]string{

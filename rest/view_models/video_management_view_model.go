@@ -6,18 +6,17 @@ import (
 )
 
 type VideoManagementViewModel struct {
-	VideoId            string
-	VideoTitle         string
-	CurrentTime        string
-	Favorite           bool
-	Progress           bool
-	Ended              bool
-	EndedReason        data.VideoEndedReason
-	AllEndedReasons    []data.VideoEndedReason
-	DownloadQueued     bool
-	ForcedDownload     bool
-	PreferSingleFormat bool
-	Source             bool
+	VideoId         string
+	VideoTitle      string
+	CurrentTime     string
+	Favorite        bool
+	Progress        bool
+	Ended           bool
+	EndedReason     data.VideoEndedReason
+	AllEndedReasons []data.VideoEndedReason
+	DownloadQueued  bool
+	ForcedDownload  bool
+	Source          bool
 }
 
 func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoManagementViewModel {
@@ -37,17 +36,16 @@ func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoMan
 	}
 
 	return &VideoManagementViewModel{
-		VideoId:            videoId,
-		VideoTitle:         videoTitle,
-		CurrentTime:        currentTime,
-		Favorite:           rdx.HasKey(data.VideoFavoriteProperty, videoId),
-		Progress:           rdx.HasKey(data.VideoProgressProperty, videoId),
-		Ended:              rdx.HasKey(data.VideoEndedDateProperty, videoId),
-		EndedReason:        endedReason,
-		AllEndedReasons:    data.AllVideoEndedReasons(),
-		DownloadQueued:     rdx.HasKey(data.VideoDownloadQueuedProperty, videoId),
-		ForcedDownload:     rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
-		PreferSingleFormat: rdx.HasKey(data.VideoPreferSingleFormatProperty, videoId),
-		Source:             rdx.HasKey(data.VideoSourceProperty, videoId),
+		VideoId:         videoId,
+		VideoTitle:      videoTitle,
+		CurrentTime:     currentTime,
+		Favorite:        rdx.HasKey(data.VideoFavoriteProperty, videoId),
+		Progress:        rdx.HasKey(data.VideoProgressProperty, videoId),
+		Ended:           rdx.HasKey(data.VideoEndedDateProperty, videoId),
+		EndedReason:     endedReason,
+		AllEndedReasons: data.AllVideoEndedReasons(),
+		DownloadQueued:  rdx.HasKey(data.VideoDownloadQueuedProperty, videoId),
+		ForcedDownload:  rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
+		Source:          rdx.HasKey(data.VideoSourceProperty, videoId),
 	}
 }

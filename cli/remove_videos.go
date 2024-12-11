@@ -12,11 +12,10 @@ func RemoveVideosHandler(u *url.URL) error {
 
 	videoId := q.Get("video-id")
 	options := &VideoOptions{
-		DownloadQueue:      q.Has("download-queue"),
-		Progress:           q.Has("progress"),
-		Ended:              q.Has("ended"),
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Force:              q.Has("force"),
+		DownloadQueue: q.Has("download-queue"),
+		Progress:      q.Has("progress"),
+		Ended:         q.Has("ended"),
+		Force:         q.Has("force"),
 	}
 
 	return RemoveVideos(nil, videoId, options)
@@ -56,9 +55,6 @@ func RemoveVideos(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) 
 	}
 	if opt.Source != "" {
 		propertyKeys[data.VideoSourceProperty] = videoId
-	}
-	if opt.PreferSingleFormat {
-		propertyKeys[data.VideoPreferSingleFormatProperty] = videoId
 	}
 	if opt.Force {
 		propertyKeys[data.VideoForcedDownloadProperty] = videoId

@@ -29,9 +29,8 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	boolPropertyInputs := map[string]string{
-		data.VideoFavoriteProperty:           "favorite",
-		data.VideoForcedDownloadProperty:     "forced-download",
-		data.VideoPreferSingleFormatProperty: "prefer-single-format",
+		data.VideoFavoriteProperty:       "favorite",
+		data.VideoForcedDownloadProperty: "forced-download",
 	}
 
 	timePropertyInputs := map[string]string{

@@ -12,12 +12,11 @@ func AddChannelHandler(u *url.URL) error {
 
 	channelId := q.Get("channel-id")
 	options := &ChannelOptions{
-		AutoRefresh:        q.Has("auto-refresh"),
-		AutoDownload:       q.Has("auto-download"),
-		DownloadPolicy:     data.ParseDownloadPolicy(q.Get("download-policy")),
-		PreferSingleFormat: q.Has("prefer-single-format"),
-		Expand:             q.Has("expand"),
-		Force:              q.Has("force"),
+		AutoRefresh:    q.Has("auto-refresh"),
+		AutoDownload:   q.Has("auto-download"),
+		DownloadPolicy: data.ParseDownloadPolicy(q.Get("download-policy")),
+		Expand:         q.Has("expand"),
+		Force:          q.Has("force"),
 	}
 
 	return AddChannel(nil, channelId, options)
@@ -57,11 +56,6 @@ func AddChannel(rdx kevlar.WriteableRedux, channelId string, opt *ChannelOptions
 	}
 	if opt.Expand {
 		propertyValues[data.ChannelExpandProperty] = map[string][]string{
-			channelId: {data.TrueValue},
-		}
-	}
-	if opt.PreferSingleFormat {
-		propertyValues[data.ChannelPreferSingleFormatProperty] = map[string][]string{
 			channelId: {data.TrueValue},
 		}
 	}
