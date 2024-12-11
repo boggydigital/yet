@@ -8,19 +8,17 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/yeti"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
 const (
 	ytDlpOwnerRepo     = "yt-dlp/yt-dlp"
-	ytDlpLinuxAsset    = "yt-dlp_linux"
-	ytDlpMacOsAsset    = "yt-dlp_macos"
 	relYtDlpPluginsDir = ".yt-dlp/plugins"
 )
 
@@ -67,16 +65,7 @@ func UpdateYtDlp(force bool) error {
 		return uyda.EndWithError(err)
 	}
 
-	var ytDlpAsset string
-	switch runtime.GOOS {
-	case "darwin":
-		ytDlpAsset = ytDlpMacOsAsset
-	case "linux":
-		ytDlpAsset = ytDlpLinuxAsset
-	default:
-		return uyda.EndWithError(errors.New("yet only supports macOS and Linux"))
-	}
-
+	ytDlpAsset := yeti.GetYtDlpBinary()
 	if err := downloadAsset(ytDlpDir, latestYtDlpRelease, ytDlpAsset, dc, force); err != nil {
 		return uyda.EndWithError(err)
 	}

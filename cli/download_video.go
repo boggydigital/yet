@@ -11,8 +11,13 @@ import (
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
+
+var defaultYtDlpOptions = map[string]string{
+	"-S": "vcodec:h264,res:1080,acodec:m4a",
+}
 
 func DownloadVideoHandler(u *url.URL) error {
 	q := u.Query()
@@ -65,10 +70,6 @@ func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions)
 	if err != nil {
 		return da.EndWithError(err)
 	}
-
-	//if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
-	//	return da.EndWithError(err)
-	//}
 
 	if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
 		da.Error(err)
@@ -145,82 +146,17 @@ func downloadVideo(
 	return nil
 }
 
-func downloadWithYtDlp(videoId, relFilename string) error {
-	return nil
-}
+func downloadWithYtDlp(videoId, absFilename string) error {
 
-//func downloadSingleFormat(
-//	dl *dolo.Client,
-//	relFilename string,
-//	format *youtube_urls.Format,
-//	playerUrl string,
-//	force bool) error {
-//
-//	if format.Url == "" {
-//		return errors.New("stream format needs url")
-//	}
-//
-//	tpw := nod.NewProgress("file: " + relFilename)
-//
-//	u, err := url.Parse(format.Url)
-//	if err != nil {
-//		return tpw.EndWithError(err)
-//	}
-//
-//	if yeti.HasBinary(yeti.NodeBin) {
-//		q := u.Query()
-//		if np := q.Get("n"); np != "" {
-//			if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
-//				return tpw.EndWithError(err)
-//			} else {
-//				if dnp != "" {
-//					q.Set("n", dnp)
-//					u.RawQuery = q.Encode()
-//				}
-//			}
-//		}
-//	}
-//
-//	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
-//	if err != nil {
-//		return tpw.EndWithError(err)
-//	}
-//
-//	if force {
-//		absFilename := filepath.Join(absVideosDir, relFilename)
-//		if _, err := os.Stat(absFilename); err == nil {
-//			if err := os.Remove(absFilename); err != nil {
-//				return tpw.EndWithError(err)
-//			}
-//		}
-//	}
-//
-//	if err := dl.Download(u, force, tpw, absVideosDir, relFilename); err != nil {
-//		return tpw.EndWithError(err)
-//	}
-//
-//	tpw.EndWithResult("done")
-//
-//	return nil
-//}
-//
-//func downloadAdaptiveFormat(dl *dolo.Client, videoId, relFilename string, vp *youtube_urls.InitialPlayerResponse, force bool) error {
-//
-//	rvfn, rafn := yeti.VideoAudioFilenames(relFilename)
-//
-//	//download video format
-//	if err := downloadSingleFormat(dl, rvfn, vp.BestAdaptiveVideoFormat(), vp.PlayerUrl, force); err != nil {
-//		return err
-//	}
-//
-//	//download audio format
-//	if err := downloadSingleFormat(dl, rafn, vp.BestAdaptiveAudioFormat(), vp.PlayerUrl, force); err != nil {
-//		return err
-//	}
-//
-//	if err := yeti.MergeStreams(relFilename, force); err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
+	options := make([]string, 0)
+
+	options = append(options, videoId)
+	options = append(options, "-o", absFilename)
+
+	for flag, value := range defaultYtDlpOptions {
+		options = append(options, flag, value)
+	}
+
+	cmd := exec.Command(yeti.GetYtDlpBinary(), options...)
+	return cmd.Run()
+}
