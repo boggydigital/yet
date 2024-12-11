@@ -14,6 +14,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 var defaultYtDlpOptions = map[string]string{
@@ -23,18 +24,22 @@ var defaultYtDlpOptions = map[string]string{
 func DownloadVideoHandler(u *url.URL) error {
 	q := u.Query()
 
-	videoId := q.Get("video-id")
+	videoIds := strings.Split(q.Get("video-id"), ",")
 	options := &VideoOptions{
 		Force: q.Has("force"),
 	}
 
-	return DownloadVideo(nil, videoId, options)
+	return DownloadVideo(nil, options, videoIds...)
 }
 
-func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) error {
+func DownloadVideo(rdx kevlar.WriteableRedux, opt *VideoOptions, videoIds ...string) error {
 
-	da := nod.Begin("downloading video %s...", videoId)
-	defer da.End()
+	da := nod.NewProgress("downloading videos...")
+	defer da.EndWithResult("done")
+
+	if opt == nil {
+		opt = DefaultVideoOptions()
+	}
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
@@ -42,69 +47,71 @@ func DownloadVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions)
 		return da.EndWithError(err)
 	}
 
-	videoId, err = yeti.ParseVideoId(videoId)
-	if err != nil {
-		return da.EndWithError(err)
-	}
+	da.TotalInt(len(videoIds))
 
-	if opt == nil {
-		opt = DefaultVideoOptions()
-	}
-	// apply video specific options
-	opt = ApplyVideoDownloadOptions(opt, videoId, rdx)
+	for _, videoId := range videoIds {
 
-	errs := false
-
-	// adding to download queue (if not there already)
-	if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
-		if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
+		videoId, err = yeti.ParseVideoId(videoId)
+		if err != nil {
 			return da.EndWithError(err)
 		}
-	}
 
-	// setting download started timestamp
-	if err := rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
-		return da.EndWithError(err)
-	}
+		// apply video specific options
+		opt = ApplyVideoDownloadOptions(opt, videoId, rdx)
 
-	videoPage, err := yeti.GetVideoPage(videoId)
-	if err != nil {
-		return da.EndWithError(err)
-	}
+		errs := false
 
-	if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
-		da.Error(err)
-		errs = true
-	}
+		// adding to download queue (if not there already)
+		if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
+			if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
+				return da.EndWithError(err)
+			}
+		}
 
-	if err := downloadVideo(videoId, videoPage, opt); err != nil {
-		da.Error(err)
-		errs = true
-	}
-
-	if err := yeti.GetPosters(videoId, dolo.DefaultClient, opt.Force, youtube_urls.AllThumbnailQualities()...); err != nil {
-		da.Error(err)
-		errs = true
-	}
-
-	if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, opt.Force); err != nil {
-		da.Error(err)
-		errs = true
-	}
-
-	if !errs {
-		// set downloaded date if no errors were encountered
-		if err := rdx.AddValues(data.VideoDownloadCompletedProperty, videoId, yeti.FmtNow()); err != nil {
+		// setting download started timestamp
+		if err := rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
 			return da.EndWithError(err)
 		}
-	} else {
-		// reset download started if errors were encountered (keeping in download queue)
-		if err := rdx.CutKeys(data.VideoDownloadStartedProperty, videoId); err != nil {
+
+		videoPage, err := yeti.GetVideoPage(videoId)
+		if err != nil {
 			return da.EndWithError(err)
 		}
-	}
 
-	da.EndWithResult("done")
+		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
+			da.Error(err)
+			errs = true
+		}
+
+		if err := downloadVideo(videoId, videoPage, opt); err != nil {
+			da.Error(err)
+			errs = true
+		}
+
+		if err := yeti.GetPosters(videoId, dolo.DefaultClient, opt.Force, youtube_urls.AllThumbnailQualities()...); err != nil {
+			da.Error(err)
+			errs = true
+		}
+
+		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, opt.Force); err != nil {
+			da.Error(err)
+			errs = true
+		}
+
+		if !errs {
+			// set downloaded date if no errors were encountered
+			if err := rdx.AddValues(data.VideoDownloadCompletedProperty, videoId, yeti.FmtNow()); err != nil {
+				return da.EndWithError(err)
+			}
+		} else {
+			// reset download started if errors were encountered (keeping in download queue)
+			if err := rdx.CutKeys(data.VideoDownloadStartedProperty, videoId); err != nil {
+				return da.EndWithError(err)
+			}
+		}
+
+		da.Increment()
+	}
 
 	return nil
 }

@@ -60,7 +60,8 @@ func ProcessQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 			return dqa.EndWithError(fmt.Errorf("exceeded max attempts for video %s", videoId))
 		}
 		processedVideoIds[videoId]++
-		if err := DownloadVideo(rdx, videoId, opt); err != nil {
+
+		if err := DownloadVideo(rdx, opt, videoId); err != nil {
 			return dqa.EndWithError(err)
 		}
 	}

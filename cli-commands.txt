@@ -36,7 +36,7 @@ cleanup-ended-videos
     now
 
 download-video
-    video-id^*
+    video-id^*&
     force
 
 get-captions
