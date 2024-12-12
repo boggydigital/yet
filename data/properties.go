@@ -49,6 +49,8 @@ const (
 	ChannelAutoDownloadProperty   = "channel-auto-download"
 	ChannelDownloadPolicyProperty = "channel-download-policy"
 	ChannelExpandProperty         = "channel-expand"
+
+	YtDlpLatestDownloadedVersionProperty = "yt-dlp-latest-downloaded-version"
 )
 
 func VideoProperties() []string {
@@ -107,10 +109,17 @@ func ChannelProperties() []string {
 	}
 }
 
+func YtDlpProperties() []string {
+	return []string{
+		YtDlpLatestDownloadedVersionProperty,
+	}
+}
+
 func AllProperties() []string {
 	properties := make([]string, 0)
 	properties = append(properties, VideoProperties()...)
 	properties = append(properties, PlaylistProperties()...)
 	properties = append(properties, ChannelProperties()...)
+	properties = append(properties, YtDlpProperties()...)
 	return properties
 }

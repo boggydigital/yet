@@ -18,7 +18,7 @@ func SyncHandler(u *url.URL) error {
 
 func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 
-	sa := nod.Begin("syncing playlists...")
+	sa := nod.Begin("syncing yet data...")
 	defer sa.End()
 
 	if opt == nil {
@@ -28,6 +28,10 @@ func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
+		return sa.EndWithError(err)
+	}
+
+	if err := UpdateYtDlp(false); err != nil {
 		return sa.EndWithError(err)
 	}
 

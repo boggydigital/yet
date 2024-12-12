@@ -5,8 +5,10 @@ import (
 	"errors"
 	"github.com/arelate/southern_light/github_integration"
 	"github.com/boggydigital/dolo"
+	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"io"
@@ -44,6 +46,16 @@ func UpdateYtDlp(force bool) error {
 	uyda := nod.Begin("updating yt-dlp and plugins...")
 	defer uyda.EndWithResult("done")
 
+	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
+	if err != nil {
+		return uyda.EndWithError(err)
+	}
+
+	rdx, err := kevlar.NewReduxWriter(metadataDir, data.YtDlpLatestDownloadedVersionProperty)
+	if err != nil {
+		return uyda.EndWithError(err)
+	}
+
 	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
 	if err != nil {
 		return uyda.EndWithError(err)
@@ -59,14 +71,8 @@ func UpdateYtDlp(force bool) error {
 	dc := dolo.DefaultClient
 
 	// update yt-dlp
-
-	latestYtDlpRelease, err := getLatestGitHubRelease(ytDlpOwnerRepo)
-	if err != nil {
-		return uyda.EndWithError(err)
-	}
-
 	ytDlpAsset := yeti.GetYtDlpBinary()
-	if err := downloadAsset(ytDlpDir, latestYtDlpRelease, ytDlpAsset, dc, force); err != nil {
+	if err := getAsset(ytDlpOwnerRepo, ytDlpAsset, ytDlpDir, dc, rdx, force); err != nil {
 		return uyda.EndWithError(err)
 	}
 
@@ -76,33 +82,56 @@ func UpdateYtDlp(force bool) error {
 	}
 
 	// update yt-dlp-get-pot
-
-	latestYtDlpGetPotRelease, err := getLatestGitHubRelease(ytDlpGetPotOwnerRepo)
-	if err != nil {
-		return uyda.EndWithError(err)
-	}
-
-	if err := downloadAsset(ytDlpDir, latestYtDlpGetPotRelease, ytDlpGetPotAsset, dc, force); err != nil {
+	if err := getAsset(ytDlpGetPotOwnerRepo, ytDlpGetPotAsset, ytDlpDir, dc, rdx, force); err != nil {
 		return uyda.EndWithError(err)
 	}
 
 	if err := copyYtDlpPlugin(ytDlpDir, ytDlpPluginsDir, ytDlpGetPotAsset, force); err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	// update bgutil-ytdlp-pot-provider
-
-	latestYtDlpPotProviderRelease, err := getLatestGitHubRelease(ytDlpPotProviderOwnerRepo)
-	if err != nil {
-		return uyda.EndWithError(err)
-	}
-
-	if err := downloadAsset(ytDlpDir, latestYtDlpPotProviderRelease, ytDlpPotProviderAsset, dc, force); err != nil {
+	if err := getAsset(ytDlpPotProviderOwnerRepo, ytDlpPotProviderAsset, ytDlpDir, dc, rdx, force); err != nil {
 		return uyda.EndWithError(err)
 	}
 
 	if err := copyYtDlpPlugin(ytDlpDir, ytDlpPluginsDir, ytDlpPotProviderAsset, force); err != nil {
-		return uyda.EndWithError(err)
+		return err
+	}
+
+	return nil
+}
+
+func getAsset(ownerRepo, asset string, downloadDir string, dc *dolo.Client, rdx kevlar.WriteableRedux, force bool) error {
+
+	gaa := nod.Begin(" getting %s asset...", ownerRepo)
+	defer gaa.EndWithResult("done")
+
+	latestRelease, err := getLatestGitHubRelease(ownerRepo)
+	if err != nil {
+		return err
+	}
+
+	updateAsset := false
+
+	if ldv, ok := rdx.GetLastVal(data.YtDlpLatestDownloadedVersionProperty, ownerRepo); ok {
+		if ldv != latestRelease.TagName || force {
+			updateAsset = true
+		}
+	} else {
+		updateAsset = true
+	}
+
+	if updateAsset {
+		if err := downloadAsset(downloadDir, latestRelease, asset, dc, updateAsset); err != nil {
+			return err
+		}
+
+		if err := rdx.ReplaceValues(data.YtDlpLatestDownloadedVersionProperty, ownerRepo, latestRelease.TagName); err != nil {
+			return err
+		}
+	} else {
+		gaa.EndWithResult("already got the latest version")
 	}
 
 	return nil
