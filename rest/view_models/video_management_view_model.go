@@ -34,6 +34,16 @@ func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoMan
 		endedReason = data.ParseVideoEndedReason(er)
 	}
 
+	downloadQueued := false
+	if dqs, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, videoId); ok {
+		downloadQueued = true
+		if dcs, sure := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); sure {
+			if dqs < dcs {
+				downloadQueued = false
+			}
+		}
+	}
+
 	return &VideoManagementViewModel{
 		VideoId:         videoId,
 		VideoTitle:      videoTitle,
@@ -43,7 +53,7 @@ func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoMan
 		Ended:           rdx.HasKey(data.VideoEndedDateProperty, videoId),
 		EndedReason:     endedReason,
 		AllEndedReasons: data.AllVideoEndedReasons(),
-		DownloadQueued:  rdx.HasKey(data.VideoDownloadQueuedProperty, videoId),
+		DownloadQueued:  downloadQueued,
 		ForcedDownload:  rdx.HasKey(data.VideoForcedDownloadProperty, videoId),
 	}
 }
