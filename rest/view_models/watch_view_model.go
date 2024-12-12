@@ -3,11 +3,14 @@ package view_models
 import (
 	"fmt"
 	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"os"
+	"path/filepath"
 	"slices"
 	"sort"
 	"strconv"
@@ -92,7 +95,15 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 			} else {
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
 					localPlayback = true
-					videoUrl = "/video?file=" + url.QueryEscape(absLocalVideoFilename)
+
+					videosDir, err := pathways.GetAbsDir(paths.Videos)
+					if err != nil {
+						return nil, err
+					}
+
+					relLocalVideoFilename, err := filepath.Rel(videosDir, absLocalVideoFilename)
+
+					videoUrl = "/video?file=" + url.QueryEscape(relLocalVideoFilename)
 					videoTitle = title
 					videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
 
