@@ -17,6 +17,8 @@ import (
 	"strings"
 )
 
+const ytDlpCookiesFilename = "cookies.txt"
+
 var defaultYtDlpOptions = map[string]string{
 	"-S": "vcodec:h264,res:1080,acodec:m4a",
 }
@@ -178,18 +180,24 @@ func downloadWithYtDlp(videoId, absFilename string) error {
 		}
 	}
 
+	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
+	if err != nil {
+		return dyda.EndWithError(err)
+	}
+
 	options := make([]string, 0)
 
 	options = append(options, videoId)
 	options = append(options, "-o", absFilename)
 
-	for flag, value := range defaultYtDlpOptions {
-		options = append(options, flag, value)
+	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)
+
+	if _, err := os.Stat(absYtDlpCookiesPath); err == nil {
+		options = append(options, "--cookies", absYtDlpCookiesPath)
 	}
 
-	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
-	if err != nil {
-		return dyda.EndWithError(err)
+	for flag, value := range defaultYtDlpOptions {
+		options = append(options, flag, value)
 	}
 
 	absYtDlpFilename := filepath.Join(ytDlpDir, yeti.GetYtDlpBinary())
