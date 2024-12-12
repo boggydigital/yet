@@ -95,7 +95,7 @@
         the {{if .LocalPlayback}}local{{else}}origin{{end}} server
     </div>
 
-    <video controls='controls' preload='metadata' poster='{{.VideoPoster}}'>
+    <video controls='controls' preload='none' poster='{{.VideoPoster}}'>
         <source src='{{.VideoUrl}}'/>
     </video>
 
