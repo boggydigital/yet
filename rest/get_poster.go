@@ -75,3 +75,4 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+}
