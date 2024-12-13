@@ -19,6 +19,8 @@ import (
 
 const ytDlpCookiesFilename = "cookies.txt"
 
+const videoIdPrefix = "video-id="
+
 var defaultYtDlpOptions = map[string]string{
 	"-S": "vcodec:h264,res:1080,acodec:m4a",
 }
@@ -53,6 +55,10 @@ func DownloadVideo(rdx kevlar.WriteableRedux, opt *VideoOptions, videoIds ...str
 	da.TotalInt(len(videoIds))
 
 	for _, videoId := range videoIds {
+
+		if strings.HasPrefix(videoId, videoIdPrefix) {
+			videoId = strings.TrimPrefix(videoId, videoIdPrefix)
+		}
 
 		videoId, err = yeti.ParseVideoId(videoId)
 		if err != nil {
@@ -188,7 +194,11 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 
 	arguments := make([]string, 0)
 
-	arguments = append(arguments, videoId)
+	if strings.HasPrefix(videoId, "-") {
+		arguments = append(arguments, "\""+videoId+"\"")
+	} else {
+		arguments = append(arguments, videoId)
+	}
 	arguments = append(arguments, "-o", absFilename)
 
 	if options.Ended {
