@@ -47,32 +47,32 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-  }
+		}
 
 		if _, err := os.Stat(absPosterFilename); err == nil {
 			w.Header().Add("Cache-Control", "max-age=31536000")
 			http.ServeFile(w, r, absPosterFilename)
 			return
+		}
+
+		var br io.ReadSeeker
+		filename := ""
+
+		switch quality {
+		case youtube_urls.ThumbnailQualityMaxRes:
+			filename = "yet_maxresdefault.png"
+			br = bytes.NewReader(yetPosterMaxResDefault)
+		default:
+			filename = "yet_hqdefault.png"
+			br = bytes.NewReader(yetPosterHQDefault)
+		}
+
+		if br != nil {
+			w.Header().Add("Cache-Control", "max-age=31536000")
+			http.ServeContent(w, r, filename, time.Unix(0, 0), br)
+		} else {
+			http.NotFound(w, r)
+		}
+
 	}
-
-	var br io.ReadSeeker
-	filename := ""
-
-	switch quality {
-	case youtube_urls.ThumbnailQualityMaxRes:
-		filename = "yet_maxresdefault.png"
-		br = bytes.NewReader(yetPosterMaxResDefault)
-	default:
-		filename = "yet_hqdefault.png"
-		br = bytes.NewReader(yetPosterHQDefault)
-	}
-
-	if br != nil {
-		w.Header().Add("Cache-Control", "max-age=31536000")
-		http.ServeContent(w, r, filename, time.Unix(0, 0), br)
-	} else {
-		http.NotFound(w, r)
-	}
-
-}
 }
