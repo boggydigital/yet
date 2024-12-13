@@ -32,6 +32,8 @@ services:
       - /docker/yet/captions:/usr/share/yet/captions
       # players
       - /docker/yet/players:/usr/share/yet/players
+      # yt-dlp
+      - /docker/yet/yt-dlp:/usr/share/yet/yt-dlp
       # sharing timezone from the host
       - /etc/localtime:/etc/localtime:ro 
 ```
