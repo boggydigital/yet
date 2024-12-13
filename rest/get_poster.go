@@ -42,16 +42,17 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 
 		// attempt to fetch posters from the origin if they don't exist locally
 		// unless that's a URL file
-		if _, err := os.Stat(absPosterFilename); err != nil {
+		if _, err := os.Stat(absPosterFilename); os.IsNotExist(err) {
 			if err := yeti.GetPosters(videoId, dolo.DefaultClient, false, q); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-		} else {
+  }
+
+		if _, err := os.Stat(absPosterFilename); err == nil {
 			w.Header().Add("Cache-Control", "max-age=31536000")
 			http.ServeFile(w, r, absPosterFilename)
 			return
-		}
 	}
 
 	var br io.ReadSeeker
