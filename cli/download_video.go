@@ -28,6 +28,7 @@ func DownloadVideoHandler(u *url.URL) error {
 
 	videoIds := strings.Split(q.Get("video-id"), ",")
 	options := &VideoOptions{
+		Ended: q.Has("mark-watched"),
 		Force: q.Has("force"),
 	}
 
@@ -149,7 +150,7 @@ func downloadVideo(
 		}
 	}
 
-	if err := downloadWithYtDlp(videoId, absFilename); err != nil {
+	if err := downloadWithYtDlp(videoId, absFilename, options); err != nil {
 		return err
 	}
 
@@ -168,7 +169,7 @@ func downloadVideo(
 	return nil
 }
 
-func downloadWithYtDlp(videoId, absFilename string) error {
+func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error {
 
 	dyda := nod.Begin(" downloading %s with yt-dlp, please wait...", videoId)
 	defer dyda.EndWithResult("done")
@@ -185,23 +186,27 @@ func downloadWithYtDlp(videoId, absFilename string) error {
 		return dyda.EndWithError(err)
 	}
 
-	options := make([]string, 0)
+	arguments := make([]string, 0)
 
-	options = append(options, videoId)
-	options = append(options, "-o", absFilename)
+	arguments = append(arguments, videoId)
+	arguments = append(arguments, "-o", absFilename)
+
+	if options.Ended {
+		arguments = append(arguments, "--mark-watched")
+	}
 
 	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)
 
 	if _, err := os.Stat(absYtDlpCookiesPath); err == nil {
-		options = append(options, "--cookies", absYtDlpCookiesPath)
+		arguments = append(arguments, "--cookies", absYtDlpCookiesPath)
 	}
 
 	for flag, value := range defaultYtDlpOptions {
-		options = append(options, flag, value)
+		arguments = append(arguments, flag, value)
 	}
 
 	absYtDlpFilename := filepath.Join(ytDlpDir, yeti.GetYtDlpBinary())
 
-	cmd := exec.Command(absYtDlpFilename, options...)
+	cmd := exec.Command(absYtDlpFilename, arguments...)
 	return cmd.Run()
 }

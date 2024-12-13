@@ -37,6 +37,7 @@ cleanup-ended-videos
 
 download-video
     video-id^*&
+    mark-watched
     force
 
 get-captions
