@@ -6,7 +6,6 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
@@ -28,7 +27,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 
 	dl := dolo.DefaultClient
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
 		return gca.EndWithError(err)
 	}

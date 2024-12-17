@@ -6,7 +6,6 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
@@ -36,7 +35,7 @@ func CleanupEndedVideos(now bool, rdx kevlar.WriteableRedux) error {
 		return cea.EndWithError(err)
 	}
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
 		return cea.EndWithError(err)
 	}
@@ -159,7 +158,7 @@ func removeVideoFile(videoId string, rdx kevlar.ReadableRedux) error {
 func removePosters(videoId string) error {
 
 	for _, tq := range youtube_urls.AllThumbnailQualities() {
-		if app, err := paths.AbsPosterPath(videoId, tq); err == nil {
+		if app, err := data.AbsPosterPath(videoId, tq); err == nil {
 			if _, err := os.Stat(app); err == nil {
 				if err = os.Remove(app); err != nil {
 					return err

@@ -9,7 +9,7 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/rutube_urls"
 	"net/http"
@@ -200,7 +200,7 @@ func getVideoSegments(
 	gvsa := nod.NewProgress(" getting video segments for %s...", videoId)
 	defer gvsa.End()
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
 		return gvsa.EndWithError(err)
 	}
@@ -240,7 +240,7 @@ func absManifestFilename(playOptions *rutube_urls.PlayOptions) (string, error) {
 	videoId := playOptions.VideoId
 	channel := busan.Sanitize(playOptions.Author.Name)
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
 		return "", err
 	}
@@ -295,7 +295,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 	mvsa := nod.Begin(" merging video segments for %s, this can take a while...", videoId)
 	defer mvsa.End()
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
 		return mvsa.EndWithError(err)
 	}
@@ -338,7 +338,7 @@ func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []str
 	rmsa := nod.NewProgress(" removing manifest, segments for %s...", videoId)
 	defer rmsa.End()
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
 		return rmsa.EndWithError(err)
 	}

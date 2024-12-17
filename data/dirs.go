@@ -1,4 +1,4 @@
-package paths
+package data
 
 import (
 	"github.com/boggydigital/pathways"

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
@@ -34,7 +34,7 @@ func GetPoster(w http.ResponseWriter, r *http.Request) {
 
 	for q := quality; q != youtube_urls.ThumbnailQualityUnknown; q = youtube_urls.LowerQuality(q) {
 
-		absPosterFilename, err := paths.AbsPosterPath(videoId, q)
+		absPosterFilename, err := data.AbsPosterPath(videoId, q)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

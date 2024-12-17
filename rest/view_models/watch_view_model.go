@@ -5,7 +5,6 @@ import (
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
@@ -96,7 +95,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 				if _, err := os.Stat(absLocalVideoFilename); err == nil {
 					localPlayback = true
 
-					videosDir, err := pathways.GetAbsDir(paths.Videos)
+					videosDir, err := pathways.GetAbsDir(data.Videos)
 					if err != nil {
 						return nil, err
 					}

@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"os"
@@ -18,7 +18,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request) {
 
 	if filepath.IsLocal(file) {
 
-		absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+		absVideosDir, err := pathways.GetAbsDir(data.Videos)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

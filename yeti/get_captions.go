@@ -4,7 +4,6 @@ import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 )
@@ -47,7 +46,7 @@ func GetCaptions(dl *dolo.Client, rdx kevlar.WriteableRedux, videoId string, cap
 			return err
 		}
 
-		if absFilename, err := paths.AbsCaptionsTrackPath(videoId, ct.LanguageCode); err == nil {
+		if absFilename, err := data.AbsCaptionsTrackPath(videoId, ct.LanguageCode); err == nil {
 			if err := dl.Download(u, force, nil, absFilename); err != nil {
 				return err
 			}

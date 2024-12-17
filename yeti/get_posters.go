@@ -3,7 +3,7 @@ package yeti
 import (
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"path/filepath"
 	"strings"
@@ -23,7 +23,7 @@ func GetPosters(videoId string, dl *dolo.Client, force bool, qualities ...youtub
 		_, fnse := filepath.Split(u.Path)
 		fnse = strings.TrimSuffix(fnse, filepath.Ext(fnse))
 
-		if absFilename, err := paths.AbsPosterPath(videoId, q); err == nil {
+		if absFilename, err := data.AbsPosterPath(videoId, q); err == nil {
 			if err := dl.Download(u, force, nil, absFilename); err != nil {
 				if lq := youtube_urls.LowerQuality(q); lq != youtube_urls.ThumbnailQualityUnknown {
 					return GetPosters(videoId, dl, force, lq)

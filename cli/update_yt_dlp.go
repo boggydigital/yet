@@ -9,7 +9,6 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"io"
 	"net/http"
@@ -46,7 +45,7 @@ func UpdateYtDlp(force bool) error {
 	uyda := nod.Begin("updating yt-dlp and plugins...")
 	defer uyda.EndWithResult("done")
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
 		return uyda.EndWithError(err)
 	}
@@ -56,7 +55,7 @@ func UpdateYtDlp(force bool) error {
 		return uyda.EndWithError(err)
 	}
 
-	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
+	ytDlpDir, err := pathways.GetAbsDir(data.YtDlp)
 	if err != nil {
 		return uyda.EndWithError(err)
 	}

@@ -2,7 +2,7 @@ package yeti
 
 import (
 	"github.com/boggydigital/coost"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"strings"
@@ -23,7 +23,7 @@ func GetVideoPage(videoId string) (*youtube_urls.InitialPlayerResponse, error) {
 			if strings.Contains(err.Error(), esc) {
 				errSolvedWithCookies = true
 				// fallback to HTTP client with cookies
-				if absCookiePath, err := paths.AbsCookiesPath(); err == nil {
+				if absCookiePath, err := data.AbsCookiesPath(); err == nil {
 					if hc, err := coost.NewHttpClientFromFile(absCookiePath); err == nil {
 						return youtube_urls.GetVideoPage(hc, videoId)
 					} else {

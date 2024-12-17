@@ -4,7 +4,7 @@ import (
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"net/url"
 )
 
@@ -20,7 +20,7 @@ func Migrate() error {
 		return ma.EndWithError(err)
 	}
 
-	amd, err := pathways.GetAbsDir(paths.Metadata)
+	amd, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
 		return ma.EndWithError(err)
 	}

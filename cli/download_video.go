@@ -6,7 +6,6 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
@@ -132,7 +131,7 @@ func downloadVideo(
 
 	relFilename := yeti.RelLocalVideoFilename(channel, title, videoId)
 
-	absVideosDir, err := pathways.GetAbsDir(paths.Videos)
+	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
 		return err
 	}
@@ -181,7 +180,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 		}
 	}
 
-	ytDlpDir, err := pathways.GetAbsDir(paths.YtDlp)
+	ytDlpDir, err := pathways.GetAbsDir(data.YtDlp)
 	if err != nil {
 		return dyda.EndWithError(err)
 	}

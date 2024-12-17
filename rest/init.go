@@ -5,7 +5,6 @@ import (
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/paths"
 	"html/template"
 )
 
@@ -18,7 +17,7 @@ var (
 
 func Init() error {
 
-	metadataDir, err := pathways.GetAbsDir(paths.Metadata)
+	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
 		return err
 	}

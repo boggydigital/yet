@@ -3,12 +3,12 @@ package cli
 import (
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 )
 
 func validateWritableRedux(rdx kevlar.WriteableRedux, properties ...string) (kevlar.WriteableRedux, error) {
 	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(paths.Metadata)
+		metadataDir, err := pathways.GetAbsDir(data.Metadata)
 		if err != nil {
 			return nil, err
 		}

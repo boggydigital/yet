@@ -7,7 +7,7 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/cli"
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"os"
 )
 
@@ -29,9 +29,9 @@ func main() {
 	defer ya.End()
 
 	if err := pathways.Setup(dirOverridesFilename,
-		paths.DefaultYetRootDir,
+		data.DefaultYetRootDir,
 		nil,
-		paths.AllAbsDirs...); err != nil {
+		data.AllAbsDirs...); err != nil {
 		_ = ya.EndWithError(err)
 		os.Exit(1)
 	}

@@ -1,7 +1,7 @@
 package yeti
 
 import (
-	"github.com/boggydigital/yet/paths"
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
 	"net/http"
@@ -28,7 +28,7 @@ func GetPlayerContent(hc *http.Client, playerUrl string) (io.ReadCloser, error) 
 
 	version := PlayerVersion(playerUrl)
 
-	absPlayerPath, err := paths.AbsPlayerPath(version)
+	absPlayerPath, err := data.AbsPlayerPath(version)
 	if err != nil {
 		return nil, err
 	}
