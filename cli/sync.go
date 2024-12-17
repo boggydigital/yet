@@ -53,6 +53,10 @@ func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 		return sa.EndWithError(err)
 	}
 
+	if err := DehydratePosters(false); err != nil {
+		return sa.EndWithError(err)
+	}
+
 	if err := ScrubEndedProperties(rdx); err != nil {
 		return sa.EndWithError(err)
 	}

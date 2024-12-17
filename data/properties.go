@@ -20,6 +20,9 @@ const (
 	VideoErrorsProperty            = "video-errors"
 	VideoFavoriteProperty          = "video-favorite"
 
+	VideoDehydratedThumbnailProperty = "video-dehydrated-thumbnail"
+	VideoDehydratedRepColorProperty  = "video-dehydrate-rep-color"
+
 	VideoForcedDownloadProperty = "video-forced-download"
 
 	VideoDownloadQueuedProperty    = "video-download-queued"
@@ -57,6 +60,8 @@ func VideoProperties() []string {
 	return []string{
 		VideoTitleProperty,
 		VideoThumbnailUrlsProperty,
+		VideoDehydratedThumbnailProperty,
+		VideoDehydratedRepColorProperty,
 		VideoExternalChannelIdProperty,
 		VideoShortDescriptionProperty,
 		VideoViewCountProperty,

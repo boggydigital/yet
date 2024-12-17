@@ -52,6 +52,7 @@ func main() {
 		"add-video":                   cli.AddVideoHandler,
 		"backup":                      cli.BackupHandler,
 		"cleanup-ended-videos":        cli.CleanupEndedVideosHandler,
+		"dehydrate-posters":           cli.DehydratePostersHandler,
 		"download-video":              cli.DownloadVideoHandler,
 		"get-captions":                cli.GetCaptionsHandler,
 		"get-channels-metadata":       cli.GetChannelsMetadataHandler,

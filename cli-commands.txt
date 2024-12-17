@@ -35,6 +35,9 @@ backup
 cleanup-ended-videos
     now
 
+dehydrate-posters
+    force
+
 download-video
     video-id^*&
     mark-watched
