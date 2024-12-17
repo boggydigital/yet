@@ -41,8 +41,14 @@ func DehydratePosters(force bool) error {
 
 	dehydratedPosters := make(map[string][]string)
 	dehydratedRepColors := make(map[string][]string)
+	dehydratedInputMissing := make(map[string][]string)
 
 	for _, videoId := range videoIds {
+
+		if rdx.HasKey(data.VideoDehydratedInputMissingProperty, videoId) && !force {
+			dpa.Increment()
+			continue
+		}
 
 		if rdx.HasKey(data.VideoDehydratedThumbnailProperty, videoId) && !force {
 			dpa.Increment()
@@ -53,7 +59,7 @@ func DehydratePosters(force bool) error {
 			dehydratedPosters[videoId] = append(dehydratedPosters[videoId], dp)
 			dehydratedRepColors[videoId] = append(dehydratedRepColors[videoId], rc)
 		} else if errors.Is(err, ErrVideoHasNoPosterThumbnail) {
-			// do nothing
+			dehydratedInputMissing[videoId] = append(dehydratedInputMissing[videoId], "true")
 		} else {
 			dpa.Error(err)
 		}
@@ -66,6 +72,10 @@ func DehydratePosters(force bool) error {
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoDehydratedRepColorProperty, dehydratedRepColors); err != nil {
+		return dpa.EndWithError(err)
+	}
+
+	if err := rdx.BatchReplaceValues(data.VideoDehydratedInputMissingProperty, dehydratedInputMissing); err != nil {
 		return dpa.EndWithError(err)
 	}
 
