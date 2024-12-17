@@ -1,0 +1,5 @@
+issa-image.video-poster {
+    & img {
+        object-fit: cover;
+    }
+}

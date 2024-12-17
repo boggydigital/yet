@@ -46,6 +46,8 @@ func HandleFuncs() {
 		"GET /manage_channel":            http.HandlerFunc(GetManageChannel),
 		"GET /update_channel":            http.HandlerFunc(GetUpdateChannel),
 
+		"GET /compton": Log(http.HandlerFunc(GetCompton)),
+
 		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}
 

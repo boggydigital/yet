@@ -18,6 +18,7 @@ require (
 )
 
 require (
+	github.com/boggydigital/compton v0.2.27 // indirect
 	github.com/boggydigital/match_node v0.1.17 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
 	golang.org/x/image v0.23.0 // indirect

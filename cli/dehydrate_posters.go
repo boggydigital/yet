@@ -2,6 +2,7 @@ package cli
 
 import (
 	"errors"
+	"fmt"
 	"github.com/boggydigital/issa"
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
@@ -45,12 +46,16 @@ func DehydratePosters(force bool) error {
 
 	for _, videoId := range videoIds {
 
+		if videoId == "KuCRvr6R8Lc" {
+			fmt.Println("KuCRvr6R8Lc")
+		}
+
 		if rdx.HasKey(data.VideoDehydratedInputMissingProperty, videoId) && !force {
 			dpa.Increment()
 			continue
 		}
 
-		if rdx.HasKey(data.VideoDehydratedThumbnailProperty, videoId) && !force {
+		if rdx.HasKey(data.VideoDehydratedPosterProperty, videoId) && !force {
 			dpa.Increment()
 			continue
 		}
@@ -67,7 +72,7 @@ func DehydratePosters(force bool) error {
 		dpa.Increment()
 	}
 
-	if err := rdx.BatchReplaceValues(data.VideoDehydratedThumbnailProperty, dehydratedPosters); err != nil {
+	if err := rdx.BatchReplaceValues(data.VideoDehydratedPosterProperty, dehydratedPosters); err != nil {
 		return dpa.EndWithError(err)
 	}
 
