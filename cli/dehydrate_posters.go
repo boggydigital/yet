@@ -12,6 +12,10 @@ import (
 	"os"
 )
 
+var (
+	ErrVideoHasNoPosterThumbnail = errors.New("video has no poster thumbnails")
+)
+
 func DehydratePostersHandler(u *url.URL) error {
 	force := u.Query().Has("force")
 	return DehydratePosters(force)
@@ -48,6 +52,8 @@ func DehydratePosters(force bool) error {
 		if dp, rc, err := dehydratePosterImageRepColor(videoId); err == nil {
 			dehydratedPosters[videoId] = append(dehydratedPosters[videoId], dp)
 			dehydratedRepColors[videoId] = append(dehydratedRepColors[videoId], rc)
+		} else if errors.Is(err, ErrVideoHasNoPosterThumbnail) {
+			// do nothing
 		} else {
 			dpa.Error(err)
 		}
@@ -80,10 +86,11 @@ func dehydratePosterImageRepColor(videoId string) (string, string, error) {
 		if _, err := os.Stat(absPosterPath); err == nil {
 			break
 		}
+		absPosterPath = ""
 	}
 
 	if absPosterPath == "" {
-		return "", "", errors.New("video has no poster thumbnails: " + videoId)
+		return "", "", ErrVideoHasNoPosterThumbnail
 	}
 
 	return issa.DehydrateImageRepColor(absPosterPath)
