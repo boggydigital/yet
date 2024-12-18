@@ -1,5 +1,8 @@
 @scope(.video-link) {
     :scope {
+
+        width: 100%;
+
         &.ended {
             filter: sepia(1.0);
         }
@@ -23,8 +26,7 @@
 
         & h2 {
             font-size: var(--fs-n);
-            width: 100%;
-            white-space: nowrap;
+            line-clamp: 1;
             overflow: hidden;
             text-overflow: ellipsis;
         }
