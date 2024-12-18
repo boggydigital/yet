@@ -1,5 +1,34 @@
-issa-image.video-poster {
-    & img {
-        object-fit: cover;
+@scope(.video-link) {
+    :scope {
+        & issa-image.poster {
+            --w: 100%;
+
+            & img {
+                object-fit: cover;
+            }
+        }
+
+        & .duration {
+            position: absolute;
+            padding: var(--s-s);
+            font-size: var(--fs-s);
+            font-weight: var(--fw-b);
+            background: var(--c-highlight);
+            border-top-left-radius: var(--br-n);
+            border-bottom-right-radius: var(--br-n);
+            color: var(--c-foreground);
+        }
+
+        & h2 {
+            font-size: var(--fs-n);
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 }
+
+
+
+
