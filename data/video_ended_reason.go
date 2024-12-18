@@ -9,6 +9,12 @@ const (
 	DefaultEndedReason                  = Completed
 )
 
+var videoEndedReasonStrings = map[VideoEndedReason]string{
+	Completed:  "Completed",
+	Skipped:    "Skipped",
+	SeenEnough: "Seen enough",
+}
+
 func ParseVideoEndedReason(s string) VideoEndedReason {
 	switch s {
 	case string(Completed):
@@ -28,4 +34,8 @@ func AllVideoEndedReasons() []VideoEndedReason {
 		Skipped,
 		SeenEnough,
 	}
+}
+
+func (ver VideoEndedReason) String() string {
+	return videoEndedReasonStrings[ver]
 }
