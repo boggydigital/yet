@@ -2,7 +2,6 @@ package cli
 
 import (
 	"errors"
-	"fmt"
 	"github.com/boggydigital/issa"
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
@@ -45,10 +44,6 @@ func DehydratePosters(force bool) error {
 	dehydratedInputMissing := make(map[string][]string)
 
 	for _, videoId := range videoIds {
-
-		if videoId == "KuCRvr6R8Lc" {
-			fmt.Println("KuCRvr6R8Lc")
-		}
 
 		if rdx.HasKey(data.VideoDehydratedInputMissingProperty, videoId) && !force {
 			dpa.Increment()
