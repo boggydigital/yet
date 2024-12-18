@@ -1,5 +1,9 @@
 @scope(.video-link) {
     :scope {
+        &.ended {
+            filter: sepia(1.0);
+        }
+
         & issa-image.poster {
             --w: 100%;
 

@@ -18,6 +18,8 @@ func GetCompton(w http.ResponseWriter, r *http.Request) {
 		"jwVEhEPK9dI",
 		"KuCRvr6R8Lc",
 		"xF8huW3imyk",
+		"b8I4SsQTqaY",
+		"KVUHtsxNFyM",
 	}
 
 	pageStack := compton.FlexItems(p, direction.Column)

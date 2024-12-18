@@ -25,7 +25,7 @@ func DefaultVideoDisplayOptions() *VideoDisplayOptions {
 	return &VideoDisplayOptions{
 		Duration:    true,
 		PublishDate: true,
-		EndedDate:   false,
+		EndedDate:   true,
 		Downloaded:  false,
 	}
 }
@@ -93,10 +93,26 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, op
 	}
 
 	if opt.Downloaded {
-		downFrow := compton.Frow(r).FontSize(size.Small)
 		if dts, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); ok && dts != "" {
+			downFrow := compton.Frow(r).FontSize(size.Small)
 			downFrow.PropVal("Downloaded", parseAndFormat(dts))
 			stack.Append(downFrow)
+		}
+	}
+
+	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
+		link.AddClass("ended")
+		if opt.EndedDate {
+			endedFrow := compton.Frow(r).FontSize(size.Small)
+			endedFrow.PropVal("Ended", parseAndFormatDate(ets))
+
+			endedReason := data.DefaultEndedReason
+			if er, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+				endedReason = data.ParseVideoEndedReason(er)
+			}
+			endedFrow.PropVal("How", string(endedReason))
+
+			stack.Append(endedFrow)
 		}
 	}
 
@@ -106,6 +122,14 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, op
 func parseAndFormat(ts string) string {
 	if pt, err := time.Parse(time.RFC3339, ts); err == nil {
 		return pt.Local().Format(time.RFC1123)
+	} else {
+		return ts
+	}
+}
+
+func parseAndFormatDate(ts string) string {
+	if pt, err := time.Parse(time.RFC3339, ts); err == nil {
+		return pt.Local().Format("Mon, 2 Jan 2006")
 	} else {
 		return ts
 	}
