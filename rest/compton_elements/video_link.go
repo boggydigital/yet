@@ -3,6 +3,7 @@ package compton_elements
 import (
 	"embed"
 	"github.com/boggydigital/compton"
+	"github.com/boggydigital/compton/consts/color"
 	"github.com/boggydigital/compton/consts/direction"
 	"github.com/boggydigital/compton/consts/size"
 	"github.com/boggydigital/kevlar"
@@ -21,7 +22,7 @@ const (
 	ShowPublishedDate VideoDisplayOptions = iota
 	ShowDownloadedDate
 	ShowEndedDate
-	ShowDuration
+	//ShowDuration
 	ShowOwnerChannel
 )
 
@@ -52,13 +53,31 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, op
 
 	stack.Append(issaImage)
 
-	if slices.Contains(options, ShowDuration) {
-		if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
-			if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
-				durationDiv := compton.DivText(formatSeconds(duri))
-				durationDiv.AddClass("duration")
-				stack.Append(durationDiv)
+	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+		if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
+
+			var remaining int64
+
+			if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
+				if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
+					remaining = duri - cti
+				}
 			}
+
+			durationItems := compton.FlexItems(r, direction.Row).FontSize(size.Small).ColumnGap(size.Small)
+			durationItems.AddClass("duration")
+
+			durSpan := compton.Fspan(r, formatSeconds(duri))
+
+			if remaining > 0 {
+				remSpan := compton.SpanText(formatSeconds(remaining))
+				durationItems.Append(remSpan)
+				durSpan.ForegroundColor(color.Gray)
+			}
+
+			durationItems.Append(durSpan)
+
+			stack.Append(durationItems)
 		}
 	}
 
