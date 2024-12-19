@@ -5,10 +5,10 @@ import (
 	"github.com/boggydigital/compton"
 	"github.com/boggydigital/compton/consts/color"
 	"github.com/boggydigital/compton/consts/direction"
+	"github.com/boggydigital/compton/consts/font_weight"
 	"github.com/boggydigital/compton/consts/size"
 	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/yet/data"
-	"slices"
 	"strconv"
 	"time"
 )
@@ -16,22 +16,32 @@ import (
 //go:embed "styles/*.css"
 var videoLinkStyles embed.FS
 
-type VideoDisplayOptions int
+var propertyTitles = map[string]string{
+	data.VideoOwnerChannelNameProperty:  "Channel",
+	data.VideoEndedDateProperty:         "Ended",
+	data.VideoPublishDateProperty:       "Published",
+	data.VideoDownloadCompletedProperty: "Downloaded",
+	data.VideoEndedReasonProperty:       "How",
+}
 
-const (
-	ShowPublishedDate VideoDisplayOptions = iota
-	ShowDownloadedDate
-	ShowEndedDate
-	//ShowDuration
-	ShowOwnerChannel
-)
+var propertiesOrder = []string{
+	data.VideoOwnerChannelNameProperty,
+	data.VideoEndedDateProperty,
+	data.VideoPublishDateProperty,
+	data.VideoDownloadCompletedProperty,
+	data.VideoEndedReasonProperty,
+}
 
-func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, options ...VideoDisplayOptions) compton.Element {
+func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux) compton.Element {
 
 	r.RegisterStyles(videoLinkStyles, "styles/video-link.css")
 
 	link := compton.A("/watch?v=" + videoId)
 	link.AddClass("video-link")
+
+	if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+		link.AddClass("ended")
+	}
 
 	stack := compton.FlexItems(r, direction.Column).RowGap(size.Small)
 	link.Append(stack)
@@ -70,9 +80,11 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, op
 			durSpan := compton.Fspan(r, formatSeconds(duri))
 
 			if remaining > 0 {
-				remSpan := compton.SpanText(formatSeconds(remaining))
+				remSpan := compton.Fspan(r, formatSeconds(remaining)).FontWeight(font_weight.Bolder)
 				durationItems.Append(remSpan)
 				durSpan.ForegroundColor(color.Gray)
+			} else {
+				durSpan.FontWeight(font_weight.Bolder)
 			}
 
 			durationItems.Append(durSpan)
@@ -85,15 +97,42 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, op
 		stack.Append(compton.H2Text(title))
 	}
 
-	if slices.Contains(options, ShowOwnerChannel) {
-		if och, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {
-			channelFrow := compton.Frow(r).FontSize(size.Small)
-			channelFrow.PropVal("Channel", och)
-			stack.Append(channelFrow)
+	vsp := videoSummaryProperties(videoId, rdx)
+
+	for _, p := range propertiesOrder {
+		v := vsp[p]
+		if v == "" {
+			continue
 		}
+		fr := compton.Frow(r).FontSize(size.Small)
+		fr.PropVal(propertyTitles[p], v)
+
+		if p == data.VideoEndedDateProperty {
+			endedReason := data.DefaultEndedReason
+			if ers, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+				endedReason = data.ParseVideoEndedReason(ers)
+			}
+			fr.PropVal(propertyTitles[data.VideoEndedReasonProperty], endedReason.String())
+		}
+
+		stack.Append(fr)
 	}
 
-	if slices.Contains(options, ShowPublishedDate) {
+	return link
+}
+
+func videoSummaryProperties(videoId string, rdx kevlar.ReadableRedux) map[string]string {
+	properties := make(map[string]string)
+
+	if och, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {
+		properties[data.VideoOwnerChannelNameProperty] = och
+	}
+
+	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
+		properties[data.VideoEndedDateProperty] = parseAndFormatDate(ets)
+	}
+
+	if len(properties) < 2 {
 		var publishedDate string
 		if pds, ok := rdx.GetLastVal(data.VideoPublishDateProperty, videoId); ok && pds != "" {
 			publishedDate = parseAndFormatDate(pds)
@@ -104,37 +143,17 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux, op
 		}
 
 		if publishedDate != "" {
-			pubFrow := compton.Frow(r).FontSize(size.Small)
-			pubFrow.PropVal("Published", publishedDate)
-			stack.Append(pubFrow)
+			properties[data.VideoPublishDateProperty] = publishedDate
 		}
 	}
 
-	if slices.Contains(options, ShowDownloadedDate) {
+	if len(properties) < 2 {
 		if dts, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); ok && dts != "" {
-			downFrow := compton.Frow(r).FontSize(size.Small)
-			downFrow.PropVal("Downloaded", parseAndFormatDate(dts))
-			stack.Append(downFrow)
+			properties[data.VideoDownloadCompletedProperty] = parseAndFormatDate(dts)
 		}
 	}
 
-	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
-		link.AddClass("ended")
-		if slices.Contains(options, ShowEndedDate) {
-			endedFrow := compton.Frow(r).FontSize(size.Small)
-			endedFrow.PropVal("Ended", parseAndFormatDate(ets))
-
-			endedReason := data.DefaultEndedReason
-			if er, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
-				endedReason = data.ParseVideoEndedReason(er)
-			}
-			endedFrow.PropVal("How", endedReason.String())
-
-			stack.Append(endedFrow)
-		}
-	}
-
-	return link
+	return properties
 }
 
 func parseAndFormat(ts string) string {

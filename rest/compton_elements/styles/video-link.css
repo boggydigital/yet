@@ -1,8 +1,6 @@
 @scope(.video-link) {
     :scope {
 
-        width: 100%;
-
         &.ended {
             filter: sepia(1.0);
         }

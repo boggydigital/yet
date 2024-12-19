@@ -30,10 +30,7 @@ func GetCompton(w http.ResponseWriter, r *http.Request) {
 	pageStack.Append(gridItems)
 
 	for _, videoId := range videoIds {
-		videoLink := compton_elements.VideoLink(p, videoId, rdx,
-			compton_elements.ShowOwnerChannel,
-			compton_elements.ShowPublishedDate,
-			compton_elements.ShowEndedDate)
+		videoLink := compton_elements.VideoLink(p, videoId, rdx)
 		gridItems.Append(videoLink)
 
 	}
