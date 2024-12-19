@@ -112,7 +112,7 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux) co
 			if ers, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
 				endedReason = data.ParseVideoEndedReason(ers)
 			}
-			fr.PropVal(propertyTitles[data.VideoEndedReasonProperty], endedReason.String())
+			fr.PropVal(propertyTitles[data.VideoEndedReasonProperty], string(endedReason))
 		}
 
 		stack.Append(fr)
