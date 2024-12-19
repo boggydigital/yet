@@ -7,6 +7,7 @@ import (
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/rest/compton_elements"
 	"net/http"
+	"slices"
 )
 
 func GetCompton(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +15,8 @@ func GetCompton(w http.ResponseWriter, r *http.Request) {
 	p := compton.Page("compton test area")
 
 	videoIds := rdx.Keys(data.VideoTitleProperty)
+	slices.Sort(videoIds)
+	videoIds = videoIds[:20]
 
 	pageStack := compton.FlexItems(p, direction.Column)
 	p.Append(pageStack)

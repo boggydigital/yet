@@ -22,5 +22,5 @@ require (
 	github.com/boggydigital/match_node v0.1.17 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
 	golang.org/x/image v0.23.0 // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 )
