@@ -91,30 +91,3 @@ func mkdirAllVideoIdDirs(path, videoId string) (string, error) {
 
 	return subPath, nil
 }
-
-func AbsPlayerPath(version string) (string, error) {
-	pdp, err := pathways.GetAbsDir(Players)
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(pdp, version+defaultScriptExt), nil
-}
-
-func AbsNParamDecoderPath(version string) (string, error) {
-	pdp, err := pathways.GetAbsDir(Players)
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(pdp, version+nParamDecoderSfx+defaultScriptExt), nil
-}
-
-func AbsSignatureCipherDecoderPath(version string) (string, error) {
-	pdp, err := pathways.GetAbsDir(Players)
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(pdp, version+signatureCipherDecoderSfx+defaultScriptExt), nil
-}
