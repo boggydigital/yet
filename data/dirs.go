@@ -13,7 +13,6 @@ const (
 	Videos   pathways.AbsDir = "videos"
 	Posters  pathways.AbsDir = "posters"
 	Captions pathways.AbsDir = "captions"
-	Players  pathways.AbsDir = "players"
 	YtDlp    pathways.AbsDir = "yt-dlp"
 )
 
@@ -24,6 +23,5 @@ var AllAbsDirs = []pathways.AbsDir{
 	Videos,
 	Posters,
 	Captions,
-	Players,
 	YtDlp,
 }
