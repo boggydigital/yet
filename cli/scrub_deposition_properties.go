@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"net/url"
 	"slices"
@@ -19,7 +19,7 @@ func ScrubDepositionPropertiesHandler(u *url.URL) error {
 // - part of current channel, playlist data
 // - downloaded, not-ended videos
 // Then we iterate over all non-preserved properties and remove data for all non-critical videos
-func ScrubDepositionProperties(rdx kevlar.WriteableRedux) error {
+func ScrubDepositionProperties(rdx redux.Writeable) error {
 	sdpa := nod.NewProgress("scrubbing deposition properties...")
 	defer sdpa.End()
 

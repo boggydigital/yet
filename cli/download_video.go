@@ -2,9 +2,9 @@ package cli
 
 import (
 	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
@@ -34,7 +34,7 @@ func DownloadVideoHandler(u *url.URL) error {
 	return DownloadVideo(nil, options, videoIds...)
 }
 
-func DownloadVideo(rdx kevlar.WriteableRedux, opt *VideoOptions, videoIds ...string) error {
+func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) error {
 
 	da := nod.NewProgress("downloading videos...")
 	defer da.EndWithResult("done")

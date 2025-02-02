@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"net/url"
 )
@@ -22,7 +22,7 @@ func AddChannelHandler(u *url.URL) error {
 	return AddChannel(nil, channelId, options)
 }
 
-func AddChannel(rdx kevlar.WriteableRedux, channelId string, opt *ChannelOptions) error {
+func AddChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) error {
 
 	aca := nod.Begin("adding channel %s...", channelId)
 	defer aca.End()

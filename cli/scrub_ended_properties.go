@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"golang.org/x/exp/slices"
 	"net/url"
@@ -25,7 +25,7 @@ func ScrubEndedPropertiesHandler(_ *url.URL) error {
 
 // ScrubEndedProperties will remove all non-preserved properties for ended videos.
 // Preserved properties are required for core functionality - history, cleanup, etc.
-func ScrubEndedProperties(rdx kevlar.WriteableRedux) error {
+func ScrubEndedProperties(rdx redux.Writeable) error {
 	sevpa := nod.NewProgress("scrubbing ended videos properties...")
 	defer sevpa.End()
 

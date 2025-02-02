@@ -2,14 +2,14 @@ package rest
 
 import (
 	"embed"
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"html/template"
 )
 
 var (
-	rdx  kevlar.WriteableRedux
+	rdx  redux.Writeable
 	tmpl *template.Template
 	//go:embed "templates/*.gohtml"
 	templates embed.FS
@@ -22,7 +22,7 @@ func Init() error {
 		return err
 	}
 
-	if rdx, err = kevlar.NewReduxWriter(metadataDir, data.AllProperties()...); err != nil {
+	if rdx, err = redux.NewWriter(metadataDir, data.AllProperties()...); err != nil {
 		return err
 	}
 

@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"slices"
 	"strconv"
@@ -43,7 +43,7 @@ type VideoViewModel struct {
 	ViewCount          string
 }
 
-func GetVideoViewModel(videoId string, rdx kevlar.ReadableRedux, options ...VideoOptions) *VideoViewModel {
+func GetVideoViewModel(videoId string, rdx redux.Readable, options ...VideoOptions) *VideoViewModel {
 
 	videoTitle := videoId
 	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {

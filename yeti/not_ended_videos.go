@@ -1,11 +1,11 @@
 package yeti
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
-func ChannelNotEndedVideos(channelId string, rdx kevlar.ReadableRedux) []string {
+func ChannelNotEndedVideos(channelId string, rdx redux.Readable) []string {
 	return notEndedVideos(
 		channelId,
 		data.ChannelVideosProperty,
@@ -13,7 +13,7 @@ func ChannelNotEndedVideos(channelId string, rdx kevlar.ReadableRedux) []string 
 		rdx)
 }
 
-func PlaylistNotEndedVideos(playlistId string, rdx kevlar.ReadableRedux) []string {
+func PlaylistNotEndedVideos(playlistId string, rdx redux.Readable) []string {
 	return notEndedVideos(
 		playlistId,
 		data.PlaylistVideosProperty,
@@ -21,7 +21,7 @@ func PlaylistNotEndedVideos(playlistId string, rdx kevlar.ReadableRedux) []strin
 		rdx)
 }
 
-func notEndedVideos(id string, videosProperty, downloadPolicyProperty string, rdx kevlar.ReadableRedux) []string {
+func notEndedVideos(id string, videosProperty, downloadPolicyProperty string, rdx redux.Readable) []string {
 
 	videos, ok := rdx.GetAllValues(videosProperty, id)
 	if !ok {

@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
@@ -12,7 +12,7 @@ func QueueChannelsDownloadsHandler(u *url.URL) error {
 	return QueueChannelsDownloads(nil)
 }
 
-func QueueChannelsDownloads(rdx kevlar.WriteableRedux) error {
+func QueueChannelsDownloads(rdx redux.Writeable) error {
 
 	qcda := nod.NewProgress("queueing channels downloads...")
 	defer qcda.End()
@@ -42,7 +42,7 @@ func QueueChannelsDownloads(rdx kevlar.WriteableRedux) error {
 
 // queueChannelDownloads goes through channel videos according to the download policy,
 // skips ended and previously queued videos and queues the rest
-func queueChannelDownloads(rdx kevlar.WriteableRedux, channelId string) error {
+func queueChannelDownloads(rdx redux.Writeable, channelId string) error {
 
 	queue := make(map[string][]string)
 

@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
@@ -11,7 +11,7 @@ type VideoErrorViewModel struct {
 	Error      string
 }
 
-func GetVideoErrorViewModel(videoId, error string, rdx kevlar.ReadableRedux) *VideoErrorViewModel {
+func GetVideoErrorViewModel(videoId, error string, rdx redux.Readable) *VideoErrorViewModel {
 	videoTitle := ""
 	if vt, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vt != "" {
 		videoTitle = vt

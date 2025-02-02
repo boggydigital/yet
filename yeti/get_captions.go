@@ -2,13 +2,13 @@ package yeti
 
 import (
 	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 )
 
-func GetCaptions(dl *dolo.Client, rdx kevlar.WriteableRedux, videoId string, captionTracks []youtube_urls.CaptionTrack, force bool) error {
+func GetCaptions(dl *dolo.Client, rdx redux.Writeable, videoId string, captionTracks []youtube_urls.CaptionTrack, force bool) error {
 
 	properties := []string{
 		data.VideoCaptionsNamesProperty,

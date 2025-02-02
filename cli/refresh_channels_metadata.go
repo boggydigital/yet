@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"net/url"
 )
@@ -11,7 +11,7 @@ func RefreshChannelsMetadataHandler(_ *url.URL) error {
 	return RefreshChannelsMetadata(nil)
 }
 
-func RefreshChannelsMetadata(rdx kevlar.WriteableRedux) error {
+func RefreshChannelsMetadata(rdx redux.Writeable) error {
 
 	ucma := nod.NewProgress("updating all channels metadata...")
 	defer ucma.End()

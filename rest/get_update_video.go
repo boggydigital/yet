@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"golang.org/x/exp/maps"
@@ -90,7 +90,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/watch?v="+videoId, http.StatusTemporaryRedirect)
 }
 
-func toggleTimeProperty(id, property string, condition bool, rdx kevlar.WriteableRedux) error {
+func toggleTimeProperty(id, property string, condition bool, rdx redux.Writeable) error {
 	if condition {
 		return rdx.ReplaceValues(property, id, yeti.FmtNow())
 	} else {

@@ -1,19 +1,19 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
-func validateWritableRedux(rdx kevlar.WriteableRedux, properties ...string) (kevlar.WriteableRedux, error) {
+func validateWritableRedux(rdx redux.Writeable, properties ...string) (redux.Writeable, error) {
 	if rdx == nil {
 		metadataDir, err := pathways.GetAbsDir(data.Metadata)
 		if err != nil {
 			return nil, err
 		}
 
-		rdx, err = kevlar.NewReduxWriter(metadataDir, properties...)
+		rdx, err = redux.NewWriter(metadataDir, properties...)
 		if err != nil {
 			return nil, err
 		}

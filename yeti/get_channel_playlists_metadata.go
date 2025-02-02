@@ -1,14 +1,14 @@
 package yeti
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 )
 
-func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlaylistsInitialData, channelId string, rdx kevlar.WriteableRedux) error {
+func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlaylistsInitialData, channelId string, rdx redux.Writeable) error {
 
 	gcpma := nod.Begin(" channel playlists metadata for %s", channelId)
 	defer gcpma.End()

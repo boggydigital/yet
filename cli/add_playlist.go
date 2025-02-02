@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
@@ -23,7 +23,7 @@ func AddPlaylistHandler(u *url.URL) error {
 	return AddPlaylist(nil, playlistId, options)
 }
 
-func AddPlaylist(rdx kevlar.WriteableRedux, playlistId string, opt *PlaylistOptions) error {
+func AddPlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions) error {
 
 	apa := nod.Begin("adding playlist %s...", playlistId)
 	defer apa.End()

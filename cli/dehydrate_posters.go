@@ -3,9 +3,9 @@ package cli
 import (
 	"errors"
 	"github.com/boggydigital/issa"
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
@@ -31,7 +31,7 @@ func DehydratePosters(force bool) error {
 		return dpa.EndWithError(err)
 	}
 
-	rdx, err := kevlar.NewReduxWriter(metadataDir, data.VideoProperties()...)
+	rdx, err := redux.NewWriter(metadataDir, data.VideoProperties()...)
 	if err != nil {
 		return dpa.EndWithError(err)
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/boggydigital/compton/consts/direction"
 	"github.com/boggydigital/compton/consts/font_weight"
 	"github.com/boggydigital/compton/consts/size"
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"strconv"
 	"time"
@@ -32,7 +32,7 @@ var propertiesOrder = []string{
 	data.VideoEndedReasonProperty,
 }
 
-func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux) compton.Element {
+func VideoLink(r compton.Registrar, videoId string, rdx redux.Readable) compton.Element {
 
 	r.RegisterStyles(videoLinkStyles, "styles/video-link.css")
 
@@ -121,7 +121,7 @@ func VideoLink(r compton.Registrar, videoId string, rdx kevlar.ReadableRedux) co
 	return link
 }
 
-func videoSummaryProperties(videoId string, rdx kevlar.ReadableRedux) map[string]string {
+func videoSummaryProperties(videoId string, rdx redux.Readable) map[string]string {
 	properties := make(map[string]string)
 
 	if och, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {

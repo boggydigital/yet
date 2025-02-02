@@ -2,8 +2,8 @@ package view_models
 
 import (
 	"fmt"
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
@@ -51,7 +51,7 @@ var propertyTitles = map[string]string{
 	data.VideoForcedDownloadProperty:    "Forced Download",
 }
 
-func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (*WatchViewModel, error) {
+func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*WatchViewModel, error) {
 
 	videoUrl, videoTitle, videoDescription := "", "", ""
 	//var videoCaptionTracks []youtube_urls.CaptionTrack
@@ -254,7 +254,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx kevlar.WriteableRedux) (
 //	return u, nil
 //}
 
-func getLocalCaptionTracks(videoId string, rdx kevlar.ReadableRedux) ([]youtube_urls.CaptionTrack, error) {
+func getLocalCaptionTracks(videoId string, rdx redux.Readable) ([]youtube_urls.CaptionTrack, error) {
 
 	if err := rdx.MustHave(
 		data.VideoCaptionsNamesProperty,

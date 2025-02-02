@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/arelate/southern_light/github_integration"
 	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"io"
@@ -50,7 +50,7 @@ func UpdateYtDlp(force bool) error {
 		return uyda.EndWithError(err)
 	}
 
-	rdx, err := kevlar.NewReduxWriter(metadataDir, data.YtDlpLatestDownloadedVersionProperty)
+	rdx, err := redux.NewWriter(metadataDir, data.YtDlpLatestDownloadedVersionProperty)
 	if err != nil {
 		return uyda.EndWithError(err)
 	}
@@ -101,7 +101,7 @@ func UpdateYtDlp(force bool) error {
 	return nil
 }
 
-func getAsset(ownerRepo, asset string, downloadDir string, dc *dolo.Client, rdx kevlar.WriteableRedux, force bool) error {
+func getAsset(ownerRepo, asset string, downloadDir string, dc *dolo.Client, rdx redux.Writeable, force bool) error {
 
 	gaa := nod.Begin(" getting %s asset...", ownerRepo)
 	defer gaa.EndWithResult("done")

@@ -1,14 +1,14 @@
 package yeti
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 )
 
-func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, expand bool, rdx kevlar.WriteableRedux) error {
+func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, expand bool, rdx redux.Writeable) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
 	defer gppma.End()

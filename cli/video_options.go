@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
@@ -25,7 +25,7 @@ func DefaultVideoOptions() *VideoOptions {
 	}
 }
 
-func ApplyVideoDownloadOptions(opt *VideoOptions, videoId string, rdx kevlar.ReadableRedux) *VideoOptions {
+func ApplyVideoDownloadOptions(opt *VideoOptions, videoId string, rdx redux.Readable) *VideoOptions {
 	if f, ok := rdx.GetLastVal(data.VideoForcedDownloadProperty, videoId); ok && f == data.TrueValue {
 		opt.Force = true
 	}

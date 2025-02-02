@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
@@ -23,7 +23,7 @@ func AddVideoHandler(u *url.URL) error {
 	return AddVideo(nil, videoId, options)
 }
 
-func AddVideo(rdx kevlar.WriteableRedux, videoId string, opt *VideoOptions) error {
+func AddVideo(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
 
 	ava := nod.Begin("adding video %s...", videoId)
 	defer ava.End()

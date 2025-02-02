@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
@@ -20,7 +20,7 @@ func GetChannelsMetadataHandler(u *url.URL) error {
 	return GetChannelsMetadata(nil, options, channelIds...)
 }
 
-func GetChannelsMetadata(rdx kevlar.WriteableRedux, opt *ChannelOptions, channelIds ...string) error {
+func GetChannelsMetadata(rdx redux.Writeable, opt *ChannelOptions, channelIds ...string) error {
 	gchma := nod.NewProgress("getting channel metadata...")
 	defer gchma.End()
 

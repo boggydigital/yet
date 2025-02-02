@@ -2,8 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"net/url"
@@ -25,7 +25,7 @@ func ProcessQueueHandler(u *url.URL) error {
 // ProcessQueue processes download queue using the following rules:
 // - download has not been completed after queue time
 // - download is not in progress since queue time and less than 48 hours ago
-func ProcessQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
+func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 
 	dqa := nod.Begin("processing videos queued for download...")
 	defer dqa.End()
@@ -74,7 +74,7 @@ func ProcessQueue(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
 // getNextQueuedDownload goes through queued downloads and returns the first one that:
 // - was not completed after download was queued (earlier is fine, means it was added again)
 // - has not started within the last 24 hours (allegedly in progress)
-func getNextQueuedDownload(rdx kevlar.WriteableRedux, force bool) (string, error) {
+func getNextQueuedDownload(rdx redux.Writeable, force bool) (string, error) {
 
 	var err error
 	rdx, err = rdx.RefreshWriter()

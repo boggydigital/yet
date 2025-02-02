@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 )
@@ -28,7 +28,7 @@ var (
 	playlistsOrder = []string{newItems, noNewItems}
 )
 
-func GetListViewModel(rdx kevlar.ReadableRedux) (*ListViewModel, error) {
+func GetListViewModel(rdx redux.Readable) (*ListViewModel, error) {
 	lvm := &ListViewModel{
 		ChannelsOrder:  channelsOrder,
 		Channels:       make(map[string][]*ChannelViewModel),
@@ -104,7 +104,7 @@ func GetListViewModel(rdx kevlar.ReadableRedux) (*ListViewModel, error) {
 	return lvm, nil
 }
 
-func getVideosProgress(rdx kevlar.ReadableRedux) ([]string, error) {
+func getVideosProgress(rdx redux.Readable) ([]string, error) {
 	vpKeys := rdx.Keys(data.VideoProgressProperty)
 	cvs := make([]string, 0)
 	var err error
@@ -127,7 +127,7 @@ func getVideosProgress(rdx kevlar.ReadableRedux) ([]string, error) {
 	}
 }
 
-func getVideoDownloads(rdx kevlar.ReadableRedux) ([]string, error) {
+func getVideoDownloads(rdx redux.Readable) ([]string, error) {
 
 	dcKeys := rdx.Keys(data.VideoDownloadCompletedProperty)
 	dvs := make([]string, 0, len(dcKeys))
@@ -190,7 +190,7 @@ func getVideoDownloads(rdx kevlar.ReadableRedux) ([]string, error) {
 	}
 }
 
-func getChannelsVideos(rdx kevlar.ReadableRedux) (map[string][]string, error) {
+func getChannelsVideos(rdx redux.Readable) (map[string][]string, error) {
 	chKeys := rdx.Keys(data.ChannelAutoRefreshProperty)
 	chs := make(map[string][]string)
 
@@ -225,7 +225,7 @@ func getChannelsVideos(rdx kevlar.ReadableRedux) (map[string][]string, error) {
 	return chs, nil
 }
 
-func getPlaylistsVideos(rdx kevlar.ReadableRedux) (map[string][]string, error) {
+func getPlaylistsVideos(rdx redux.Readable) (map[string][]string, error) {
 	plKeys := rdx.Keys(data.PlaylistAutoRefreshProperty)
 	pls := make(map[string][]string)
 
@@ -260,7 +260,7 @@ func getPlaylistsVideos(rdx kevlar.ReadableRedux) (map[string][]string, error) {
 	return pls, nil
 }
 
-func getQueuedDownloads(rdx kevlar.ReadableRedux) ([]string, error) {
+func getQueuedDownloads(rdx redux.Readable) ([]string, error) {
 
 	dqKeys := rdx.Keys(data.VideoDownloadQueuedProperty)
 	qds := make([]string, 0, len(dqKeys))
@@ -293,7 +293,7 @@ func getQueuedDownloads(rdx kevlar.ReadableRedux) ([]string, error) {
 	}
 }
 
-func getFavoriteVideos(rdx kevlar.ReadableRedux) ([]string, error) {
+func getFavoriteVideos(rdx redux.Readable) ([]string, error) {
 	fvs := rdx.Keys(data.VideoFavoriteProperty)
 	var err error
 	if fvs, err = rdx.Sort(fvs, false, data.VideoTitleProperty); err == nil {

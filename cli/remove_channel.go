@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"net/url"
 )
@@ -21,7 +21,7 @@ func RemoveChannelHandler(u *url.URL) error {
 	return RemoveChannel(nil, channelId, options)
 }
 
-func RemoveChannel(rdx kevlar.WriteableRedux, channelId string, opt *ChannelOptions) error {
+func RemoveChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) error {
 
 	rpa := nod.Begin("removing channel %s...", channelId)
 	defer rpa.End()

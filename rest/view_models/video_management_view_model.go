@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
@@ -18,7 +18,7 @@ type VideoManagementViewModel struct {
 	ForcedDownload  bool
 }
 
-func GetVideoManagementModel(videoId string, rdx kevlar.ReadableRedux) *VideoManagementViewModel {
+func GetVideoManagementModel(videoId string, rdx redux.Readable) *VideoManagementViewModel {
 	videoTitle := ""
 	if vt, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vt != "" {
 		videoTitle = vt

@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"net/url"
 )
@@ -11,7 +11,7 @@ func RefreshPlaylistsMetadataHandler(_ *url.URL) error {
 	return RefreshPlaylistsMetadata(nil)
 }
 
-func RefreshPlaylistsMetadata(rdx kevlar.WriteableRedux) error {
+func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 
 	upma := nod.NewProgress("updating all playlists metadata...")
 	defer upma.End()

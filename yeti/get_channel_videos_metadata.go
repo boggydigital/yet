@@ -1,14 +1,14 @@
 package yeti
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 )
 
-func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosInitialData, channelId string, expand bool, rdx kevlar.WriteableRedux) error {
+func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosInitialData, channelId string, expand bool, rdx redux.Writeable) error {
 
 	gcvma := nod.Begin(" channel videos metadata for %s", channelId)
 	defer gcvma.End()

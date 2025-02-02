@@ -1,7 +1,7 @@
 package view_models
 
 import (
-	"github.com/boggydigital/kevlar"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 )
@@ -21,7 +21,7 @@ type ChannelViewModel struct {
 	ChannelExpand         bool
 }
 
-func GetChannelViewModel(channelId string, rdx kevlar.ReadableRedux) *ChannelViewModel {
+func GetChannelViewModel(channelId string, rdx redux.Readable) *ChannelViewModel {
 	channelTitle := channelId
 	if ct, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
 		channelTitle = ct

@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/boggydigital/kevlar"
 	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"net/url"
 )
@@ -16,7 +16,7 @@ func SyncHandler(u *url.URL) error {
 	return Sync(nil, options)
 }
 
-func Sync(rdx kevlar.WriteableRedux, opt *VideoOptions) error {
+func Sync(rdx redux.Writeable, opt *VideoOptions) error {
 
 	sa := nod.Begin("syncing yet data...")
 	defer sa.End()
