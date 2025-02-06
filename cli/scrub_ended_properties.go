@@ -4,8 +4,8 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
-	"golang.org/x/exp/slices"
 	"net/url"
+	"slices"
 )
 
 var preserveVideoProperties = []string{

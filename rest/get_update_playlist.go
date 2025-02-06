@@ -3,8 +3,9 @@ package rest
 import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
-	"golang.org/x/exp/maps"
+	"maps"
 	"net/http"
+	"slices"
 )
 
 func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +38,8 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		data.PlaylistDownloadPolicyProperty: "download-policy",
 	}
 
-	properties := maps.Keys(boolPropertyInputs)
-	properties = append(properties, maps.Keys(specialProperties)...)
+	properties := slices.Collect(maps.Keys(boolPropertyInputs))
+	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
 		if err := toggleProperty(playlistId, property, q.Has(input), rdx); err != nil {

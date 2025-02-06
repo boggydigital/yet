@@ -4,8 +4,9 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"golang.org/x/exp/maps"
+	"maps"
 	"net/http"
+	"slices"
 )
 
 func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
@@ -43,9 +44,9 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		data.VideoEndedReasonProperty: "ended-reason",
 	}
 
-	properties := maps.Keys(boolPropertyInputs)
-	properties = append(properties, maps.Keys(timePropertyInputs)...)
-	properties = append(properties, maps.Keys(specialProperties)...)
+	properties := slices.Collect(maps.Keys(boolPropertyInputs))
+	properties = append(properties, slices.Collect(maps.Keys(timePropertyInputs))...)
+	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
 		if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
