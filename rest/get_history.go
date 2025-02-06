@@ -40,10 +40,11 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	whKeys := rdx.Keys(data.VideoEndedDateProperty)
+	whKeysLen := rdx.Len(data.VideoEndedDateProperty)
 
-	pageTitle := fmt.Sprintf("Last %d watched videos (out of %d)", endedVideosLimit, len(whKeys))
+	pageTitle := fmt.Sprintf("Last %d watched videos (out of %d)", endedVideosLimit, whKeysLen)
 	if showAll {
-		pageTitle = fmt.Sprintf("All %d watched videos", len(whKeys))
+		pageTitle = fmt.Sprintf("All %d watched videos", whKeysLen)
 	}
 
 	hvm := &HistoryViewModel{
@@ -55,7 +56,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	endedGroups := make(map[string][]string)
-	for _, id := range whKeys {
+	for id := range whKeys {
 		group := olderGroup
 		if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok && ets != "" {
 			if et, err := time.Parse(time.RFC3339, ets); err == nil {

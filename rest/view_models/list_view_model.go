@@ -4,6 +4,7 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
+	"slices"
 )
 
 type ListViewModel struct {
@@ -99,21 +100,20 @@ func GetListViewModel(rdx redux.Readable) (*ListViewModel, error) {
 		return nil, err
 	}
 
-	lvm.HasHistory = len(rdx.Keys(data.VideoEndedDateProperty)) > 0
+	lvm.HasHistory = rdx.Len(data.VideoEndedDateProperty) > 0
 
 	return lvm, nil
 }
 
 func getVideosProgress(rdx redux.Readable) ([]string, error) {
-	vpKeys := rdx.Keys(data.VideoProgressProperty)
 	cvs := make([]string, 0)
 	var err error
 
-	if len(vpKeys) == 0 {
+	if rdx.Len(data.VideoProgressProperty) == 0 {
 		return cvs, nil
 	}
 
-	for _, id := range vpKeys {
+	for id := range rdx.Keys(data.VideoProgressProperty) {
 		if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok && et != "" {
 			continue
 		}
@@ -129,10 +129,9 @@ func getVideosProgress(rdx redux.Readable) ([]string, error) {
 
 func getVideoDownloads(rdx redux.Readable) ([]string, error) {
 
-	dcKeys := rdx.Keys(data.VideoDownloadCompletedProperty)
-	dvs := make([]string, 0, len(dcKeys))
+	dvs := make([]string, 0, rdx.Len(data.VideoDownloadCompletedProperty))
 
-	if len(dcKeys) == 0 {
+	if rdx.Len(data.VideoDownloadCompletedProperty) == 0 {
 		return dvs, nil
 	}
 
@@ -143,7 +142,7 @@ func getVideoDownloads(rdx redux.Readable) ([]string, error) {
 	// - in any auto-refreshing channel
 	// - in any auto-refreshing playlist
 
-	for _, id := range dcKeys {
+	for id := range rdx.Keys(data.VideoDownloadCompletedProperty) {
 
 		if rdx.HasKey(data.VideoEndedDateProperty, id) {
 			continue
@@ -157,7 +156,7 @@ func getVideoDownloads(rdx redux.Readable) ([]string, error) {
 
 		// check if this video is an auto-refreshing channel video
 		skip := false
-		for _, channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
+		for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
 			if rdx.HasValue(data.ChannelVideosProperty, channelId, id) {
 				skip = true
 				break
@@ -169,7 +168,7 @@ func getVideoDownloads(rdx redux.Readable) ([]string, error) {
 
 		// check if this video is an auto-refreshing playlist video
 		skip = false
-		for _, playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
+		for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 			if rdx.HasValue(data.PlaylistVideosProperty, playlistId, id) {
 				skip = true
 				break
@@ -191,16 +190,17 @@ func getVideoDownloads(rdx redux.Readable) ([]string, error) {
 }
 
 func getChannelsVideos(rdx redux.Readable) (map[string][]string, error) {
-	chKeys := rdx.Keys(data.ChannelAutoRefreshProperty)
 	chs := make(map[string][]string)
 
-	if len(chKeys) == 0 {
+	chKeysLen := rdx.Len(data.ChannelAutoRefreshProperty)
+
+	if chKeysLen == 0 {
 		return chs, nil
 	}
 
-	chNewVideos, chNoNewVideos := make([]string, 0, len(chKeys)), make([]string, 0, len(chKeys))
+	chNewVideos, chNoNewVideos := make([]string, 0, chKeysLen), make([]string, 0, chKeysLen)
 
-	for _, channelId := range chKeys {
+	for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
 		if newVideos := yeti.ChannelNotEndedVideos(channelId, rdx); len(newVideos) > 0 {
 			chNewVideos = append(chNewVideos, channelId)
 		} else {
@@ -226,16 +226,17 @@ func getChannelsVideos(rdx redux.Readable) (map[string][]string, error) {
 }
 
 func getPlaylistsVideos(rdx redux.Readable) (map[string][]string, error) {
-	plKeys := rdx.Keys(data.PlaylistAutoRefreshProperty)
 	pls := make(map[string][]string)
 
-	if len(plKeys) == 0 {
+	plKeysLen := rdx.Len(data.PlaylistAutoRefreshProperty)
+
+	if plKeysLen == 0 {
 		return pls, nil
 	}
 
-	plNewVideos, plNoNewVideos := make([]string, 0, len(plKeys)), make([]string, 0, len(plKeys))
+	plNewVideos, plNoNewVideos := make([]string, 0, plKeysLen), make([]string, 0, plKeysLen)
 
-	for _, playlistId := range plKeys {
+	for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 		if newVideos := yeti.PlaylistNotEndedVideos(playlistId, rdx); len(newVideos) > 0 {
 			plNewVideos = append(plNewVideos, playlistId)
 		} else {
@@ -262,14 +263,15 @@ func getPlaylistsVideos(rdx redux.Readable) (map[string][]string, error) {
 
 func getQueuedDownloads(rdx redux.Readable) ([]string, error) {
 
-	dqKeys := rdx.Keys(data.VideoDownloadQueuedProperty)
-	qds := make([]string, 0, len(dqKeys))
+	qdLen := rdx.Len(data.VideoDownloadQueuedProperty)
 
-	if len(dqKeys) == 0 {
+	qds := make([]string, 0, qdLen)
+
+	if qdLen == 0 {
 		return qds, nil
 	}
 
-	for _, id := range dqKeys {
+	for id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
 
 		dqTime := ""
 		if dqt, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, id); ok {
@@ -294,7 +296,7 @@ func getQueuedDownloads(rdx redux.Readable) ([]string, error) {
 }
 
 func getFavoriteVideos(rdx redux.Readable) ([]string, error) {
-	fvs := rdx.Keys(data.VideoFavoriteProperty)
+	fvs := slices.Collect(rdx.Keys(data.VideoFavoriteProperty))
 	var err error
 	if fvs, err = rdx.Sort(fvs, false, data.VideoTitleProperty); err == nil {
 		return fvs, nil

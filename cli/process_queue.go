@@ -82,7 +82,7 @@ func getNextQueuedDownload(rdx redux.Writeable, force bool) (string, error) {
 		return "", err
 	}
 
-	for _, id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
+	for id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
 
 		vdqTime := ""
 		if vdq, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, id); ok && vdq != "" {

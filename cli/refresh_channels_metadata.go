@@ -23,14 +23,13 @@ func RefreshChannelsMetadata(rdx redux.Writeable) error {
 	}
 
 	// update auto-refresh channels metadata
-	channelIds := rdx.Keys(data.ChannelAutoRefreshProperty)
-	ucma.TotalInt(len(channelIds))
+	ucma.TotalInt(rdx.Len(data.ChannelAutoRefreshProperty))
 
 	refreshOptions := &ChannelOptions{
 		Force: true,
 	}
 
-	for _, channelId := range channelIds {
+	for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
 
 		if err := GetChannelsMetadata(rdx, refreshOptions, channelId); err != nil {
 			return ucma.EndWithError(err)

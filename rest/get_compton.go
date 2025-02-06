@@ -14,8 +14,7 @@ func GetCompton(w http.ResponseWriter, r *http.Request) {
 
 	p := compton.Page("compton test area")
 
-	videoIds := rdx.Keys(data.VideoTitleProperty)
-	slices.Sort(videoIds)
+	videoIds := slices.Sorted(rdx.Keys(data.VideoTitleProperty))
 	videoIds = videoIds[:20]
 
 	pageStack := compton.FlexItems(p, direction.Column)

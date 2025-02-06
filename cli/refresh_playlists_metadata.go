@@ -23,14 +23,13 @@ func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 	}
 
 	// update auto-refresh playlists metadata
-	playlistIds := rdx.Keys(data.PlaylistAutoRefreshProperty)
-	upma.TotalInt(len(playlistIds))
+	upma.TotalInt(rdx.Len(data.PlaylistAutoRefreshProperty))
 
 	refreshOptions := &PlaylistOptions{
 		Force: true,
 	}
 
-	for _, playlistId := range playlistIds {
+	for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 
 		if err := GetPlaylistsMetadata(rdx, refreshOptions, playlistId); err != nil {
 			return upma.EndWithError(err)

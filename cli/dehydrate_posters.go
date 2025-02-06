@@ -36,14 +36,13 @@ func DehydratePosters(force bool) error {
 		return dpa.EndWithError(err)
 	}
 
-	videoIds := rdx.Keys(data.VideoTitleProperty)
-	dpa.TotalInt(len(videoIds))
+	dpa.TotalInt(rdx.Len(data.VideoTitleProperty))
 
 	dehydratedPosters := make(map[string][]string)
 	dehydratedRepColors := make(map[string][]string)
 	dehydratedInputMissing := make(map[string][]string)
 
-	for _, videoId := range videoIds {
+	for videoId := range rdx.Keys(data.VideoTitleProperty) {
 
 		if rdx.HasKey(data.VideoDehydratedInputMissingProperty, videoId) && !force {
 			dpa.Increment()

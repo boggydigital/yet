@@ -35,11 +35,9 @@ func ScrubEndedProperties(rdx redux.Writeable) error {
 		return sevpa.EndWithError(err)
 	}
 
-	endedVideos := rdx.Keys(data.VideoEndedDateProperty)
+	sevpa.TotalInt(rdx.Len(data.VideoEndedDateProperty))
 
-	sevpa.TotalInt(len(endedVideos))
-
-	for _, videoId := range endedVideos {
+	for videoId := range rdx.Keys(data.VideoEndedDateProperty) {
 
 		for _, vp := range data.VideoProperties() {
 			if slices.Contains(preserveVideoProperties, vp) {

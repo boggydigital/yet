@@ -42,7 +42,7 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 
 	cleanupVideoIds := make([]string, 0)
 
-	for _, id := range rdx.Keys(data.VideoEndedDateProperty) {
+	for id := range rdx.Keys(data.VideoEndedDateProperty) {
 
 		// don't cleanup favorite videos
 		if rdx.HasKey(data.VideoFavoriteProperty, id) {

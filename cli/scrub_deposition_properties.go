@@ -31,14 +31,14 @@ func ScrubDepositionProperties(rdx redux.Writeable) error {
 
 	currentVideoIds := make(map[string]any)
 
-	for _, videoId := range rdx.Keys(data.VideoDownloadCompletedProperty) {
+	for videoId := range rdx.Keys(data.VideoDownloadCompletedProperty) {
 		if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
 			continue
 		}
 		currentVideoIds[videoId] = nil
 	}
 
-	for _, channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
+	for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
 		if videos, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); ok {
 			for _, videoId := range videos {
 				currentVideoIds[videoId] = nil
@@ -46,7 +46,7 @@ func ScrubDepositionProperties(rdx redux.Writeable) error {
 		}
 	}
 
-	for _, playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
+	for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 		if videos, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); ok {
 			for _, videoId := range videos {
 				currentVideoIds[videoId] = nil
@@ -63,8 +63,7 @@ func ScrubDepositionProperties(rdx redux.Writeable) error {
 			sdpa.Increment()
 			continue
 		}
-		videos := rdx.Keys(vp)
-		for _, videoId := range videos {
+		for videoId := range rdx.Keys(vp) {
 			if _, ok := currentVideoIds[videoId]; !ok {
 				if rdx.HasKey(vp, videoId) {
 					if err := rdx.CutKeys(vp, videoId); err != nil {

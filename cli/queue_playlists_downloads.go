@@ -23,10 +23,9 @@ func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 		return qpda.EndWithError(err)
 	}
 
-	playlistIds := rdx.Keys(data.PlaylistAutoDownloadProperty)
-	qpda.TotalInt(len(playlistIds))
+	qpda.TotalInt(rdx.Len(data.PlaylistAutoDownloadProperty))
 
-	for _, playlistId := range playlistIds {
+	for playlistId := range rdx.Keys(data.PlaylistAutoDownloadProperty) {
 
 		if err := queuePlaylistDownloads(rdx, playlistId); err != nil {
 			return qpda.EndWithError(err)

@@ -23,10 +23,9 @@ func QueueChannelsDownloads(rdx redux.Writeable) error {
 		return qcda.EndWithError(err)
 	}
 
-	channelsIds := rdx.Keys(data.ChannelAutoDownloadProperty)
-	qcda.TotalInt(len(channelsIds))
+	qcda.TotalInt(rdx.Len(data.ChannelAutoDownloadProperty))
 
-	for _, channelId := range channelsIds {
+	for channelId := range rdx.Keys(data.ChannelAutoDownloadProperty) {
 
 		if err := queueChannelDownloads(rdx, channelId); err != nil {
 			return qcda.EndWithError(err)

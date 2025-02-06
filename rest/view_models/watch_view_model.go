@@ -202,14 +202,18 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 
 	allPlaylistsWithVideo := rdx.MatchAsset(data.PlaylistVideosProperty, []string{videoId}, nil)
 	playlistId := ""
-	for _, pid := range allPlaylistsWithVideo {
+	for pid := range allPlaylistsWithVideo {
 		if rdx.HasKey(data.PlaylistAutoRefreshProperty, pid) {
 			playlistId = pid
 			break
 		}
 	}
-	if playlistId == "" && len(allPlaylistsWithVideo) > 0 {
-		playlistId = allPlaylistsWithVideo[0]
+
+	if playlistId == "" {
+		for pid := range allPlaylistsWithVideo {
+			playlistId = pid
+			break
+		}
 	}
 
 	channelId := ""
