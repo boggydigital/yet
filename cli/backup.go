@@ -14,7 +14,7 @@ func BackupHandler(_ *url.URL) error {
 
 func Backup() error {
 	ea := nod.NewProgress("backing up metadata...")
-	defer ea.End()
+	defer ea.Done()
 
 	amp, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
@@ -30,16 +30,12 @@ func Backup() error {
 		return err
 	}
 
-	ea.EndWithResult("done")
-
 	cba := nod.NewProgress("cleaning up old backups...")
-	defer cba.End()
+	defer cba.Done()
 
 	if err := backups.Cleanup(abp, true, cba); err != nil {
 		return err
 	}
-
-	cba.EndWithResult("done")
 
 	return nil
 }

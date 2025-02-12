@@ -26,7 +26,7 @@ func AddPlaylistHandler(u *url.URL) error {
 func AddPlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions) error {
 
 	apa := nod.Begin("adding playlist %s...", playlistId)
-	defer apa.End()
+	defer apa.Done()
 
 	if opt == nil {
 		opt = DefaultPlaylistOptions()
@@ -75,8 +75,6 @@ func AddPlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions) e
 	if err := GetPlaylistsMetadata(rdx, opt, playlistId); err != nil {
 		return err
 	}
-
-	apa.EndWithResult("done")
 
 	return nil
 }

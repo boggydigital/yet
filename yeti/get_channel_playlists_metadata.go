@@ -11,7 +11,7 @@ import (
 func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlaylistsInitialData, channelId string, rdx redux.Writeable) error {
 
 	gcpma := nod.Begin(" channel playlists metadata for %s", channelId)
-	defer gcpma.End()
+	defer gcpma.Done()
 
 	if err := rdx.MustHave(
 		data.ChannelTitleProperty,
@@ -38,7 +38,7 @@ func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlayl
 	}
 
 	if description := channelPlaylistsPage.Metadata.ChannelMetadataRenderer.Description; description != "" {
-		if err := rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
+		if err = rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
 			return err
 		}
 	}
@@ -54,19 +54,17 @@ func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlayl
 		playlistsChannels[playlistId] = []string{channelTitle}
 	}
 
-	if err := rdx.ReplaceValues(data.ChannelPlaylistsProperty, channelId, channelPlaylists...); err != nil {
+	if err = rdx.ReplaceValues(data.ChannelPlaylistsProperty, channelId, channelPlaylists...); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchReplaceValues(data.PlaylistTitleProperty, playlistsTitles); err != nil {
+	if err = rdx.BatchReplaceValues(data.PlaylistTitleProperty, playlistsTitles); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchReplaceValues(data.PlaylistChannelProperty, playlistsChannels); err != nil {
+	if err = rdx.BatchReplaceValues(data.PlaylistChannelProperty, playlistsChannels); err != nil {
 		return err
 	}
-
-	gcpma.EndWithResult("done")
 
 	return nil
 }

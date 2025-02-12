@@ -25,7 +25,7 @@ func AddChannelHandler(u *url.URL) error {
 func AddChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) error {
 
 	aca := nod.Begin("adding channel %s...", channelId)
-	defer aca.End()
+	defer aca.Done()
 
 	if opt == nil {
 		opt = DefaultChannelOptions()
@@ -70,8 +70,6 @@ func AddChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) erro
 	//if err := GetPlaylistMetadata(rdx, opt, playlistId); err != nil {
 	//	return err
 	//}
-
-	aca.EndWithResult("done")
 
 	return nil
 }

@@ -43,7 +43,7 @@ func UpdateYtDlpHandler(u *url.URL) error {
 func UpdateYtDlp(force bool) error {
 
 	uyda := nod.Begin("updating yt-dlp and plugins...")
-	defer uyda.EndWithResult("done")
+	defer uyda.Done()
 
 	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
@@ -104,7 +104,7 @@ func UpdateYtDlp(force bool) error {
 func getAsset(ownerRepo, asset string, downloadDir string, dc *dolo.Client, rdx redux.Writeable, force bool) error {
 
 	gaa := nod.Begin(" getting %s asset...", ownerRepo)
-	defer gaa.EndWithResult("done")
+	defer gaa.Done()
 
 	latestRelease, err := getLatestGitHubRelease(ownerRepo)
 	if err != nil {
@@ -139,7 +139,7 @@ func getAsset(ownerRepo, asset string, downloadDir string, dc *dolo.Client, rdx 
 func getLatestGitHubRelease(ownerRepo string) (*github_integration.GitHubRelease, error) {
 
 	gra := nod.Begin(" getting the latest GitHub release for %s...", ownerRepo)
-	defer gra.EndWithResult("done")
+	defer gra.Done()
 
 	owner, repo, ok := strings.Cut(ownerRepo, "/")
 	if !ok {
@@ -175,7 +175,7 @@ func getLatestGitHubRelease(ownerRepo string) (*github_integration.GitHubRelease
 func downloadAsset(dstDir string, release *github_integration.GitHubRelease, assetName string, dc *dolo.Client, force bool) error {
 
 	daa := nod.NewProgress(" downloading %s...", assetName)
-	defer daa.EndWithResult("done")
+	defer daa.Done()
 
 	dstAssetFilename := filepath.Join(dstDir, assetName)
 	if _, err := os.Stat(dstAssetFilename); err == nil && !force {
@@ -207,7 +207,7 @@ func downloadAsset(dstDir string, release *github_integration.GitHubRelease, ass
 func copyYtDlpPlugin(srcDir, dstDir, pluginFilename string, force bool) error {
 
 	cpa := nod.Begin(" copying yt-dlp plugin %s...", pluginFilename)
-	defer cpa.EndWithResult("done")
+	defer cpa.Done()
 
 	if _, err := os.Stat(dstDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(dstDir, 0755); err != nil {

@@ -19,7 +19,7 @@ func GetPosterHandler(u *url.URL) error {
 func GetPoster(force bool, videoIds ...string) error {
 
 	gpa := nod.NewProgress("getting poster(s)...")
-	defer gpa.End()
+	defer gpa.Done()
 
 	parsedVideoIds, err := yeti.ParseVideoIds(videoIds...)
 	if err != nil {
@@ -36,8 +36,6 @@ func GetPoster(force bool, videoIds ...string) error {
 
 		gpa.Increment()
 	}
-
-	gpa.EndWithResult("done")
 
 	return nil
 }

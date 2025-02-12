@@ -14,7 +14,7 @@ func RefreshPlaylistsMetadataHandler(_ *url.URL) error {
 func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 
 	upma := nod.NewProgress("updating all playlists metadata...")
-	defer upma.End()
+	defer upma.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.PlaylistProperties()...)
@@ -37,8 +37,6 @@ func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 
 		upma.Increment()
 	}
-
-	upma.EndWithResult("done")
 
 	return nil
 }

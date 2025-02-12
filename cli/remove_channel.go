@@ -24,7 +24,7 @@ func RemoveChannelHandler(u *url.URL) error {
 func RemoveChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) error {
 
 	rpa := nod.Begin("removing channel %s...", channelId)
-	defer rpa.End()
+	defer rpa.Done()
 
 	if opt == nil {
 		opt = DefaultChannelOptions()
@@ -56,8 +56,6 @@ func RemoveChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) e
 			return err
 		}
 	}
-
-	rpa.EndWithResult("done")
 
 	return nil
 }

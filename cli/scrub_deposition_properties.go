@@ -21,7 +21,7 @@ func ScrubDepositionPropertiesHandler(u *url.URL) error {
 // Then we iterate over all non-preserved properties and remove data for all non-critical videos
 func ScrubDepositionProperties(rdx redux.Writeable) error {
 	sdpa := nod.NewProgress("scrubbing deposition properties...")
-	defer sdpa.End()
+	defer sdpa.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
@@ -74,8 +74,6 @@ func ScrubDepositionProperties(rdx redux.Writeable) error {
 		}
 		sdpa.Increment()
 	}
-
-	sdpa.EndWithResult("done")
 
 	return nil
 }

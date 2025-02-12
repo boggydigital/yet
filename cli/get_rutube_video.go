@@ -30,7 +30,7 @@ func GetRuTubeVideoHandler(u *url.URL) error {
 func GetRuTubeVideo(force bool, urls ...string) error {
 
 	grva := nod.NewProgress("getting Rutube videos...")
-	defer grva.End()
+	defer grva.Done()
 
 	grva.TotalInt(len(urls))
 
@@ -45,8 +45,6 @@ func GetRuTubeVideo(force bool, urls ...string) error {
 		grva.Increment()
 	}
 
-	grva.EndWithResult("done")
-
 	return nil
 }
 
@@ -60,7 +58,7 @@ func getRuTubeVideo(dc *dolo.Client, u string, force bool) error {
 	videoId, p := path.Base(ru.Path), ru.Query().Get("p")
 
 	grtva := nod.Begin("getting %s...", videoId)
-	defer grtva.End()
+	defer grtva.Done()
 
 	playOptions, err := getPlayOptions(videoId, p)
 	if err != nil {
@@ -103,7 +101,7 @@ func getRuTubeVideo(dc *dolo.Client, u string, force bool) error {
 func getPlayOptions(videoId, p string) (*rutube_urls.PlayOptions, error) {
 
 	gpo := nod.Begin(" getting play options for %s...", videoId)
-	defer gpo.End()
+	defer gpo.Done()
 
 	pou := rutube_urls.PlayOptionsUrl(videoId, p)
 
@@ -132,7 +130,7 @@ func getPlayOptions(videoId, p string) (*rutube_urls.PlayOptions, error) {
 func getVideoBalancerFormats(videoId string, playOptions *rutube_urls.PlayOptions) ([]string, error) {
 
 	gvbfa := nod.Begin(" getting video balancer formats for %s...", videoId)
-	defer gvbfa.End()
+	defer gvbfa.Done()
 
 	resp, err := http.DefaultClient.Get(playOptions.VideoBalancer.Default)
 	if err != nil {
@@ -155,15 +153,13 @@ func getVideoBalancerFormats(videoId string, playOptions *rutube_urls.PlayOption
 		return nil, errors.New("no formats found")
 	}
 
-	gvbfa.EndWithResult("done")
-
 	return formats, nil
 }
 
 func getVideoSegmentsPlaylist(videoId string, formats []string) ([]string, error) {
 
 	gvspa := nod.Begin(" getting video segments playlist for %s...", videoId)
-	defer gvspa.End()
+	defer gvspa.Done()
 
 	resp, err := http.DefaultClient.Get(formats[len(formats)-1])
 	if err != nil {
@@ -182,8 +178,6 @@ func getVideoSegmentsPlaylist(videoId string, formats []string) ([]string, error
 		}
 	}
 
-	gvspa.EndWithResult("done")
-
 	return segments, nil
 }
 
@@ -198,7 +192,7 @@ func getVideoSegments(
 	channel := busan.Sanitize(playOptions.Author.Name)
 
 	gvsa := nod.NewProgress(" getting video segments for %s...", videoId)
-	defer gvsa.End()
+	defer gvsa.Done()
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
@@ -253,7 +247,7 @@ func generateMergeManifest(playOptions *rutube_urls.PlayOptions, segments []stri
 	videoId := playOptions.VideoId
 
 	gmma := nod.Begin(" generating merge manifest for %s...", videoId)
-	defer gmma.End()
+	defer gmma.Done()
 
 	amf, err := absManifestFilename(playOptions)
 	if err != nil {
@@ -279,8 +273,6 @@ func generateMergeManifest(playOptions *rutube_urls.PlayOptions, segments []stri
 		}
 	}
 
-	gmma.EndWithResult("done")
-
 	return nil
 }
 
@@ -293,7 +285,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 	title = strings.Replace(title, "\n", " ", -1)
 
 	mvsa := nod.Begin(" merging video segments for %s, this can take a while...", videoId)
-	defer mvsa.End()
+	defer mvsa.Done()
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
@@ -336,7 +328,7 @@ func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []str
 	channel := busan.Sanitize(playOptions.Author.Name)
 
 	rmsa := nod.NewProgress(" removing manifest, segments for %s...", videoId)
-	defer rmsa.End()
+	defer rmsa.Done()
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {

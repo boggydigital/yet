@@ -26,7 +26,7 @@ func AddVideoHandler(u *url.URL) error {
 func AddVideo(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
 
 	ava := nod.Begin("adding video %s...", videoId)
-	defer ava.End()
+	defer ava.Done()
 
 	if opt == nil {
 		opt = DefaultVideoOptions()
@@ -72,16 +72,14 @@ func AddVideo(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
 	}
 
 	for property, idValues := range propertyValues {
-		if err := rdx.BatchAddValues(property, idValues); err != nil {
+		if err = rdx.BatchAddValues(property, idValues); err != nil {
 			return err
 		}
 	}
 
-	if err := GetVideoMetadata(rdx, opt, videoId); err != nil {
+	if err = GetVideoMetadata(rdx, opt, videoId); err != nil {
 		return err
 	}
-
-	ava.EndWithResult("done")
 
 	return nil
 }

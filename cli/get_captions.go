@@ -21,7 +21,7 @@ func GetCaptionsHandler(u *url.URL) error {
 func GetCaptions(force bool, videoIds ...string) error {
 
 	gca := nod.NewProgress("getting captions...")
-	defer gca.End()
+	defer gca.Done()
 
 	gca.TotalInt(len(videoIds))
 
@@ -49,8 +49,6 @@ func GetCaptions(force bool, videoIds ...string) error {
 		gca.Increment()
 	}
 
-	gca.EndWithResult("done")
-
 	return nil
 }
 
@@ -62,7 +60,7 @@ func getVideoPageCaptions(
 	force bool) error {
 
 	gca := nod.Begin(" captions for %s", videoId)
-	defer gca.End()
+	defer gca.Done()
 
 	var err error
 	if videoPage == nil {
@@ -76,8 +74,6 @@ func getVideoPageCaptions(
 	if err := yeti.GetCaptions(dl, rdx, videoId, captionTracks, force); err != nil {
 		return err
 	}
-
-	gca.EndWithResult("done")
 
 	return nil
 }

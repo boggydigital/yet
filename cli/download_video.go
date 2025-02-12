@@ -37,7 +37,7 @@ func DownloadVideoHandler(u *url.URL) error {
 func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) error {
 
 	da := nod.NewProgress("downloading videos...")
-	defer da.EndWithResult("done")
+	defer da.Done()
 
 	if opt == nil {
 		opt = DefaultVideoOptions()
@@ -171,7 +171,7 @@ func downloadVideo(
 func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error {
 
 	dyda := nod.Begin(" downloading %s with yt-dlp, please wait...", videoId)
-	defer dyda.EndWithResult("done")
+	defer dyda.Done()
 
 	absDir, _ := path.Split(absFilename)
 	if _, err := os.Stat(absDir); os.IsNotExist(err) {

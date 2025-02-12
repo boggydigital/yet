@@ -24,7 +24,7 @@ func RemoveVideosHandler(u *url.URL) error {
 func RemoveVideos(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
 
 	rva := nod.Begin("removing video %s...", videoId)
-	defer rva.End()
+	defer rva.Done()
 
 	if opt == nil {
 		opt = DefaultVideoOptions()
@@ -62,8 +62,6 @@ func RemoveVideos(rdx redux.Writeable, videoId string, opt *VideoOptions) error 
 			return err
 		}
 	}
-
-	rva.EndWithResult("done")
 
 	return nil
 }

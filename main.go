@@ -26,7 +26,7 @@ func main() {
 	nod.EnableStdOutPresenter()
 
 	ya := nod.Begin("yet is serving your videos needs")
-	defer ya.End()
+	defer ya.Done()
 
 	if err := pathways.Setup(dirOverridesFilename,
 		data.DefaultYetRootDir,

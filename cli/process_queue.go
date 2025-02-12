@@ -28,7 +28,7 @@ func ProcessQueueHandler(u *url.URL) error {
 func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 
 	dqa := nod.Begin("processing videos queued for download...")
-	defer dqa.End()
+	defer dqa.Done()
 
 	if opt == nil {
 		opt = DefaultVideoOptions()
@@ -65,8 +65,6 @@ func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 			return err
 		}
 	}
-
-	dqa.EndWithResult("done")
 
 	return nil
 }

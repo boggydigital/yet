@@ -8,14 +8,14 @@ import (
 	"net/url"
 )
 
-func QueuePlaylistsDownloadsHandler(u *url.URL) error {
+func QueuePlaylistsDownloadsHandler(_ *url.URL) error {
 	return QueuePlaylistsDownloads(nil)
 }
 
 func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 
 	qpda := nod.NewProgress("queueing playlists downloads...")
-	defer qpda.End()
+	defer qpda.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
@@ -33,8 +33,6 @@ func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 
 		qpda.Increment()
 	}
-
-	qpda.EndWithResult("done")
 
 	return nil
 }

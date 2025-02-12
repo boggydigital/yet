@@ -25,7 +25,7 @@ func RemovePlaylistHandler(u *url.URL) error {
 func RemovePlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions) error {
 
 	rpa := nod.Begin("removing playlist %s...", playlistId)
-	defer rpa.End()
+	defer rpa.Done()
 
 	if opt == nil {
 		opt = DefaultPlaylistOptions()
@@ -62,8 +62,6 @@ func RemovePlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions
 			return err
 		}
 	}
-
-	rpa.EndWithResult("done")
 
 	return nil
 }

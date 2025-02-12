@@ -15,7 +15,7 @@ func QueueChannelsDownloadsHandler(u *url.URL) error {
 func QueueChannelsDownloads(rdx redux.Writeable) error {
 
 	qcda := nod.NewProgress("queueing channels downloads...")
-	defer qcda.End()
+	defer qcda.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
@@ -33,8 +33,6 @@ func QueueChannelsDownloads(rdx redux.Writeable) error {
 
 		qcda.Increment()
 	}
-
-	qcda.EndWithResult("done")
 
 	return nil
 }

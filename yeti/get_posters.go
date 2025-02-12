@@ -12,7 +12,7 @@ import (
 func GetPosters(videoId string, dl *dolo.Client, force bool, qualities ...youtube_urls.ThumbnailQuality) error {
 
 	gpa := nod.NewProgress(" posters for %s", videoId)
-	defer gpa.End()
+	defer gpa.Done()
 
 	gpa.TotalInt(len(qualities))
 
@@ -37,8 +37,6 @@ func GetPosters(videoId string, dl *dolo.Client, force bool, qualities ...youtub
 
 		gpa.Increment()
 	}
-
-	gpa.EndWithResult("done")
 
 	return nil
 }

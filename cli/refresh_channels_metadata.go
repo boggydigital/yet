@@ -14,7 +14,7 @@ func RefreshChannelsMetadataHandler(_ *url.URL) error {
 func RefreshChannelsMetadata(rdx redux.Writeable) error {
 
 	ucma := nod.NewProgress("updating all channels metadata...")
-	defer ucma.End()
+	defer ucma.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.ChannelProperties()...)
@@ -31,14 +31,12 @@ func RefreshChannelsMetadata(rdx redux.Writeable) error {
 
 	for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
 
-		if err := GetChannelsMetadata(rdx, refreshOptions, channelId); err != nil {
+		if err = GetChannelsMetadata(rdx, refreshOptions, channelId); err != nil {
 			return err
 		}
 
 		ucma.Increment()
 	}
-
-	ucma.EndWithResult("done")
 
 	return nil
 }

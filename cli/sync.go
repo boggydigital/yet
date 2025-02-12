@@ -19,7 +19,7 @@ func SyncHandler(u *url.URL) error {
 func Sync(rdx redux.Writeable, opt *VideoOptions) error {
 
 	sa := nod.Begin("syncing yet data...")
-	defer sa.End()
+	defer sa.Done()
 
 	if opt == nil {
 		opt = DefaultVideoOptions()

@@ -11,7 +11,7 @@ import (
 func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosInitialData, channelId string, expand bool, rdx redux.Writeable) error {
 
 	gcvma := nod.Begin(" channel videos metadata for %s", channelId)
-	defer gcvma.End()
+	defer gcvma.Done()
 
 	if err := rdx.MustHave(
 		data.ChannelTitleProperty,
@@ -32,13 +32,13 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 	}
 
 	if channelTitle := channelVideosPage.Metadata.ChannelMetadataRenderer.Title; channelTitle != "" {
-		if err := rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
+		if err = rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
 			return err
 		}
 	}
 
 	if description := channelVideosPage.Metadata.ChannelMetadataRenderer.Description; description != "" {
-		if err := rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
+		if err = rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
 			return err
 		}
 	}
@@ -68,23 +68,21 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 		}
 	}
 
-	if err := rdx.ReplaceValues(data.ChannelVideosProperty, channelId, channelVideos...); err != nil {
+	if err = rdx.ReplaceValues(data.ChannelVideosProperty, channelId, channelVideos...); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchReplaceValues(data.VideoTitleProperty, videoTitles); err != nil {
+	if err = rdx.BatchReplaceValues(data.VideoTitleProperty, videoTitles); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchReplaceValues(data.VideoDurationProperty, videoLengthsSeconds); err != nil {
+	if err = rdx.BatchReplaceValues(data.VideoDurationProperty, videoLengthsSeconds); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchReplaceValues(data.VideoOwnerChannelNameProperty, videoOwnerChannels); err != nil {
+	if err = rdx.BatchReplaceValues(data.VideoOwnerChannelNameProperty, videoOwnerChannels); err != nil {
 		return err
 	}
-
-	gcvma.EndWithResult("done")
 
 	return nil
 }

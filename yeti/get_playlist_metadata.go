@@ -11,7 +11,7 @@ import (
 func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, expand bool, rdx redux.Writeable) error {
 
 	gppma := nod.Begin(" metadata for %s", playlistId)
-	defer gppma.End()
+	defer gppma.Done()
 
 	if err := rdx.MustHave(
 		data.PlaylistTitleProperty,
@@ -33,13 +33,13 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 
 	phr := playlistPage.PlaylistHeaderRenderer()
 	if phr.Title.SimpleText != "" {
-		if err := rdx.AddValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
+		if err = rdx.AddValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
 			return err
 		}
 	}
 
 	if playlistPage.PlaylistOwner() != "" {
-		if err := rdx.AddValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
+		if err = rdx.AddValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
 			return err
 		}
 	}
@@ -69,23 +69,21 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 		}
 	}
 
-	if err := rdx.ReplaceValues(data.PlaylistVideosProperty, playlistId, playlistVideos...); err != nil {
+	if err = rdx.ReplaceValues(data.PlaylistVideosProperty, playlistId, playlistVideos...); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
+	if err = rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchAddValues(data.VideoDurationProperty, videoLengths); err != nil {
+	if err = rdx.BatchAddValues(data.VideoDurationProperty, videoLengths); err != nil {
 		return err
 	}
 
-	if err := rdx.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
+	if err = rdx.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
 		return err
 	}
-
-	gppma.EndWithResult("done")
 
 	return nil
 }

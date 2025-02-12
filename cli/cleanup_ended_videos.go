@@ -27,7 +27,7 @@ func CleanupEndedVideosHandler(u *url.URL) error {
 func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 
 	cea := nod.NewProgress("cleaning up ended media...")
-	defer cea.End()
+	defer cea.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
@@ -103,8 +103,6 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 
 		cea.Increment()
 	}
-
-	cea.EndWithResult("done")
 
 	return nil
 }

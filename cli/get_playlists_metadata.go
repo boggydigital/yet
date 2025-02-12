@@ -21,7 +21,7 @@ func GetPlaylistsMetadataHandler(u *url.URL) error {
 
 func GetPlaylistsMetadata(rdx redux.Writeable, opt *PlaylistOptions, playlistIds ...string) error {
 	gpma := nod.NewProgress("getting playlist metadata...")
-	defer gpma.End()
+	defer gpma.Done()
 
 	if opt == nil {
 		opt = DefaultPlaylistOptions()
@@ -57,8 +57,6 @@ func GetPlaylistsMetadata(rdx redux.Writeable, opt *PlaylistOptions, playlistIds
 
 		gpma.Increment()
 	}
-
-	gpma.EndWithResult("done")
 
 	return nil
 }

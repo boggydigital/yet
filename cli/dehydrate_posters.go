@@ -24,7 +24,7 @@ func DehydratePostersHandler(u *url.URL) error {
 func DehydratePosters(force bool) error {
 
 	dpa := nod.NewProgress("dehydrating posters...")
-	defer dpa.EndWithResult("done")
+	defer dpa.Done()
 
 	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {

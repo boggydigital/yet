@@ -27,7 +27,7 @@ func ScrubEndedPropertiesHandler(_ *url.URL) error {
 // Preserved properties are required for core functionality - history, cleanup, etc.
 func ScrubEndedProperties(rdx redux.Writeable) error {
 	sevpa := nod.NewProgress("scrubbing ended videos properties...")
-	defer sevpa.End()
+	defer sevpa.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
@@ -53,8 +53,6 @@ func ScrubEndedProperties(rdx redux.Writeable) error {
 
 		sevpa.Increment()
 	}
-
-	sevpa.EndWithResult("done")
 
 	return nil
 }

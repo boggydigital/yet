@@ -21,7 +21,7 @@ func GetVideoMetadataHandler(u *url.URL) error {
 
 func GetVideoMetadata(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) error {
 	gvma := nod.NewProgress("getting video metadata...")
-	defer gvma.End()
+	defer gvma.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
@@ -46,15 +46,13 @@ func GetVideoMetadata(rdx redux.Writeable, opt *VideoOptions, videoIds ...string
 		gvma.Increment()
 	}
 
-	gvma.EndWithResult("done")
-
 	return nil
 }
 
 func getVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId string, rdx redux.Writeable) error {
 
 	gvpma := nod.Begin(" metadata for %s", videoId)
-	defer gvpma.End()
+	defer gvpma.Done()
 
 	var err error
 	if videoPage == nil {
@@ -69,8 +67,6 @@ func getVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId
 			return err
 		}
 	}
-
-	gvpma.EndWithResult("done")
 
 	return nil
 }

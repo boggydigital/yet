@@ -22,7 +22,7 @@ func GetChannelsMetadataHandler(u *url.URL) error {
 
 func GetChannelsMetadata(rdx redux.Writeable, opt *ChannelOptions, channelIds ...string) error {
 	gchma := nod.NewProgress("getting channel metadata...")
-	defer gchma.End()
+	defer gchma.Done()
 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
@@ -55,8 +55,6 @@ func GetChannelsMetadata(rdx redux.Writeable, opt *ChannelOptions, channelIds ..
 
 		gchma.Increment()
 	}
-
-	gchma.EndWithResult("done")
 
 	return nil
 }
