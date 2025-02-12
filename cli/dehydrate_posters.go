@@ -28,12 +28,12 @@ func DehydratePosters(force bool) error {
 
 	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
-		return dpa.EndWithError(err)
+		return err
 	}
 
 	rdx, err := redux.NewWriter(metadataDir, data.VideoProperties()...)
 	if err != nil {
-		return dpa.EndWithError(err)
+		return err
 	}
 
 	dpa.TotalInt(rdx.Len(data.VideoTitleProperty))
@@ -67,15 +67,15 @@ func DehydratePosters(force bool) error {
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoDehydratedPosterProperty, dehydratedPosters); err != nil {
-		return dpa.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoDehydratedRepColorProperty, dehydratedRepColors); err != nil {
-		return dpa.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoDehydratedInputMissingProperty, dehydratedInputMissing); err != nil {
-		return dpa.EndWithError(err)
+		return err
 	}
 
 	return nil

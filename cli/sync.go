@@ -28,47 +28,47 @@ func Sync(rdx redux.Writeable, opt *VideoOptions) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := UpdateYtDlp(false); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := RefreshChannelsMetadata(rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 	if err := QueueChannelsDownloads(rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := RefreshPlaylistsMetadata(rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 	if err := QueuePlaylistsDownloads(rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := ProcessQueue(rdx, opt); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := DehydratePosters(false); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := ScrubEndedProperties(rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 	if err := ScrubDepositionProperties(rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 	if err := CleanupEndedVideos(false, rdx); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	if err := Backup(); err != nil {
-		return sa.EndWithError(err)
+		return err
 	}
 
 	return nil

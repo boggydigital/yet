@@ -28,7 +28,7 @@ func GetVideoMetadata(rdx redux.Writeable, opt *VideoOptions, videoIds ...string
 
 	parsedVideoIds, err := yeti.ParseVideoIds(videoIds...)
 	if err != nil {
-		return gvma.EndWithError(err)
+		return err
 	}
 
 	gvma.TotalInt(len(parsedVideoIds))
@@ -60,13 +60,13 @@ func getVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId
 	if videoPage == nil {
 		videoPage, err = yeti.GetVideoPage(videoId)
 		if err != nil {
-			return gvpma.EndWithError(err)
+			return err
 		}
 	}
 
 	for p, v := range yeti.ExtractMetadata(videoPage) {
 		if err := rdx.AddValues(p, videoId, v...); err != nil {
-			return gvpma.EndWithError(err)
+			return err
 		}
 	}
 

@@ -23,7 +23,7 @@ func GetPoster(force bool, videoIds ...string) error {
 
 	parsedVideoIds, err := yeti.ParseVideoIds(videoIds...)
 	if err != nil {
-		return gpa.EndWithError(err)
+		return err
 	}
 
 	gpa.TotalInt(len(parsedVideoIds))

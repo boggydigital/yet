@@ -28,11 +28,11 @@ func GetPosters(videoId string, dl *dolo.Client, force bool, qualities ...youtub
 				if lq := youtube_urls.LowerQuality(q); lq != youtube_urls.ThumbnailQualityUnknown {
 					return GetPosters(videoId, dl, force, lq)
 				} else {
-					return gpa.EndWithError(err)
+					return err
 				}
 			}
 		} else {
-			return gpa.EndWithError(err)
+			return err
 		}
 
 		gpa.Increment()

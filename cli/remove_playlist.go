@@ -34,12 +34,12 @@ func RemovePlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.PlaylistProperties()...)
 	if err != nil {
-		return rpa.EndWithError(err)
+		return err
 	}
 
 	playlistId, err = yeti.ParsePlaylistId(playlistId)
 	if err != nil {
-		return rpa.EndWithError(err)
+		return err
 	}
 
 	propertyKeys := make(map[string]string)
@@ -59,7 +59,7 @@ func RemovePlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions
 
 	for property, key := range propertyKeys {
 		if err := rdx.CutKeys(property, key); err != nil {
-			return rpa.EndWithError(err)
+			return err
 		}
 	}
 

@@ -47,22 +47,22 @@ func UpdateYtDlp(force bool) error {
 
 	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	rdx, err := redux.NewWriter(metadataDir, data.YtDlpLatestDownloadedVersionProperty)
 	if err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	ytDlpDir, err := pathways.GetAbsDir(data.YtDlp)
 	if err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	ytDlpPluginsDir := filepath.Join(userHomeDir, relYtDlpPluginsDir)
@@ -72,17 +72,17 @@ func UpdateYtDlp(force bool) error {
 	// update yt-dlp
 	ytDlpAsset := yeti.GetYtDlpBinary()
 	if err := getAsset(ytDlpOwnerRepo, ytDlpAsset, ytDlpDir, dc, rdx, force); err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	ytDlpBinaryFilename := filepath.Join(ytDlpDir, ytDlpAsset)
 	if err := os.Chmod(ytDlpBinaryFilename, 0555); err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	// update yt-dlp-get-pot
 	if err := getAsset(ytDlpGetPotOwnerRepo, ytDlpGetPotAsset, ytDlpDir, dc, rdx, force); err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	if err := copyYtDlpPlugin(ytDlpDir, ytDlpPluginsDir, ytDlpGetPotAsset, force); err != nil {
@@ -91,7 +91,7 @@ func UpdateYtDlp(force bool) error {
 
 	// update bgutil-ytdlp-pot-provider
 	if err := getAsset(ytDlpPotProviderOwnerRepo, ytDlpPotProviderAsset, ytDlpDir, dc, rdx, force); err != nil {
-		return uyda.EndWithError(err)
+		return err
 	}
 
 	if err := copyYtDlpPlugin(ytDlpDir, ytDlpPluginsDir, ytDlpPotProviderAsset, force); err != nil {
@@ -143,24 +143,24 @@ func getLatestGitHubRelease(ownerRepo string) (*github_integration.GitHubRelease
 
 	owner, repo, ok := strings.Cut(ownerRepo, "/")
 	if !ok {
-		return nil, gra.EndWithError(errors.New("invalid owner/repo " + ownerRepo))
+		return nil, errors.New("invalid owner/repo " + ownerRepo)
 	}
 
 	ytDlpReleasesUrl := github_integration.ReleasesUrl(owner, repo)
 
 	resp, err := http.Get(ytDlpReleasesUrl.String())
 	if err != nil {
-		return nil, gra.EndWithError(err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, gra.EndWithError(errors.New(resp.Status))
+		return nil, errors.New(resp.Status)
 	}
 
 	var releases []github_integration.GitHubRelease
 	if err := json.NewDecoder(resp.Body).Decode(&releases); err != nil {
-		return nil, gra.EndWithError(err)
+		return nil, err
 	}
 
 	if len(releases) > 0 {
@@ -169,7 +169,7 @@ func getLatestGitHubRelease(ownerRepo string) (*github_integration.GitHubRelease
 		return latestRelease, nil
 	}
 
-	return nil, gra.EndWithError(errors.New("latest release not found for " + ownerRepo))
+	return nil, errors.New("latest release not found for " + ownerRepo)
 }
 
 func downloadAsset(dstDir string, release *github_integration.GitHubRelease, assetName string, dc *dolo.Client, force bool) error {
@@ -193,12 +193,12 @@ func downloadAsset(dstDir string, release *github_integration.GitHubRelease, ass
 	}
 
 	if desiredAsset == nil {
-		return daa.EndWithError(errors.New("cannot locate asset in the provided release"))
+		return errors.New("cannot locate asset in the provided release")
 	}
 
 	assetUrl, err := url.Parse(desiredAsset.BrowserDownloadUrl)
 	if err != nil {
-		return daa.EndWithError(err)
+		return err
 	}
 
 	return dc.Download(assetUrl, force, daa, dstDir)
@@ -211,7 +211,7 @@ func copyYtDlpPlugin(srcDir, dstDir, pluginFilename string, force bool) error {
 
 	if _, err := os.Stat(dstDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(dstDir, 0755); err != nil {
-			return cpa.EndWithError(err)
+			return err
 		}
 	}
 
@@ -220,7 +220,7 @@ func copyYtDlpPlugin(srcDir, dstDir, pluginFilename string, force bool) error {
 	if _, err := os.Stat(dstFilename); err == nil {
 		if force {
 			if err := os.Remove(dstFilename); err != nil {
-				return cpa.EndWithError(err)
+				return err
 			}
 		} else {
 			cpa.EndWithResult("already exists")
@@ -231,18 +231,18 @@ func copyYtDlpPlugin(srcDir, dstDir, pluginFilename string, force bool) error {
 	srcFilename := filepath.Join(srcDir, pluginFilename)
 	srcFile, err := os.Open(srcFilename)
 	if err != nil {
-		return cpa.EndWithError(err)
+		return err
 	}
 	defer srcFile.Close()
 
 	dstFile, err := os.Create(dstFilename)
 	if err != nil {
-		return cpa.EndWithError(err)
+		return err
 	}
 	defer dstFile.Close()
 
 	if _, err := io.Copy(dstFile, srcFile); err != nil {
-		return cpa.EndWithError(err)
+		return err
 	}
 
 	return nil

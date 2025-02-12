@@ -35,12 +35,12 @@ func AddPlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions) e
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return apa.EndWithError(err)
+		return err
 	}
 
 	playlistId, err = yeti.ParsePlaylistId(playlistId)
 	if err != nil {
-		return apa.EndWithError(err)
+		return err
 	}
 
 	propertyValues := make(map[string]map[string][]string)
@@ -68,12 +68,12 @@ func AddPlaylist(rdx redux.Writeable, playlistId string, opt *PlaylistOptions) e
 
 	for property, idValues := range propertyValues {
 		if err := rdx.BatchAddValues(property, idValues); err != nil {
-			return apa.EndWithError(err)
+			return err
 		}
 	}
 
 	if err := GetPlaylistsMetadata(rdx, opt, playlistId); err != nil {
-		return apa.EndWithError(err)
+		return err
 	}
 
 	apa.EndWithResult("done")

@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"fmt"
+	"errors"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
@@ -37,7 +37,7 @@ func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return dqa.EndWithError(err)
+		return err
 	}
 
 	processedVideoIds := make(map[string]int)
@@ -45,7 +45,7 @@ func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 	for {
 		videoId, err := getNextQueuedDownload(rdx, opt.Force)
 		if err != nil {
-			return dqa.EndWithError(err)
+			return err
 		}
 		if videoId == "" {
 			break
@@ -57,12 +57,12 @@ func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 		// we'll attempt up to maxAttempts and break to avoid infinite loop
 		// returning error to allow to get to the root cause if that happens
 		if att, ok := processedVideoIds[videoId]; ok && att >= maxAttempts {
-			return dqa.EndWithError(fmt.Errorf("exceeded max attempts for video %s", videoId))
+			return errors.New("exceeded max attempts for video " + videoId)
 		}
 		processedVideoIds[videoId]++
 
 		if err := DownloadVideo(rdx, opt, videoId); err != nil {
-			return dqa.EndWithError(err)
+			return err
 		}
 	}
 

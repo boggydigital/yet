@@ -19,27 +19,27 @@ func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlayl
 		data.ChannelPlaylistsProperty,
 		data.PlaylistTitleProperty,
 		data.PlaylistChannelProperty); err != nil {
-		return gcpma.EndWithError(err)
+		return err
 	}
 
 	var err error
 	if channelPlaylistsPage == nil {
 		channelPlaylistsPage, err = youtube_urls.GetChannelPlaylistsPage(http.DefaultClient, channelId)
 		if err != nil {
-			return gcpma.EndWithError(err)
+			return err
 		}
 	}
 
 	channelTitle := ""
 	if channelTitle = channelPlaylistsPage.Metadata.ChannelMetadataRenderer.Title; channelTitle != "" {
 		if err := rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
-			return gcpma.EndWithError(err)
+			return err
 		}
 	}
 
 	if description := channelPlaylistsPage.Metadata.ChannelMetadataRenderer.Description; description != "" {
 		if err := rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
-			return gcpma.EndWithError(err)
+			return err
 		}
 	}
 
@@ -55,15 +55,15 @@ func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlayl
 	}
 
 	if err := rdx.ReplaceValues(data.ChannelPlaylistsProperty, channelId, channelPlaylists...); err != nil {
-		return gcpma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.PlaylistTitleProperty, playlistsTitles); err != nil {
-		return gcpma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.PlaylistChannelProperty, playlistsChannels); err != nil {
-		return gcpma.EndWithError(err)
+		return err
 	}
 
 	gcpma.EndWithResult("done")

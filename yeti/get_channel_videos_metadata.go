@@ -20,26 +20,26 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 		data.VideoTitleProperty,
 		data.VideoDurationProperty,
 		data.VideoOwnerChannelNameProperty); err != nil {
-		return gcvma.EndWithError(err)
+		return err
 	}
 
 	var err error
 	if channelVideosPage == nil {
 		channelVideosPage, err = youtube_urls.GetChannelVideosPage(http.DefaultClient, channelId)
 		if err != nil {
-			return gcvma.EndWithError(err)
+			return err
 		}
 	}
 
 	if channelTitle := channelVideosPage.Metadata.ChannelMetadataRenderer.Title; channelTitle != "" {
 		if err := rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
-			return gcvma.EndWithError(err)
+			return err
 		}
 	}
 
 	if description := channelVideosPage.Metadata.ChannelMetadataRenderer.Description; description != "" {
 		if err := rdx.ReplaceValues(data.ChannelDescriptionProperty, channelId, description); err != nil {
-			return gcvma.EndWithError(err)
+			return err
 		}
 	}
 
@@ -61,7 +61,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 
 		if expand && channelVideosPage.HasContinuation() {
 			if err = channelVideosPage.Continue(http.DefaultClient); err != nil {
-				return gcvma.EndWithError(err)
+				return err
 			}
 		} else {
 			channelVideosPage = nil
@@ -69,19 +69,19 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 	}
 
 	if err := rdx.ReplaceValues(data.ChannelVideosProperty, channelId, channelVideos...); err != nil {
-		return gcvma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoTitleProperty, videoTitles); err != nil {
-		return gcvma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoDurationProperty, videoLengthsSeconds); err != nil {
-		return gcvma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchReplaceValues(data.VideoOwnerChannelNameProperty, videoOwnerChannels); err != nil {
-		return gcvma.EndWithError(err)
+		return err
 	}
 
 	gcvma.EndWithResult("done")

@@ -46,7 +46,7 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return da.EndWithError(err)
+		return err
 	}
 
 	da.TotalInt(len(videoIds))
@@ -55,7 +55,7 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 
 		videoId, err = yeti.ParseVideoId(videoId)
 		if err != nil {
-			return da.EndWithError(err)
+			return err
 		}
 
 		// apply video specific options
@@ -66,18 +66,18 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 		// adding to download queue (if not there already)
 		if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
 			if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
-				return da.EndWithError(err)
+				return err
 			}
 		}
 
 		// setting download started timestamp
 		if err := rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
-			return da.EndWithError(err)
+			return err
 		}
 
 		videoPage, err := yeti.GetVideoPage(videoId)
 		if err != nil {
-			return da.EndWithError(err)
+			return err
 		}
 
 		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
@@ -103,12 +103,12 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 		if !errs {
 			// set downloaded date if no errors were encountered
 			if err := rdx.AddValues(data.VideoDownloadCompletedProperty, videoId, yeti.FmtNow()); err != nil {
-				return da.EndWithError(err)
+				return err
 			}
 		} else {
 			// reset download started if errors were encountered (keeping in download queue)
 			if err := rdx.CutKeys(data.VideoDownloadStartedProperty, videoId); err != nil {
-				return da.EndWithError(err)
+				return err
 			}
 		}
 
@@ -176,13 +176,13 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 	absDir, _ := path.Split(absFilename)
 	if _, err := os.Stat(absDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(absDir, 0755); err != nil {
-			return dyda.EndWithError(err)
+			return err
 		}
 	}
 
 	ytDlpDir, err := pathways.GetAbsDir(data.YtDlp)
 	if err != nil {
-		return dyda.EndWithError(err)
+		return err
 	}
 
 	arguments := make([]string, 0)

@@ -34,7 +34,7 @@ func AddChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) erro
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return aca.EndWithError(err)
+		return err
 	}
 
 	propertyValues := make(map[string]map[string][]string)
@@ -62,13 +62,13 @@ func AddChannel(rdx redux.Writeable, channelId string, opt *ChannelOptions) erro
 
 	for property, idValues := range propertyValues {
 		if err := rdx.BatchAddValues(property, idValues); err != nil {
-			return aca.EndWithError(err)
+			return err
 		}
 	}
 
 	// TODO: add GetChannelMetadata when ready
 	//if err := GetPlaylistMetadata(rdx, opt, playlistId); err != nil {
-	//	return aca.EndWithError(err)
+	//	return err
 	//}
 
 	aca.EndWithResult("done")

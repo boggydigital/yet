@@ -33,7 +33,7 @@ func RemoveVideos(rdx redux.Writeable, videoId string, opt *VideoOptions) error 
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return rva.EndWithError(err)
+		return err
 	}
 
 	propertyKeys := make(map[string]string)
@@ -59,7 +59,7 @@ func RemoveVideos(rdx redux.Writeable, videoId string, opt *VideoOptions) error 
 
 	for property, key := range propertyKeys {
 		if err := rdx.CutKeys(property, key); err != nil {
-			return rva.EndWithError(err)
+			return err
 		}
 	}
 

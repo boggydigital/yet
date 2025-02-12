@@ -32,7 +32,7 @@ func main() {
 		data.DefaultYetRootDir,
 		nil,
 		data.AllAbsDirs...); err != nil {
-		_ = ya.EndWithError(err)
+		_ = err
 		os.Exit(1)
 	}
 
@@ -42,7 +42,7 @@ func main() {
 		nil)
 
 	if err != nil {
-		_ = ya.EndWithError(err)
+		_ = err
 		os.Exit(1)
 	}
 
@@ -78,12 +78,12 @@ func main() {
 	})
 
 	if err := defs.AssertCommandsHaveHandlers(); err != nil {
-		_ = ya.EndWithError(err)
+		_ = err
 		os.Exit(1)
 	}
 
 	if err := defs.Serve(os.Args[1:]); err != nil {
-		_ = ya.EndWithError(err)
+		_ = err
 		os.Exit(1)
 	}
 }

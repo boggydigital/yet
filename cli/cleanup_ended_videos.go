@@ -32,12 +32,12 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return cea.EndWithError(err)
+		return err
 	}
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
-		return cea.EndWithError(err)
+		return err
 	}
 
 	cleanupVideoIds := make([]string, 0)
@@ -67,7 +67,7 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 						continue
 					}
 				} else {
-					return cea.EndWithError(err)
+					return err
 				}
 			}
 		}
@@ -80,14 +80,14 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 	for _, videoId := range cleanupVideoIds {
 
 		if err := removeVideoFile(videoId, rdx); err != nil {
-			return cea.EndWithError(err)
+			return err
 		}
 		if err := removePosters(videoId); err != nil {
-			return cea.EndWithError(err)
+			return err
 		}
 
 		if err := rdx.AddValues(data.VideoDownloadCleanedUpProperty, videoId, time.Now().Format(time.RFC3339)); err != nil {
-			return cea.EndWithError(err)
+			return err
 		}
 
 		// checking and removing empty directories

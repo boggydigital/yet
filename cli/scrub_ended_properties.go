@@ -32,7 +32,7 @@ func ScrubEndedProperties(rdx redux.Writeable) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return sevpa.EndWithError(err)
+		return err
 	}
 
 	sevpa.TotalInt(rdx.Len(data.VideoEndedDateProperty))
@@ -46,7 +46,7 @@ func ScrubEndedProperties(rdx redux.Writeable) error {
 
 			if rdx.HasKey(vp, videoId) {
 				if err := rdx.CutKeys(vp, videoId); err != nil {
-					return sevpa.EndWithError(err)
+					return err
 				}
 			}
 		}

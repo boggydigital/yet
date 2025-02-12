@@ -20,27 +20,27 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 		data.VideoTitleProperty,
 		data.VideoDurationProperty,
 		data.VideoOwnerChannelNameProperty); err != nil {
-		return gppma.EndWithError(err)
+		return err
 	}
 
 	var err error
 	if playlistPage == nil {
 		playlistPage, err = youtube_urls.GetPlaylistPage(http.DefaultClient, playlistId)
 		if err != nil {
-			return gppma.EndWithError(err)
+			return err
 		}
 	}
 
 	phr := playlistPage.PlaylistHeaderRenderer()
 	if phr.Title.SimpleText != "" {
 		if err := rdx.AddValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
-			return gppma.EndWithError(err)
+			return err
 		}
 	}
 
 	if playlistPage.PlaylistOwner() != "" {
 		if err := rdx.AddValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
-			return gppma.EndWithError(err)
+			return err
 		}
 	}
 
@@ -62,7 +62,7 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 
 		if expand && playlistPage.HasContinuation() {
 			if err = playlistPage.Continue(http.DefaultClient); err != nil {
-				return gppma.EndWithError(err)
+				return err
 			}
 		} else {
 			playlistPage = nil
@@ -70,19 +70,19 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 	}
 
 	if err := rdx.ReplaceValues(data.PlaylistVideosProperty, playlistId, playlistVideos...); err != nil {
-		return gppma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
-		return gppma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchAddValues(data.VideoDurationProperty, videoLengths); err != nil {
-		return gppma.EndWithError(err)
+		return err
 	}
 
 	if err := rdx.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
-		return gppma.EndWithError(err)
+		return err
 	}
 
 	gppma.EndWithResult("done")

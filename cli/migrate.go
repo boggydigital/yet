@@ -17,16 +17,16 @@ func Migrate() error {
 	defer ma.End()
 
 	if err := Backup(); err != nil {
-		return ma.EndWithError(err)
+		return err
 	}
 
 	amd, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
-		return ma.EndWithError(err)
+		return err
 	}
 
 	if err := kevlar.Migrate(amd); err != nil {
-		return ma.EndWithError(err)
+		return err
 	}
 
 	ma.EndWithResult("done")

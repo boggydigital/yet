@@ -35,12 +35,12 @@ func AddVideo(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.VideoProperties()...)
 	if err != nil {
-		return ava.EndWithError(err)
+		return err
 	}
 
 	videoId, err = yeti.ParseVideoId(videoId)
 	if err != nil {
-		return ava.EndWithError(err)
+		return err
 	}
 
 	propertyValues := make(map[string]map[string][]string)
@@ -73,12 +73,12 @@ func AddVideo(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
 
 	for property, idValues := range propertyValues {
 		if err := rdx.BatchAddValues(property, idValues); err != nil {
-			return ava.EndWithError(err)
+			return err
 		}
 	}
 
 	if err := GetVideoMetadata(rdx, opt, videoId); err != nil {
-		return ava.EndWithError(err)
+		return err
 	}
 
 	ava.EndWithResult("done")

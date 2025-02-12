@@ -20,7 +20,7 @@ func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return qpda.EndWithError(err)
+		return err
 	}
 
 	qpda.TotalInt(rdx.Len(data.PlaylistAutoDownloadProperty))
@@ -28,7 +28,7 @@ func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 	for playlistId := range rdx.Keys(data.PlaylistAutoDownloadProperty) {
 
 		if err := queuePlaylistDownloads(rdx, playlistId); err != nil {
-			return qpda.EndWithError(err)
+			return err
 		}
 
 		qpda.Increment()

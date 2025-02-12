@@ -29,7 +29,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 
 	metadataDir, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
-		return gca.EndWithError(err)
+		return err
 	}
 
 	rdx, err := redux.NewWriter(metadataDir,
@@ -37,7 +37,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 		data.VideoCaptionsKindsProperty,
 		data.VideoCaptionsLanguagesProperty)
 	if err != nil {
-		return gca.EndWithError(err)
+		return err
 	}
 
 	for _, videoId := range videoIds {
@@ -68,13 +68,13 @@ func getVideoPageCaptions(
 	if videoPage == nil {
 		videoPage, err = yeti.GetVideoPage(videoId)
 		if err != nil {
-			return gca.EndWithError(err)
+			return err
 		}
 	}
 
 	captionTracks := videoPage.Captions.PlayerCaptionsTracklistRenderer.CaptionTracks
 	if err := yeti.GetCaptions(dl, rdx, videoId, captionTracks, force); err != nil {
-		return gca.EndWithError(err)
+		return err
 	}
 
 	gca.EndWithResult("done")

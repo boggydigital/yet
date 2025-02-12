@@ -30,12 +30,12 @@ func GetPlaylistsMetadata(rdx redux.Writeable, opt *PlaylistOptions, playlistIds
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return gpma.EndWithError(err)
+		return err
 	}
 
 	parsedPlaylistIds, err := yeti.ParsePlaylistIds(playlistIds...)
 	if err != nil {
-		return gpma.EndWithError(err)
+		return err
 	}
 
 	gpma.TotalInt(len(parsedPlaylistIds))

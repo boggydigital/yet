@@ -19,7 +19,7 @@ func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.PlaylistProperties()...)
 	if err != nil {
-		return upma.EndWithError(err)
+		return err
 	}
 
 	// update auto-refresh playlists metadata
@@ -32,7 +32,7 @@ func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 	for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 
 		if err := GetPlaylistsMetadata(rdx, refreshOptions, playlistId); err != nil {
-			return upma.EndWithError(err)
+			return err
 		}
 
 		upma.Increment()

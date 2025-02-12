@@ -18,16 +18,16 @@ func Backup() error {
 
 	amp, err := pathways.GetAbsDir(data.Metadata)
 	if err != nil {
-		return ea.EndWithError(err)
+		return err
 	}
 
 	abp, err := pathways.GetAbsDir(data.Backups)
 	if err != nil {
-		return ea.EndWithError(err)
+		return err
 	}
 
 	if err := backups.Compress(amp, abp); err != nil {
-		return ea.EndWithError(err)
+		return err
 	}
 
 	ea.EndWithResult("done")
@@ -36,7 +36,7 @@ func Backup() error {
 	defer cba.End()
 
 	if err := backups.Cleanup(abp, true, cba); err != nil {
-		return cba.EndWithError(err)
+		return err
 	}
 
 	cba.EndWithResult("done")

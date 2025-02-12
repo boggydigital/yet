@@ -26,7 +26,7 @@ func ScrubDepositionProperties(rdx redux.Writeable) error {
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return sdpa.EndWithError(err)
+		return err
 	}
 
 	currentVideoIds := make(map[string]any)
@@ -67,7 +67,7 @@ func ScrubDepositionProperties(rdx redux.Writeable) error {
 			if _, ok := currentVideoIds[videoId]; !ok {
 				if rdx.HasKey(vp, videoId) {
 					if err := rdx.CutKeys(vp, videoId); err != nil {
-						return sdpa.EndWithError(err)
+						return err
 					}
 				}
 			}

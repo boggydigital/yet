@@ -27,7 +27,7 @@ func GetChannelsMetadata(rdx redux.Writeable, opt *ChannelOptions, channelIds ..
 	var err error
 	rdx, err = validateWritableRedux(rdx, data.AllProperties()...)
 	if err != nil {
-		return gchma.EndWithError(err)
+		return err
 	}
 
 	gchma.TotalInt(len(channelIds))

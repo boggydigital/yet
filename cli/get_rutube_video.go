@@ -64,37 +64,37 @@ func getRuTubeVideo(dc *dolo.Client, u string, force bool) error {
 
 	playOptions, err := getPlayOptions(videoId, p)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	formats, err := getVideoBalancerFormats(videoId, playOptions)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	segments, err := getVideoSegmentsPlaylist(videoId, formats)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	err = getVideoSegments(playOptions, formats, segments, dc, force)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	err = generateMergeManifest(playOptions, segments, force)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	err = mergeVideoSegments(playOptions, force)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	err = removeManifestSegments(playOptions, segments)
 	if err != nil {
-		return grtva.EndWithError(err)
+		return err
 	}
 
 	return nil
@@ -152,7 +152,7 @@ func getVideoBalancerFormats(videoId string, playOptions *rutube_urls.PlayOption
 	}
 
 	if len(formats) == 0 {
-		return nil, gvbfa.EndWithError(errors.New("no formats found"))
+		return nil, errors.New("no formats found")
 	}
 
 	gvbfa.EndWithResult("done")
@@ -202,7 +202,7 @@ func getVideoSegments(
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
-		return gvsa.EndWithError(err)
+		return err
 	}
 
 	gvsa.TotalInt(len(segments))
@@ -257,25 +257,25 @@ func generateMergeManifest(playOptions *rutube_urls.PlayOptions, segments []stri
 
 	amf, err := absManifestFilename(playOptions)
 	if err != nil {
-		return gmma.EndWithError(err)
+		return err
 	}
 
 	if _, err := os.Stat(amf); err == nil && force {
 		if err := os.Remove(amf); err != nil {
-			return gmma.EndWithError(err)
+			return err
 		}
 	}
 
 	manifestFile, err := os.Create(amf)
 	if err != nil {
-		return gmma.EndWithError(err)
+		return err
 	}
 	defer manifestFile.Close()
 
 	for _, segment := range segments {
 		line := fmt.Sprintf("file '%s'\n", segment)
 		if _, err := manifestFile.WriteString(line); err != nil {
-			return gmma.EndWithError(err)
+			return err
 		}
 	}
 
@@ -297,7 +297,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
-		return mvsa.EndWithError(err)
+		return err
 	}
 
 	absOutputDir := filepath.Join(absVideosDir, channel)
@@ -307,13 +307,13 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 
 	if _, err := os.Stat(absOutputFilename); err == nil && force {
 		if err := os.Remove(absOutputFilename); err != nil {
-			return mvsa.EndWithError(err)
+			return err
 		}
 	}
 
 	ffmb, err := exec.LookPath("ffmpeg")
 	if err != nil {
-		return mvsa.EndWithError(err)
+		return err
 	}
 
 	args := []string{
@@ -324,7 +324,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 	cmd := exec.Command(ffmb, args...)
 	cmd.Dir = absOutputDir
 	if err := cmd.Run(); err != nil {
-		return mvsa.EndWithError(err)
+		return err
 	}
 
 	return nil
@@ -340,18 +340,18 @@ func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []str
 
 	absVideosDir, err := pathways.GetAbsDir(data.Videos)
 	if err != nil {
-		return rmsa.EndWithError(err)
+		return err
 	}
 
 	absOutputDir := filepath.Join(absVideosDir, channel)
 
 	amf, err := absManifestFilename(playOptions)
 	if err != nil {
-		return rmsa.EndWithError(err)
+		return err
 	}
 
 	if err := os.Remove(amf); err != nil {
-		return rmsa.EndWithError(err)
+		return err
 	}
 
 	rmsa.TotalInt(len(segments))
@@ -364,14 +364,14 @@ func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []str
 
 		absSegmentFilename := filepath.Join(absOutputDir, segment)
 		if err := os.Remove(absSegmentFilename); err != nil {
-			return rmsa.EndWithError(err)
+			return err
 		}
 
 		rmsa.Increment()
 	}
 
 	if err := os.Remove(filepath.Join(absOutputDir, dir)); err != nil {
-		return rmsa.EndWithError(err)
+		return err
 	}
 
 	return nil
