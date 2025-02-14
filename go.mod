@@ -1,6 +1,6 @@
 module github.com/boggydigital/yet
 
-go 1.23.6
+go 1.24.0
 
 require (
 	github.com/arelate/southern_light v0.1.97
@@ -14,7 +14,7 @@ require (
 	github.com/boggydigital/kevlar v0.6.6
 	github.com/boggydigital/nod v0.1.25
 	github.com/boggydigital/pathways v0.1.15
-	github.com/boggydigital/redux v0.1.3
+	github.com/boggydigital/redux v0.1.4
 	github.com/boggydigital/yet_urls v0.1.56
 )
 
