@@ -8,6 +8,7 @@ import (
 	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/cli"
 	"github.com/boggydigital/yet/data"
+	"log"
 	"os"
 )
 
@@ -32,8 +33,7 @@ func main() {
 		data.DefaultYetRootDir,
 		nil,
 		data.AllAbsDirs...); err != nil {
-		_ = err
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 
 	defs, err := clo.Load(
@@ -42,8 +42,7 @@ func main() {
 		nil)
 
 	if err != nil {
-		_ = err
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
@@ -77,13 +76,11 @@ func main() {
 		"version":                     cli.VersionHandler,
 	})
 
-	if err := defs.AssertCommandsHaveHandlers(); err != nil {
-		_ = err
-		os.Exit(1)
+	if err = defs.AssertCommandsHaveHandlers(); err != nil {
+		log.Fatalln(err)
 	}
 
-	if err := defs.Serve(os.Args[1:]); err != nil {
-		_ = err
-		os.Exit(1)
+	if err = defs.Serve(os.Args[1:]); err != nil {
+		log.Fatalln(err)
 	}
 }
