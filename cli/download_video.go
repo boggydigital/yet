@@ -27,8 +27,9 @@ func DownloadVideoHandler(u *url.URL) error {
 
 	videoIds := strings.Split(q.Get("video-id"), ",")
 	options := &VideoOptions{
-		Ended: q.Has("mark-watched"),
-		Force: q.Has("force"),
+		Ended:   q.Has("mark-watched"),
+		Verbose: q.Has("verbose"),
+		Force:   q.Has("force"),
 	}
 
 	return DownloadVideo(nil, options, videoIds...)
@@ -80,12 +81,12 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 			return err
 		}
 
-		if err := getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
+		if err = getVideoPageMetadata(videoPage, videoId, rdx); err != nil {
 			da.Error(err)
 			errs = true
 		}
 
-		if err := downloadVideo(videoId, videoPage, opt); err != nil {
+		if err = downloadVideo(videoId, videoPage, opt); err != nil {
 			da.Error(err)
 			errs = true
 		}
@@ -149,7 +150,7 @@ func downloadVideo(
 		}
 	}
 
-	if err := downloadWithYtDlp(videoId, absFilename, options); err != nil {
+	if err = downloadWithYtDlp(videoId, absFilename, options); err != nil {
 		return err
 	}
 
@@ -201,7 +202,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 
 	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)
 
-	if _, err := os.Stat(absYtDlpCookiesPath); err == nil {
+	if _, err = os.Stat(absYtDlpCookiesPath); err == nil {
 		arguments = append(arguments, "--cookies", absYtDlpCookiesPath)
 	}
 
@@ -212,5 +213,11 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 	absYtDlpFilename := filepath.Join(ytDlpDir, yeti.GetYtDlpBinary())
 
 	cmd := exec.Command(absYtDlpFilename, arguments...)
+
+	if options.Verbose {
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	}
+
 	return cmd.Run()
 }

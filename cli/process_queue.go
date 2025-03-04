@@ -16,7 +16,8 @@ func ProcessQueueHandler(u *url.URL) error {
 	q := u.Query()
 
 	options := &VideoOptions{
-		Force: q.Has("force"),
+		Verbose: q.Has("verbose"),
+		Force:   q.Has("force"),
 	}
 
 	return ProcessQueue(nil, options)

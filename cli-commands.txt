@@ -41,6 +41,7 @@ dehydrate-posters
 download-video
     video-id^*&
     mark-watched
+    verbose
     force
 
 get-captions
@@ -73,6 +74,7 @@ get-video-metadata
 migrate
 
 process-queue
+    verbose
     force
 
 queue-channels-downloads
@@ -114,6 +116,7 @@ serve
     stderr$
 
 sync
+    verbose
     force
 
 update-yt-dlp

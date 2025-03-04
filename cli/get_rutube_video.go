@@ -23,7 +23,7 @@ import (
 
 func GetRuTubeVideoHandler(u *url.URL) error {
 	urls := strings.Split(u.Query().Get("url"), ",")
-	force := u.Query().Has("Force")
+	force := u.Query().Has("force")
 	return GetRuTubeVideo(force, urls...)
 }
 

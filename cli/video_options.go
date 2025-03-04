@@ -11,6 +11,7 @@ type VideoOptions struct {
 	Progress      bool
 	Ended         bool
 	Reason        data.VideoEndedReason
+	Verbose       bool
 	Force         bool
 }
 
@@ -21,6 +22,7 @@ func DefaultVideoOptions() *VideoOptions {
 		Progress:      false,
 		Ended:         false,
 		Reason:        data.DefaultEndedReason,
+		Verbose:       false,
 		Force:         false,
 	}
 }
