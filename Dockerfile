@@ -9,8 +9,7 @@ RUN go build \
     -ldflags="-s -w -X 'github.com/boggydigital/yet/cli.GitTag=`git describe --tags --abbrev=0`'" \
     main.go
 
-# starting with Node.js runtime
-FROM node:alpine
+FROM alpine:latest
 # adding ffmpeg
 RUN apk update && apk add && apk add ffmpeg
 # adding yet
@@ -26,8 +25,12 @@ VOLUME /usr/share/yet/input
 VOLUME /usr/share/yet/metadata
 # videos
 VOLUME /usr/share/yet/videos
-# players
-VOLUME /usr/share/yet/players
+# posters
+VOLUME /usr/share/yet/posters
+# captions
+VOLUME /usr/share/yet/captions
+# yt-dlp
+VOLUME /usr/share/yet/yt-dlp
 
 ENTRYPOINT ["/usr/bin/yet"]
 CMD ["serve","-port", "2005", "-stderr"]
