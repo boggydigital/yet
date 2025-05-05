@@ -31,15 +31,14 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 		}
 	}
 
-	phr := playlistPage.PlaylistHeaderRenderer()
-	if phr.Title.SimpleText != "" {
-		if err = rdx.AddValues(data.PlaylistTitleProperty, playlistId, phr.Title.SimpleText); err != nil {
+	if pt := playlistPage.PlaylistTitle(); pt != "" {
+		if err = rdx.AddValues(data.PlaylistTitleProperty, playlistId, pt); err != nil {
 			return err
 		}
 	}
 
-	if playlistPage.PlaylistOwner() != "" {
-		if err = rdx.AddValues(data.PlaylistChannelProperty, playlistId, playlistPage.PlaylistOwner()); err != nil {
+	if po := playlistPage.PlaylistOwner(); po != "" {
+		if err = rdx.AddValues(data.PlaylistChannelProperty, playlistId, po); err != nil {
 			return err
 		}
 	}
