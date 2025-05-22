@@ -26,10 +26,12 @@ func DownloadVideoHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoIds := strings.Split(q.Get("video-id"), ",")
+
 	options := &VideoOptions{
-		Ended:   q.Has("mark-watched"),
-		Verbose: q.Has("verbose"),
-		Force:   q.Has("force"),
+		BgUtilBaseUrl: q.Get("bgutil-baseurl"),
+		Ended:         q.Has("mark-watched"),
+		Verbose:       q.Has("verbose"),
+		Force:         q.Has("force"),
 	}
 
 	return DownloadVideo(nil, options, videoIds...)
@@ -198,6 +200,10 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 
 	if options.Ended {
 		arguments = append(arguments, "--mark-watched")
+	}
+
+	if options.BgUtilBaseUrl != "" {
+		arguments = append(arguments, "--extractor-args \"youtube:getpot_bgutil_baseurl="+options.BgUtilBaseUrl+"\"")
 	}
 
 	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)

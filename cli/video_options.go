@@ -10,6 +10,7 @@ type VideoOptions struct {
 	DownloadQueue bool
 	Progress      bool
 	Ended         bool
+	BgUtilBaseUrl string
 	Reason        data.VideoEndedReason
 	Verbose       bool
 	Force         bool
