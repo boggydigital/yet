@@ -221,6 +221,8 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 	cmd := exec.Command(absYtDlpFilename, arguments...)
 
 	if options.Verbose {
+		arguments = append(arguments, "-vU")
+
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 	}
