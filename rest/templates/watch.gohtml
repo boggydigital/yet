@@ -11,12 +11,13 @@
         <title>{{.VideoTitle}}</title>
         {{template "css-shared"}}
         <style id="css-watch">
-            video, audio {
+            video, img {
                 width: 100%;
                 height: 100%;
                 aspect-ratio: 16/9;
                 margin-block-start: var(--small);
                 border-radius: var(--border-radius);
+                object-fit: cover;
             }
 
             audio {
@@ -38,7 +39,7 @@
 
             .video_source {
                 text-align: right;
-                color: var(--color-brown);
+                color: var(--color-red);
                 font-size: var(--fs-x-smaller);
 
                 &.local {
@@ -91,13 +92,17 @@
 
     {{template "back"}}
 
-    <div class='video_source {{if .LocalPlayback}}local{{end}}'>This video will play from
-        the {{if .LocalPlayback}}local{{else}}origin{{end}} server
+    <div class='video_source {{if .LocalPlayback}}local{{end}}'>
+        {{if .LocalPlayback}}This video is ready to play{{else}}This video needs to be downloaded to play{{end}}
     </div>
 
+    {{if .VideoUrl}}
     <video controls='controls' preload='none' poster='{{.VideoPoster}}'>
         <source src='{{.VideoUrl}}'/>
     </video>
+    {{else}}
+        <img src='{{.VideoPoster}}' />
+    {{end}}
 
     <ul class="video_details_container">
 

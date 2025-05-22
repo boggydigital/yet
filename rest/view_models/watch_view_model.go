@@ -146,27 +146,6 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 		videoDescription = videoPage.VideoDetails.ShortDescription
 	}
 
-	//if videoUrl == "" || videoTitle == "" {
-	//
-	//	if videoPage == nil {
-	//		videoPage, err = yeti.GetVideoPage(videoId)
-	//		if err != nil {
-	//			return nil, err
-	//		}
-	//	}
-	//
-	//	if err := yeti.DecodeSignatureCiphers(http.DefaultClient, videoPage); err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	vu, err := decode(videoPage.BestFormat().Url, videoPage.PlayerUrl)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	videoUrl = vu.String()
-	//}
-
 	lastEndedTime := ""
 	if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && et != "" {
 		lastEndedTime = et
@@ -238,25 +217,6 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 		PlaylistViewModel:    GetPlaylistViewModel(playlistId, rdx),
 	}, nil
 }
-
-//func decode(urlStr, playerUrl string) (*url.URL, error) {
-//	u, err := url.Parse(urlStr)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	q := u.Query()
-//	if np := q.Get("n"); np != "" {
-//		if dnp, err := yeti.DecodeNParam(np, playerUrl); err != nil {
-//			return nil, err
-//		} else {
-//			q.Set("n", dnp)
-//			u.RawQuery = q.Encode()
-//		}
-//	}
-//
-//	return u, nil
-//}
 
 func getLocalCaptionTracks(videoId string, rdx redux.Readable) ([]youtube_urls.CaptionTrack, error) {
 
