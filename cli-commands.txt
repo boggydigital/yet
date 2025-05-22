@@ -75,6 +75,7 @@ get-video-metadata
 migrate
 
 process-queue
+    bgutil-baseurl$
     verbose
     force
 
@@ -117,6 +118,7 @@ serve
     stderr$
 
 sync
+    bgutil-baseurl$
     verbose
     force
 
