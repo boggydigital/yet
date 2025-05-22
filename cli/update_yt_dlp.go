@@ -10,7 +10,6 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -19,8 +18,7 @@ import (
 )
 
 const (
-	ytDlpOwnerRepo     = "yt-dlp/yt-dlp"
-	relYtDlpPluginsDir = ".yt-dlp/plugins"
+	ytDlpOwnerRepo = "yt-dlp/yt-dlp"
 )
 
 const (
@@ -60,12 +58,10 @@ func UpdateYtDlp(force bool) error {
 		return err
 	}
 
-	userHomeDir, err := os.UserHomeDir()
+	absYtDlpPluginsDir, err := pathways.GetAbsRelDir(data.YtDlpPlugins)
 	if err != nil {
 		return err
 	}
-
-	ytDlpPluginsDir := filepath.Join(userHomeDir, relYtDlpPluginsDir)
 
 	dc := dolo.DefaultClient
 
@@ -81,22 +77,22 @@ func UpdateYtDlp(force bool) error {
 	}
 
 	// update yt-dlp-get-pot
-	if err := getAsset(ytDlpGetPotOwnerRepo, ytDlpGetPotAsset, ytDlpDir, dc, rdx, force); err != nil {
+	if err := getAsset(ytDlpGetPotOwnerRepo, ytDlpGetPotAsset, absYtDlpPluginsDir, dc, rdx, force); err != nil {
 		return err
 	}
 
-	if err := copyYtDlpPlugin(ytDlpDir, ytDlpPluginsDir, ytDlpGetPotAsset, force); err != nil {
-		return err
-	}
+	//if err := copyYtDlpPlugin(ytDlpDir, absYtDlpPluginsDir, ytDlpGetPotAsset, force); err != nil {
+	//	return err
+	//}
 
 	// update bgutil-ytdlp-pot-provider
-	if err := getAsset(ytDlpPotProviderOwnerRepo, ytDlpPotProviderAsset, ytDlpDir, dc, rdx, force); err != nil {
+	if err := getAsset(ytDlpPotProviderOwnerRepo, ytDlpPotProviderAsset, absYtDlpPluginsDir, dc, rdx, force); err != nil {
 		return err
 	}
 
-	if err := copyYtDlpPlugin(ytDlpDir, ytDlpPluginsDir, ytDlpPotProviderAsset, force); err != nil {
-		return err
-	}
+	//if err := copyYtDlpPlugin(ytDlpDir, absYtDlpPluginsDir, ytDlpPotProviderAsset, force); err != nil {
+	//	return err
+	//}
 
 	return nil
 }
@@ -204,46 +200,46 @@ func downloadAsset(dstDir string, release *github_integration.GitHubRelease, ass
 	return dc.Download(assetUrl, force, daa, dstDir)
 }
 
-func copyYtDlpPlugin(srcDir, dstDir, pluginFilename string, force bool) error {
-
-	cpa := nod.Begin(" copying yt-dlp plugin %s...", pluginFilename)
-	defer cpa.Done()
-
-	if _, err := os.Stat(dstDir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dstDir, 0755); err != nil {
-			return err
-		}
-	}
-
-	dstFilename := filepath.Join(dstDir, pluginFilename)
-
-	if _, err := os.Stat(dstFilename); err == nil {
-		if force {
-			if err := os.Remove(dstFilename); err != nil {
-				return err
-			}
-		} else {
-			cpa.EndWithResult("already exists")
-			return nil
-		}
-	}
-
-	srcFilename := filepath.Join(srcDir, pluginFilename)
-	srcFile, err := os.Open(srcFilename)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-
-	dstFile, err := os.Create(dstFilename)
-	if err != nil {
-		return err
-	}
-	defer dstFile.Close()
-
-	if _, err := io.Copy(dstFile, srcFile); err != nil {
-		return err
-	}
-
-	return nil
-}
+//func copyYtDlpPlugin(srcDir, dstDir, pluginFilename string, force bool) error {
+//
+//	cpa := nod.Begin(" copying yt-dlp plugin %s...", pluginFilename)
+//	defer cpa.Done()
+//
+//	if _, err := os.Stat(dstDir); os.IsNotExist(err) {
+//		if err := os.MkdirAll(dstDir, 0755); err != nil {
+//			return err
+//		}
+//	}
+//
+//	dstFilename := filepath.Join(dstDir, pluginFilename)
+//
+//	if _, err := os.Stat(dstFilename); err == nil {
+//		if force {
+//			if err := os.Remove(dstFilename); err != nil {
+//				return err
+//			}
+//		} else {
+//			cpa.EndWithResult("already exists")
+//			return nil
+//		}
+//	}
+//
+//	srcFilename := filepath.Join(srcDir, pluginFilename)
+//	srcFile, err := os.Open(srcFilename)
+//	if err != nil {
+//		return err
+//	}
+//	defer srcFile.Close()
+//
+//	dstFile, err := os.Create(dstFilename)
+//	if err != nil {
+//		return err
+//	}
+//	defer dstFile.Close()
+//
+//	if _, err := io.Copy(dstFile, srcFile); err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}

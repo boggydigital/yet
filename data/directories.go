@@ -4,7 +4,7 @@ import (
 	"github.com/boggydigital/pathways"
 )
 
-const DefaultYetRootDir = "/usr/share/yet"
+const DefaultRootDir = "/usr/share/yet"
 
 const (
 	Backups  pathways.AbsDir = "backups"
@@ -15,6 +15,14 @@ const (
 	Captions pathways.AbsDir = "captions"
 	YtDlp    pathways.AbsDir = "yt-dlp"
 )
+
+const (
+	YtDlpPlugins pathways.RelDir = "plugins"
+)
+
+var RelToAbsDirs = map[pathways.RelDir]pathways.AbsDir{
+	YtDlpPlugins: YtDlp,
+}
 
 var AllAbsDirs = []pathways.AbsDir{
 	Backups,

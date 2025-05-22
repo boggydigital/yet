@@ -190,6 +190,13 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 
 	arguments := make([]string, 0)
 
+	absYtDlpPluginsDir, err := pathways.GetAbsRelDir(data.YtDlpPlugins)
+	if err != nil {
+		return err
+	}
+
+	arguments = append(arguments, "--plugin-dirs", absYtDlpPluginsDir)
+
 	if strings.HasPrefix(videoId, "-") {
 		arguments = append(arguments, youtube_urls.VideoUrl(videoId).String())
 	} else {

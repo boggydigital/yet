@@ -30,8 +30,8 @@ func main() {
 	defer ya.Done()
 
 	if err := pathways.Setup(dirOverridesFilename,
-		data.DefaultYetRootDir,
-		nil,
+		data.DefaultRootDir,
+		data.RelToAbsDirs,
 		data.AllAbsDirs...); err != nil {
 		log.Fatalln(err)
 	}
