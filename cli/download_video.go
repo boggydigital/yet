@@ -203,7 +203,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 	}
 
 	if options.BgUtilBaseUrl != "" {
-		arguments = append(arguments, "--extractor-args \"youtube:getpot_bgutil_baseurl="+options.BgUtilBaseUrl+"\"")
+		arguments = append(arguments, "--extractor-args", "youtube:getpot_bgutil_baseurl="+options.BgUtilBaseUrl)
 	}
 
 	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)
