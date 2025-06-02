@@ -22,11 +22,6 @@ const (
 )
 
 const (
-	ytDlpGetPotOwnerRepo = "coletdjnz/yt-dlp-get-pot"
-	ytDlpGetPotAsset     = "yt-dlp-get-pot.zip"
-)
-
-const (
 	ytDlpPotProviderOwnerRepo = "Brainicism/bgutil-ytdlp-pot-provider"
 	ytDlpPotProviderAsset     = "bgutil-ytdlp-pot-provider.zip"
 )
@@ -76,10 +71,10 @@ func UpdateYtDlp(force bool) error {
 		return err
 	}
 
-	// update yt-dlp-get-pot
-	if err := getAsset(ytDlpGetPotOwnerRepo, ytDlpGetPotAsset, absYtDlpPluginsDir, dc, rdx, force); err != nil {
-		return err
-	}
+	//// update yt-dlp-get-pot
+	//if err := getAsset(ytDlpGetPotOwnerRepo, ytDlpGetPotAsset, absYtDlpPluginsDir, dc, rdx, force); err != nil {
+	//	return err
+	//}
 
 	//if err := copyYtDlpPlugin(ytDlpDir, absYtDlpPluginsDir, ytDlpGetPotAsset, force); err != nil {
 	//	return err
