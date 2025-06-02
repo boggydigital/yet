@@ -18,6 +18,8 @@ import (
 
 const ytDlpCookiesFilename = "cookies.txt"
 
+const bgutilBaseUrlParam = "youtubepot-bgutilhttp:base_url"
+
 var defaultYtDlpOptions = map[string]string{
 	"-S": "vcodec:h264,res:1080,acodec:m4a",
 }
@@ -210,7 +212,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 	}
 
 	if options.BgUtilBaseUrl != "" {
-		arguments = append(arguments, "--extractor-args", "youtube:getpot_bgutil_baseurl="+options.BgUtilBaseUrl)
+		arguments = append(arguments, "--extractor-args", strings.Join([]string{bgutilBaseUrlParam, options.BgUtilBaseUrl}, "="))
 	}
 
 	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)
