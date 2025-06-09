@@ -90,7 +90,14 @@
 
     {{template "icons"}}
 
-    {{template "back"}}
+    <ul class="horizontal">
+        <li>
+            <a class='action highlight' href='/list'>Home</a>
+        </li>
+        <li>
+            <a class='action' href='/paste'>Paste</a>
+        </li>
+    </ul>
 
     <div class='video_source {{if .LocalPlayback}}local{{end}}'>
         {{if .LocalPlayback}}This video is ready to play{{else}}This video needs to be downloaded to play{{end}}
