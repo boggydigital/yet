@@ -4,6 +4,7 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
+	"maps"
 	"slices"
 )
 
@@ -106,22 +107,28 @@ func GetListViewModel(rdx redux.Readable) (*ListViewModel, error) {
 }
 
 func getVideosProgress(rdx redux.Readable) ([]string, error) {
-	cvs := make([]string, 0)
+	cvs := make(map[string]any, 0)
 	var err error
 
 	if rdx.Len(data.VideoProgressProperty) == 0 {
-		return cvs, nil
+		return nil, nil
+	}
+
+	for id := range data.VideosProgress {
+		cvs[id] = nil
 	}
 
 	for id := range rdx.Keys(data.VideoProgressProperty) {
 		if et, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok && et != "" {
 			continue
 		}
-		cvs = append(cvs, id)
+		cvs[id] = nil
 	}
 
-	if cvs, err = rdx.Sort(cvs, false, data.VideoTitleProperty); err == nil {
-		return cvs, nil
+	videoIds := slices.Collect(maps.Keys(cvs))
+
+	if videoIds, err = rdx.Sort(videoIds, false, data.VideoTitleProperty); err == nil {
+		return videoIds, nil
 	} else {
 		return nil, err
 	}

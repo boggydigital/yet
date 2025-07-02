@@ -67,7 +67,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		case data.VideoProgressProperty:
 			// progress is cleared (condition: false) when flag IS NOT present in input
 			if !q.Has(input) {
-				if err := toggleProperty(videoId, property, false, rdx); err != nil {
+				if err = toggleProperty(videoId, property, false, rdx); err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
@@ -81,7 +81,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			if er := q.Get(input); er != "" {
 				reason = data.ParseVideoEndedReason(er)
 			}
-			if err := rdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, string(reason)); err != nil {
+			if err = rdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, string(reason)); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}

@@ -33,43 +33,47 @@ func Sync(rdx redux.Writeable, opt *VideoOptions) error {
 		return err
 	}
 
-	if err := UpdateYtDlp(false); err != nil {
+	if err = flushProgress(rdx); err != nil {
 		return err
 	}
 
-	if err := RefreshChannelsMetadata(rdx); err != nil {
-		return err
-	}
-	if err := QueueChannelsDownloads(rdx); err != nil {
+	if err = UpdateYtDlp(false); err != nil {
 		return err
 	}
 
-	if err := RefreshPlaylistsMetadata(rdx); err != nil {
+	if err = RefreshChannelsMetadata(rdx); err != nil {
 		return err
 	}
-	if err := QueuePlaylistsDownloads(rdx); err != nil {
-		return err
-	}
-
-	if err := ProcessQueue(rdx, opt); err != nil {
+	if err = QueueChannelsDownloads(rdx); err != nil {
 		return err
 	}
 
-	if err := DehydratePosters(false); err != nil {
+	if err = RefreshPlaylistsMetadata(rdx); err != nil {
+		return err
+	}
+	if err = QueuePlaylistsDownloads(rdx); err != nil {
 		return err
 	}
 
-	if err := ScrubEndedProperties(rdx); err != nil {
-		return err
-	}
-	if err := ScrubDepositionProperties(rdx); err != nil {
-		return err
-	}
-	if err := CleanupEndedVideos(false, rdx); err != nil {
+	if err = ProcessQueue(rdx, opt); err != nil {
 		return err
 	}
 
-	if err := Backup(); err != nil {
+	if err = DehydratePosters(false); err != nil {
+		return err
+	}
+
+	if err = ScrubEndedProperties(rdx); err != nil {
+		return err
+	}
+	if err = ScrubDepositionProperties(rdx); err != nil {
+		return err
+	}
+	if err = CleanupEndedVideos(false, rdx); err != nil {
+		return err
+	}
+
+	if err = Backup(); err != nil {
 		return err
 	}
 

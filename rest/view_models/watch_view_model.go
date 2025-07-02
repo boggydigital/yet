@@ -76,12 +76,21 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 
 	var ct int64
 	if currentTime == "" {
-		if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
-			if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
+
+		var currentTimeStr string
+		if vpct, ok := data.VideosProgress[videoId]; ok && len(vpct) > 0 {
+			currentTimeStr = vpct[0]
+		} else if cts, sure := rdx.GetLastVal(data.VideoProgressProperty, videoId); sure && cts != "" {
+			currentTimeStr = cts
+		}
+
+		if currentTimeStr != "" {
+			if cti, err := strconv.ParseInt(currentTimeStr, 10, 64); err == nil {
 				ct = cti
 				currentTime = strconv.FormatInt(ct, 10)
 			}
 		}
+
 	}
 	rem = dur - ct
 

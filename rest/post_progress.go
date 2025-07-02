@@ -17,25 +17,16 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 	// POST /progress
 	// {v, t}
 
-	var err error
-	rdx, err = rdx.RefreshWriter()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	decoder := json.NewDecoder(r.Body)
 	var pr ProgressRequest
-	err = decoder.Decode(&pr)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&pr); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := rdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	data.ProgressMux.Lock()
+	data.VideosProgress[pr.VideoId] = []string{trimTime(pr.CurrentTime)}
+	data.ProgressMux.Unlock()
+
 }
 
 func trimTime(ts string) string {
