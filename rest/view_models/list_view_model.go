@@ -107,15 +107,11 @@ func GetListViewModel(rdx redux.Readable) (*ListViewModel, error) {
 }
 
 func getVideosProgress(rdx redux.Readable) ([]string, error) {
-	cvs := make(map[string]any, 0)
+	cvs := make(map[string]any)
 	var err error
 
 	if rdx.Len(data.VideoProgressProperty) == 0 {
 		return nil, nil
-	}
-
-	for id := range data.VideosProgress {
-		cvs[id] = nil
 	}
 
 	for id := range rdx.Keys(data.VideoProgressProperty) {

@@ -33,10 +33,6 @@ func Sync(rdx redux.Writeable, opt *VideoOptions) error {
 		return err
 	}
 
-	if err = flushProgress(rdx); err != nil {
-		return err
-	}
-
 	if err = UpdateYtDlp(false); err != nil {
 		return err
 	}

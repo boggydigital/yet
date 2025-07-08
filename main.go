@@ -60,7 +60,6 @@ func main() {
 		"get-rutube-video":            cli.GetRuTubeVideoHandler,
 		"get-video-metadata":          cli.GetVideoMetadataHandler,
 		"process-queue":               cli.ProcessQueueHandler,
-		"migrate":                     cli.MigrateHandler,
 		"queue-channels-downloads":    cli.QueueChannelsDownloadsHandler,
 		"queue-playlists-downloads":   cli.QueuePlaylistsDownloadsHandler,
 		"refresh-channels-metadata":   cli.RefreshChannelsMetadataHandler,

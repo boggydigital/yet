@@ -20,7 +20,7 @@ func GetCompton(w http.ResponseWriter, r *http.Request) {
 	pageStack := compton.FlexItems(p, direction.Column)
 	p.Append(pageStack)
 
-	gridItems := compton.GridItems(p)
+	gridItems := compton.FlexItems(p, direction.Row)
 	pageStack.Append(gridItems)
 
 	for _, videoId := range videoIds {

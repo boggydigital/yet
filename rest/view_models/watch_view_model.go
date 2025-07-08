@@ -78,9 +78,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 	if currentTime == "" {
 
 		var currentTimeStr string
-		if vpct, ok := data.VideosProgress[videoId]; ok && len(vpct) > 0 {
-			currentTimeStr = vpct[0]
-		} else if cts, sure := rdx.GetLastVal(data.VideoProgressProperty, videoId); sure && cts != "" {
+		if cts, sure := rdx.GetLastVal(data.VideoProgressProperty, videoId); sure && cts != "" {
 			currentTimeStr = cts
 		}
 

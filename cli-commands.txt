@@ -72,8 +72,6 @@ get-video-metadata
     video-id&^
     force
 
-migrate
-
 process-queue
     bgutil-baseurl$
     verbose

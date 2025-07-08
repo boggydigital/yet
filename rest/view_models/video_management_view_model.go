@@ -25,9 +25,7 @@ func GetVideoManagementModel(videoId string, rdx redux.Readable) *VideoManagemen
 	}
 
 	currentTime := ""
-	if cts, ok := data.VideosProgress[videoId]; ok && len(cts) > 0 {
-		currentTime = cts[0]
-	} else if ct, sure := rdx.GetLastVal(data.VideoProgressProperty, videoId); sure && ct != "" {
+	if ct, sure := rdx.GetLastVal(data.VideoProgressProperty, videoId); sure && ct != "" {
 		currentTime = ct
 	}
 
