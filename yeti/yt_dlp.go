@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	ytDlpLinuxAsset   = "yt-dlp_linux"
+	ytDlpLinuxAsset   = "yt-dlp_musllinux"
 	ytDlpMacOsAsset   = "yt-dlp_macos"
 	ytDlpWindowsAsset = "yt-dlp.exe"
 )
