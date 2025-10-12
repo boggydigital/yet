@@ -12,6 +12,8 @@ RUN go build \
 FROM alpine:latest
 # adding ffmpeg
 RUN apk update && apk add && apk add ffmpeg
+# adding deno for https://github.com/yt-dlp/yt-dlp/issues/14404
+RUN apk add deno
 # adding yet
 COPY --from=build /go/src/app/yet /usr/bin/yet
 

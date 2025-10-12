@@ -3,6 +3,12 @@ package cli
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/arelate/southern_light/github_integration"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
@@ -10,11 +16,6 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/http"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 const (
@@ -62,12 +63,12 @@ func UpdateYtDlp(force bool) error {
 
 	// update yt-dlp
 	ytDlpAsset := yeti.GetYtDlpBinary()
-	if err := getAsset(ytDlpOwnerRepo, ytDlpAsset, ytDlpDir, dc, rdx, force); err != nil {
+	if err = getAsset(ytDlpOwnerRepo, ytDlpAsset, ytDlpDir, dc, rdx, force); err != nil {
 		return err
 	}
 
 	ytDlpBinaryFilename := filepath.Join(ytDlpDir, ytDlpAsset)
-	if err := os.Chmod(ytDlpBinaryFilename, 0555); err != nil {
+	if err = os.Chmod(ytDlpBinaryFilename, 0555); err != nil {
 		return err
 	}
 
