@@ -3,13 +3,14 @@ package main
 import (
 	"bytes"
 	_ "embed"
+	"log"
+	"net/url"
+	"os"
+
 	"github.com/boggydigital/clo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/cli"
 	"github.com/boggydigital/yet/data"
-	"log"
-	"os"
 )
 
 var (
@@ -19,21 +20,14 @@ var (
 	cliHelp []byte
 )
 
-const (
-	dirOverridesFilename = "directories.txt"
-)
-
 func main() {
 	nod.EnableStdOutPresenter()
 
 	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.Done()
 
-	if err := pathways.Setup(dirOverridesFilename,
-		data.DefaultRootDir,
-		data.RelToAbsDirs,
-		data.AllAbsDirs...); err != nil {
-		log.Fatalln(err)
+	if err := data.InitPathways(); err != nil {
+		log.Fatalln(nod.Error(err))
 	}
 
 	defs, err := clo.Load(
@@ -42,7 +36,7 @@ func main() {
 		nil)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln(nod.Error(err))
 	}
 
 	clo.HandleFuncs(map[string]clo.Handler{
@@ -51,7 +45,6 @@ func main() {
 		"add-video":                   cli.AddVideoHandler,
 		"backup":                      cli.BackupHandler,
 		"cleanup-ended-videos":        cli.CleanupEndedVideosHandler,
-		"dehydrate-posters":           cli.DehydratePostersHandler,
 		"download-video":              cli.DownloadVideoHandler,
 		"get-captions":                cli.GetCaptionsHandler,
 		"get-channels-metadata":       cli.GetChannelsMetadataHandler,
@@ -76,10 +69,16 @@ func main() {
 	})
 
 	if err = defs.AssertCommandsHaveHandlers(); err != nil {
+		log.Fatalln(nod.Error(err))
+	}
+
+	var u *url.URL
+	u, err = defs.Parse(os.Args[1:])
+	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if err = defs.Serve(os.Args[1:]); err != nil {
-		log.Fatalln(err)
+	if err = defs.Serve(u); err != nil {
+		log.Fatalln(nod.Error(err))
 	}
 }

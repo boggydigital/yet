@@ -1,13 +1,13 @@
 package rest
 
 import (
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 func GetVideo(w http.ResponseWriter, r *http.Request) {
@@ -18,12 +18,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request) {
 
 	if filepath.IsLocal(file) {
 
-		absVideosDir, err := pathways.GetAbsDir(data.Videos)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
+		absVideosDir := data.Pwd.AbsDirPath(data.Videos)
 		absFilepath := filepath.Join(absVideosDir, file)
 
 		if _, err := os.Stat(absFilepath); err == nil {

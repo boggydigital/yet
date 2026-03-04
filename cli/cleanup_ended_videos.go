@@ -1,18 +1,18 @@
 package cli
 
 import (
-	"github.com/boggydigital/busan"
-	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/redux"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"io"
 	"net/url"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/boggydigital/busan"
+	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 func CleanupEndedVideosHandler(u *url.URL) error {
@@ -35,10 +35,7 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 		return err
 	}
 
-	absVideosDir, err := pathways.GetAbsDir(data.Videos)
-	if err != nil {
-		return err
-	}
+	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
 
 	cleanupVideoIds := make([]string, 0)
 

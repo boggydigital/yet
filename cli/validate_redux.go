@@ -1,18 +1,15 @@
 package cli
 
 import (
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
 func validateWritableRedux(rdx redux.Writeable, properties ...string) (redux.Writeable, error) {
 	if rdx == nil {
-		metadataDir, err := pathways.GetAbsDir(data.Metadata)
-		if err != nil {
-			return nil, err
-		}
+		metadataDir := data.Pwd.AbsDirPath(data.Metadata)
 
+		var err error
 		rdx, err = redux.NewWriter(metadataDir, properties...)
 		if err != nil {
 			return nil, err

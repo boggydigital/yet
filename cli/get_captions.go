@@ -1,15 +1,15 @@
 package cli
 
 import (
+	"net/url"
+	"strings"
+
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
-	"net/url"
-	"strings"
 )
 
 func GetCaptionsHandler(u *url.URL) error {
@@ -27,10 +27,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 
 	dl := dolo.DefaultClient
 
-	metadataDir, err := pathways.GetAbsDir(data.Metadata)
-	if err != nil {
-		return err
-	}
+	metadataDir := data.Pwd.AbsDirPath(data.Metadata)
 
 	rdx, err := redux.NewWriter(metadataDir,
 		data.VideoCaptionsNamesProperty,

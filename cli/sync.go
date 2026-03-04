@@ -1,10 +1,11 @@
 package cli
 
 import (
+	"net/url"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
-	"net/url"
 )
 
 func SyncHandler(u *url.URL) error {
@@ -52,10 +53,6 @@ func Sync(rdx redux.Writeable, opt *VideoOptions) error {
 	}
 
 	if err = ProcessQueue(rdx, opt); err != nil {
-		return err
-	}
-
-	if err = DehydratePosters(false); err != nil {
 		return err
 	}
 

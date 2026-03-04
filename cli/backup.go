@@ -1,11 +1,11 @@
 package cli
 
 import (
+	"net/url"
+
 	"github.com/boggydigital/backups"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/yet/data"
-	"net/url"
 )
 
 func BackupHandler(_ *url.URL) error {
@@ -16,15 +16,8 @@ func Backup() error {
 	ea := nod.NewProgress("backing up metadata...")
 	defer ea.Done()
 
-	amp, err := pathways.GetAbsDir(data.Metadata)
-	if err != nil {
-		return err
-	}
-
-	abp, err := pathways.GetAbsDir(data.Backups)
-	if err != nil {
-		return err
-	}
+	amp := data.Pwd.AbsDirPath(data.Metadata)
+	abp := data.Pwd.AbsDirPath(data.Backups)
 
 	if err := backups.Compress(amp, abp); err != nil {
 		return err

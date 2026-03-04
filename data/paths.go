@@ -3,24 +3,39 @@ package data
 import (
 	"errors"
 	"fmt"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"os"
 	"path/filepath"
+
+	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 const (
-	cookiesFilename    = "cookies.txt"
 	defaultCaptionsExt = ".ytt"
 	defaultScriptExt   = ".js"
-
-	nParamDecoderSfx          = "-n"
-	signatureCipherDecoderSfx = "-signatureCipher"
 )
 
-func AbsCookiesPath() (string, error) {
-	idp, err := pathways.GetAbsDir(Input)
-	return filepath.Join(idp, cookiesFilename), err
+const (
+	setPathwaysFilename = "directories.txt"
+)
+
+var Pwd pathways.Pathway
+
+func InitPathways() error {
+	var setExists bool
+	if _, err := os.Stat(setPathwaysFilename); err == nil {
+		setExists = true
+	}
+
+	var err error
+	switch setExists {
+	case true:
+		Pwd, err = pathways.ReadSet(setPathwaysFilename)
+	default:
+		Pwd, err = pathways.NewRoot(rootPathwaysDir)
+	}
+
+	return err
 }
 
 // AbsPosterPath constructs poster path using poster directory,
@@ -29,10 +44,7 @@ func AbsCookiesPath() (string, error) {
 // /path/to/posters/v/i/videoId/quality.jpg
 func AbsPosterPath(videoId string, quality youtube_urls.ThumbnailQuality) (string, error) {
 
-	pdp, err := pathways.GetAbsDir(Posters)
-	if err != nil {
-		return "", err
-	}
+	pdp := Pwd.AbsDirPath(Posters)
 
 	spdp, err := mkdirAllVideoIdDirs(pdp, videoId)
 	if err != nil {
@@ -46,10 +58,7 @@ func AbsPosterPath(videoId string, quality youtube_urls.ThumbnailQuality) (strin
 // first and second letters of video-id to product something like
 // /path/to/captions/f/s/fs_lang.jpg
 func AbsCaptionsTrackPath(videoId, lang string) (string, error) {
-	cdp, err := pathways.GetAbsDir(Captions)
-	if err != nil {
-		return "", err
-	}
+	cdp := Pwd.AbsDirPath(Captions)
 
 	scdp, err := mkdirAllVideoIdDirs(cdp, videoId)
 	if err != nil {

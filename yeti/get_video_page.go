@@ -1,11 +1,9 @@
 package yeti
 
 import (
-	"github.com/boggydigital/coost"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/http"
-	"strings"
+
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 var errorsSolvedWithCookies = []string{
@@ -18,25 +16,30 @@ func GetVideoPage(videoId string) (*youtube_urls.InitialPlayerResponse, error) {
 	// by default - use a default client that doesn't supply client cookies
 	videoPage, err := youtube_urls.GetVideoPage(http.DefaultClient, videoId)
 	if err != nil {
-		errSolvedWithCookies := false
-		for _, esc := range errorsSolvedWithCookies {
-			if strings.Contains(err.Error(), esc) {
-				errSolvedWithCookies = true
-				// fallback to HTTP client with cookies
-				if absCookiePath, err := data.AbsCookiesPath(); err == nil {
-					if hc, err := coost.NewHttpClientFromFile(absCookiePath); err == nil {
-						return youtube_urls.GetVideoPage(hc, videoId)
-					} else {
-						return nil, err
-					}
-				} else {
-					return nil, err
-				}
-			}
-		}
-		if !errSolvedWithCookies {
-			return nil, err
-		}
+		// TODO: rewrite this to handle more gracefully
+		//errSolvedWithCookies := false
+		//for _, esc := range errorsSolvedWithCookies {
+		//	if strings.Contains(err.Error(), esc) {
+		//		errSolvedWithCookies = true
+		//		// fallback to HTTP client with cookies
+		//		absCookiePath := data.AbsCookiesPath()
+		//		var jar http.CookieJar
+		//		jar, err = coost.Read(youtube_urls.HostUrl(), absCookiePath)
+		//		if err != nil {
+		//			return nil, err
+		//		}
+		//		client := http.DefaultClient
+		//		client.Jar = jar
+		//
+		//		return youtube_urls.GetVideoPage(client, videoId)
+		//	} else {
+		//		return nil, err
+		//	}
+		//}
+		//if !errSolvedWithCookies {
+		//	return nil, err
+		//}
+		return nil, err
 	}
 	return videoPage, nil
 }

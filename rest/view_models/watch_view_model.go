@@ -2,11 +2,6 @@ package view_models
 
 import (
 	"fmt"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/redux"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -15,6 +10,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/boggydigital/redux"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 type WatchViewModel struct {
@@ -99,15 +99,16 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 			} else if err != nil {
 				return nil, err
 			} else {
-				if _, err := os.Stat(absLocalVideoFilename); err == nil {
+				if _, err = os.Stat(absLocalVideoFilename); err == nil {
 					localPlayback = true
 
-					videosDir, err := pathways.GetAbsDir(data.Videos)
+					videosDir := data.Pwd.AbsDirPath(data.Videos)
+
+					var relLocalVideoFilename string
+					relLocalVideoFilename, err = filepath.Rel(videosDir, absLocalVideoFilename)
 					if err != nil {
 						return nil, err
 					}
-
-					relLocalVideoFilename, err := filepath.Rel(videosDir, absLocalVideoFilename)
 
 					videoUrl = "/video?file=" + url.QueryEscape(relLocalVideoFilename)
 					videoTitle = title

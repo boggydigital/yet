@@ -3,7 +3,7 @@ RUN apk add --no-cache --update git
 ADD . /go/src/app
 WORKDIR /go/src/app
 RUN go get ./...
-RUN go build \
+RUN GOEXPERIMENT=jsonv2 go build \
     -a -tags timetzdata \
     -o yet \
     -ldflags="-s -w -X 'github.com/boggydigital/yet/cli.GitTag=`git describe --tags --abbrev=0`'" \

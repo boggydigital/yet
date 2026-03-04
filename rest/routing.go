@@ -1,8 +1,9 @@
 package rest
 
 import (
-	"github.com/boggydigital/nod"
 	"net/http"
+
+	"github.com/boggydigital/nod"
 )
 
 var (
@@ -45,8 +46,6 @@ func HandleFuncs() {
 		"GET /refresh_channel_playlists": Log(http.HandlerFunc(GetRefreshChannelPlaylists)),
 		"GET /manage_channel":            http.HandlerFunc(GetManageChannel),
 		"GET /update_channel":            http.HandlerFunc(GetUpdateChannel),
-
-		"GET /compton": Log(http.HandlerFunc(GetCompton)),
 
 		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}

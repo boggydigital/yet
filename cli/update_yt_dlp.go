@@ -12,7 +12,6 @@ import (
 	"github.com/arelate/southern_light/github_integration"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -39,22 +38,11 @@ func UpdateYtDlp(force bool) error {
 	uyda := nod.Begin("updating yt-dlp and plugins...")
 	defer uyda.Done()
 
-	metadataDir, err := pathways.GetAbsDir(data.Metadata)
-	if err != nil {
-		return err
-	}
+	metadataDir := data.Pwd.AbsDirPath(data.Metadata)
+	ytDlpDir := data.Pwd.AbsDirPath(data.YtDlp)
+	absYtDlpPluginsDir := data.Pwd.AbsRelDirPath(data.YtDlpPlugins, data.YtDlp)
 
 	rdx, err := redux.NewWriter(metadataDir, data.YtDlpLatestDownloadedVersionProperty)
-	if err != nil {
-		return err
-	}
-
-	ytDlpDir, err := pathways.GetAbsDir(data.YtDlp)
-	if err != nil {
-		return err
-	}
-
-	absYtDlpPluginsDir, err := pathways.GetAbsRelDir(data.YtDlpPlugins)
 	if err != nil {
 		return err
 	}

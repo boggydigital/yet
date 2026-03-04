@@ -1,19 +1,19 @@
 package cli
 
 import (
-	"github.com/boggydigital/dolo"
-	"github.com/boggydigital/nod"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/redux"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/yeti"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"net/url"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/boggydigital/dolo"
+	"github.com/boggydigital/nod"
+	"github.com/boggydigital/redux"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 const ytDlpCookiesFilename = "cookies.txt"
@@ -136,11 +136,7 @@ func downloadVideo(
 
 	relFilename := yeti.RelLocalVideoFilename(channel, title, videoId)
 
-	absVideosDir, err := pathways.GetAbsDir(data.Videos)
-	if err != nil {
-		return err
-	}
-
+	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
 	absFilename := filepath.Join(absVideosDir, relFilename)
 
 	if _, err := os.Stat(absFilename); err == nil {
@@ -154,7 +150,7 @@ func downloadVideo(
 		}
 	}
 
-	if err = downloadWithYtDlp(videoId, absFilename, options); err != nil {
+	if err := downloadWithYtDlp(videoId, absFilename, options); err != nil {
 		return err
 	}
 
@@ -180,22 +176,16 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 
 	absDir, _ := path.Split(absFilename)
 	if _, err := os.Stat(absDir); os.IsNotExist(err) {
-		if err := os.MkdirAll(absDir, 0755); err != nil {
+		if err = os.MkdirAll(absDir, 0755); err != nil {
 			return err
 		}
 	}
 
-	ytDlpDir, err := pathways.GetAbsDir(data.YtDlp)
-	if err != nil {
-		return err
-	}
+	ytDlpDir := data.Pwd.AbsDirPath(data.YtDlp)
 
 	arguments := make([]string, 0)
 
-	absYtDlpPluginsDir, err := pathways.GetAbsRelDir(data.YtDlpPlugins)
-	if err != nil {
-		return err
-	}
+	absYtDlpPluginsDir := data.Pwd.AbsRelDirPath(data.YtDlpPlugins, data.YtDlp)
 
 	arguments = append(arguments, "--plugin-dirs", absYtDlpPluginsDir)
 
@@ -217,7 +207,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 
 	absYtDlpCookiesPath := filepath.Join(ytDlpDir, ytDlpCookiesFilename)
 
-	if _, err = os.Stat(absYtDlpCookiesPath); err == nil {
+	if _, err := os.Stat(absYtDlpCookiesPath); err == nil {
 		arguments = append(arguments, "--cookies", absYtDlpCookiesPath)
 	}
 

@@ -2,10 +2,10 @@ package rest
 
 import (
 	"embed"
-	"github.com/boggydigital/pathways"
+	"html/template"
+
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
-	"html/template"
 )
 
 var (
@@ -17,11 +17,9 @@ var (
 
 func Init() error {
 
-	metadataDir, err := pathways.GetAbsDir(data.Metadata)
-	if err != nil {
-		return err
-	}
+	metadataDir := data.Pwd.AbsDirPath(data.Metadata)
 
+	var err error
 	if rdx, err = redux.NewWriter(metadataDir, data.AllProperties()...); err != nil {
 		return err
 	}

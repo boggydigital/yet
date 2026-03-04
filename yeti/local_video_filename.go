@@ -3,13 +3,13 @@ package yeti
 import (
 	"errors"
 	"fmt"
-	"github.com/boggydigital/busan"
-	"github.com/boggydigital/pathways"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet_urls/youtube_urls"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/boggydigital/busan"
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 const (
@@ -48,10 +48,7 @@ func RelLocalVideoFilename(channel, title, videoId string) string {
 // mitigate this problem.
 func LocateLocalVideo(videoId string) (string, error) {
 
-	videosDir, err := pathways.GetAbsDir(data.Videos)
-	if err != nil {
-		return "", err
-	}
+	videosDir := data.Pwd.AbsDirPath(data.Videos)
 
 	pattern := strings.Replace(globTemplate, "{video-id}", videoId, 1)
 	pattern = filepath.Join(videosDir, pattern)

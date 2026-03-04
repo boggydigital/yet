@@ -4,7 +4,7 @@ import (
 	"github.com/boggydigital/pathways"
 )
 
-const DefaultRootDir = "/usr/share/yet"
+const rootPathwaysDir = "/usr/share/yet"
 
 const (
 	Backups  pathways.AbsDir = "backups"
