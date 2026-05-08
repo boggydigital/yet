@@ -1,11 +1,12 @@
 package cli
 
 import (
+	"net/url"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/url"
 )
 
 func QueuePlaylistsDownloadsHandler(_ *url.URL) error {
@@ -43,7 +44,7 @@ func queuePlaylistDownloads(rdx redux.Writeable, playlistId string) error {
 
 	queue := make(map[string][]string)
 
-	for _, videoId := range yeti.PlaylistNotEndedVideos(playlistId, rdx) {
+	for _, videoId := range yeti.PlaylistNotEndedVideos(playlistId, data.RecentDownloadsLimit, rdx) {
 		if rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
 			continue
 		}

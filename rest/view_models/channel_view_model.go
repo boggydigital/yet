@@ -1,6 +1,8 @@
 package view_models
 
 import (
+	"math"
+
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -32,7 +34,7 @@ func GetChannelViewModel(channelId string, rdx redux.Readable) *ChannelViewModel
 		channelDescription = cd
 	}
 
-	cnev := yeti.ChannelNotEndedVideos(channelId, rdx)
+	cnev := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx)
 	badgeCount := len(cnev)
 
 	var channelVideos []*VideoViewModel

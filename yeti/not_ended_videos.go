@@ -5,23 +5,25 @@ import (
 	"github.com/boggydigital/yet/data"
 )
 
-func ChannelNotEndedVideos(channelId string, rdx redux.Readable) []string {
+func ChannelNotEndedVideos(channelId string, limitVideos int, rdx redux.Readable) []string {
 	return notEndedVideos(
 		channelId,
 		data.ChannelVideosProperty,
 		data.ChannelDownloadPolicyProperty,
+		limitVideos,
 		rdx)
 }
 
-func PlaylistNotEndedVideos(playlistId string, rdx redux.Readable) []string {
+func PlaylistNotEndedVideos(playlistId string, limitVideos int, rdx redux.Readable) []string {
 	return notEndedVideos(
 		playlistId,
 		data.PlaylistVideosProperty,
 		data.PlaylistDownloadPolicyProperty,
+		limitVideos,
 		rdx)
 }
 
-func notEndedVideos(id string, videosProperty, downloadPolicyProperty string, rdx redux.Readable) []string {
+func notEndedVideos(id string, videosProperty, downloadPolicyProperty string, limitVideos int, rdx redux.Readable) []string {
 
 	videos, ok := rdx.GetAllValues(videosProperty, id)
 	if !ok {
@@ -29,11 +31,10 @@ func notEndedVideos(id string, videosProperty, downloadPolicyProperty string, rd
 	}
 
 	policy := data.DefaultDownloadPolicy
-	if dp, ok := rdx.GetLastVal(downloadPolicyProperty, id); ok {
+	if dp, sure := rdx.GetLastVal(downloadPolicyProperty, id); sure {
 		policy = data.ParseDownloadPolicy(dp)
 	}
 
-	limitVideos := data.RecentDownloadsLimit
 	if policy == data.All || limitVideos > len(videos) {
 		limitVideos = len(videos)
 	}

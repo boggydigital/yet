@@ -1,11 +1,12 @@
 package cli
 
 import (
+	"net/url"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/url"
 )
 
 func QueueChannelsDownloadsHandler(u *url.URL) error {
@@ -27,7 +28,7 @@ func QueueChannelsDownloads(rdx redux.Writeable) error {
 
 	for channelId := range rdx.Keys(data.ChannelAutoDownloadProperty) {
 
-		if err := queueChannelDownloads(rdx, channelId); err != nil {
+		if err = queueChannelDownloads(rdx, channelId); err != nil {
 			return err
 		}
 
@@ -43,7 +44,7 @@ func queueChannelDownloads(rdx redux.Writeable, channelId string) error {
 
 	queue := make(map[string][]string)
 
-	for _, videoId := range yeti.ChannelNotEndedVideos(channelId, rdx) {
+	for _, videoId := range yeti.ChannelNotEndedVideos(channelId, data.RecentDownloadsLimit, rdx) {
 		if rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
 			continue
 		}

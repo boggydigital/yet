@@ -1,11 +1,13 @@
 package view_models
 
 import (
+	"maps"
+	"math"
+	"slices"
+
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"maps"
-	"slices"
 )
 
 type ListViewModel struct {
@@ -204,7 +206,7 @@ func getChannelsVideos(rdx redux.Readable) (map[string][]string, error) {
 	chNewVideos, chNoNewVideos := make([]string, 0, chKeysLen), make([]string, 0, chKeysLen)
 
 	for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
-		if newVideos := yeti.ChannelNotEndedVideos(channelId, rdx); len(newVideos) > 0 {
+		if newVideos := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx); len(newVideos) > 0 {
 			chNewVideos = append(chNewVideos, channelId)
 		} else {
 			chNoNewVideos = append(chNoNewVideos, channelId)
@@ -240,7 +242,7 @@ func getPlaylistsVideos(rdx redux.Readable) (map[string][]string, error) {
 	plNewVideos, plNoNewVideos := make([]string, 0, plKeysLen), make([]string, 0, plKeysLen)
 
 	for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
-		if newVideos := yeti.PlaylistNotEndedVideos(playlistId, rdx); len(newVideos) > 0 {
+		if newVideos := yeti.PlaylistNotEndedVideos(playlistId, math.MaxInt, rdx); len(newVideos) > 0 {
 			plNewVideos = append(plNewVideos, playlistId)
 		} else {
 			plNoNewVideos = append(plNoNewVideos, playlistId)

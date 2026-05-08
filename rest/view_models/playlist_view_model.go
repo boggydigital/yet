@@ -1,6 +1,8 @@
 package view_models
 
 import (
+	"math"
+
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -25,7 +27,7 @@ func GetPlaylistViewModel(playlistId string, rdx redux.Readable) *PlaylistViewMo
 		return nil
 	}
 
-	pnev := yeti.PlaylistNotEndedVideos(playlistId, rdx)
+	pnev := yeti.PlaylistNotEndedVideos(playlistId, math.MaxInt, rdx)
 	badgeCount := len(pnev)
 
 	autoRefresh := false
