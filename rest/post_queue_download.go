@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
+	"net/http"
+
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/http"
 )
 
 type QueueDownloadRequest struct {
@@ -23,16 +24,15 @@ func PostQueueDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decoder := json.NewDecoder(r.Body)
 	var qdr QueueDownloadRequest
-	err = decoder.Decode(&qdr)
-	if err != nil {
+
+	if err = json.UnmarshalRead(r.Body, &qdr); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// store completion timestamp
-	if err := rdx.AddValues(data.VideoDownloadQueuedProperty, qdr.VideoId, yeti.FmtNow()); err != nil {
+	if err = rdx.AddValues(data.VideoDownloadQueuedProperty, qdr.VideoId, yeti.FmtNow()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

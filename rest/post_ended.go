@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
+	"net/http"
+
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/http"
 )
 
 type EndedRequest struct {
@@ -24,10 +25,8 @@ func PostEnded(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decoder := json.NewDecoder(r.Body)
 	var er EndedRequest
-	err = decoder.Decode(&er)
-	if err != nil {
+	if err = json.UnmarshalRead(r.Body, &er); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

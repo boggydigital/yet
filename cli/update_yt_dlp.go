@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"net/http"
 	"net/url"
@@ -139,7 +139,7 @@ func getLatestGitHubRelease(ownerRepo string) (*github_integration.GitHubRelease
 	}
 
 	var releases []github_integration.GitHubRelease
-	if err := json.NewDecoder(resp.Body).Decode(&releases); err != nil {
+	if err = json.UnmarshalRead(resp.Body, &releases); err != nil {
 		return nil, err
 	}
 

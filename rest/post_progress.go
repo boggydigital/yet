@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"encoding/json"
-	"github.com/boggydigital/yet/data"
+	"encoding/json/v2"
 	"net/http"
 	"strings"
+
+	"github.com/boggydigital/yet/data"
 )
 
 type ProgressRequest struct {
@@ -24,10 +25,9 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decoder := json.NewDecoder(r.Body)
 	var pr ProgressRequest
-	err = decoder.Decode(&pr)
-	if err != nil {
+
+	if err = json.UnmarshalRead(r.Body, &pr); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
