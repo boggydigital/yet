@@ -1,8 +1,9 @@
 package rest
 
 import (
-	"github.com/boggydigital/yet/yeti"
 	"net/http"
+
+	"github.com/boggydigital/yet/yeti"
 )
 
 func GetRefreshChannelPlaylists(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +24,7 @@ func GetRefreshChannelPlaylists(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
+	if err = yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

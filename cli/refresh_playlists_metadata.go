@@ -1,10 +1,11 @@
 package cli
 
 import (
+	"net/url"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
-	"net/url"
 )
 
 func RefreshPlaylistsMetadataHandler(_ *url.URL) error {
@@ -31,7 +32,7 @@ func RefreshPlaylistsMetadata(rdx redux.Writeable) error {
 
 	for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
 
-		if err := GetPlaylistsMetadata(rdx, refreshOptions, playlistId); err != nil {
+		if err = GetPlaylistsMetadata(rdx, refreshOptions, playlistId); err != nil {
 			return err
 		}
 

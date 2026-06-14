@@ -1,11 +1,12 @@
 package rest
 
 import (
-	"github.com/boggydigital/redux"
-	"github.com/boggydigital/yet/data"
 	"maps"
 	"net/http"
 	"slices"
+
+	"github.com/boggydigital/redux"
+	"github.com/boggydigital/yet/data"
 )
 
 func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +43,7 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
-		if err := toggleProperty(playlistId, property, q.Has(input), rdx); err != nil {
+		if err = toggleProperty(playlistId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
