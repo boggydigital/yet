@@ -1,11 +1,12 @@
 package rest
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/rest/view_models"
 	"github.com/boggydigital/yet/yeti"
-	"net/http"
-	"strings"
 )
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +64,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if queueDownload {
-		if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
+		if err = rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -77,7 +78,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tmpl.ExecuteTemplate(w, "watch", wvm); err != nil {
+	if err = tmpl.ExecuteTemplate(w, "watch", wvm); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -2,12 +2,13 @@ package cli
 
 import (
 	"errors"
+	"net/url"
+	"time"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/url"
-	"time"
 )
 
 const maxAttempts = 2
@@ -45,7 +46,8 @@ func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 	processedVideoIds := make(map[string]int)
 
 	for {
-		videoId, err := getNextQueuedDownload(rdx, opt.Force)
+		var videoId string
+		videoId, err = getNextQueuedDownload(rdx, opt.Force)
 		if err != nil {
 			return err
 		}
@@ -63,7 +65,7 @@ func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
 		}
 		processedVideoIds[videoId]++
 
-		if err := DownloadVideo(rdx, opt, videoId); err != nil {
+		if err = DownloadVideo(rdx, opt, videoId); err != nil {
 			return err
 		}
 	}

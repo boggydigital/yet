@@ -92,33 +92,40 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 	}
 	rem = dur - ct
 
+	var absLocalVideoFilename string
+
 	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		if channel, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && channel != "" {
-			if absLocalVideoFilename, err := yeti.LocateLocalVideo(videoId); os.IsNotExist(err) {
-				// do nothing
-			} else if err != nil {
+		if channelId, sure := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); sure && channelId != "" {
+			videosDir := data.Pwd.AbsDirPath(data.Videos)
+			absLocalVideoFilename = filepath.Join(videosDir,
+				yeti.RelLocalVideoFilename(channelId, title, videoId))
+		}
+	}
+
+	if absLocalVideoFilename == "" {
+		var err error
+		absLocalVideoFilename, err = yeti.LocateLocalVideo(videoId)
+		if os.IsNotExist(err) {
+			// do nothing
+		} else if err != nil {
+			return nil, err
+		}
+	}
+
+	if absLocalVideoFilename != "" {
+		if _, err := os.Stat(absLocalVideoFilename); err == nil {
+			localPlayback = true
+
+			videosDir := data.Pwd.AbsDirPath(data.Videos)
+
+			var relLocalVideoFilename string
+			relLocalVideoFilename, err = filepath.Rel(videosDir, absLocalVideoFilename)
+			if err != nil {
 				return nil, err
-			} else {
-				if _, err = os.Stat(absLocalVideoFilename); err == nil {
-					localPlayback = true
-
-					videosDir := data.Pwd.AbsDirPath(data.Videos)
-
-					var relLocalVideoFilename string
-					relLocalVideoFilename, err = filepath.Rel(videosDir, absLocalVideoFilename)
-					if err != nil {
-						return nil, err
-					}
-
-					videoUrl = "/video?file=" + url.QueryEscape(relLocalVideoFilename)
-					videoTitle = title
-					videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
-
-					//if vct, err := getLocalCaptionTracks(videoId, rdx); err == nil {
-					//	videoCaptionTracks = vct
-					//}
-				}
 			}
+
+			videoUrl = "/video?file=" + url.QueryEscape(relLocalVideoFilename)
+			videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
 		}
 	}
 

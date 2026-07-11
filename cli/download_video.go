@@ -70,17 +70,18 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 
 		// adding to download queue (if not there already)
 		if !rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
-			if err := rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
+			if err = rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
 				return err
 			}
 		}
 
 		// setting download started timestamp
-		if err := rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
+		if err = rdx.AddValues(data.VideoDownloadStartedProperty, videoId, yeti.FmtNow()); err != nil {
 			return err
 		}
 
-		videoPage, err := yeti.GetVideoPage(videoId)
+		var videoPage *youtube_urls.InitialPlayerResponse
+		videoPage, err = yeti.GetVideoPage(videoId)
 		if err != nil {
 			return err
 		}
@@ -95,7 +96,7 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 			errs = true
 		}
 
-		if err := yeti.GetPosters(videoId, dolo.DefaultClient, opt.Force, youtube_urls.AllThumbnailQualities()...); err != nil {
+		if err = yeti.GetPosters(videoId, dolo.DefaultClient, opt.Force, youtube_urls.AllThumbnailQualities()...); err != nil {
 			da.Error(err)
 			errs = true
 		}
@@ -141,7 +142,7 @@ func downloadVideo(
 
 	if _, err := os.Stat(absFilename); err == nil {
 		if options.Force {
-			if err := os.Remove(absFilename); err != nil {
+			if err = os.Remove(absFilename); err != nil {
 				return err
 			}
 		} else {
@@ -156,7 +157,7 @@ func downloadVideo(
 
 	//set file modification time to video publish date to allow OS sorting based on mod time
 	if _, err := os.Stat(absFilename); err == nil {
-		if err := os.Chtimes(absFilename, videoPage.PublishDate(), videoPage.PublishDate()); err != nil {
+		if err = os.Chtimes(absFilename, videoPage.PublishDate(), videoPage.PublishDate()); err != nil {
 			return err
 		}
 	} else if os.IsNotExist(err) {
