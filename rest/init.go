@@ -4,6 +4,7 @@ import (
 	"embed"
 	"html/template"
 
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
@@ -17,7 +18,7 @@ var (
 
 func Init() error {
 
-	metadataDir := data.Pwd.AbsDirPath(data.Metadata)
+	metadataDir := camino.GetAbs(data.Metadata)
 
 	var err error
 	if rdx, err = redux.NewWriter(metadataDir, data.AllProperties()...); err != nil {

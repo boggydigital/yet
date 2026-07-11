@@ -1,13 +1,14 @@
 package cli
 
 import (
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 )
 
 func validateWritableRedux(rdx redux.Writeable, properties ...string) (redux.Writeable, error) {
 	if rdx == nil {
-		metadataDir := data.Pwd.AbsDirPath(data.Metadata)
+		metadataDir := camino.GetAbs(data.Metadata)
 
 		var err error
 		rdx, err = redux.NewWriter(metadataDir, properties...)

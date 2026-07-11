@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
@@ -27,7 +28,7 @@ func GetCaptions(force bool, videoIds ...string) error {
 
 	dl := dolo.DefaultClient
 
-	metadataDir := data.Pwd.AbsDirPath(data.Metadata)
+	metadataDir := camino.GetAbs(data.Metadata)
 
 	rdx, err := redux.NewWriter(metadataDir,
 		data.VideoCaptionsNamesProperty,

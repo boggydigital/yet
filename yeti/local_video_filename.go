@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/boggydigital/busan"
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
@@ -48,7 +49,7 @@ func RelLocalVideoFilename(channel, title, videoId string) string {
 // mitigate this problem.
 func LocateLocalVideo(videoId string) (string, error) {
 
-	videosDir := data.Pwd.AbsDirPath(data.Videos)
+	videosDir := camino.GetAbs(data.Videos)
 
 	pattern := strings.Replace(globTemplate, "{video-id}", videoId, 1)
 	pattern = filepath.Join(videosDir, pattern)

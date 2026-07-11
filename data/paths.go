@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/boggydigital/pathways"
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
@@ -15,36 +15,13 @@ const (
 	defaultScriptExt   = ".js"
 )
 
-const (
-	setPathwaysFilename = "directories.txt"
-)
-
-var Pwd pathways.Pathway
-
-func InitPathways() error {
-	var setExists bool
-	if _, err := os.Stat(setPathwaysFilename); err == nil {
-		setExists = true
-	}
-
-	var err error
-	switch setExists {
-	case true:
-		Pwd, err = pathways.ReadSet(setPathwaysFilename)
-	default:
-		Pwd, err = pathways.NewRoot(rootPathwaysDir)
-	}
-
-	return err
-}
-
 // AbsPosterPath constructs poster path using poster directory,
 // first and second letters of video-id, video-id itself
 // and finally poster quality to get something like:
 // /path/to/posters/v/i/videoId/quality.jpg
 func AbsPosterPath(videoId string, quality youtube_urls.ThumbnailQuality) (string, error) {
 
-	pdp := Pwd.AbsDirPath(Posters)
+	pdp := camino.GetAbs(Posters)
 
 	spdp, err := mkdirAllVideoIdDirs(pdp, videoId)
 	if err != nil {
@@ -58,7 +35,7 @@ func AbsPosterPath(videoId string, quality youtube_urls.ThumbnailQuality) (strin
 // first and second letters of video-id to product something like
 // /path/to/captions/f/s/fs_lang.jpg
 func AbsCaptionsTrackPath(videoId, lang string) (string, error) {
-	cdp := Pwd.AbsDirPath(Captions)
+	cdp := camino.GetAbs(Captions)
 
 	scdp, err := mkdirAllVideoIdDirs(cdp, videoId)
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
@@ -18,7 +19,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request) {
 
 	if filepath.IsLocal(file) {
 
-		absVideosDir := data.Pwd.AbsDirPath(data.Videos)
+		absVideosDir := camino.GetAbs(data.Videos)
 		absFilepath := filepath.Join(absVideosDir, file)
 
 		if _, err := os.Stat(absFilepath); err == nil {

@@ -4,6 +4,7 @@ import (
 	"net/url"
 
 	"github.com/boggydigital/backups"
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 )
@@ -16,8 +17,8 @@ func Backup() error {
 	ea := nod.NewProgress("backing up metadata...")
 	defer ea.Done()
 
-	amp := data.Pwd.AbsDirPath(data.Metadata)
-	abp := data.Pwd.AbsDirPath(data.Backups)
+	amp := camino.GetAbs(data.Metadata)
+	abp := camino.GetAbs(data.Backups)
 
 	if err := backups.Compress(amp, abp); err != nil {
 		return err

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/boggydigital/busan"
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
@@ -35,7 +36,7 @@ func CleanupEndedVideos(now bool, rdx redux.Writeable) error {
 		return err
 	}
 
-	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
+	absVideosDir := camino.GetAbs(data.Videos)
 
 	cleanupVideoIds := make([]string, 0)
 

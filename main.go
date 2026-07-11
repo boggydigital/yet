@@ -26,7 +26,7 @@ func main() {
 	ya := nod.Begin("yet is serving your videos needs")
 	defer ya.Done()
 
-	if err := data.InitPathways(); err != nil {
+	if err := data.InitYetCamino(); err != nil {
 		log.Fatalln(nod.Error(err))
 	}
 

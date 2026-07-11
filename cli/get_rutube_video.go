@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/boggydigital/busan"
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/dolo"
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
@@ -194,7 +195,7 @@ func getVideoSegments(
 	gvsa := nod.NewProgress(" getting video segments for %s...", videoId)
 	defer gvsa.Done()
 
-	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
+	absVideosDir := camino.GetAbs(data.Videos)
 
 	gvsa.TotalInt(len(segments))
 
@@ -231,7 +232,7 @@ func absManifestFilename(playOptions *rutube_urls.PlayOptions) (string, error) {
 	videoId := playOptions.VideoId
 	channel := busan.Sanitize(playOptions.Author.Name)
 
-	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
+	absVideosDir := camino.GetAbs(data.Videos)
 	return filepath.Join(absVideosDir, channel, relManifestFilename(videoId)), nil
 }
 
@@ -280,7 +281,7 @@ func mergeVideoSegments(playOptions *rutube_urls.PlayOptions, force bool) error 
 	mvsa := nod.Begin(" merging video segments for %s, this can take a while...", videoId)
 	defer mvsa.Done()
 
-	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
+	absVideosDir := camino.GetAbs(data.Videos)
 	absOutputDir := filepath.Join(absVideosDir, channel)
 
 	relOutputFilename := yeti.RelLocalVideoFilename("", title, videoId)
@@ -319,7 +320,7 @@ func removeManifestSegments(playOptions *rutube_urls.PlayOptions, segments []str
 	rmsa := nod.NewProgress(" removing manifest, segments for %s...", videoId)
 	defer rmsa.Done()
 
-	absVideosDir := data.Pwd.AbsDirPath(data.Videos)
+	absVideosDir := camino.GetAbs(data.Videos)
 	absOutputDir := filepath.Join(absVideosDir, channel)
 
 	amf, err := absManifestFilename(playOptions)

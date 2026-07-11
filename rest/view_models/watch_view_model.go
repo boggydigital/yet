@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/boggydigital/camino"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -96,7 +97,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 
 	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
 		if channelId, sure := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); sure && channelId != "" {
-			videosDir := data.Pwd.AbsDirPath(data.Videos)
+			videosDir := camino.GetAbs(data.Videos)
 			absLocalVideoFilename = filepath.Join(videosDir,
 				yeti.RelLocalVideoFilename(channelId, title, videoId))
 		}
@@ -116,7 +117,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 		if _, err := os.Stat(absLocalVideoFilename); err == nil {
 			localPlayback = true
 
-			videosDir := data.Pwd.AbsDirPath(data.Videos)
+			videosDir := camino.GetAbs(data.Videos)
 
 			var relLocalVideoFilename string
 			relLocalVideoFilename, err = filepath.Rel(videosDir, absLocalVideoFilename)
