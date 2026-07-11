@@ -1,11 +1,12 @@
 package view_models
 
 import (
-	"github.com/boggydigital/redux"
-	"github.com/boggydigital/yet/data"
 	"slices"
 	"strconv"
 	"time"
+
+	"github.com/boggydigital/redux"
+	"github.com/boggydigital/yet/data"
 )
 
 type VideoOptions int
@@ -147,7 +148,7 @@ func GetVideoViewModel(videoId string, rdx redux.Readable, options ...VideoOptio
 		EndedReason:        endedReason,
 		ShowDuration:       optShowDuration && dur > 0,
 		Duration:           formatSeconds(dur),
-		ShowProgress:       optShowProgress && rem > 0 && dur > 0,
+		ShowProgress:       optShowProgress && rem != 0,
 		CurrentTimeSeconds: strconv.FormatInt(dur-rem, 10),
 		DurationSeconds:    strconv.FormatInt(dur, 10),
 		ShowOwnerChannel:   optShowOwnerChannel,

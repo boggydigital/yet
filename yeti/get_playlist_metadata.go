@@ -74,15 +74,15 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 		return err
 	}
 
-	if err = rdx.BatchAddValues(data.VideoTitleProperty, videoTitles); err != nil {
+	if err = rdx.BatchReplaceValues(data.VideoTitleProperty, videoTitles); err != nil {
 		return err
 	}
 
-	if err = rdx.BatchAddValues(data.VideoDurationProperty, videoLengths); err != nil {
+	if err = rdx.BatchReplaceValues(data.VideoDurationProperty, videoLengths); err != nil {
 		return err
 	}
 
-	if err = rdx.BatchAddValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
+	if err = rdx.BatchReplaceValues(data.VideoOwnerChannelNameProperty, videoChannels); err != nil {
 		return err
 	}
 
