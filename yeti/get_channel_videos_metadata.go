@@ -1,11 +1,13 @@
 package yeti
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
-	"net/http"
 )
 
 func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosInitialData, channelId string, expand bool, rdx redux.Writeable) error {
@@ -56,7 +58,7 @@ func GetChannelVideosMetadata(channelVideosPage *youtube_urls.ChannelVideosIniti
 			channelVideos = append(channelVideos, videoId)
 			videoTitles[videoId] = []string{video.Title}
 			videoOwnerChannels[videoId] = []string{channelVideosPage.Metadata.ChannelMetadataRenderer.Title}
-			videoLengthsSeconds[videoId] = []string{video.LengthSeconds}
+			videoLengthsSeconds[videoId] = []string{strconv.FormatInt(video.LengthSeconds, 10)}
 		}
 
 		if expand && channelVideosPage.HasContinuation() {

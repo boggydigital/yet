@@ -1,11 +1,13 @@
 package yeti
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
-	"net/http"
 )
 
 func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, expand bool, rdx redux.Writeable) error {
@@ -56,7 +58,7 @@ func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlis
 			playlistVideos = append(playlistVideos, videoId)
 			videoTitles[videoId] = []string{video.Title}
 			videoChannels[videoId] = []string{video.Channel}
-			videoLengths[videoId] = []string{video.LengthSeconds}
+			videoLengths[videoId] = []string{strconv.FormatInt(video.LengthSeconds, 10)}
 		}
 
 		if expand && playlistPage.HasContinuation() {
