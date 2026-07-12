@@ -13,9 +13,8 @@ var (
 func HandleFuncs() {
 
 	patternHandlers := map[string]http.Handler{
-		"GET /video":    Log(http.HandlerFunc(GetVideo)),
-		"GET /poster":   Log(http.HandlerFunc(GetPoster)),
-		"GET /captions": Log(http.HandlerFunc(GetCaptions)),
+		"GET /video/{videoId}": Log(http.HandlerFunc(GetVideo)),
+		"GET /poster":          Log(http.HandlerFunc(GetPoster)),
 
 		"GET /watch":        Log(http.HandlerFunc(GetWatch)),
 		"GET /manage_video": http.HandlerFunc(GetManageVideo),

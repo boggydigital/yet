@@ -102,14 +102,9 @@ func DownloadVideo(rdx redux.Writeable, opt *VideoOptions, videoIds ...string) e
 			errs = true
 		}
 
-		if err := getVideoPageCaptions(videoPage, videoId, rdx, dolo.DefaultClient, opt.Force); err != nil {
-			da.Error(err)
-			errs = true
-		}
-
 		if !errs {
 			// set downloaded date if no errors were encountered
-			if err := rdx.AddValues(data.VideoDownloadCompletedProperty, videoId, yeti.FmtNow()); err != nil {
+			if err = rdx.AddValues(data.VideoDownloadCompletedProperty, videoId, yeti.FmtNow()); err != nil {
 				return err
 			}
 		} else {

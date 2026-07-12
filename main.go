@@ -46,7 +46,6 @@ func main() {
 		"backup":                      cli.BackupHandler,
 		"cleanup-ended-videos":        cli.CleanupEndedVideosHandler,
 		"download-video":              cli.DownloadVideoHandler,
-		"get-captions":                cli.GetCaptionsHandler,
 		"get-channels-metadata":       cli.GetChannelsMetadataHandler,
 		"get-playlists-metadata":      cli.GetPlaylistsMetadataHandler,
 		"get-poster":                  cli.GetPosterHandler,

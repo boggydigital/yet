@@ -29,8 +29,6 @@ VOLUME /usr/share/yet/metadata
 VOLUME /usr/share/yet/videos
 # posters
 VOLUME /usr/share/yet/posters
-# captions
-VOLUME /usr/share/yet/captions
 # yt-dlp
 VOLUME /usr/share/yet/yt-dlp
 

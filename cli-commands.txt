@@ -42,10 +42,6 @@ download-video
     verbose
     force
 
-get-captions
-    video-id&^
-    force
-
 get-channels-metadata
     channel-id&^
     playlists
