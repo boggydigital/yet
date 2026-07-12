@@ -99,16 +99,10 @@
         </li>
         {{if .LocalPlayback}}{{else}}
             <li>
-                <a class='action shortcut' href="/download_video/{{.VideoId}}">Download to watch</a>
+                <a class='action shortcut' href="/download_video/{{.VideoId}}">Download</a>
             </li>
         {{end}}
     </ul>
-
-{{/*    <div class='video_source {{if .LocalPlayback}}local{{end}}'>*/}}
-{{/*        {{if .LocalPlayback}}{{else}}*/}}
-{{/*            <a class='action shortcut' href="/download_video/{{.VideoId}}">Download to watch</a>*/}}
-{{/*        {{end}}*/}}
-{{/*    </div>*/}}
 
     {{if .VideoUrl}}
     <video controls='controls' preload='none' poster='{{.VideoPoster}}'>
