@@ -4,13 +4,12 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetQueueDownload(w http.ResponseWriter, r *http.Request) {
+func GetDownloadVideo(w http.ResponseWriter, r *http.Request) {
 
-	// Get /queue_download/{videoId}
+	// Get /download_video/{videoId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -21,8 +20,7 @@ func GetQueueDownload(w http.ResponseWriter, r *http.Request) {
 
 	videoId := r.PathValue("videoId")
 
-	// store completion timestamp
-	if err = rdx.AddValues(data.VideoDownloadQueuedProperty, videoId, yeti.FmtNow()); err != nil {
+	if err = yeti.DownloadVideoMetadataPoster(nil, videoId, yeti.DefaultVideoOptions(), rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

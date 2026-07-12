@@ -1,18 +1,19 @@
 package cli
 
 import (
+	"net/url"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"net/url"
 )
 
 func AddVideoHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoId := q.Get("video-id")
-	options := &VideoOptions{
+	options := &yeti.VideoOptions{
 		Favorite:      q.Has("favorite"),
 		DownloadQueue: q.Has("download-queue"),
 		Ended:         q.Has("ended"),
@@ -23,13 +24,13 @@ func AddVideoHandler(u *url.URL) error {
 	return AddVideo(nil, videoId, options)
 }
 
-func AddVideo(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
+func AddVideo(rdx redux.Writeable, videoId string, opt *yeti.VideoOptions) error {
 
 	ava := nod.Begin("adding video %s...", videoId)
 	defer ava.Done()
 
 	if opt == nil {
-		opt = DefaultVideoOptions()
+		opt = yeti.DefaultVideoOptions()
 	}
 
 	var err error

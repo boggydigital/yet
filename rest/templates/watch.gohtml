@@ -100,7 +100,9 @@
     </ul>
 
     <div class='video_source {{if .LocalPlayback}}local{{end}}'>
-        {{if .LocalPlayback}}This video is ready to play{{else}}This video needs to be downloaded to play{{end}}
+        {{if .LocalPlayback}}{{else}}
+            <a class='action shortcut' href="/download_video/{{.VideoId}}">Download to watch</a>
+        {{end}}
     </div>
 
     {{if .VideoUrl}}

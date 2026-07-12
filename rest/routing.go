@@ -33,6 +33,7 @@ func HandleFuncs() {
 		"POST /progress":                Log(http.HandlerFunc(PostProgress)),
 		"GET /end/{videoId}/{reason}":   Log(http.HandlerFunc(GetEnded)),
 		"GET /queue_download/{videoId}": Log(http.HandlerFunc(GetQueueDownload)),
+		"GET /download_video/{videoId}": Log(http.HandlerFunc(GetDownloadVideo)),
 
 		"GET /playlist":         Log(http.HandlerFunc(GetPlaylist)),
 		"GET /refresh_playlist": Log(http.HandlerFunc(GetRefreshPlaylist)),

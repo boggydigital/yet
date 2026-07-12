@@ -6,12 +6,13 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 )
 
 func SyncHandler(u *url.URL) error {
 	q := u.Query()
 
-	options := &VideoOptions{
+	options := &yeti.VideoOptions{
 		BgUtilBaseUrl: q.Get("bgutil-baseurl"),
 		Verbose:       q.Has("verbose"),
 		Force:         q.Has("force"),
@@ -19,13 +20,13 @@ func SyncHandler(u *url.URL) error {
 	return Sync(nil, options)
 }
 
-func Sync(rdx redux.Writeable, opt *VideoOptions) error {
+func Sync(rdx redux.Writeable, opt *yeti.VideoOptions) error {
 
 	sa := nod.Begin("syncing yet data...")
 	defer sa.Done()
 
 	if opt == nil {
-		opt = DefaultVideoOptions()
+		opt = yeti.DefaultVideoOptions()
 	}
 
 	var err error

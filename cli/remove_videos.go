@@ -4,6 +4,8 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
+
 	"net/url"
 )
 
@@ -11,7 +13,7 @@ func RemoveVideosHandler(u *url.URL) error {
 	q := u.Query()
 
 	videoId := q.Get("video-id")
-	options := &VideoOptions{
+	options := &yeti.VideoOptions{
 		DownloadQueue: q.Has("download-queue"),
 		Progress:      q.Has("progress"),
 		Ended:         q.Has("ended"),
@@ -21,13 +23,13 @@ func RemoveVideosHandler(u *url.URL) error {
 	return RemoveVideos(nil, videoId, options)
 }
 
-func RemoveVideos(rdx redux.Writeable, videoId string, opt *VideoOptions) error {
+func RemoveVideos(rdx redux.Writeable, videoId string, opt *yeti.VideoOptions) error {
 
 	rva := nod.Begin("removing video %s...", videoId)
 	defer rva.Done()
 
 	if opt == nil {
-		opt = DefaultVideoOptions()
+		opt = yeti.DefaultVideoOptions()
 	}
 
 	var err error

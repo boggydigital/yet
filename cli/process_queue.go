@@ -16,7 +16,7 @@ const maxAttempts = 2
 func ProcessQueueHandler(u *url.URL) error {
 	q := u.Query()
 
-	options := &VideoOptions{
+	options := &yeti.VideoOptions{
 		BgUtilBaseUrl: q.Get("bgutil-baseurl"),
 		Verbose:       q.Has("verbose"),
 		Force:         q.Has("force"),
@@ -28,13 +28,13 @@ func ProcessQueueHandler(u *url.URL) error {
 // ProcessQueue processes download queue using the following rules:
 // - download has not been completed after queue time
 // - download is not in progress since queue time and less than 48 hours ago
-func ProcessQueue(rdx redux.Writeable, opt *VideoOptions) error {
+func ProcessQueue(rdx redux.Writeable, opt *yeti.VideoOptions) error {
 
 	dqa := nod.Begin("processing videos queued for download...")
 	defer dqa.Done()
 
 	if opt == nil {
-		opt = DefaultVideoOptions()
+		opt = yeti.DefaultVideoOptions()
 	}
 
 	var err error

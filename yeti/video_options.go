@@ -1,4 +1,4 @@
-package cli
+package yeti
 
 import (
 	"github.com/boggydigital/redux"
