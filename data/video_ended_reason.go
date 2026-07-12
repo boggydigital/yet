@@ -1,31 +1,39 @@
 package data
 
-type VideoEndedReason string
-
-const (
-	Completed          VideoEndedReason = "completed"
-	Skipped            VideoEndedReason = "skipped"
-	SeenEnough         VideoEndedReason = "seen-enough"
-	DefaultEndedReason                  = Completed
+import (
+	"maps"
+	"slices"
 )
 
+type VideoEndedReason int
+
+const (
+	Completed VideoEndedReason = iota
+	Skipped
+	SeenEnough
+
+	DefaultEndedReason = Completed
+)
+
+var videoEndedReasonNames = map[VideoEndedReason]string{
+	Completed:  "completed",
+	Skipped:    "skipped",
+	SeenEnough: "seen-enough",
+}
+
 func ParseVideoEndedReason(s string) VideoEndedReason {
-	switch s {
-	case string(Completed):
-		return Completed
-	case string(Skipped):
-		return Skipped
-	case string(SeenEnough):
-		return SeenEnough
-	default:
-		return DefaultEndedReason
+	for ver, name := range videoEndedReasonNames {
+		if s == name {
+			return ver
+		}
 	}
+	return DefaultEndedReason
 }
 
 func AllVideoEndedReasons() []VideoEndedReason {
-	return []VideoEndedReason{
-		Completed,
-		Skipped,
-		SeenEnough,
-	}
+	return slices.Collect(maps.Keys(videoEndedReasonNames))
+}
+
+func (ver VideoEndedReason) String() string {
+	return videoEndedReasonNames[ver]
 }

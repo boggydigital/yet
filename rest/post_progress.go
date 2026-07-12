@@ -32,7 +32,7 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := rdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
+	if err = rdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

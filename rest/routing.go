@@ -13,13 +13,13 @@ var (
 func HandleFuncs() {
 
 	patternHandlers := map[string]http.Handler{
-		"GET /video/{videoId}": Log(http.HandlerFunc(GetVideo)),
-		"GET /poster":          Log(http.HandlerFunc(GetPoster)),
+		"GET /video":  Log(http.HandlerFunc(GetVideo)),
+		"GET /poster": Log(http.HandlerFunc(GetPoster)),
 
-		"GET /watch":        Log(http.HandlerFunc(GetWatch)),
-		"GET /manage_video": http.HandlerFunc(GetManageVideo),
-		"GET /update_video": http.HandlerFunc(GetUpdateVideo),
-		"GET /video_error":  http.HandlerFunc(GetVideoError),
+		"GET /watch/{videoId}": Log(http.HandlerFunc(GetWatch)),
+		"GET /manage_video":    http.HandlerFunc(GetManageVideo),
+		"GET /update_video":    http.HandlerFunc(GetUpdateVideo),
+		"GET /video_error":     http.HandlerFunc(GetVideoError),
 
 		"GET /list": Log(http.HandlerFunc(GetList)),
 
@@ -30,9 +30,9 @@ func HandleFuncs() {
 		"GET /search":  Log(http.HandlerFunc(GetSearch)),
 		"GET /results": Log(http.HandlerFunc(GetResults)),
 
-		"POST /progress":       Log(http.HandlerFunc(PostProgress)),
-		"POST /ended":          Log(http.HandlerFunc(PostEnded)),
-		"POST /queue_download": Log(http.HandlerFunc(PostQueueDownload)),
+		"POST /progress":                Log(http.HandlerFunc(PostProgress)),
+		"GET /end/{videoId}/{reason}":   Log(http.HandlerFunc(GetEnded)),
+		"GET /queue_download/{videoId}": Log(http.HandlerFunc(GetQueueDownload)),
 
 		"GET /playlist":         Log(http.HandlerFunc(GetPlaylist)),
 		"GET /refresh_playlist": Log(http.HandlerFunc(GetRefreshPlaylist)),

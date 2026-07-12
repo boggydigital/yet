@@ -10,7 +10,7 @@
             <div class='duration'>{{.Duration}}</div>
         {{end}}
         {{if .EndedTime}}
-            <div class='ended'>{{if eq .EndedReason "completed"}}☑️{{else if eq .EndedReason "skipped"}}⏩{{else if eq .EndedReason "seen-enough"}}⏭️{{else}}❓{{end}}</div>
+            <div class='ended'>{{if eq .EndedReason 0}}☑️{{else if eq .EndedReason 1}}⏩{{else if eq .EndedReason 2}}⏭️{{else}}❓{{end}}</div>
         {{end}}
         <span class='title'>{{.VideoTitle}}</span>
         {{if .ShowOwnerChannel}}

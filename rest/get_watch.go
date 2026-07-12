@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"path"
 	"strings"
 
 	"github.com/boggydigital/yet/data"
@@ -11,7 +12,7 @@ import (
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
 
-	// GET /watch?v&t
+	// GET /watch/{videoId}?t
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -20,23 +21,24 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	videoId := r.PathValue("videoId")
+
 	q := r.URL.Query()
 
-	v := q.Get("v")
 	t := q.Get("t")
 	queueDownload := q.Has("queue-download")
 
-	if v == "" {
+	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
 	}
 
 	// resolve full YouTube URL to just video-id, as needed
-	if strings.Contains(v, "?") {
-		if videoIds, err := yeti.ParseVideoIds(v); err != nil {
+	if strings.Contains(videoId, "?") {
+		if videoIds, err := yeti.ParseVideoIds(videoId); err != nil {
 
 			// one more attempt - redirect to playlist page if we've got a valid playlist
-			if playlistIds, err := yeti.ParsePlaylistIds(v); err == nil && len(playlistIds) > 0 {
+			if playlistIds, err := yeti.ParsePlaylistIds(videoId); err == nil && len(playlistIds) > 0 {
 				http.Redirect(w, r, "/playlist?list="+playlistIds[0], http.StatusPermanentRedirect)
 				return
 			}
@@ -44,7 +46,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		} else if len(videoIds) > 0 {
-			redirectUrl := "/watch?v=" + videoIds[0]
+			redirectUrl := path.Join("/watch", videoIds[0])
 			if queueDownload {
 				redirectUrl += "&queue-download"
 			}
@@ -54,13 +56,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// iOS insists on inserting a space on paste
-	v = strings.TrimSpace(v)
+	videoId = strings.TrimSpace(videoId)
 
-	videoId := ""
-	if videoIds, err := yeti.ParseVideoIds(v); err == nil && len(videoIds) > 0 {
+	var videoIds []string
+	if videoIds, err = yeti.ParseVideoIds(videoId); err == nil && len(videoIds) > 0 {
 		videoId = videoIds[0]
-	} else {
-		videoId = v
 	}
 
 	if queueDownload {

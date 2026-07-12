@@ -1,12 +1,14 @@
 package rest
 
 import (
+	"maps"
+	"net/http"
+	"path"
+	"slices"
+
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
-	"maps"
-	"net/http"
-	"slices"
 )
 
 func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +90,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, "/watch?v="+videoId, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, path.Join("/watch", videoId), http.StatusTemporaryRedirect)
 }
 
 func toggleTimeProperty(id, property string, condition bool, rdx redux.Writeable) error {

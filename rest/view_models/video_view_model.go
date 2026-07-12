@@ -1,6 +1,7 @@
 package view_models
 
 import (
+	"path"
 	"slices"
 	"strconv"
 	"time"
@@ -51,9 +52,9 @@ func GetVideoViewModel(videoId string, rdx redux.Readable, options ...VideoOptio
 		videoTitle = title
 	}
 
-	videoUrl := "/watch?"
+	videoUrl := "/watch"
 	if videoId != "" {
-		videoUrl += "v=" + videoId
+		videoUrl = path.Join(videoUrl, videoId)
 	}
 
 	publishedDate := ""

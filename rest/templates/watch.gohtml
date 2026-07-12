@@ -164,12 +164,12 @@
                 {{if eq .CurrentTimeSeconds "0"}}
                     <li>
                         <a class='action shortcut'
-                           id="set-ended-skipped" href="">Skip</a>
+                           id="set-ended-skipped" href="/end/{{.VideoId}}/skipped">Skip</a>
                     </li>
                 {{else}}
                     <li>
                         <a class='action shortcut'
-                           id="set-ended-seen-enough" href="">Seen
+                           id="set-ended-seen-enough" href="/end/{{.VideoId}}/seen-enough">Seen
                             enough</a>
                     </li>
                 {{end}}
@@ -178,7 +178,7 @@
             {{else}}
                 <li>
                     <a class='action shortcut'
-                       id="queue-download" href="">Queue Download</a>
+                       id="queue-download" href="/queue_download/{{.VideoId}}">Queue Download</a>
                 </li>
             {{end}}
         </ul>
@@ -220,11 +220,8 @@
 
     <script>
         video.addEventListener('ended', (e) => {
-        fetch('/ended', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'},
-                body: JSON.stringify({v: '{{.VideoId}}'})
+        fetch('/end/{{.VideoId}}/completed', {
+                method: 'get',
             }).then((resp) => { if (resp && !resp.ok) {
                 console.log(resp)}
             });
@@ -252,52 +249,6 @@
                 break;
             };
             });
-    </script>
-
-    <script>
-        let setEndedSkipped = document.getElementById("set-ended-skipped")
-        setEndedSkipped.addEventListener("click", (e) => {
-            fetch('/ended', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    v: '{{.VideoId}}',
-                    r: 'skipped'})
-            }).then((resp) => { if (resp && !resp.ok) {
-                console.log(resp)}
-            });
-        });
-    </script>
-
-    <script>
-        let setEndedSeenEnough = document.getElementById("set-ended-seen-enough")
-        setEndedSeenEnough.addEventListener("click", (e) => {
-            fetch('/ended', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    v: '{{.VideoId}}',
-                    r: 'seen-enough'})
-            }).then((resp) => { if (resp && !resp.ok) {
-                console.log(resp)}
-            });
-        });
-    </script>
-
-    <script>
-        let queueDownload = document.getElementById("queue-download")
-        queueDownload.addEventListener("click", (e) => {
-            fetch('/queue_download', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'},
-                body: JSON.stringify({v: '{{.VideoId}}'})
-            }).then((resp) => { if (resp && !resp.ok) {
-                console.log(resp)}
-            });
-        });
     </script>
 
     </body>
