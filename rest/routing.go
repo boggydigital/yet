@@ -23,7 +23,8 @@ func HandleFuncs() {
 
 		"GET /list": Log(http.HandlerFunc(GetList)),
 
-		"GET /paste": Log(http.HandlerFunc(GetPaste)),
+		"GET /paste":       Log(http.HandlerFunc(GetPaste)),
+		"GET /paste_video": Log(http.HandlerFunc(GetPasteVideo)),
 
 		"GET /history": Log(http.HandlerFunc(GetHistory)),
 
