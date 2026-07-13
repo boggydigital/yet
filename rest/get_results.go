@@ -1,11 +1,12 @@
 package rest
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/rest/view_models"
 	"github.com/boggydigital/yet_urls/youtube_urls"
-	"net/http"
-	"strings"
 )
 
 type ResultsViewModel struct {
@@ -25,7 +26,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	searchQuery := r.URL.Query().Get("search_query")
+	searchQuery := r.URL.Query().Get("search-query")
 
 	terms := strings.Split(searchQuery, " ")
 
