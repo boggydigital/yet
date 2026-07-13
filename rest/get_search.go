@@ -9,12 +9,6 @@ import (
 
 func GetSearch(w http.ResponseWriter, r *http.Request) {
 
-	//w.Header().Set("Content-Type", "text/html")
-	//
-	//if err := tmpl.ExecuteTemplate(w, "search", nil); err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//}
-
 	root := strom.Page("Search")
 
 	var body strom.Element
@@ -31,7 +25,7 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(NavButton("Home", "/"))
 
-	body.Append(strom.CreateText("h1", "Search YouTube videos"))
+	body.Append(strom.CreateText("h2", "Search YouTube videos"))
 
 	form := strom.Create("form").
 		SetAttribute("id", "search-form").
@@ -82,5 +76,4 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 	if err := strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
 }

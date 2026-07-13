@@ -25,7 +25,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(NavButton("Home", "/"))
 
-	body.Append(strom.CreateText("h1", "Paste YouTube link or video-id"))
+	body.Append(strom.CreateText("h2", "Paste YouTube link or video-id"))
 
 	form := strom.Create("form").
 		SetAttribute("id", "paste-form").
