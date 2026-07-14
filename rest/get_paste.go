@@ -30,10 +30,6 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 	body.Append(form)
 
 	form.Append(
-		strom.CreateText("label", "YouTube link or video-id").
-			SetAttribute("for", "video-id"))
-
-	form.Append(
 		strom.Create("input").
 			SetAttribute("id", "name", "video-id").
 			SetAttribute("type", "text").

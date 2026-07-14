@@ -28,9 +28,6 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(form)
 
-	form.Append(strom.CreateText("label", "Search terms").
-		SetAttribute("for", "search-query"))
-
 	form.Append(strom.Create("input").
 		SetAttribute("id", "name", "search-query").
 		SetAttribute("type", "search").
