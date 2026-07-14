@@ -16,114 +16,70 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 		break
 	}
 
-	body.SetStyle(map[string]string{
-		"padding":        vars.Size(vars.SizeNormal),
-		"display":        "flex",
-		"flex-direction": "column",
-		"row-gap":        vars.Size(vars.SizeLarge),
-	})
+	body.AddClass("d-f", "fd-c", "rg-l")
 
-	body.Append(NavButton("Home", "/"))
+	body.Append(navButton("Home", "/"))
 
-	body.Append(strom.CreateText("h2", "Paste YouTube link or video-id"))
+	body.Append(
+		strom.CreateText("h2", "Paste YouTube link or video-id"))
 
-	form := strom.Create("form").
+	form := strom.Create("form", "d-f", "fd-c", "rg-n").
 		SetAttribute("id", "paste-form").
 		SetAttribute("method", "get").
-		SetAttribute("action", "/paste_video").
-		SetStyle(map[string]string{
-			"display":        "flex",
-			"flex-direction": "column",
-			"row-gap":        vars.Size(vars.SizeNormal),
-		})
-
+		SetAttribute("action", "/paste_video")
 	body.Append(form)
 
-	form.Append(strom.CreateText("label", "YouTube link or video-id").
-		SetAttribute("for", "video-id"))
+	form.Append(
+		strom.CreateText("label", "YouTube link or video-id").
+			SetAttribute("for", "video-id"))
 
-	form.Append(strom.Create("input").
-		SetAttribute("id", "video-id").
-		SetAttribute("name", "video-id").
-		SetAttribute("type", "text").
-		SetAttribute("placeholder", "YouTube link or video-id").
-		SetAttribute("autofocus", "").
-		SetAttribute("required", "").
-		SetStyle(map[string]string{
-			"max-width": "calc(1.5 * " + vars.Size(vars.SizeXXXLarge) + ")",
-			"padding":   vars.Size(vars.SizeSmall),
-			"font-size": vars.FontSize(vars.SizeNormal),
-		}))
+	form.Append(
+		strom.Create("input").
+			SetAttribute("id", "name", "video-id").
+			SetAttribute("type", "text").
+			SetAttribute("placeholder", "YouTube link or video-id").
+			SetAttribute("autofocus").
+			SetAttribute("required").
+			SetStyle(textInputStyles()))
 
-	downloadParameters := strom.Create("ul").
-		SetStyle(map[string]string{
-			"display":        "flex",
-			"flex-direction": "column",
-			"row-gap":        vars.Size(vars.SizeNormal),
-		})
+	downloadParameters := strom.Create("ul").AddClass("d-f", "fd-c", "rg-n")
 	form.Append(downloadParameters)
 
-	queueDownload := strom.Create("li").
-		SetStyle(map[string]string{
-			"display":        "flex",
-			"flex-direction": "row",
-			"column-gap":     vars.Size(vars.SizeNormal),
-		})
+	queueDownload := strom.Create("li").AddClass("d-f", "fd-r", "cg-n")
 	downloadParameters.Append(queueDownload)
 
-	queueDownload.Append(strom.Create("input").
-		SetAttribute("type", "checkbox").
-		SetAttribute("switch", "").
-		SetAttribute("checked", "").
-		SetAttribute("id", "queue-download").
-		SetAttribute("name", "queue-download"))
+	queueDownload.Append(
+		strom.Create("input").
+			SetAttribute("id", "name", "queue-download").
+			SetAttribute("type", "checkbox").
+			SetAttribute("switch").
+			SetAttribute("checked"))
 
-	queueDownload.Append(strom.CreateText("label", "Queue download").
-		SetAttribute("for", "queue-download"))
+	queueDownload.Append(
+		strom.CreateText("label", "Queue download").
+			SetAttribute("for", "queue-download"))
 
-	downloadNow := strom.Create("li").
-		SetStyle(map[string]string{
-			"display":        "flex",
-			"flex-direction": "row",
-			"column-gap":     vars.Size(vars.SizeNormal),
-		})
+	downloadNow := strom.Create("li").AddClass("d-f", "fd-r", "cg-n")
 	downloadParameters.Append(downloadNow)
 
 	downloadNow.Append(strom.Create("input").
+		SetAttribute("id", "name", "download-now").
 		SetAttribute("type", "checkbox").
-		SetAttribute("switch", "").
-		SetAttribute("id", "download-now").
-		SetAttribute("name", "download-now"))
+		SetAttribute("switch"))
 
 	downloadNow.Append(strom.CreateText("label", "Download now").
 		SetAttribute("for", "download-now"))
 
-	body.Append(strom.Create("input").
-		SetAttribute("type", "submit").
-		SetAttribute("form", "paste-form").
-		SetAttribute("value", "Paste").
-		SetStyle(map[string]string{
-			"margin-block-start": vars.Size(vars.SizeNormal),
-			"appearance":         "none",
-			"padding-inline":     vars.Size(vars.SizeNormal),
-			"padding-block":      vars.Size(vars.SizeSmall),
-			"background-color":   vars.Color(vars.ColorPurple),
-			"color":              vars.Color(vars.ColorBackground),
-			"border-radius":      vars.Size(vars.SizeLarge),
-			"border":             "none",
-			"font-size":          vars.FontSize(vars.SizeNormal),
-			"font-weight":        vars.FontWeight(vars.WeightBold),
-			"width":              "max-content",
-		}))
+	body.Append(submitButton("Paste", form.GetAttribute("id")))
 
 	if err := strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func NavButton(title, href string) strom.Element {
+func navButton(title, href string) strom.Element {
 
-	button := strom.Create("a").
+	button := strom.Create("a", "br-l", "fs-n", "fw-b").
 		SetTextContent(title).
 		SetAttribute("href", href).
 		SetStyle(map[string]string{
@@ -132,10 +88,32 @@ func NavButton(title, href string) strom.Element {
 			"width":            "max-content",
 			"padding-inline":   vars.Size(vars.SizeNormal),
 			"padding-block":    vars.Size(vars.SizeSmall),
-			"border-radius":    vars.Size(vars.SizeLarge),
-			"font-size":        vars.FontSize(vars.SizeNormal),
-			"font-weight":      vars.FontWeight(vars.WeightBold),
 		})
 
 	return button
+}
+
+func submitButton(value, form string) strom.Element {
+	return strom.Create("input", "br-l", "fs-n", "fw-b").
+		SetAttribute("type", "submit").
+		SetAttribute("form", form).
+		SetAttribute("value", value).
+		SetStyle(map[string]string{
+			"margin-block-start": vars.Size(vars.SizeNormal),
+			"appearance":         "none",
+			"padding-inline":     vars.Size(vars.SizeNormal),
+			"padding-block":      vars.Size(vars.SizeSmall),
+			"background-color":   vars.Color(vars.ColorPurple),
+			"color":              vars.Color(vars.ColorBackground),
+			"border":             "none",
+			"width":              "max-content",
+		})
+}
+
+func textInputStyles() map[string]string {
+	return map[string]string{
+		"max-width": "calc(1.5 * " + vars.Size(vars.SizeXXXLarge) + ")",
+		"padding":   vars.Size(vars.SizeSmall),
+		"font-size": vars.FontSize(vars.SizeNormal),
+	}
 }
