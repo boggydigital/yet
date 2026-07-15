@@ -73,20 +73,26 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func navButton(title, href string) strom.Element {
+func roundedButton(title, href string, color vars.ColorVar) strom.Element {
 
-	button := strom.Create("a", "br-l", "fs-n", "fw-b").
+	return strom.Create("a", "br-l", "fs-n", "fw-b").
 		SetTextContent(title).
 		SetAttribute("href", href).
 		SetStyle(map[string]string{
-			"background-color": vars.Color(vars.ColorBlue),
+			"background-color": vars.Color(color),
 			"color":            vars.Color(vars.ColorBackground),
 			"width":            "max-content",
 			"padding-inline":   vars.Size(vars.SizeNormal),
 			"padding-block":    vars.Size(vars.SizeSmall),
 		})
+}
 
-	return button
+func navButton(title, href string) strom.Element {
+	return roundedButton(title, href, vars.ColorBlue)
+}
+
+func actionButton(title, href string) strom.Element {
+	return roundedButton(title, href, vars.ColorPurple)
 }
 
 func submitButton(value, form string) strom.Element {
