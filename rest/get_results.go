@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"iter"
 	"math"
 	"net/http"
 	"path"
@@ -135,9 +136,9 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 			})
 		body.Append(videos)
 
-		for _, vr := range sid.VideoRenderers() {
-			videos.Append(videoTile(vr.VideoId, rdx))
-		}
+		vd := new(videosDelegate{searchInitialData: sid, rdx: rdx})
+
+		videos.Append(strom.Defer(vd.videos))
 	}
 
 	if err = strom.WriteResponse(w, root); err != nil {
@@ -145,6 +146,21 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	return
+}
+
+type videosDelegate struct {
+	searchInitialData *youtube_urls.SearchInitialData
+	rdx               redux.Readable
+}
+
+func (vd *videosDelegate) videos() iter.Seq[strom.Element] {
+	return func(yield func(strom.Element) bool) {
+		for _, vr := range vd.searchInitialData.VideoRenderers() {
+			if !yield(videoTile(vr.VideoId, rdx)) {
+				return
+			}
+		}
+	}
 }
 
 func videoTile(videoId string, rdx redux.Readable) strom.Element {
