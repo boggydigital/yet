@@ -156,7 +156,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	body.Append(videoNavButtonsRow)
 
 	videoNavButtonsRow.Append(
-		navButton("Manage video", "/manage_video?v="+videoId),
+		navButton("Manage", "/manage_video?v="+videoId),
 		actionButton("Seen enough", "/end/"+videoId+"/seen-enough"),
 		actionButton("Skip", "/end/"+videoId+"/skipped"),
 	)
