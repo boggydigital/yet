@@ -31,7 +31,6 @@ var propertyTitles = map[string]string{
 	data.VideoEndedDateProperty:         "Ended",
 	data.VideoPublishDateProperty:       "Published",
 	data.VideoDownloadCompletedProperty: "Downloaded",
-	data.VideoEndedReasonProperty:       "How",
 }
 
 var propertiesOrder = []string{
@@ -39,7 +38,6 @@ var propertiesOrder = []string{
 	data.VideoEndedDateProperty,
 	data.VideoPublishDateProperty,
 	data.VideoDownloadCompletedProperty,
-	data.VideoEndedReasonProperty,
 }
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
@@ -136,24 +134,22 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 			})
 		body.Append(videos)
 
-		vd := new(videosDelegate{searchInitialData: sid, rdx: rdx})
+		srv := new(searchResultsVideos{searchInitialData: sid, rdx: rdx})
 
-		videos.Append(strom.Defer(vd.videos))
+		videos.Append(strom.Defer(srv.getVideos))
 	}
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	return
 }
 
-type videosDelegate struct {
+type searchResultsVideos struct {
 	searchInitialData *youtube_urls.SearchInitialData
 	rdx               redux.Readable
 }
 
-func (vd *videosDelegate) videos() iter.Seq[strom.Element] {
+func (vd *searchResultsVideos) getVideos() iter.Seq[strom.Element] {
 	return func(yield func(strom.Element) bool) {
 		for _, vr := range vd.searchInitialData.VideoRenderers() {
 			if !yield(videoTile(vr.VideoId, rdx)) {
@@ -192,7 +188,12 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 			"filter": "grayscale(1.0)",
 		})
 
-		tileContainer.Append(strom.CreateText("span", "Watched").
+		reason := data.Completed
+		if ver, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok && ver != "" {
+			reason = data.ParseVideoEndedReason(ver)
+		}
+
+		tileContainer.Append(strom.CreateText("span", reason.String()).
 			SetStyle(map[string]string{
 				"position":                  "absolute",
 				"top":                       "0",
@@ -219,14 +220,14 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 
 			durationItems := strom.Create("span", "d-f", "fd-r", "cg-s", "fs-s").
 				SetStyle(map[string]string{
-					"position":                  "absolute",
-					"top":                       "0",
-					"left":                      "0",
-					"font-size":                 vars.FontSize(vars.SizeXSmall),
-					"padding":                   vars.Size(vars.SizeSmall),
-					"border-bottom-left-radius": vars.Size(vars.SizeSmall),
-					"border-top-right-radius":   vars.Size(vars.SizeSmall),
-					"background-color":          vars.Color(vars.ColorBackground),
+					"position":                   "absolute",
+					"top":                        "0",
+					"left":                       "0",
+					"font-size":                  vars.FontSize(vars.SizeXSmall),
+					"padding":                    vars.Size(vars.SizeSmall),
+					"border-bottom-right-radius": vars.Size(vars.SizeSmall),
+					"border-top-left-radius":     vars.Size(vars.SizeSmall),
+					"background-color":           vars.Color(vars.ColorBackground),
 				})
 
 			durSpan := strom.CreateText("span", formatSeconds(duri))
@@ -355,12 +356,13 @@ func formatSeconds(ts int64) string {
 func channelTile(channelId string, rdx redux.Readable) strom.Element {
 
 	tileContainer := strom.Create("a", "d-f", "fd-c", "br-s", "p-n").
-		SetAttribute("href", "/channel?id="+channelId).
+		SetAttribute("href", path.Join("/channel", channelId)).
 		SetStyle(map[string]string{
 			"flow-shrink": "0",
 			"padding":     "calc(1.5 * " + vars.Size(vars.SizeSmall) + ")",
 			"row-gap":     vars.Size(vars.SizeXXSmall),
 			"background":  vars.Color(vars.ColorHighlight),
+			"width":       "max-content",
 		})
 
 	var title string

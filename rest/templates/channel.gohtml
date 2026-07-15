@@ -3,7 +3,7 @@
         {{$class := ""}}
         {{if .ChannelAutoRefresh}}{{if eq .ChannelBadgeCount 0}}{{$class = print $class " ended"}}{{end}}{{end}}
         {{if .ChannelAutoDownload}}{{$class = print $class " downloading"}}{{end}}
-        <a class='channel {{$class}}' href='/channel?id={{.ChannelId}}'>
+        <a class='channel {{$class}}' href='/channel/{{.ChannelId}}'>
             <span class='channelTitle'>{{.ChannelTitle}}</span>
             {{if .ChannelAutoRefresh}}
                 <span class='new_videos'>

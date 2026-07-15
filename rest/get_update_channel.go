@@ -1,10 +1,12 @@
 package rest
 
 import (
-	"github.com/boggydigital/yet/data"
 	"maps"
 	"net/http"
+	"path"
 	"slices"
+
+	"github.com/boggydigital/yet/data"
 )
 
 func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +63,6 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, "/channel?id="+channelId, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, path.Join("/channel", channelId), http.StatusTemporaryRedirect)
 
 }
