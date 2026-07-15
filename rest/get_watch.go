@@ -111,7 +111,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	videoPosterUrl := "/poster?v=" + videoId + "&q" + youtube_urls.ThumbnailQualityMaxRes.String()
+	videoPosterUrl := "/poster?v=" + videoId + "&q=" + youtube_urls.ThumbnailQualityMaxRes.String()
 
 	if absLocalVideoFilename != "" {
 		if _, err = os.Stat(absLocalVideoFilename); err == nil {
