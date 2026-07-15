@@ -61,7 +61,10 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 			}))
 	}
 
-	channelNavButtonsRow := strom.Create("ul", "d-f", "fd-r", "cg-n", "rg-n").
+	channelNavButtonsRow := strom.Create("ul", "d-f", "cg-n", "rg-n").
+		SetStyle(map[string]string{
+			"flex-flow": "row wrap",
+		}).
 		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId)).
 		Append(navButton("Playlists", "/channel_playlists?id="+channelId)).
 		Append(navButton("Refresh", "/refresh_channel_videos?id="+channelId)).
@@ -83,12 +86,6 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	//w.Header().Set("Content-Type", "text/html")
-	//
-	//if err := tmpl.ExecuteTemplate(w, "channels", view_models.GetChannelViewModel(channelId, rdx)); err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
 }
 
 type channelVideos struct {

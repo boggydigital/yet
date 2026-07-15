@@ -175,6 +175,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 
 	poster := strom.Create("img", "br-s").
 		SetAttribute("src", path.Join("/poster?v="+videoId+"&q=hqdefault")).
+		SetAttribute("loading", "lazy").
 		SetStyle(map[string]string{
 			"aspect-ratio": "16/9",
 			"width":        "100%",
@@ -230,14 +231,19 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 					"background-color":           vars.Color(vars.ColorBackground),
 				})
 
-			durSpan := strom.CreateText("span", formatSeconds(duri))
+			durSpan := strom.CreateText("span", formatSeconds(duri)).
+				SetStyle(map[string]string{
+					"font-size": vars.FontSize(vars.SizeXSmall),
+				})
 
 			if remaining > 0 {
 				remSpan := strom.CreateText("span", formatSeconds(remaining), "fw-b")
 				durationItems.Append(remSpan)
 				durSpan.SetStyle(map[string]string{"color": vars.Color(vars.ColorGray)})
 			} else {
-				durSpan.AddClass("fw-b")
+				if !ended {
+					durSpan.AddClass("fw-b")
+				}
 			}
 
 			durationItems.Append(durSpan)
