@@ -207,7 +207,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 			}))
 	}
 
-	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" && durs != "0" {
 		if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
 
 			var remaining int64

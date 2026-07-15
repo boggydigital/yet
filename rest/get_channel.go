@@ -51,6 +51,8 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(navButton("Home", "/"))
 
+	body.Append(strom.CreateText("h1", "Channel"))
+
 	body.Append(channelTile(channelId, rdx))
 
 	if cd, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
