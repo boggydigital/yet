@@ -8,14 +8,9 @@ import (
 
 func GetSearch(w http.ResponseWriter, r *http.Request) {
 
-	root := strom.Page("Search")
+	root, body := strom.RootBody("Search")
 
-	var body strom.Element
-	for body = range root.GetElementsByTagName("body") {
-		break
-	}
-
-	body.AddClass("d-f", "fd-c", "rg-l")
+	body.AddClass("d-f", "fd-c", "rg-n")
 
 	body.Append(navButton("Home", "/"))
 

@@ -9,14 +9,9 @@ import (
 
 func GetPaste(w http.ResponseWriter, r *http.Request) {
 
-	root := strom.Page("Paste")
+	root, body := strom.RootBody("Paste")
 
-	var body strom.Element
-	for body = range root.GetElementsByTagName("body") {
-		break
-	}
-
-	body.AddClass("d-f", "fd-c", "rg-l")
+	body.AddClass("d-f", "fd-c", "rg-n")
 
 	body.Append(navButton("Home", "/"))
 
@@ -78,13 +73,7 @@ func roundedButton(title, href string, color vars.ColorVar) strom.Element {
 	return strom.Create("a", "br-l", "fs-n", "fw-b").
 		SetTextContent(title).
 		SetAttribute("href", href).
-		SetStyle(map[string]string{
-			"background-color": vars.Color(color),
-			"color":            vars.Color(vars.ColorBackground),
-			"width":            "max-content",
-			"padding-inline":   vars.Size(vars.SizeNormal),
-			"padding-block":    vars.Size(vars.SizeSmall),
-		})
+		SetStyle(buttonStyles(vars.ColorGray))
 }
 
 func navButton(title, href string) strom.Element {
@@ -100,16 +89,20 @@ func submitButton(value, form string) strom.Element {
 		SetAttribute("type", "submit").
 		SetAttribute("form", form).
 		SetAttribute("value", value).
-		SetStyle(map[string]string{
-			"margin-block-start": vars.Size(vars.SizeNormal),
-			"appearance":         "none",
-			"padding-inline":     vars.Size(vars.SizeNormal),
-			"padding-block":      vars.Size(vars.SizeSmall),
-			"background-color":   vars.Color(vars.ColorPurple),
-			"color":              vars.Color(vars.ColorBackground),
-			"border":             "none",
-			"width":              "max-content",
-		})
+		SetStyle(map[string]string{"appearance": "none"}).
+		SetStyle(buttonStyles(vars.ColorGray))
+}
+
+func buttonStyles(c vars.ColorVar) map[string]string {
+	return map[string]string{
+		"padding-inline":   vars.Size(vars.SizeNormal),
+		"padding-block":    vars.Size(vars.SizeSmall),
+		"background-color": vars.Color(c),
+		"color":            vars.Color(vars.ColorBackground),
+		"border":           "none",
+		"width":            "max-content",
+		"font-size":        vars.FontSize(vars.SizeXSmall),
+	}
 }
 
 func textInputStyles() map[string]string {

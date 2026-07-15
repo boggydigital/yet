@@ -51,14 +51,9 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	searchQuery := r.URL.Query().Get("search-query")
 
-	root := strom.Page("Search")
+	root, body := strom.RootBody("Search")
 
-	var body strom.Element
-	for body = range root.GetElementsByTagName("body") {
-		break
-	}
-
-	body.AddClass("d-f", "fd-c", "rg-l")
+	body.AddClass("d-f", "fd-c", "rg-n")
 
 	body.Append(navButton("Home", "/"))
 
@@ -128,7 +123,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 			body.Append(strom.CreateText("h2", "Videos"))
 		}
 
-		videos := strom.Create("ul", "d-f", "cg-l", "rg-l").
+		videos := strom.Create("ul", "d-f", "cg-n", "rg-n").
 			SetStyle(map[string]string{
 				"flex-flow": "row wrap",
 			})
@@ -271,14 +266,6 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 		v := vsp[p]
 		if v == "" {
 			continue
-		}
-
-		if p == data.VideoEndedDateProperty {
-			endedReason := data.DefaultEndedReason
-			if ers, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
-				endedReason = data.ParseVideoEndedReason(ers)
-			}
-			v = endedReason.String()
 		}
 
 		ptv := propertyTitles[p] + ": " + v

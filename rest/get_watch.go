@@ -72,16 +72,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		videoTitle = vt
 	}
 
-	root := strom.Page(videoTitle)
+	root, body := strom.RootBody(videoTitle)
 
-	var body strom.Element
-	for body = range root.GetElementsByTagName("body") {
-		break
-	}
+	body.AddClass("d-f", "fd-c", "rg-n")
 
-	body.AddClass("d-f", "fd-c", "rg-l")
-
-	topNavButtons := strom.Create("ul", "d-f", "cg-n", "rg-n").
+	topNavButtons := strom.Create("ul", "d-f", "cg-s", "rg-s").
 		SetStyle(map[string]string{
 			"flex-flow": "row wrap",
 		})
@@ -157,7 +152,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		body.Append(channelTile(channelId, rdx))
 	}
 
-	videoNavButtonsRow := strom.Create("ul", "d-f", "cg-n", "rg-n").
+	videoNavButtonsRow := strom.Create("ul", "d-f", "cg-s", "rg-s").
 		SetStyle(map[string]string{
 			"flex-flow": "row wrap",
 		})

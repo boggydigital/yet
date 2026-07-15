@@ -40,14 +40,9 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		channelTitle = ct
 	}
 
-	root := strom.Page(channelTitle)
+	root, body := strom.RootBody(channelTitle)
 
-	var body strom.Element
-	for body = range root.GetElementsByTagName("body") {
-		break
-	}
-
-	body.AddClass("d-f", "fd-c", "rg-l")
+	body.AddClass("d-f", "fd-c", "rg-n")
 
 	body.Append(navButton("Home", "/"))
 
@@ -76,7 +71,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	cv := new(channelVideos{channelId: channelId, rdx: rdx})
 
-	videos := strom.Create("ul", "d-f", "cg-l", "rg-l").
+	videos := strom.Create("ul", "d-f", "cg-n", "rg-n").
 		SetStyle(map[string]string{
 			"flex-flow": "row wrap",
 		})
