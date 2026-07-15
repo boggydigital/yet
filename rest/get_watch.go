@@ -113,6 +113,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	videoPosterUrl := "/poster?v=" + videoId + "&q=" + youtube_urls.ThumbnailQualityMaxRes.String()
 
+	var mediaElement strom.Element
+
 	if absLocalVideoFilename != "" {
 		if _, err = os.Stat(absLocalVideoFilename); err == nil {
 			videosDir := camino.GetAbs(data.Videos)
@@ -127,23 +129,29 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			videoUrl := "/video?file=" + url.QueryEscape(relLocalVideoFilename)
 			//videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
 
-			body.Append(strom.Create("video", "br-s").
+			mediaElement = strom.Create("video").
 				SetAttribute("src", videoUrl).
 				SetAttribute("poster", videoPosterUrl).
 				SetAttribute("controls", "controls").
-				SetAttribute("preload", "none").
-				SetStyle(map[string]string{
-					"max-width": "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")"}))
+				SetAttribute("preload", "none")
 
 		} else {
-			body.Append(strom.Create("img", "br-s").
-				SetAttribute("src", videoPosterUrl).
-				SetStyle(map[string]string{
-					"max-width": "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")"}))
+			mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 		}
 	}
 
-	body.Append(strom.CreateText("h2", videoTitle))
+	mediaElement.SetStyle(map[string]string{
+		"max-width":            "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")",
+		"view-transition-name": "video-poster-" + videoId,
+		"border-radius":        vars.Size(vars.SizeXSmall),
+	})
+
+	body.Append(mediaElement)
+
+	body.Append(strom.CreateText("h2", videoTitle).
+		SetStyle(map[string]string{
+			"view-transition-name": "video-title-" + videoId,
+		}))
 
 	if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, videoId); ok && channelId != "" {
 		body.Append(channelTile(channelId, rdx))
