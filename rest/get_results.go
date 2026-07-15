@@ -1,11 +1,19 @@
 package rest
 
 import (
+	"math"
 	"net/http"
+	"path"
+	"strconv"
 	"strings"
+	"time"
 
+	"github.com/boggydigital/redux"
+	"github.com/boggydigital/strom"
+	"github.com/boggydigital/strom/vars"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/rest/view_models"
+	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
@@ -15,6 +23,22 @@ type ResultsViewModel struct {
 	Channels    []*view_models.ChannelViewModel
 	Playlists   []*view_models.PlaylistViewModel
 	Videos      []*view_models.VideoViewModel
+}
+
+var propertyTitles = map[string]string{
+	data.VideoOwnerChannelNameProperty:  "Channel",
+	data.VideoEndedDateProperty:         "Ended",
+	data.VideoPublishDateProperty:       "Published",
+	data.VideoDownloadCompletedProperty: "Downloaded",
+	data.VideoEndedReasonProperty:       "How",
+}
+
+var propertiesOrder = []string{
+	data.VideoOwnerChannelNameProperty,
+	data.VideoEndedDateProperty,
+	data.VideoPublishDateProperty,
+	data.VideoDownloadCompletedProperty,
+	data.VideoEndedReasonProperty,
 }
 
 func GetResults(w http.ResponseWriter, r *http.Request) {
@@ -28,9 +52,22 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	searchQuery := r.URL.Query().Get("search-query")
 
-	terms := strings.Split(searchQuery, " ")
+	root := strom.Page("Search")
 
-	sid, err := youtube_urls.GetSearchResultsPage(http.DefaultClient, terms...)
+	var body strom.Element
+	for body = range root.GetElementsByTagName("body") {
+		break
+	}
+
+	body.AddClass("d-f", "fd-c", "rg-l")
+
+	body.Append(navButton("Home", "/"))
+
+	body.Append(strom.CreateText("h1", "Results for '"+searchQuery+"'"))
+
+	sid, err := youtube_urls.GetSearchResultsPage(
+		http.DefaultClient,
+		strings.Split(searchQuery, " ")...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,7 +75,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	propertyValues := extractSearchVideosMetadata(sid.VideoRenderers())
 	for property, keyValues := range propertyValues {
-		if err := rdx.BatchAddValues(property, keyValues); err != nil {
+		if err = rdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -46,7 +83,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	propertyValues = extractSearchPlaylistMetadata(sid.PlaylistRenderers())
 	for property, keyValues := range propertyValues {
-		if err := rdx.BatchAddValues(property, keyValues); err != nil {
+		if err = rdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -54,39 +91,289 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	propertyValues = extractSearchChannelMetadata(sid.ChannelRenderers())
 	for property, keyValues := range propertyValues {
-		if err := rdx.BatchAddValues(property, keyValues); err != nil {
+		if err = rdx.BatchAddValues(property, keyValues); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
 
-	rvm := &ResultsViewModel{
-		SearchQuery: searchQuery,
-		Refinements: sid.Refinements,
+	hasRefinements := len(sid.Refinements) > 0
+	hasChannels := len(sid.ChannelRenderers()) > 0
+	hasPlaylists := len(sid.PlaylistRenderers()) > 0
+	hasVideos := len(sid.VideoRenderers()) > 0
+
+	if hasRefinements {
+		body.Append(strom.CreateText("h2", "Refinements"))
 	}
 
-	for _, chr := range sid.ChannelRenderers() {
-		rvm.Channels = append(rvm.Channels, view_models.GetChannelViewModel(chr.ChannelId, rdx))
+	if hasChannels {
+		body.Append(strom.CreateText("h2", "Channels"))
+
+		channels := strom.Create("ul", "d-f", "cg-n", "rg-n").
+			SetStyle(map[string]string{
+				"flex-flow": "row wrap",
+			})
+		body.Append(channels)
+
+		for _, chr := range sid.ChannelRenderers() {
+			channels.Append(channelTile(chr.ChannelId, rdx))
+		}
 	}
 
-	for _, plr := range sid.PlaylistRenderers() {
-		rvm.Playlists = append(rvm.Playlists, view_models.GetPlaylistViewModel(plr.PlaylistId, rdx))
+	if hasPlaylists {
+		//
 	}
 
-	for _, vr := range sid.VideoRenderers() {
-		rvm.Videos = append(rvm.Videos, view_models.GetVideoViewModel(vr.VideoId, rdx,
-			view_models.ShowPoster,
-			view_models.ShowOwnerChannel,
-			view_models.ShowPublishedDate,
-			view_models.ShowViewCount))
+	if hasVideos {
+		if hasRefinements || hasChannels || hasPlaylists {
+			body.Append(strom.CreateText("h2", "Videos"))
+		}
+
+		videos := strom.Create("ul", "d-f", "cg-l", "rg-l").
+			SetStyle(map[string]string{
+				"flex-flow": "row wrap",
+			})
+		body.Append(videos)
+
+		for _, vr := range sid.VideoRenderers() {
+			videos.Append(videoTile(vr.VideoId, rdx))
+		}
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-
-	if err := tmpl.ExecuteTemplate(w, "results", rvm); err != nil {
+	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
+
+	return
+}
+
+func videoTile(videoId string, rdx redux.Readable) strom.Element {
+
+	tileContainer := strom.Create("a", "d-f", "fd-c", "rg-n").
+		SetAttribute("href", path.Join("/watch", videoId)).
+		SetStyle(map[string]string{
+			"width":    "calc(1.5 * " + vars.Size(vars.SizeXXXLarge) + ")",
+			"position": "relative",
+		})
+
+	var ended bool
+	if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+		ended = true
+	}
+
+	poster := strom.Create("img", "br-s").
+		SetAttribute("src", path.Join("/poster?v="+videoId+"&q=hqdefault")).
+		SetStyle(map[string]string{
+			"aspect-ratio": "16/9",
+			"width":        "100%",
+			"object-fit":   "cover",
+		})
+
+	tileContainer.Append(poster)
+
+	if ended {
+		poster.SetStyle(map[string]string{
+			"filter": "grayscale(1.0)",
+		})
+
+		tileContainer.Append(strom.CreateText("span", "Watched").
+			SetStyle(map[string]string{
+				"position":                  "absolute",
+				"top":                       "0",
+				"right":                     "0",
+				"font-size":                 vars.FontSize(vars.SizeXSmall),
+				"padding":                   vars.Size(vars.SizeSmall),
+				"border-bottom-left-radius": vars.Size(vars.SizeSmall),
+				"border-top-right-radius":   vars.Size(vars.SizeSmall),
+				"background-color":          vars.Color(vars.ColorBackground),
+			}))
+	}
+
+	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+		if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
+
+			var remaining int64
+
+			if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
+				var cti int64
+				if cti, err = strconv.ParseInt(cts, 10, 64); err == nil {
+					remaining = duri - cti
+				}
+			}
+
+			durationItems := strom.Create("span", "d-f", "fd-r", "cg-s", "fs-s").
+				SetStyle(map[string]string{
+					"position":                  "absolute",
+					"top":                       "0",
+					"left":                      "0",
+					"font-size":                 vars.FontSize(vars.SizeXSmall),
+					"padding":                   vars.Size(vars.SizeSmall),
+					"border-bottom-left-radius": vars.Size(vars.SizeSmall),
+					"border-top-right-radius":   vars.Size(vars.SizeSmall),
+					"background-color":          vars.Color(vars.ColorBackground),
+				})
+
+			durSpan := strom.CreateText("span", formatSeconds(duri))
+
+			if remaining > 0 {
+				remSpan := strom.CreateText("span", formatSeconds(remaining), "fw-b")
+				durationItems.Append(remSpan)
+				durSpan.SetStyle(map[string]string{"color": vars.Color(vars.ColorGray)})
+			} else {
+				durSpan.AddClass("fw-b")
+			}
+
+			durationItems.Append(durSpan)
+
+			tileContainer.Append(durationItems)
+		}
+	}
+
+	titlePropertiesStack := strom.Create("ul", "d-f", "fd-c", "rg-s")
+
+	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
+		titlePropertiesStack.Append(strom.CreateText("h3", title))
+	}
+
+	vsp := videoSummaryProperties(videoId, rdx)
+
+	propertiesStack := strom.Create("ul", "d-f", "fd-c", "rg-xs")
+	titlePropertiesStack.Append(propertiesStack)
+
+	for _, p := range propertiesOrder {
+		v := vsp[p]
+		if v == "" {
+			continue
+		}
+
+		if p == data.VideoEndedDateProperty {
+			endedReason := data.DefaultEndedReason
+			if ers, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok {
+				endedReason = data.ParseVideoEndedReason(ers)
+			}
+			v = endedReason.String()
+		}
+
+		ptv := propertyTitles[p] + ": " + v
+
+		propertyRow := strom.CreateText("span", ptv).
+			SetStyle(map[string]string{
+				"color":     vars.Color(vars.ColorGray),
+				"font-size": vars.FontSize(vars.SizeXSmall),
+			})
+
+		propertiesStack.Append(propertyRow)
+	}
+
+	tileContainer.Append(titlePropertiesStack)
+
+	return tileContainer
+}
+
+func videoSummaryProperties(videoId string, rdx redux.Readable) map[string]string {
+	properties := make(map[string]string)
+
+	if och, ok := rdx.GetLastVal(data.VideoOwnerChannelNameProperty, videoId); ok && och != "" {
+		properties[data.VideoOwnerChannelNameProperty] = och
+	}
+
+	if ets, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && ets != "" {
+		properties[data.VideoEndedDateProperty] = parseAndFormatDate(ets)
+	}
+
+	if len(properties) < 2 {
+		var publishedDate string
+		if pds, ok := rdx.GetLastVal(data.VideoPublishDateProperty, videoId); ok && pds != "" {
+			publishedDate = parseAndFormatDate(pds)
+		} else {
+			if ptts, ok := rdx.GetLastVal(data.VideoPublishTimeTextProperty, videoId); ok && ptts != "" {
+				publishedDate = ptts
+			}
+		}
+
+		if publishedDate != "" {
+			properties[data.VideoPublishDateProperty] = publishedDate
+		}
+	}
+
+	if len(properties) < 2 {
+		if dts, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); ok && dts != "" {
+			properties[data.VideoDownloadCompletedProperty] = parseAndFormatDate(dts)
+		}
+	}
+
+	return properties
+}
+
+func parseAndFormat(ts string) string {
+	if pt, err := time.Parse(time.RFC3339, ts); err == nil {
+		return pt.Local().Format(time.RFC1123)
+	} else {
+		return ts
+	}
+}
+
+func parseAndFormatDate(ts string) string {
+	if pt, err := time.Parse(time.RFC3339, ts); err == nil {
+		return pt.Local().Format("Mon, 2 Jan 2006")
+	} else {
+		return ts
+	}
+}
+
+func formatSeconds(ts int64) string {
+	if ts == 0 {
+		return "unknown"
+	}
+
+	t := time.Unix(ts, 0).UTC()
+
+	layout := "4:05"
+	if t.Hour() > 0 {
+		layout = "15:04:05"
+	}
+
+	return t.Format(layout)
+}
+
+func channelTile(channelId string, rdx redux.Readable) strom.Element {
+
+	tileContainer := strom.Create("a", "d-f", "fd-c", "br-s", "p-n").
+		SetAttribute("href", "/channel?id="+channelId).
+		SetStyle(map[string]string{
+			"flow-shrink": "0",
+			"padding":     "calc(1.5 * " + vars.Size(vars.SizeSmall) + ")",
+			"row-gap":     vars.Size(vars.SizeXXSmall),
+			"background":  vars.Color(vars.ColorHighlight),
+		})
+
+	var title string
+	if tp, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && tp != "" {
+		title = tp
+	}
+
+	tileContainer.Append(strom.CreateText("span", title, "fw-b"))
+
+	var newSubtitle string
+	cnev := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx)
+	if len(cnev) > 0 {
+		switch len(cnev) {
+		case 1:
+			newSubtitle = "1 new video"
+		default:
+			newSubtitle = strconv.Itoa(len(cnev)) + " new videos"
+		}
+	} else {
+		newSubtitle = "No new videos"
+	}
+
+	tileContainer.Append(strom.CreateText("span", newSubtitle).
+		SetStyle(map[string]string{
+			"font-size": vars.FontSize(vars.SizeXSmall),
+			"color":     vars.Color(vars.ColorGray),
+		}))
+
+	return tileContainer
 }
 
 var extractedSearchVideosProperties = []string{

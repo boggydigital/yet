@@ -19,7 +19,7 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(navButton("Home", "/"))
 
-	body.Append(strom.CreateText("h2", "Search YouTube videos"))
+	body.Append(strom.CreateText("h1", "Search YouTube videos"))
 
 	form := strom.Create("form", "d-f", "fd-c", "rg-n").
 		SetAttribute("id", "search-form").
