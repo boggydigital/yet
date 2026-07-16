@@ -58,7 +58,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 			}))
 	}
 
-	channelNavButtonsRow := strom.Create("ul", "d-f", "cg-n", "rg-n").
+	channelNavButtonsRow := strom.Create("ul", "d-f", "cg-s", "rg-s").
 		SetStyle(map[string]string{
 			"flex-flow": "row wrap",
 		}).
