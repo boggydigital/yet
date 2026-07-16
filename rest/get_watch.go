@@ -136,17 +136,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mediaElement.SetStyle(map[string]string{
-		"max-width":            "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")",
-		"view-transition-name": "video-poster-" + videoId,
-		"border-radius":        vars.Size(vars.SizeXSmall),
+		"max-width":     "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")",
+		"border-radius": vars.Size(vars.SizeXSmall),
 	})
 
 	body.Append(mediaElement)
 
-	body.Append(strom.CreateText("h2", videoTitle).
-		SetStyle(map[string]string{
-			"view-transition-name": "video-title-" + videoId,
-		}))
+	body.Append(strom.CreateText("h2", videoTitle))
 
 	if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, videoId); ok && channelId != "" {
 		body.Append(channelTile(channelId, rdx))

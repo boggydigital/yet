@@ -172,10 +172,9 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 		SetAttribute("src", path.Join("/poster?v="+videoId+"&q=hqdefault")).
 		SetAttribute("loading", "lazy").
 		SetStyle(map[string]string{
-			"aspect-ratio":         "16/9",
-			"width":                "100%",
-			"object-fit":           "cover",
-			"view-transition-name": "video-poster-" + videoId,
+			"aspect-ratio": "16/9",
+			"width":        "100%",
+			"object-fit":   "cover",
 		})
 
 	tileContainer.Append(poster)
@@ -251,10 +250,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 	titlePropertiesStack := strom.Create("ul", "d-f", "fd-c", "rg-s")
 
 	if title, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && title != "" {
-		titlePropertiesStack.Append(strom.CreateText("h3", title).
-			SetStyle(map[string]string{
-				"view-transition-name": "video-title-" + videoId,
-			}))
+		titlePropertiesStack.Append(strom.CreateText("h3", title))
 	}
 
 	vsp := videoSummaryProperties(videoId, rdx)
