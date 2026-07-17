@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -135,6 +136,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				SetAttribute("preload", "none")
 
 		} else {
+			topNavButtons.Append(navButton("Download", path.Join("/download_video", videoId)))
 			mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 		}
 	}
