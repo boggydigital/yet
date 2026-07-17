@@ -1,6 +1,7 @@
 package rest
 
 import (
+	_ "embed"
 	"net/http"
 	"net/url"
 	"os"
@@ -10,11 +11,17 @@ import (
 
 	"github.com/boggydigital/camino"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/vars"
+	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/calc"
+	"github.com/boggydigital/strom/vars/colors"
+	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
+
+//go:embed "scripts/watch.js"
+var scriptWatch string
 
 func GetWatch(w http.ResponseWriter, r *http.Request) {
 
@@ -74,12 +81,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody(videoTitle)
 
-	body.AddClass("d-f", "fd-c", "rg-n")
+	body.AddAtoms(atoms.FlexColNoWrap(sizes.Normal)...)
 
-	topNavButtons := strom.Create("ul", "d-f", "cg-s", "rg-s").
-		SetStyle(map[string]string{
-			"flex-flow": "row wrap",
-		})
+	topNavButtons := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 
 	body.Append(topNavButtons)
 
@@ -136,8 +140,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mediaElement.SetStyle(map[string]string{
-		"max-width":     "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")",
-		"border-radius": vars.Size(vars.SizeXSmall),
+		"max-width":     calc.Mult(sizes.XXXLarge, 4),
+		"border-radius": sizes.XSmall,
 	})
 
 	body.Append(mediaElement)
@@ -148,10 +152,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		body.Append(channelTile(channelId, rdx))
 	}
 
-	videoNavButtonsRow := strom.Create("ul", "d-f", "cg-s", "rg-s").
-		SetStyle(map[string]string{
-			"flex-flow": "row wrap",
-		})
+	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 	body.Append(videoNavButtonsRow)
 
 	videoNavButtonsRow.Append(
@@ -170,18 +171,16 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			strom.CreateText("pre", vd).SetStyle(map[string]string{
 				"white-space": "pre-wrap",
 				"word-break":  "break-word",
-				"color":       vars.Color(vars.ColorGray),
+				"color":       colors.Gray,
+				"max-width":   calc.Mult(sizes.XXXLarge, 4),
 			}))
 	}
 
-	body.Append(strom.CreateText("script", "let video = document.getElementsByTagName('video')[0];"))
-	body.Append(strom.CreateText("script", "video.currentTime = "+t+";"))
-	body.Append(strom.CreateText("script",
-		"let lastProgressUpdate = new Date();\n        video.addEventListener('timeupdate', (e) => {\n            let now = new Date();\n            let elapsed = now - lastProgressUpdate;\n            if (elapsed > 5000) {\n                fetch('/progress', {\n                    method: 'post',\n                    headers: {\n                        'Content-Type': 'application/json'},\n                    body: JSON.stringify({\n                        v: '"+videoId+"',\n                        t: video.currentTime.toString()})\n                }).then((resp) => { if (resp && !resp.ok) {\n                    console.log(resp)}\n                });\n                lastProgressUpdate = now;\n            }});"))
-	body.Append(strom.CreateText("script", "video.addEventListener('ended', (e) => {\n        fetch('/end/"+videoId+"/completed', {\n                method: 'get',\n            }).then((resp) => { if (resp && !resp.ok) {\n                console.log(resp)}\n            });\n        if (prg) {prg.value = prg.max}\n        });"))
-	body.Append(strom.CreateText("script", "document.body.addEventListener('keydown', (e) => {\n            switch (e.keyCode) {\n        // ArrowRight\n                case 39:\n                e.preventDefault();\n                video.currentTime += 15;\n                break;\n        // ArrowLeft\n                case 37:\n                e.preventDefault();\n                video.currentTime -= 15;\n                break;\n        // Space\n                case 32:\n                e.preventDefault();\n                video.paused ? video.play() : video.pause();\n                break;\n            };\n            });"))
+	// must be a new string per video otherwise global will be rewritten for all
+	videoScriptWatch := strings.Replace(scriptWatch, "{currentTime}", t, -1)
+	videoScriptWatch = strings.Replace(videoScriptWatch, "{videoId}", videoId, -1)
 
-	if err = strom.WriteResponse(w, root); err != nil {
+	if err = strom.WriteResponse(w, root, []byte(videoScriptWatch)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

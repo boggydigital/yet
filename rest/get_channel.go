@@ -6,7 +6,10 @@ import (
 
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/vars"
+	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/calc"
+	"github.com/boggydigital/strom/vars/colors"
+	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 )
 
@@ -42,7 +45,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody(channelTitle)
 
-	body.AddClass("d-f", "fd-c", "rg-n")
+	body.AddAtoms(atoms.FlexColWrap(sizes.Normal)...)
 
 	body.Append(navButton("Home", "/"))
 
@@ -53,15 +56,12 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 	if cd, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
 		body.Append(strom.CreateText("span", cd).
 			SetStyle(map[string]string{
-				"color":     vars.Color(vars.ColorGray),
-				"max-width": "calc(4 * " + vars.Size(vars.SizeXXXLarge) + ")",
+				"color":     colors.Gray,
+				"max-width": calc.Mult(sizes.XXXLarge, 4),
 			}))
 	}
 
-	channelNavButtonsRow := strom.Create("ul", "d-f", "cg-s", "rg-s").
-		SetStyle(map[string]string{
-			"flex-flow": "row wrap",
-		}).
+	channelNavButtonsRow := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.ColGapSmall, atoms.RowGapSmall).
 		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId)).
 		Append(navButton("Playlists", "/channel_playlists?id="+channelId)).
 		Append(navButton("Refresh", "/refresh_channel_videos?id="+channelId)).
@@ -71,13 +71,10 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	cv := new(channelVideos{channelId: channelId, rdx: rdx})
 
-	videos := strom.Create("ul", "d-f", "cg-n", "rg-n").
-		SetStyle(map[string]string{
-			"flex-flow": "row wrap",
-		})
+	videos := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.ColGapNormal, atoms.RowGapNormal)
 	body.Append(videos)
 
-	videos.Append(strom.Defer(cv.getVideos))
+	videos.Append(strom.OnDemand(cv.getVideos))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/boggydigital/strom"
+	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/sizes"
 )
 
 func GetSearch(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +18,7 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(strom.CreateText("h1", "Search YouTube videos"))
 
-	form := strom.Create("form", "d-f", "fd-c", "rg-n").
+	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "search-form").
 		SetAttribute("method", "get").
 		SetAttribute("action", "/results")

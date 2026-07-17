@@ -5,7 +5,7 @@ import (
 	"slices"
 )
 
-type VideoEndedReason int
+type VideoEndedReason int8
 
 const (
 	Completed VideoEndedReason = iota

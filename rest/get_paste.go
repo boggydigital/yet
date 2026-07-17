@@ -4,7 +4,11 @@ import (
 	"net/http"
 
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/vars"
+	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/calc"
+	"github.com/boggydigital/strom/vars/colors"
+	"github.com/boggydigital/strom/vars/font_sizes"
+	"github.com/boggydigital/strom/vars/sizes"
 )
 
 func GetPaste(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +22,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 	body.Append(
 		strom.CreateText("h1", "Paste YouTube link or video-id"))
 
-	form := strom.Create("form", "d-f", "fd-c", "rg-n").
+	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "paste-form").
 		SetAttribute("method", "get").
 		SetAttribute("action", "/paste_video")
@@ -33,10 +37,10 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 			SetAttribute("required").
 			SetStyle(textInputStyles()))
 
-	downloadParameters := strom.Create("ul").AddClass("d-f", "fd-c", "rg-n")
+	downloadParameters := strom.Create("ul", atoms.FlexColWrap(sizes.Normal)...)
 	form.Append(downloadParameters)
 
-	queueDownload := strom.Create("li").AddClass("d-f", "fd-r", "cg-n")
+	queueDownload := strom.Create("li", atoms.FlexRowWrap(sizes.Normal)...)
 	downloadParameters.Append(queueDownload)
 
 	queueDownload.Append(
@@ -68,47 +72,47 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func roundedButton(title, href string, color vars.ColorVar) strom.Element {
+func roundedButton(title, href string, clr colors.Color) strom.Element {
 
-	return strom.Create("a", "br-l", "fs-n", "fw-b").
+	return strom.Create("a", atoms.BorderRadiusLarge, atoms.FontSizeNormal, atoms.FontWeightBold).
 		SetTextContent(title).
 		SetAttribute("href", href).
-		SetStyle(buttonStyles(vars.ColorGray))
+		SetStyle(buttonStyles(colors.Gray))
 }
 
 func navButton(title, href string) strom.Element {
-	return roundedButton(title, href, vars.ColorBlue)
+	return roundedButton(title, href, colors.Blue)
 }
 
 func actionButton(title, href string) strom.Element {
-	return roundedButton(title, href, vars.ColorPurple)
+	return roundedButton(title, href, colors.Purple)
 }
 
 func submitButton(value, form string) strom.Element {
-	return strom.Create("input", "br-l", "fs-n", "fw-b").
+	return strom.Create("input", atoms.BorderRadiusLarge, atoms.FontSizeNormal, atoms.FontWeightBold).
 		SetAttribute("type", "submit").
 		SetAttribute("form", form).
 		SetAttribute("value", value).
 		SetStyle(map[string]string{"appearance": "none"}).
-		SetStyle(buttonStyles(vars.ColorGray))
+		SetStyle(buttonStyles(colors.Gray))
 }
 
-func buttonStyles(c vars.ColorVar) map[string]string {
+func buttonStyles(c string) map[string]string {
 	return map[string]string{
-		"padding-inline":   vars.Size(vars.SizeNormal),
-		"padding-block":    vars.Size(vars.SizeSmall),
-		"background-color": vars.Color(c),
-		"color":            vars.Color(vars.ColorBackground),
+		"padding-inline":   sizes.Normal,
+		"padding-block":    sizes.Small,
+		"background-color": c,
+		"color":            colors.Background,
 		"border":           "none",
 		"width":            "max-content",
-		"font-size":        vars.FontSize(vars.SizeXSmall),
+		"font-size":        font_sizes.XSmall,
 	}
 }
 
 func textInputStyles() map[string]string {
 	return map[string]string{
-		"max-width": "calc(1.5 * " + vars.Size(vars.SizeXXXLarge) + ")",
-		"padding":   vars.Size(vars.SizeSmall),
-		"font-size": vars.FontSize(vars.SizeNormal),
+		"max-width": calc.Mult(sizes.XXXLarge, 1.5),
+		"padding":   sizes.Small,
+		"font-size": font_sizes.Normal,
 	}
 }
