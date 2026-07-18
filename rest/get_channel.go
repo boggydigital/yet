@@ -115,10 +115,10 @@ func (cv *channelVideos) getEndedVideos() iter.Seq[strom.Element] {
 
 		if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, cv.channelId); ok && len(chvs) > 0 {
 			for _, videoId := range chvs {
+				if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+					continue
+				}
 				if !yield(videoTile(videoId, rdx)) {
-					if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
-						continue
-					}
 					return
 				}
 			}
