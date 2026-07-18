@@ -254,10 +254,11 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 				styles.Decl("border-radius", sizes.Small),
 				styles.Decl("padding", sizes.Small),
 				styles.Decl("background-color", colors.Background),
-				styles.Decl("font-weight", font_weights.Bold)))
+				styles.Decl("font-weight", font_weights.Bold),
+				styles.Decl("font-size", font_sizes.XXSmall)))
 	}
 
-	titlesStack := strom.Create("ul", atoms.FlexCol(sizes.Small)...)
+	titlesStack := strom.Create("ul", atoms.FlexCol(sizes.XSmall)...)
 	tileContainer.Append(titlesStack)
 
 	if len(titles) > 0 {
@@ -266,7 +267,9 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 
 	if len(titles) > 1 {
 		titlesStack.Append(strom.CreateText("span", titles[1]).
-			SetStyle(styles.Decl("font-size", font_sizes.XSmall)))
+			SetStyle(
+				styles.Decl("font-size", font_sizes.XSmall),
+				styles.Decl("color", colors.Gray)))
 	}
 
 	return tileContainer
