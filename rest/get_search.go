@@ -10,9 +10,7 @@ import (
 
 func GetSearch(w http.ResponseWriter, r *http.Request) {
 
-	root, body := strom.RootBody("Search")
-
-	body.AddClass("d-f", "fd-c", "rg-n")
+	root, body := strom.RootBody("Search", atoms.FlexCol(sizes.Normal)...)
 
 	body.Append(navButton("Home", "/"))
 

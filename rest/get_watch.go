@@ -80,9 +80,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		videoTitle = vt
 	}
 
-	root, body := strom.RootBody(videoTitle)
-
-	body.AddAtoms(atoms.FlexColNoWrap(sizes.Normal)...)
+	root, body := strom.RootBody(videoTitle, atoms.FlexCol(sizes.Normal)...)
 
 	topNavButtons := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 

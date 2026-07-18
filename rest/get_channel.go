@@ -43,9 +43,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		channelTitle = ct
 	}
 
-	root, body := strom.RootBody(channelTitle)
-
-	body.AddAtoms(atoms.FlexColWrap(sizes.Normal)...)
+	root, body := strom.RootBody(channelTitle, atoms.FlexCol(sizes.Normal)...)
 
 	body.Append(navButton("Home", "/"))
 
@@ -61,7 +59,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 			}))
 	}
 
-	channelNavButtonsRow := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.ColGapSmall, atoms.RowGapSmall).
+	channelNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId)).
 		Append(navButton("Playlists", "/channel_playlists?id="+channelId)).
 		Append(navButton("Refresh", "/refresh_channel_videos?id="+channelId)).
@@ -71,7 +69,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	cv := new(channelVideos{channelId: channelId, rdx: rdx})
 
-	videos := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.ColGapNormal, atoms.RowGapNormal)
+	videos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
 	body.Append(videos)
 
 	videos.Append(strom.OnDemand(cv.getVideos))

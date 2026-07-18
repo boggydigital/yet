@@ -105,7 +105,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 				durSpan.SetStyle(map[string]string{"color": colors.Gray})
 			} else {
 				if !ended {
-					durSpan.AddClass("fw-b")
+					durSpan.AddAtom(atoms.FontWeightBold)
 				}
 			}
 

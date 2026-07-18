@@ -47,9 +47,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	searchQuery := r.URL.Query().Get("search-query")
 
-	root, body := strom.RootBody("Search")
-
-	body.AddClass("d-f", "fd-c", "rg-n")
+	root, body := strom.RootBody("Search", atoms.FlexCol(sizes.Normal)...)
 
 	body.Append(navButton("Home", "/"))
 

@@ -13,9 +13,7 @@ import (
 
 func GetPaste(w http.ResponseWriter, r *http.Request) {
 
-	root, body := strom.RootBody("Paste")
-
-	body.AddClass("d-f", "fd-c", "rg-n")
+	root, body := strom.RootBody("Paste", atoms.FlexCol(sizes.Normal)...)
 
 	body.Append(navButton("Home", "/"))
 
@@ -54,7 +52,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 		strom.CreateText("label", "Queue download").
 			SetAttribute("for", "queue-download"))
 
-	downloadNow := strom.Create("li").AddClass("d-f", "fd-r", "cg-n")
+	downloadNow := strom.Create("li", atoms.FlexRow(sizes.Normal)...)
 	downloadParameters.Append(downloadNow)
 
 	downloadNow.Append(strom.Create("input").
