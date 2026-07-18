@@ -29,12 +29,12 @@ func GetPasteVideo(w http.ResponseWriter, r *http.Request) {
 		if videoIds, err = yeti.ParseVideoIds(videoId); err != nil {
 
 			// one more attempt - redirect to playlist page if we've got a valid playlist
-			if playlistIds, err := yeti.ParsePlaylistIds(videoId); err == nil && len(playlistIds) > 0 {
-				http.Redirect(w, r, "/playlist?list="+playlistIds[0], http.StatusPermanentRedirect)
+			var playlistIds []string
+			if playlistIds, err = yeti.ParsePlaylistIds(videoId); err == nil && len(playlistIds) > 0 {
+				http.Redirect(w, r, path.Join("/playlist", playlistIds[0]), http.StatusPermanentRedirect)
 				return
 			}
 
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		} else if len(videoIds) > 0 {
 			videoId = videoIds[0]
@@ -54,9 +54,7 @@ func GetPasteVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !(downloadVideo || queueDownload) {
-		http.Redirect(w, r, "/video_error?v="+videoId+"&err=Paste+requires+Download+now+or+Queue+download", http.StatusTemporaryRedirect)
-		return
-	}
-
+	//if !downloadVideo && !queueDownload {
+	http.Redirect(w, r, "/video_error?v="+videoId+"&err=Paste+requires+Download+now+or+Queue+download", http.StatusTemporaryRedirect)
+	return
 }

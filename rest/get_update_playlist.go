@@ -3,6 +3,7 @@ package rest
 import (
 	"maps"
 	"net/http"
+	"path"
 	"slices"
 
 	"github.com/boggydigital/redux"
@@ -63,7 +64,7 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, "/playlist?list="+playlistId, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, path.Join("/playlist", playlistId), http.StatusTemporaryRedirect)
 
 }
 

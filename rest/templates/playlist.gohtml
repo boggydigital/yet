@@ -3,7 +3,7 @@
     {{if .PlaylistAutoRefresh}}{{if eq .PlaylistBadgeCount 0}}{{$class = print $class " ended"}}{{end}}{{end}}
     {{if .PlaylistAutoDownload}}{{$class = print $class " downloading"}}{{end}}
     <li class="playlist-container">
-        <a class="playlist {{$class}}" href='/playlist?list={{.PlaylistId}}'>
+        <a class="playlist {{$class}}" href='/playlist/{{.PlaylistId}}'>
             <span class='title'>{{.PlaylistTitle}}</span>
             <span class='subtitle'>{{.PlaylistChannelTitle}}</span>
             {{if .PlaylistAutoRefresh}}

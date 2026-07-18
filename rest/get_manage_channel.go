@@ -1,13 +1,14 @@
 package rest
 
 import (
-	"github.com/boggydigital/yet/rest/view_models"
 	"net/http"
+
+	"github.com/boggydigital/yet/rest/view_models"
 )
 
 func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 
-	// GET /manage_channel?id
+	// GET /manage_channel/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -16,7 +17,7 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	channelId := r.URL.Query().Get("id")
+	channelId := r.PathValue("channelId")
 
 	if channelId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)

@@ -1,22 +1,15 @@
 package rest
 
 import (
-	"encoding/json/v2"
 	"net/http"
 	"strings"
 
 	"github.com/boggydigital/yet/data"
 )
 
-type ProgressRequest struct {
-	VideoId     string `json:"v"`
-	CurrentTime string `json:"t"`
-}
-
 func PostProgress(w http.ResponseWriter, r *http.Request) {
 
-	// POST /progress
-	// {v, t}
+	// POST /progress/{videoId}/{time}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -25,14 +18,10 @@ func PostProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var pr ProgressRequest
+	videoId := r.PathValue("videoId")
+	currentTime := r.PathValue("currentTime")
 
-	if err = json.UnmarshalRead(r.Body, &pr); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err = rdx.ReplaceValues(data.VideoProgressProperty, pr.VideoId, trimTime(pr.CurrentTime)); err != nil {
+	if err = rdx.ReplaceValues(data.VideoProgressProperty, videoId, trimTime(currentTime)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -11,7 +11,7 @@ import (
 
 func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 
-	// GET /update_channel?id
+	// GET /update_channel/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -22,7 +22,7 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	channelId := q.Get("id")
+	channelId := r.PathValue("channelId")
 
 	if channelId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
@@ -56,7 +56,7 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 			if dp := q.Get(input); dp != "" {
 				policy = data.ParseDownloadPolicy(dp)
 			}
-			if err := rdx.ReplaceValues(data.ChannelDownloadPolicyProperty, channelId, string(policy)); err != nil {
+			if err = rdx.ReplaceValues(data.ChannelDownloadPolicyProperty, channelId, string(policy)); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}

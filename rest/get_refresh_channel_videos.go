@@ -10,7 +10,7 @@ import (
 
 func GetRefreshChannelVideos(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_channel_videos?id
+	// GET /refresh_channel_videos/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -19,7 +19,7 @@ func GetRefreshChannelVideos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	channelId := r.URL.Query().Get("id")
+	channelId := r.PathValue("channelId")
 
 	if channelId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)

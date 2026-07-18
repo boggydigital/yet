@@ -21,8 +21,7 @@
 
     <a class='action' href='https://www.youtube.com/channel/{{.ChannelId}}'>Origin</a>
 
-    <form method="get" action="/update_channel">
-        <input type="hidden" id="id" name="id" value="{{.ChannelId}}"/>
+    <form method="get" action="/update_channel/{{.ChannelId}}">
         <input type="submit" value='Update'/>
         <ul class="management">
             <li>

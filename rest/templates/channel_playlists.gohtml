@@ -39,10 +39,10 @@
             <a class='action' href='/channel/{{.ChannelId}}'>Videos</a>
         </li>
         <li>
-            <a class='action' href='/refresh_channel_playlists?id={{.ChannelId}}'>Refresh</a>
+            <a class='action' href='/refresh_channel_playlists/{{.ChannelId}}'>Refresh</a>
         </li>
         <li>
-            <a class='action' href='/manage_channel?id={{.ChannelId}}'>Manage</a>
+            <a class='action' href='/manage_channel/{{.ChannelId}}'>Manage</a>
         </li>
     </ul>
 
@@ -52,7 +52,7 @@
         {{range $playlistId := .PlaylistsOrder}}
             {{$playlistTitle := index $playlists $playlistId}}
             <li class="playlist-container">
-                <a class="playlist" href='/playlist?list={{$playlistId}}'>
+                <a class="playlist" href='/playlist/{{$playlistId}}'>
                     <span class='title'>{{$playlistTitle}}</span>
                     <span class='subtitle'>{{$channelTitle}}</span>
                 </a>

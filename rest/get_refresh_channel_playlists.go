@@ -2,13 +2,14 @@ package rest
 
 import (
 	"net/http"
+	"path"
 
 	"github.com/boggydigital/yet/yeti"
 )
 
 func GetRefreshChannelPlaylists(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_channel_playlists?id
+	// GET /refresh_channel_playlists/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -17,7 +18,7 @@ func GetRefreshChannelPlaylists(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	channelId := r.URL.Query().Get("id")
+	channelId := r.PathValue("channelId")
 
 	if channelId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
@@ -29,6 +30,6 @@ func GetRefreshChannelPlaylists(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/channel_playlists?id="+channelId, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, path.Join("/channel_playlists", channelId), http.StatusTemporaryRedirect)
 
 }

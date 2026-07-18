@@ -1,14 +1,15 @@
 package rest
 
 import (
+	"net/http"
+
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/rest/view_models"
-	"net/http"
 )
 
 func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
-	// GET /playlist?list
+	// GET /playlist/{playlistId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -17,7 +18,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playlistId := r.URL.Query().Get("list")
+	playlistId := r.PathValue("playlistId")
 
 	if playlistId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)

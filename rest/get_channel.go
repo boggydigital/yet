@@ -3,6 +3,7 @@ package rest
 import (
 	"iter"
 	"net/http"
+	"path"
 
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
@@ -33,8 +34,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	// check if the channel has no videos and refresh automatically
 	if videos, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); !ok || len(videos) == 0 {
-		url := "/refresh_channel_videos?id=" + channelId
-		http.Redirect(w, r, url, http.StatusPermanentRedirect)
+		http.Redirect(w, r, path.Join("/refresh_channel_videos", channelId), http.StatusPermanentRedirect)
 		return
 	}
 
@@ -63,9 +63,9 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	channelNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId)).
-		Append(navButton("Playlists", "/channel_playlists?id="+channelId)).
-		Append(navButton("Refresh", "/refresh_channel_videos?id="+channelId)).
-		Append(navButton("Manage", "/manage_channel?id="+channelId))
+		Append(navButton("Playlists", path.Join("/channel_playlists", channelId))).
+		Append(navButton("Refresh", path.Join("/refresh_channel_videos", channelId))).
+		Append(navButton("Manage", path.Join("/manage_channel", channelId)))
 
 	body.Append(channelNavButtonsRow)
 

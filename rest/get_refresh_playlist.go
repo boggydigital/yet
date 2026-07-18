@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"path"
 
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -35,5 +36,5 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/playlist?list="+playlistId, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, path.Join("/playlist", playlistId), http.StatusTemporaryRedirect)
 }
