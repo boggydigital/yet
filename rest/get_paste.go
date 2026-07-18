@@ -5,9 +5,6 @@ import (
 
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
-	"github.com/boggydigital/strom/vars/calc"
-	"github.com/boggydigital/strom/vars/colors"
-	"github.com/boggydigital/strom/vars/font_sizes"
 	"github.com/boggydigital/strom/vars/sizes"
 )
 
@@ -69,50 +66,5 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	if err := strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func roundedButton(title, href string, clr colors.Color) strom.Element {
-
-	return strom.Create("a", atoms.BorderRadiusLarge, atoms.FontSizeNormal, atoms.FontWeightBold).
-		SetTextContent(title).
-		SetAttribute("href", href).
-		SetStyle(buttonStyles(colors.Gray))
-}
-
-func navButton(title, href string) strom.Element {
-	return roundedButton(title, href, colors.Blue)
-}
-
-func actionButton(title, href string) strom.Element {
-	return roundedButton(title, href, colors.Purple)
-}
-
-func submitButton(value, form string) strom.Element {
-	return strom.Create("input", atoms.BorderRadiusLarge, atoms.FontSizeNormal, atoms.FontWeightBold).
-		SetAttribute("type", "submit").
-		SetAttribute("form", form).
-		SetAttribute("value", value).
-		SetStyle(map[string]string{"appearance": "none"}).
-		SetStyle(buttonStyles(colors.Gray))
-}
-
-func buttonStyles(c string) map[string]string {
-	return map[string]string{
-		"padding-inline":   sizes.Normal,
-		"padding-block":    sizes.Small,
-		"background-color": c,
-		"color":            colors.Background,
-		"border":           "none",
-		"width":            "max-content",
-		"font-size":        font_sizes.XSmall,
-	}
-}
-
-func textInputStyles() map[string]string {
-	return map[string]string{
-		"max-width": calc.Mult(sizes.XXXLarge, 1.5),
-		"padding":   sizes.Small,
-		"font-size": font_sizes.Normal,
 	}
 }

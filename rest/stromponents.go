@@ -12,6 +12,7 @@ import (
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/font_sizes"
+	"github.com/boggydigital/strom/vars/font_weights"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -219,41 +220,117 @@ func formatSeconds(ts int64) string {
 
 func channelTile(channelId string, rdx redux.Readable) strom.Element {
 
-	tileContainer := strom.Create("a", atoms.DisplayFlex, atoms.FlexDirColumn, atoms.BorderRadiusSmall).
-		SetAttribute("href", path.Join("/channel", channelId)).
+	var channelTitle string
+	if tp, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && tp != "" {
+		channelTitle = tp
+	}
+
+	newVideos := len(yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx))
+
+	return linkTile(path.Join("/channel", channelId), newVideos, channelTitle)
+}
+
+func playlistTile(playlistId string, rdx redux.Readable) strom.Element {
+
+	var playlistTitle string
+	if tp, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && tp != "" {
+		playlistTitle = tp
+	}
+
+	var channelTitle string
+	if channel, ok := rdx.GetLastVal(data.PlaylistChannelProperty, playlistId); ok && channel != "" {
+		channelTitle = channel
+	}
+
+	newVideos := len(yeti.PlaylistNotEndedVideos(playlistId, math.MaxInt, rdx))
+
+	return linkTile(path.Join("/playlist", playlistId), newVideos, playlistTitle, channelTitle)
+}
+
+func linkTile(href string, count int, titles ...string) strom.Element {
+
+	tileContainer := strom.Create("a", atoms.FlexRow(sizes.Small)...).
+		SetAttribute("href", href).
 		SetStyle(map[string]string{
-			"flow-shrink": "0",
-			"padding":     calc.Mult(sizes.Small, 1.5),
-			"row-gap":     sizes.XXSmall,
-			"background":  colors.Highlight,
-			"width":       "max-content",
+			"align-items":        "center",
+			"flow-shrink":        "0",
+			"border-radius":      sizes.Small,
+			"padding":            sizes.Small,
+			"padding-inline-end": sizes.Normal,
+			"background":         colors.Highlight,
+			"width":              "max-content",
 		})
 
-	var title string
-	if tp, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && tp != "" {
-		title = tp
+	if count > 0 {
+		tileContainer.Append(strom.CreateText("span", strconv.Itoa(count)).
+			SetStyle(map[string]string{
+				"border-radius":    sizes.Small,
+				"padding":          sizes.Small,
+				"background-color": colors.Background,
+				"font-weight":      font_weights.Bold,
+			}))
 	}
 
-	tileContainer.Append(strom.CreateText("span", title, atoms.FontWeightBold))
+	titlesStack := strom.Create("ul", atoms.FlexCol(sizes.Small)...)
+	tileContainer.Append(titlesStack)
 
-	var newSubtitle string
-	cnev := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx)
-	if len(cnev) > 0 {
-		switch len(cnev) {
-		case 1:
-			newSubtitle = "1 new video"
-		default:
-			newSubtitle = strconv.Itoa(len(cnev)) + " new videos"
-		}
-	} else {
-		newSubtitle = "No new videos"
+	if len(titles) > 0 {
+		titlesStack.Append(strom.CreateText("span", titles[0], atoms.FontWeightBold))
 	}
 
-	tileContainer.Append(strom.CreateText("span", newSubtitle).
-		SetStyle(map[string]string{
-			"font-size": font_sizes.XSmall,
-			"color":     colors.Gray,
-		}))
+	if len(titles) > 1 {
+		titlesStack.Append(strom.CreateText("span", titles[1]).
+			SetStyle(map[string]string{
+				"font-size": font_sizes.XSmall,
+			}))
+	}
 
 	return tileContainer
+}
+
+func roundedButton(title, href string) strom.Element {
+
+	return strom.Create("a", atoms.BorderRadiusSmall, atoms.FontSizeNormal, atoms.FontWeightBold).
+		SetTextContent(title).
+		SetAttribute("href", href).
+		SetStyle(buttonStyles())
+}
+
+func navButton(title, href string) strom.Element {
+	return roundedButton(title, href)
+}
+
+func actionButton(title, href string) strom.Element {
+	return roundedButton(title, href)
+}
+
+func submitButton(value, form string) strom.Element {
+	return strom.Create("input").
+		SetAttribute("type", "submit").
+		SetAttribute("form", form).
+		SetAttribute("value", value).
+		SetStyle(map[string]string{"appearance": "none"}).
+		SetStyle(buttonStyles())
+}
+
+func buttonStyles() map[string]string {
+	return map[string]string{
+		"padding-inline":   sizes.Normal,
+		"padding-block":    sizes.Small,
+		"background-color": colors.Gray,
+		"border-radius":    sizes.Small,
+		"color":            colors.Background,
+		"border":           "none",
+		"width":            "max-content",
+		"font-size":        font_sizes.Small,
+		"font-weight":      font_weights.Bold,
+	}
+}
+
+func textInputStyles() map[string]string {
+	return map[string]string{
+		"max-width": calc.Mult(sizes.XXXLarge, 1.5),
+		"padding":   sizes.Small,
+		"font-size": font_sizes.Normal,
+	}
 }

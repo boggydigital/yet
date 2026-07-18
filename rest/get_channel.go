@@ -61,13 +61,13 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 			}))
 	}
 
-	channelNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
+	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId)).
 		Append(navButton("Playlists", path.Join("/channel_playlists", channelId))).
 		Append(navButton("Refresh", path.Join("/refresh_channel_videos", channelId))).
 		Append(navButton("Manage", path.Join("/manage_channel", channelId)))
 
-	body.Append(channelNavButtonsRow)
+	body.Append(channelMgmtRow)
 
 	cv := new(channelVideos{channelId: channelId, rdx: rdx})
 
