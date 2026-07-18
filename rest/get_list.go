@@ -10,9 +10,7 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
-	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -56,11 +54,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(strom.CreateText("h2", "History"))
 
-	body.Append(strom.CreateText("a", "See full watch history").
-		SetAttribute("href", "/history").
-		AddAtom(atoms.FontWeightBold).
-		SetStyle(
-			styles.Decl("color", colors.Foreground)))
+	body.Append(navButton("See full watch history", "/history"))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
