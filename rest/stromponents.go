@@ -290,7 +290,7 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 
 func roundedButton(title, href string) strom.Element {
 
-	return strom.Create("a", atoms.BorderRadiusSmall, atoms.FontSizeNormal, atoms.FontWeightBold).
+	return strom.Create("a").
 		SetTextContent(title).
 		SetAttribute("href", href).
 		SetStyle(buttonStyles())
@@ -315,22 +315,24 @@ func submitButton(value, form string) strom.Element {
 
 func buttonStyles() map[string]string {
 	return map[string]string{
-		"padding-inline":   sizes.Normal,
 		"padding-block":    sizes.Small,
+		"padding-inline":   calc.Mult(sizes.Small, 1.25),
 		"background-color": colors.Gray,
 		"border-radius":    sizes.Small,
 		"color":            colors.Background,
 		"border":           "none",
 		"width":            "max-content",
 		"font-size":        font_sizes.Small,
-		"font-weight":      font_weights.Bold,
 	}
 }
 
 func textInputStyles() map[string]string {
 	return map[string]string{
-		"max-width": calc.Mult(sizes.XXXLarge, 1.5),
-		"padding":   sizes.Small,
-		"font-size": font_sizes.Normal,
+		"appearance":    "none",
+		"border":        "none",
+		"border-radius": sizes.Small,
+		"max-width":     calc.Mult(sizes.XXXLarge, 1.5),
+		"padding":       sizes.Small,
+		"font-size":     font_sizes.Normal,
 	}
 }
