@@ -45,9 +45,11 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody(channelTitle, atoms.FlexCol(sizes.Normal)...)
 
-	body.Append(navButton("Home", "/"))
+	topRow := strom.Create("ul", atoms.FlexRow(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	body.Append(topRow)
 
-	body.Append(strom.CreateText("h1", "Channel"))
+	topRow.Append(navButton("Home", "/"))
+	topRow.Append(strom.CreateText("h2", "Channel"))
 
 	body.Append(channelTile(channelId, rdx))
 

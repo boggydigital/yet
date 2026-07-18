@@ -11,7 +11,7 @@ require (
 	github.com/boggydigital/dolo v0.2.26
 	github.com/boggydigital/nod v0.1.30
 	github.com/boggydigital/redux v0.1.12
-	github.com/boggydigital/strom v0.1.5
+	github.com/boggydigital/strom v0.1.6
 	github.com/boggydigital/yet_urls v0.1.64
 )
 

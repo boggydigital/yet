@@ -82,11 +82,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody(videoTitle, atoms.FlexCol(sizes.Normal)...)
 
-	topNavButtons := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
+	topRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	body.Append(topRow)
 
-	body.Append(topNavButtons)
-
-	topNavButtons.Append(
+	topRow.Append(
 		navButton("Home", "/"),
 		navButton("Paste", "/paste"))
 
@@ -134,10 +133,12 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				SetAttribute("preload", "none")
 
 		} else {
-			topNavButtons.Append(navButton("Download", path.Join("/download_video", videoId)))
+			topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
 			mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 		}
 	}
+
+	topRow.Append(strom.CreateText("h2", videoTitle))
 
 	mediaElement.SetStyle(map[string]string{
 		"max-width":     calc.Mult(sizes.XXXLarge, 4),
@@ -145,8 +146,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	})
 
 	body.Append(mediaElement)
-
-	body.Append(strom.CreateText("h2", videoTitle))
 
 	if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, videoId); ok && channelId != "" {
 		body.Append(channelTile(channelId, rdx))
