@@ -71,10 +71,17 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	cv := new(channelVideos{channelId: channelId, rdx: rdx})
 
-	videos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-	body.Append(videos)
+	newVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+	body.Append(newVideos)
 
-	videos.Append(strom.OnDemand(cv.getVideos))
+	newVideos.Append(strom.OnDemand(cv.getNewVideos))
+
+	body.Append(strom.CreateText("h2", "Ended videos"))
+
+	endedVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+	body.Append(endedVideos)
+
+	endedVideos.Append(strom.OnDemand(cv.getEndedVideos))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -87,12 +94,31 @@ type channelVideos struct {
 	rdx       redux.Readable
 }
 
-func (cv *channelVideos) getVideos() iter.Seq[strom.Element] {
+func (cv *channelVideos) getNewVideos() iter.Seq[strom.Element] {
+	return func(yield func(element strom.Element) bool) {
+
+		if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, cv.channelId); ok && len(chvs) > 0 {
+			for _, videoId := range chvs {
+				if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+					continue
+				}
+				if !yield(videoTile(videoId, rdx)) {
+					return
+				}
+			}
+		}
+	}
+}
+
+func (cv *channelVideos) getEndedVideos() iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
 
 		if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, cv.channelId); ok && len(chvs) > 0 {
 			for _, videoId := range chvs {
 				if !yield(videoTile(videoId, rdx)) {
+					if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+						continue
+					}
 					return
 				}
 			}

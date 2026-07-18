@@ -61,10 +61,17 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	pv := new(playlistVideos{playlistId: playlistId, rdx: rdx})
 
-	videos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-	body.Append(videos)
+	newVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+	body.Append(newVideos)
 
-	videos.Append(strom.OnDemand(pv.getVideos))
+	newVideos.Append(strom.OnDemand(pv.getNewVideos))
+
+	body.Append(strom.CreateText("h2", "Ended videos"))
+
+	endedVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+	body.Append(endedVideos)
+
+	endedVideos.Append(strom.OnDemand(pv.getEndedVideos))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -83,10 +90,28 @@ type playlistVideos struct {
 	rdx        redux.Readable
 }
 
-func (pv *playlistVideos) getVideos() iter.Seq[strom.Element] {
+func (pv *playlistVideos) getNewVideos() iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
 		if plvs, ok := rdx.GetAllValues(data.PlaylistVideosProperty, pv.playlistId); ok && len(plvs) > 0 {
 			for _, videoId := range plvs {
+				if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+					continue
+				}
+				if !yield(videoTile(videoId, rdx)) {
+					return
+				}
+			}
+		}
+	}
+}
+
+func (pv *playlistVideos) getEndedVideos() iter.Seq[strom.Element] {
+	return func(yield func(element strom.Element) bool) {
+		if plvs, ok := rdx.GetAllValues(data.PlaylistVideosProperty, pv.playlistId); ok && len(plvs) > 0 {
+			for _, videoId := range plvs {
+				if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+					continue
+				}
 				if !yield(videoTile(videoId, rdx)) {
 					return
 				}
