@@ -76,13 +76,6 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	//w.Header().Set("Content-Type", "text/html")
-	//
-	//if err := tmpl.ExecuteTemplate(w, "playlists", view_models.GetPlaylistViewModel(playlistId, rdx)); err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
 }
 
 type playlistVideos struct {

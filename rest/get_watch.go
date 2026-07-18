@@ -12,6 +12,7 @@ import (
 
 	"github.com/boggydigital/camino"
 	"github.com/boggydigital/strom"
+	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
@@ -140,10 +141,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	topRow.Append(strom.CreateText("h2", videoTitle))
 
-	mediaElement.SetStyle(map[string]string{
-		"max-width":     calc.Mult(sizes.XXXLarge, 4),
-		"border-radius": sizes.XSmall,
-	})
+	mediaElement.SetStyle(
+		styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4)),
+		styles.Decl("border-radius", sizes.XSmall))
 
 	body.Append(mediaElement)
 
@@ -167,12 +167,12 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	if vd, ok := rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId); ok && vd != "" {
 		body.Append(
 			strom.CreateText("h3", "Description"),
-			strom.CreateText("pre", vd).SetStyle(map[string]string{
-				"white-space": "pre-wrap",
-				"word-break":  "break-word",
-				"color":       colors.Gray,
-				"max-width":   calc.Mult(sizes.XXXLarge, 4),
-			}))
+			strom.CreateText("pre", vd).
+				SetStyle(
+					"white-space:pre-wrap",
+					"word-break:break-word",
+					styles.Decl("color", colors.Gray),
+					styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4))))
 	}
 
 	// must be a new string per video otherwise global will be rewritten for all

@@ -7,6 +7,7 @@ import (
 
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
+	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
@@ -55,10 +56,9 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	if cd, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
 		body.Append(strom.CreateText("span", cd).
-			SetStyle(map[string]string{
-				"color":     colors.Gray,
-				"max-width": calc.Mult(sizes.XXXLarge, 4),
-			}))
+			SetStyle(
+				styles.Decl("color", colors.Gray),
+				styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4))))
 	}
 
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).

@@ -31,7 +31,7 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 		SetAttribute("placeholder", "Search terms").
 		SetAttribute("autofocus").
 		SetAttribute("required").
-		SetStyle(textInputStyles()))
+		SetStyle(textInputStyles()...))
 
 	body.Append(submitButton("Search", form.GetAttribute("id")))
 

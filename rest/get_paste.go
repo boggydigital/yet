@@ -32,7 +32,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 			SetAttribute("placeholder", "YouTube link or video-id").
 			SetAttribute("autofocus").
 			SetAttribute("required").
-			SetStyle(textInputStyles()))
+			SetStyle(textInputStyles()...))
 
 	downloadParameters := strom.Create("ul", atoms.FlexColWrap(sizes.Normal)...)
 	form.Append(downloadParameters)
