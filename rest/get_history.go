@@ -2,10 +2,11 @@ package rest
 
 import (
 	"fmt"
-	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/rest/view_models"
 	"net/http"
 	"time"
+
+	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/rest/view_models"
 )
 
 const (
@@ -36,8 +37,6 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	showAll := r.URL.Query().Has("showAll")
-
-	w.Header().Set("Content-Type", "text/html")
 
 	whKeys := rdx.Keys(data.VideoEndedDateProperty)
 	whKeysLen := rdx.Len(data.VideoEndedDateProperty)
@@ -99,6 +98,8 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 			writtenVideos++
 		}
 	}
+
+	w.Header().Set("Content-Type", "text/html")
 
 	if err := tmpl.ExecuteTemplate(w, "history", hvm); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
