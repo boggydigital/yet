@@ -306,9 +306,9 @@ func buttonStyles() []string {
 		"width:fit-content",
 		styles.Decl("padding-block", sizes.Small),
 		styles.Decl("padding-inline", calc.Mult(sizes.Small, 1.25)),
-		styles.Decl("background-color", colors.Gray),
+		styles.Decl("background-color", colors.Highlight),
 		styles.Decl("border-radius", sizes.Small),
-		styles.Decl("color", colors.Background),
+		styles.Decl("color", colors.Foreground),
 		styles.Decl("font-size", font_sizes.Small),
 	}
 }
