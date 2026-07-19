@@ -61,7 +61,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 			SetStyle(
 				styles.Decl("color", colors.Gray),
 				styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4)),
-				"word-break:break-all"))
+				"word-break:break-word"))
 	}
 
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
