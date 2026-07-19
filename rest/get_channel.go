@@ -60,7 +60,8 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		body.Append(strom.CreateText("span", cd).
 			SetStyle(
 				styles.Decl("color", colors.Gray),
-				styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4))))
+				styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4)),
+				"word-break:break-all"))
 	}
 
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).

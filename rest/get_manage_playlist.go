@@ -45,7 +45,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(playlistTile(playlistId, rdx))
 
-	originRow := strom.Create("ul", atoms.FlexRow(sizes.Small)...).
+	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		AddAtom(atoms.AlignItemsCenter)
 	body.Append(originRow)
 

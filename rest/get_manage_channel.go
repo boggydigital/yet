@@ -46,7 +46,7 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(channelTile(channelId, rdx))
 
-	originRow := strom.Create("ul", atoms.FlexRow(sizes.Small)...).
+	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		AddAtom(atoms.AlignItemsCenter)
 	body.Append(originRow)
 
@@ -93,7 +93,8 @@ func switchTitleSubtitle(on bool, name, title, subTitle string) strom.Element {
 	switchElement := strom.Create("input").
 		SetAttribute("id", "name", name).
 		SetAttribute("type", "checkbox").
-		SetAttribute("switch")
+		SetAttribute("switch").
+		SetStyle("flex-shrink:0")
 
 	if on {
 		switchElement.SetAttribute("checked")

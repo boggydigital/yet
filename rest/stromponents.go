@@ -244,7 +244,7 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 		AddAtom(atoms.AlignItemsCenter, atoms.BorderRadiusSmall, atoms.PaddingSmall).
 		SetStyle(
 			"flow-shrink:0",
-			"width:max-content",
+			"width:fit-content",
 			styles.Decl("padding-inline-end", sizes.Normal),
 			styles.Decl("background", colors.Highlight))
 
@@ -303,7 +303,7 @@ func submitButton(value, form string) strom.Element {
 func buttonStyles() []string {
 	return []string{
 		"border:none",
-		"width:max-content",
+		"width:fit-content",
 		styles.Decl("padding-block", sizes.Small),
 		styles.Decl("padding-inline", calc.Mult(sizes.Small, 1.25)),
 		styles.Decl("background-color", colors.Gray),
