@@ -309,7 +309,6 @@ func buttonStyles() []string {
 		styles.Decl("background-color", colors.Highlight),
 		styles.Decl("border-radius", sizes.Small),
 		styles.Decl("color", colors.Foreground),
-		styles.Decl("font-size", font_sizes.Small),
 	}
 }
 
