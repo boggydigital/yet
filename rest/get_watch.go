@@ -119,8 +119,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 	videoNavButtonsRow.Append(
 		navButton("Manage", "/manage_video?v="+videoId),
-		actionButton("Seen enough", "/end/"+videoId+"/seen-enough"),
-		actionButton("Skip", "/end/"+videoId+"/skipped"),
+		navButton("Seen enough", "/end/"+videoId+"/seen-enough"),
+		navButton("Skip", "/end/"+videoId+"/skipped"),
 	)
 
 	if absLocalVideoFilename != "" {

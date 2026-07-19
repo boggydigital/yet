@@ -275,20 +275,11 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 	return tileContainer
 }
 
-func roundedButton(title, href string) strom.Element {
-
+func navButton(title, href string) strom.Element {
 	return strom.Create("a").
 		SetTextContent(title).
 		SetAttribute("href", href).
 		SetStyle(buttonStyles()...)
-}
-
-func navButton(title, href string) strom.Element {
-	return roundedButton(title, href)
-}
-
-func actionButton(title, href string) strom.Element {
-	return roundedButton(title, href)
 }
 
 func submitButton(value, form string) strom.Element {
@@ -309,6 +300,7 @@ func buttonStyles() []string {
 		styles.Decl("background-color", colors.Highlight),
 		styles.Decl("border-radius", sizes.Small),
 		styles.Decl("color", colors.Foreground),
+		styles.Decl("font-size", font_sizes.Normal),
 	}
 }
 
