@@ -33,7 +33,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	body.Append(topRow)
 
 	topRow.Append(
-		navButton("Home", "/"),
+		navButton("Search", "/search"),
 		navButton("Paste", "/paste"))
 
 	cvs := new(continueVideosSection{rdx: rdx})
