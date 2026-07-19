@@ -115,6 +115,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	var mediaElement strom.Element
 
+	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
+	videoNavButtonsRow.Append(
+		navButton("Manage", "/manage_video?v="+videoId),
+		actionButton("Seen enough", "/end/"+videoId+"/seen-enough"),
+		actionButton("Skip", "/end/"+videoId+"/skipped"),
+	)
+
 	if absLocalVideoFilename != "" {
 		if _, err = os.Stat(absLocalVideoFilename); err == nil {
 			videosDir := camino.GetAbs(data.Videos)
@@ -138,6 +145,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		} else {
 			topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
 			mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
+			videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
 		}
 	}
 
@@ -152,14 +160,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	pct := new(playlistChannelTile{videoId: videoId, rdx: rdx})
 	body.Append(strom.OnDemand(pct.getPlaylistChannelTile))
 
-	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 	body.Append(videoNavButtonsRow)
-
-	videoNavButtonsRow.Append(
-		navButton("Manage", "/manage_video?v="+videoId),
-		actionButton("Seen enough", "/end/"+videoId+"/seen-enough"),
-		actionButton("Skip", "/end/"+videoId+"/skipped"),
-	)
 
 	if absLocalVideoFilename == "" {
 		videoNavButtonsRow.Append(actionButton("Queue download", "/queue_download/"+videoId))

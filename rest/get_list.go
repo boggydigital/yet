@@ -52,6 +52,9 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(strom.OnDemand(pls.getCompletedPlaylists))
 
+	qvs := new(queueudVideosSection{rdx: rdx})
+	body.Append(strom.OnDemand(qvs.getSectionVideos))
+
 	body.Append(strom.CreateText("h2", "History"))
 
 	body.Append(navButton("See full watch history", "/history"))
@@ -127,6 +130,36 @@ func (dvs *downloadedVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			videosContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
 
 			vl := new(videosList{videoIds: downloadedVideoIds, rdx: rdx})
+			videosContainer.Append(strom.OnDemand(vl.getVideoTiles))
+
+			if !yield(videosContainer) {
+				return
+			}
+		}
+	}
+}
+
+type queueudVideosSection struct {
+	rdx redux.Readable
+}
+
+func (qvs *queueudVideosSection) getSectionVideos() iter.Seq[strom.Element] {
+	return func(yield func(element strom.Element) bool) {
+
+		queuedVideoIds, err := getQueuedDownloads(rdx)
+		if err != nil {
+			nod.Log(err.Error())
+			return
+		}
+
+		if len(queuedVideoIds) > 0 {
+			if !yield(strom.CreateText("h2", "Queued downloads")) {
+				return
+			}
+
+			videosContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+
+			vl := new(videosList{videoIds: queuedVideoIds, rdx: rdx})
 			videosContainer.Append(strom.OnDemand(vl.getVideoTiles))
 
 			if !yield(videosContainer) {
@@ -368,6 +401,40 @@ func getDownloadedVideos(rdx redux.Readable) ([]string, error) {
 	var err error
 	if dvs, err = rdx.Sort(dvs, false, data.VideoTitleProperty); err == nil {
 		return dvs, nil
+	} else {
+		return nil, err
+	}
+}
+
+func getQueuedDownloads(rdx redux.Readable) ([]string, error) {
+
+	qdLen := rdx.Len(data.VideoDownloadQueuedProperty)
+
+	qds := make([]string, 0, qdLen)
+
+	if qdLen == 0 {
+		return qds, nil
+	}
+
+	for id := range rdx.Keys(data.VideoDownloadQueuedProperty) {
+
+		dqTime := ""
+		if dqt, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, id); ok {
+			dqTime = dqt
+		}
+
+		// only continue if download was completed _after_ it was queued,
+		// meaning it wasn't re-queued again after completion
+		if dcd, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && dcd > dqTime {
+			continue
+		}
+
+		qds = append(qds, id)
+	}
+
+	var err error
+	if qds, err = rdx.Sort(qds, false, data.VideoTitleProperty); err == nil {
+		return qds, nil
 	} else {
 		return nil, err
 	}
