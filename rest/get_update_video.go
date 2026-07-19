@@ -13,7 +13,7 @@ import (
 
 func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
-	// GET /update_video?v
+	// GET /update_video/{videoId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -24,7 +24,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	videoId := q.Get("v")
+	videoId := r.PathValue("videoId")
 
 	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
@@ -51,14 +51,14 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
-		if err := toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
+		if err = toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
 
 	for property, input := range timePropertyInputs {
-		if err := toggleTimeProperty(videoId, property, q.Has(input), rdx); err != nil {
+		if err = toggleTimeProperty(videoId, property, q.Has(input), rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
