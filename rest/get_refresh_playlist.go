@@ -10,7 +10,7 @@ import (
 
 func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_playlist?list
+	// GET /refresh_playlist/{playlistId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -19,7 +19,7 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playlistId := r.URL.Query().Get("list")
+	playlistId := r.PathValue("playlistId")
 
 	if playlistId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)

@@ -1,11 +1,12 @@
 package yeti
 
 import (
+	"net/http"
+
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
-	"net/http"
 )
 
 func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlaylistsInitialData, channelId string, rdx redux.Writeable) error {
@@ -32,7 +33,7 @@ func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlayl
 
 	channelTitle := ""
 	if channelTitle = channelPlaylistsPage.Metadata.ChannelMetadataRenderer.Title; channelTitle != "" {
-		if err := rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
+		if err = rdx.ReplaceValues(data.ChannelTitleProperty, channelId, channelTitle); err != nil {
 			return err
 		}
 	}
@@ -50,7 +51,7 @@ func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlayl
 	for _, playlist := range channelPlaylistsPage.Playlists() {
 		playlistId := playlist.PlaylistId
 		channelPlaylists = append(channelPlaylists, playlistId)
-		playlistsTitles[playlistId] = []string{playlist.Title.String()}
+		playlistsTitles[playlistId] = []string{playlist.Title}
 		playlistsChannels[playlistId] = []string{channelTitle}
 	}
 

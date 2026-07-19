@@ -32,8 +32,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	// check if the playlist has no videos and refresh automatically
 	if videos, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); !ok || len(videos) == 0 {
-		url := "/refresh_playlist?list=" + playlistId
-		http.Redirect(w, r, url, http.StatusPermanentRedirect)
+		http.Redirect(w, r, path.Join("/refresh_playlist", playlistId), http.StatusPermanentRedirect)
 		return
 	}
 
