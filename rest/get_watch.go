@@ -2,6 +2,7 @@ package rest
 
 import (
 	_ "embed"
+	"iter"
 	"net/http"
 	"net/url"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/boggydigital/camino"
+	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
@@ -147,9 +149,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(mediaElement)
 
-	if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, videoId); ok && channelId != "" {
-		body.Append(channelTile(channelId, rdx))
-	}
+	pct := new(playlistChannelTile{videoId: videoId, rdx: rdx})
+	body.Append(strom.OnDemand(pct.getPlaylistChannelTile))
 
 	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 	body.Append(videoNavButtonsRow)
@@ -181,5 +182,44 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	if err = strom.WriteResponse(w, root, []byte(videoScriptWatch)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+type playlistChannelTile struct {
+	videoId string
+	rdx     redux.Readable
+}
+
+func (pct *playlistChannelTile) getPlaylistChannelTile() iter.Seq[strom.Element] {
+	return func(yield func(element strom.Element) bool) {
+
+		allPlaylistsWithVideo := rdx.MatchAsset(data.PlaylistVideosProperty, []string{pct.videoId}, nil)
+		var playlistId string
+		for pid := range allPlaylistsWithVideo {
+			if rdx.HasKey(data.PlaylistAutoRefreshProperty, pid) {
+				playlistId = pid
+				break
+			}
+		}
+
+		if playlistId == "" {
+			for pid := range allPlaylistsWithVideo {
+				playlistId = pid
+				break
+			}
+		}
+
+		if playlistId != "" {
+			if !yield(playlistTile(playlistId, pct.rdx)) {
+				return
+			}
+			return
+		}
+
+		if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, pct.videoId); ok && channelId != "" {
+			if !yield(channelTile(channelId, rdx)) {
+				return
+			}
+		}
 	}
 }
