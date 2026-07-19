@@ -108,7 +108,8 @@ func downloadPolicySelect(currentPolicy data.DownloadPolicy) strom.Element {
 		AddAtom(atoms.AlignItemsCenter)
 
 	dps := strom.Create("select").
-		SetAttribute("name", "download-policy")
+		SetAttribute("name", "download-policy").
+		AddAtom(atoms.FontSizeNormal)
 
 	for _, dp := range data.AllDownloadPolicies() {
 		opt := strom.CreateText("option", string(dp))
@@ -123,17 +124,6 @@ func downloadPolicySelect(currentPolicy data.DownloadPolicy) strom.Element {
 	row.Append(titleSubtitle("download-policy", "Download policy", "Recent - limit to the last 10 videos. All - no download limits."))
 
 	return row
-
-	//<select id="download-policy" name="download-policy">
-	//	{{$policy := .ChannelDownloadPolicy}}
-	//	{{range .AllDownloadPolicies}}
-	//	<option {{if eq . $policy}}selected{{end}}>{{.}}</option>
-	//	{{end}}
-	//	</select>
-	//		<label for="download-policy">
-	//		<span class="title">Download policy</span>
-	//		<span class="subtitle subtle">Recent - limit to the last 10 videos. All - no download limits.</span>
-	//		</label>
 }
 
 func titleSubtitle(name, title, subTitle string) strom.Element {
