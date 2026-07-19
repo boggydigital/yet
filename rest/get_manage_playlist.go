@@ -5,9 +5,7 @@ import (
 	"path"
 
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
-	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 )
@@ -51,10 +49,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	originRow.Append(
 		navButton("Origin", "https://www.youtube.com/playlist?list="+playlistId),
-		navButton("RSS", "https://www.youtube.com/feeds/videos.xml?playlist_id="+playlistId),
-		strom.CreateText("span", "Playlist ID").
-			SetStyle(styles.Decl("color", colors.Gray)),
-		strom.CreateText("span", playlistId, atoms.FontWeightBold))
+		navButton("RSS", "https://www.youtube.com/feeds/videos.xml?playlist_id="+playlistId))
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "manage-playlist").

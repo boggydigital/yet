@@ -52,10 +52,7 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 
 	originRow.Append(
 		navButton("Origin", path.Join("https://www.youtube.com/channel", channelId)),
-		navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId),
-		strom.CreateText("span", "Channel ID").
-			SetStyle(styles.Decl("color", colors.Gray)),
-		strom.CreateText("span", channelId, atoms.FontWeightBold))
+		navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId))
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "manage-channel").
