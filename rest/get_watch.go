@@ -114,6 +114,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	videoPosterUrl := "/poster?v=" + videoId + "&q=" + youtube_urls.ThumbnailQualityMaxRes.String()
 
 	var mediaElement strom.Element
+	mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 
 	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 	videoNavButtonsRow.Append(
@@ -144,9 +145,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 			topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
-			mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 			videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
 		}
+	} else {
+		topRow.Append(
+			navButton("Refresh", path.Join("/refresh_video", videoId)),
+			navButton("Download", path.Join("/download_video", videoId)))
+		videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
 	}
 
 	topRow.Append(strom.CreateText("h2", videoTitle))
@@ -161,10 +166,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	body.Append(strom.OnDemand(pct.getPlaylistChannelTile))
 
 	body.Append(videoNavButtonsRow)
-
-	if absLocalVideoFilename == "" {
-		videoNavButtonsRow.Append(actionButton("Queue download", "/queue_download/"+videoId))
-	}
 
 	if vd, ok := rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId); ok && vd != "" {
 		body.Append(

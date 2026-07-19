@@ -142,7 +142,7 @@ func GetWatchViewModel(videoId, currentTime string, rdx redux.Writeable) (*Watch
 		videoMetadata := yeti.ExtractMetadata(videoPage)
 
 		for p, values := range videoMetadata {
-			if err := rdx.AddValues(p, videoId, values...); err != nil {
+			if err = rdx.AddValues(p, videoId, values...); err != nil {
 				return nil, err
 			}
 		}

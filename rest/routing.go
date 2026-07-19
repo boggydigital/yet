@@ -16,10 +16,11 @@ func HandleFuncs() {
 		"GET /video":  Log(http.HandlerFunc(GetVideo)),
 		"GET /poster": Log(http.HandlerFunc(GetPoster)),
 
-		"GET /watch/{videoId}": Log(http.HandlerFunc(GetWatch)),
-		"GET /manage_video":    http.HandlerFunc(GetManageVideo),
-		"GET /update_video":    http.HandlerFunc(GetUpdateVideo),
-		"GET /video_error":     http.HandlerFunc(GetVideoError),
+		"GET /watch/{videoId}":         Log(http.HandlerFunc(GetWatch)),
+		"GET /refresh_video/{videoId}": Log(http.HandlerFunc(GetRefreshVideo)),
+		"GET /manage_video":            http.HandlerFunc(GetManageVideo),
+		"GET /update_video":            http.HandlerFunc(GetUpdateVideo),
+		"GET /video_error":             http.HandlerFunc(GetVideoError),
 
 		"GET /list": Log(http.HandlerFunc(GetList)),
 
