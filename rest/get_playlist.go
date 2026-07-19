@@ -2,6 +2,7 @@ package rest
 
 import (
 	"iter"
+	"math"
 	"net/http"
 	"path"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 )
 
 func GetPlaylist(w http.ResponseWriter, r *http.Request) {
@@ -53,60 +55,75 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	playlistMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?playlist_id="+playlistId)).
-		Append(navButton("Refresh", path.Join("/refresh_playlist?list="+playlistId))).
-		Append(navButton("Manage", path.Join("/manage_playlist?list=", playlistId)))
+		Append(navButton("Refresh", path.Join("/refresh_playlist", playlistId))).
+		Append(navButton("Manage", path.Join("/manage_playlist", playlistId)))
 
 	body.Append(playlistMgmtRow)
 
-	pv := new(playlistVideos{playlistId: playlistId, rdx: rdx})
+	nepv := new(newEndedPlaylistVideos{playlistId: playlistId, rdx: rdx})
 
-	newVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-	body.Append(newVideos)
-
-	newVideos.Append(strom.OnDemand(pv.getNewVideos))
-
-	body.Append(strom.CreateText("h2", "Ended videos"))
-
-	endedVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-	body.Append(endedVideos)
-
-	endedVideos.Append(strom.OnDemand(pv.getEndedVideos))
+	body.Append(strom.OnDemand(nepv.getNewVideos))
+	body.Append(strom.OnDemand(nepv.getEndedVideos))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-type playlistVideos struct {
+type newEndedPlaylistVideos struct {
 	playlistId string
 	rdx        redux.Readable
 }
 
-func (pv *playlistVideos) getNewVideos() iter.Seq[strom.Element] {
+func (nepv *newEndedPlaylistVideos) getNewVideos() iter.Seq[strom.Element] {
+	return nepv.getVideos(false)
+}
+
+func (nepv *newEndedPlaylistVideos) getEndedVideos() iter.Seq[strom.Element] {
+	return nepv.getVideos(true)
+}
+
+func (nepv *newEndedPlaylistVideos) getVideos(ended bool) iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
-		if plvs, ok := rdx.GetAllValues(data.PlaylistVideosProperty, pv.playlistId); ok && len(plvs) > 0 {
-			for _, videoId := range plvs {
-				if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
-					continue
-				}
-				if !yield(videoTile(videoId, rdx)) {
+
+		playlistVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+		if !ended {
+			if newVideos := yeti.PlaylistNotEndedVideos(nepv.playlistId, math.MaxInt, nepv.rdx); len(newVideos) == 0 {
+				return
+			}
+		}
+
+		if plvs, ok := nepv.rdx.GetAllValues(data.PlaylistVideosProperty, nepv.playlistId); ok && len(plvs) > 0 {
+			nev := new(newEndedVideos{ended: ended, videoIds: plvs, rdx: rdx})
+			if ended {
+				if !yield(strom.CreateText("h2", "Ended videos")) {
 					return
 				}
+			}
+			if !yield(playlistVideos.Append(strom.OnDemand(nev.getVideos))) {
+				return
 			}
 		}
 	}
 }
 
-func (pv *playlistVideos) getEndedVideos() iter.Seq[strom.Element] {
+type newEndedVideos struct {
+	ended    bool
+	videoIds []string
+	rdx      redux.Readable
+}
+
+func (nev *newEndedVideos) getVideos() iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
-		if plvs, ok := rdx.GetAllValues(data.PlaylistVideosProperty, pv.playlistId); ok && len(plvs) > 0 {
-			for _, videoId := range plvs {
-				if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
-					continue
-				}
-				if !yield(videoTile(videoId, rdx)) {
-					return
-				}
+		for _, videoId := range nev.videoIds {
+			if nev.ended && !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+				continue
+			}
+			if !nev.ended && rdx.HasKey(data.VideoEndedDateProperty, videoId) {
+				continue
+			}
+			if !yield(videoTile(videoId, nev.rdx)) {
+				return
 			}
 		}
 	}

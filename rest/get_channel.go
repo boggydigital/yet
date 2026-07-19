@@ -2,6 +2,7 @@ package rest
 
 import (
 	"iter"
+	"math"
 	"net/http"
 	"path"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
+	"github.com/boggydigital/yet/yeti"
 )
 
 func GetChannel(w http.ResponseWriter, r *http.Request) {
@@ -69,19 +71,10 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(channelMgmtRow)
 
-	cv := new(channelVideos{channelId: channelId, rdx: rdx})
+	cv := new(newEndedChannelVideos{channelId: channelId, rdx: rdx})
 
-	newVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-	body.Append(newVideos)
-
-	newVideos.Append(strom.OnDemand(cv.getNewVideos))
-
-	body.Append(strom.CreateText("h2", "Ended videos"))
-
-	endedVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-	body.Append(endedVideos)
-
-	endedVideos.Append(strom.OnDemand(cv.getEndedVideos))
+	body.Append(strom.OnDemand(cv.getNewVideos))
+	body.Append(strom.OnDemand(cv.getEndedVideos))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -89,38 +82,40 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type channelVideos struct {
+type newEndedChannelVideos struct {
 	channelId string
 	rdx       redux.Readable
 }
 
-func (cv *channelVideos) getNewVideos() iter.Seq[strom.Element] {
+func (necv *newEndedChannelVideos) getNewVideos() iter.Seq[strom.Element] {
+	return necv.getVideos(false)
+}
+
+func (necv *newEndedChannelVideos) getEndedVideos() iter.Seq[strom.Element] {
+	return necv.getVideos(true)
+}
+
+func (necv *newEndedChannelVideos) getVideos(ended bool) iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
 
-		if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, cv.channelId); ok && len(chvs) > 0 {
-			for _, videoId := range chvs {
-				if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
-					continue
-				}
-				if !yield(videoTile(videoId, rdx)) {
+		channelVideos := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+		if !ended {
+			if newVideos := yeti.ChannelNotEndedVideos(necv.channelId, math.MaxInt, necv.rdx); len(newVideos) == 0 {
+				return
+			}
+		}
+
+		if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, necv.channelId); ok && len(chvs) > 0 {
+			nev := new(newEndedVideos{ended: ended, videoIds: chvs, rdx: rdx})
+
+			if ended {
+				if !yield(strom.CreateText("h2", "Ended videos")) {
 					return
 				}
 			}
-		}
-	}
-}
 
-func (cv *channelVideos) getEndedVideos() iter.Seq[strom.Element] {
-	return func(yield func(element strom.Element) bool) {
-
-		if chvs, ok := rdx.GetAllValues(data.ChannelVideosProperty, cv.channelId); ok && len(chvs) > 0 {
-			for _, videoId := range chvs {
-				if !rdx.HasKey(data.VideoEndedDateProperty, videoId) {
-					continue
-				}
-				if !yield(videoTile(videoId, rdx)) {
-					return
-				}
+			if !yield(channelVideos.Append(strom.OnDemand(nev.getVideos))) {
+				return
 			}
 		}
 	}

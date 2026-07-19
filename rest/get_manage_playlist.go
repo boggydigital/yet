@@ -1,8 +1,9 @@
 package rest
 
 import (
-	"github.com/boggydigital/yet/rest/view_models"
 	"net/http"
+
+	"github.com/boggydigital/yet/rest/view_models"
 )
 
 func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +17,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playlistId := r.URL.Query().Get("list")
+	playlistId := r.PathValue("playlistId")
 
 	if playlistId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
@@ -25,7 +26,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	if err := tmpl.ExecuteTemplate(w, "manage_playlist", view_models.GetPlaylistViewModel(playlistId, rdx)); err != nil {
+	if err = tmpl.ExecuteTemplate(w, "manage_playlist", view_models.GetPlaylistViewModel(playlistId, rdx)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
