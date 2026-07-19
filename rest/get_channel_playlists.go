@@ -60,7 +60,6 @@ func GetChannelPlaylists(w http.ResponseWriter, r *http.Request) {
 	}
 
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
-		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId)).
 		Append(navButton("Videos", path.Join("/channel", channelId))).
 		Append(navButton("Refresh", path.Join("/refresh_channel_videos", channelId))).
 		Append(navButton("Manage", path.Join("/manage_channel", channelId)))

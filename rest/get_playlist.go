@@ -54,7 +54,6 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	body.Append(playlistTile(playlistId, rdx))
 
 	playlistMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
-		Append(navButton("RSS", "https://www.youtube.com/feeds/videos.xml?playlist_id="+playlistId)).
 		Append(navButton("Refresh", path.Join("/refresh_playlist", playlistId))).
 		Append(navButton("Manage", path.Join("/manage_playlist", playlistId)))
 
