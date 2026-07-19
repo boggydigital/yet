@@ -20,7 +20,7 @@
     <div class="subtle"><b>VideoId:</b> {{.VideoId}}</div>
 
     <a class="action"
-       href="https://www.youtube.com/watch/{{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}?t={{.CurrentTime}}{{end}}{{end}}">
+       href="https://www.youtube.com/watch?v={{.VideoId}}{{if .CurrentTime}}{{if .Ended}}{{else}}?t={{.CurrentTime}}{{end}}{{end}}">
         {{if .CurrentTime}}{{if .Ended}}Watch at origin{{else}}Continue watching at origin{{end}}{{else}}Watch at origin{{end}}</a>
 
     <form method="get" action="/update_video">

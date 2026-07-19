@@ -170,105 +170,105 @@ type channelsSection struct {
 	rdx redux.Readable
 }
 
-func (cs *channelsSection) getNewChannels() iter.Seq[strom.Element] {
+func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
 
 		if rdx.Len(data.ChannelAutoRefreshProperty) == 0 {
 			return
 		}
 
-		var newChannelIds []string
+		var channelIds []string
 
 		for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
-			if newVideos := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx); len(newVideos) > 0 {
-				newChannelIds = append(newChannelIds, channelId)
+
+			newVideos := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx)
+			switch len(newVideos) {
+			case 0:
+				if ended {
+					channelIds = append(channelIds, channelId)
+				}
+			default:
+				if !ended {
+					channelIds = append(channelIds, channelId)
+				}
 			}
 		}
 
-		if len(newChannelIds) > 0 {
-			if !yield(strom.CreateText("h2", "Channels")) {
+		sectionTitle := "Channels"
+		if ended {
+			sectionTitle = "Completed channels"
+		}
+
+		if len(channelIds) > 0 {
+			if !yield(strom.CreateText("h2", sectionTitle)) {
 				return
 			}
 
 			channelsContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
 
-			slices.Sort(newChannelIds)
+			slices.Sort(channelIds)
 
-			cl := new(channelsList{channelIds: newChannelIds, rdx: rdx})
+			cl := new(channelsList{channelIds: channelIds, rdx: rdx})
 			channelsContainer.Append(strom.OnDemand(cl.getChannelTiles))
 
 			if !yield(channelsContainer) {
 				return
 			}
-
 		}
-
 	}
 }
 
+func (cs *channelsSection) getNewChannels() iter.Seq[strom.Element] {
+	return cs.getChannels(false)
+}
+
 func (cs *channelsSection) getCompletedChannels() iter.Seq[strom.Element] {
-	return func(yield func(element strom.Element) bool) {
-
-		if rdx.Len(data.ChannelAutoRefreshProperty) == 0 {
-			return
-		}
-
-		var endedChannelIds []string
-
-		for channelId := range rdx.Keys(data.ChannelAutoRefreshProperty) {
-			if newVideos := yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx); len(newVideos) == 0 {
-				endedChannelIds = append(endedChannelIds, channelId)
-			}
-		}
-
-		if len(endedChannelIds) > 0 {
-			if !yield(strom.CreateText("h2", "Completed channels")) {
-				return
-			}
-
-			channelsContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-
-			slices.Sort(endedChannelIds)
-
-			cl := new(channelsList{channelIds: endedChannelIds, rdx: rdx})
-			channelsContainer.Append(strom.OnDemand(cl.getChannelTiles))
-
-			if !yield(channelsContainer) {
-				return
-			}
-		}
-	}
+	return cs.getChannels(true)
 }
 
 type playlistsSection struct {
 	rdx redux.Readable
 }
 
-func (ps *playlistsSection) getNewPlaylists() iter.Seq[strom.Element] {
+func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 	return func(yield func(element strom.Element) bool) {
 
 		if rdx.Len(data.PlaylistAutoRefreshProperty) == 0 {
 			return
 		}
 
-		var newPlaylistIds []string
+		var playlistIds []string
 
 		for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
-			if newVideos := yeti.PlaylistNotEndedVideos(playlistId, math.MaxInt, rdx); len(newVideos) > 0 {
-				newPlaylistIds = append(newPlaylistIds, playlistId)
+			newVideos := yeti.PlaylistNotEndedVideos(playlistId, math.MaxInt, rdx)
+
+			switch len(newVideos) {
+			case 0:
+				if ended {
+					playlistIds = append(playlistIds, playlistId)
+				}
+			default:
+				if !ended {
+					playlistIds = append(playlistIds, playlistId)
+				}
 			}
 		}
 
-		if len(newPlaylistIds) > 0 {
-			if !yield(strom.CreateText("h2", "Playlists")) {
+		sectionTitle := "Playlists"
+		if ended {
+			sectionTitle = "Completed playlists"
+		}
+
+		if len(playlistIds) > 0 {
+			if !yield(strom.CreateText("h2", sectionTitle)) {
 				return
 			}
 
 			playlistsContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
 
-			slices.Sort(newPlaylistIds)
+			slices.Sort(playlistIds)
 
-			cl := new(playlistsList{playlistIds: newPlaylistIds, rdx: rdx})
+			cl := new(playlistsList{playlistIds: playlistIds, rdx: rdx})
 			playlistsContainer.Append(strom.OnDemand(cl.getPlaylistTiles))
 
 			if !yield(playlistsContainer) {
@@ -276,43 +276,18 @@ func (ps *playlistsSection) getNewPlaylists() iter.Seq[strom.Element] {
 			}
 		}
 	}
+}
+
+func (ps *playlistsSection) getNewPlaylists() iter.Seq[strom.Element] {
+	return ps.getPlaylists(false)
 }
 
 func (ps *playlistsSection) getCompletedPlaylists() iter.Seq[strom.Element] {
-	return func(yield func(element strom.Element) bool) {
-
-		if rdx.Len(data.PlaylistAutoRefreshProperty) == 0 {
-			return
-		}
-
-		var endedPlaylistIds []string
-
-		for playlistId := range rdx.Keys(data.PlaylistAutoRefreshProperty) {
-			if newVideos := yeti.PlaylistNotEndedVideos(playlistId, math.MaxInt, rdx); len(newVideos) == 0 {
-				endedPlaylistIds = append(endedPlaylistIds, playlistId)
-			}
-		}
-
-		if len(endedPlaylistIds) > 0 {
-			if !yield(strom.CreateText("h2", "Completed playlists")) {
-				return
-			}
-
-			playlistsContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
-
-			slices.Sort(endedPlaylistIds)
-
-			cl := new(playlistsList{playlistIds: endedPlaylistIds, rdx: rdx})
-			playlistsContainer.Append(strom.OnDemand(cl.getPlaylistTiles))
-
-			if !yield(playlistsContainer) {
-				return
-			}
-		}
-	}
+	return ps.getPlaylists(true)
 }
 
 func getContinueVideos(rdx redux.Readable) ([]string, error) {
+
 	cvs := make(map[string]any)
 	var err error
 
