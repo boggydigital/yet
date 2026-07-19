@@ -210,10 +210,12 @@ func (pct *playlistChannelTile) getPlaylistChannelTile() iter.Seq[strom.Element]
 		}
 
 		if playlistId != "" {
-			if !yield(playlistTile(playlistId, pct.rdx)) {
+			if rdx.HasKey(data.PlaylistAutoRefreshProperty, playlistId) {
+				if !yield(playlistTile(playlistId, pct.rdx)) {
+					return
+				}
 				return
 			}
-			return
 		}
 
 		if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, pct.videoId); ok && channelId != "" {
