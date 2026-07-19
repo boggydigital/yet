@@ -49,9 +49,11 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody("Search", atoms.FlexCol(sizes.Normal)...)
 
-	body.Append(navButton("Home", "/"))
+	topRow := strom.Create("ul", atoms.FlexRow(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	body.Append(topRow)
 
-	body.Append(strom.CreateText("h1", "Results for '"+searchQuery+"'"))
+	topRow.Append(navButton("Home", "/"))
+	topRow.Append(strom.CreateText("h2", "Results for '"+searchQuery+"'"))
 
 	sid, err := youtube_urls.GetSearchResultsPage(
 		http.DefaultClient,
