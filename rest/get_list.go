@@ -16,6 +16,14 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
+var jumpToSections = []string{"videos", "channels", "playlists", "history"}
+var jumpToSectionTitles = map[string]string{
+	"videos":    "Videos",
+	"channels":  "Channels",
+	"playlists": "Playlists",
+	"history":   "History",
+}
+
 func GetList(w http.ResponseWriter, r *http.Request) {
 
 	// GET /list
@@ -36,6 +44,15 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		navButton("Search", "/search"),
 		navButton("Paste", "/paste"))
 
+	body.Append(strom.CreateText("h2", "Jump to"))
+
+	jumpContainer := strom.Create("ul", atoms.FlexRow(sizes.Small)...)
+	body.Append(jumpContainer)
+
+	for _, section := range jumpToSections {
+		jumpContainer.Append(navButton(jumpToSectionTitles[section], "#"+section))
+	}
+
 	cvs := new(continueVideosSection{rdx: rdx})
 	body.Append(strom.OnDemand(cvs.getSectionVideos))
 
@@ -55,7 +72,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	qvs := new(queueudVideosSection{rdx: rdx})
 	body.Append(strom.OnDemand(qvs.getSectionVideos))
 
-	body.Append(strom.CreateText("h2", "History"))
+	body.Append(strom.CreateText("h2", "History").
+		SetAttribute("id", "history"))
 
 	body.Append(navButton("See full watch history", "/history"))
 
@@ -93,7 +111,8 @@ func (cvs *continueVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(continueVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Continue")) {
+			if !yield(strom.CreateText("h2", "Continue").
+				SetAttribute("id", "continue")) {
 				return
 			}
 
@@ -123,7 +142,8 @@ func (dvs *downloadedVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(downloadedVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Videos")) {
+			if !yield(strom.CreateText("h2", "Videos").
+				SetAttribute("id", "videos")) {
 				return
 			}
 
@@ -153,7 +173,8 @@ func (qvs *queueudVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(queuedVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Queued downloads")) {
+			if !yield(strom.CreateText("h2", "Queued downloads").
+				SetAttribute("id", "downloads")) {
 				return
 			}
 
@@ -228,12 +249,15 @@ func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 		}
 
 		sectionTitle := "Channels"
+		sectionId := "channels"
 		if ended {
 			sectionTitle = "Completed channels"
+			sectionId = "completed_channels"
 		}
 
 		if len(channelIds) > 0 {
-			if !yield(strom.CreateText("h2", sectionTitle)) {
+			if !yield(strom.CreateText("h2", sectionTitle).
+				SetAttribute("id", sectionId)) {
 				return
 			}
 
@@ -288,12 +312,15 @@ func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 		}
 
 		sectionTitle := "Playlists"
+		sectionId := "playlists"
 		if ended {
 			sectionTitle = "Completed playlists"
+			sectionId = "completed_playlists"
 		}
 
 		if len(playlistIds) > 0 {
-			if !yield(strom.CreateText("h2", sectionTitle)) {
+			if !yield(strom.CreateText("h2", sectionTitle).
+				SetAttribute("id", sectionId)) {
 				return
 			}
 
