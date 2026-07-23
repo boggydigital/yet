@@ -49,7 +49,7 @@ func GetResults(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody("Search", atoms.FlexCol(sizes.Normal)...)
 
-	topRow := strom.Create("ul", atoms.FlexRow(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	topRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
 	body.Append(topRow)
 
 	topRow.Append(navButton("Home", "/"))
