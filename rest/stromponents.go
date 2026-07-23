@@ -245,10 +245,12 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 		SetStyle(
 			"flow-shrink:0",
 			"width:fit-content",
-			styles.Decl("padding-inline-end", sizes.Normal),
+			styles.Decl("padding-inline", sizes.Normal),
 			styles.Decl("background", colors.Highlight))
 
 	if count > 0 {
+		tileContainer.SetStyle(styles.Decl("padding-inline-start", sizes.Small))
+
 		tileContainer.Append(strom.CreateText("span", strconv.Itoa(count)).
 			SetStyle(
 				styles.Decl("border-radius", sizes.Small),

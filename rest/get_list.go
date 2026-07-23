@@ -46,7 +46,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(strom.CreateText("h2", "Jump to"))
 
-	jumpContainer := strom.Create("ul", atoms.FlexRow(sizes.Small)...)
+	jumpContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
 	body.Append(jumpContainer)
 
 	for _, section := range jumpToSections {
