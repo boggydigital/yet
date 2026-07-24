@@ -31,11 +31,13 @@ func GetChannelPlaylists(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check if the channel has no playlists and refresh automatically
-	if playlists, ok := rdx.GetAllValues(data.ChannelPlaylistsProperty, channelId); !ok || len(playlists) == 0 {
-		http.Redirect(w, r, path.Join("/refresh_channel_playlists", channelId), http.StatusPermanentRedirect)
-		return
-	}
+	// do not refresh playlists automatically, since not every channel has playlists
+	// and it would be an infinite loop in that case
+
+	//if playlists, ok := rdx.GetAllValues(data.ChannelPlaylistsProperty, channelId); !ok || len(playlists) == 0 {
+	//	http.Redirect(w, r, path.Join("/refresh_channel_playlists", channelId), http.StatusPermanentRedirect)
+	//	return
+	//}
 
 	var channelTitle string
 	if ct, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
