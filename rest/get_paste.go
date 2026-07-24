@@ -55,7 +55,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 	downloadParameters.Append(downloadNow)
 
 	downloadNow.Append(strom.Create("input").
-		SetAttribute("id", "name", "download-now").
+		SetAttribute("id", "name", "download-video").
 		SetAttribute("type", "checkbox").
 		SetAttribute("switch"))
 

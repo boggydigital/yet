@@ -61,7 +61,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 	form.Append(switchTitleSubtitle(autoRefresh, "auto-refresh", "Auto refresh", "Update metadata, videos."))
 
 	expandPlaylist := rdx.HasKey(data.PlaylistExpandProperty, playlistId)
-	form.Append(switchTitleSubtitle(expandPlaylist, "expand", "Expand channel videos", "On: Get all videos in a playlist. Off: Only get the latest 100 videos."))
+	form.Append(switchTitleSubtitle(expandPlaylist, "expand", "Expand playlist videos", "On: Get all videos in a playlist. Off: Only get the latest 100 videos."))
 
 	autoDownload := rdx.HasKey(data.PlaylistAutoDownloadProperty, playlistId)
 	form.Append(switchTitleSubtitle(autoDownload, "auto-download", "Auto download videos", "Download new videos."))
