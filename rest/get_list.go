@@ -16,12 +16,11 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-var jumpToSections = []string{"videos", "channels", "playlists", "history"}
+var jumpToSections = []string{"videos", "channels", "playlists"}
 var jumpToSectionTitles = map[string]string{
 	"videos":    "Videos",
 	"channels":  "Channels",
 	"playlists": "Playlists",
-	"history":   "History",
 }
 
 func GetList(w http.ResponseWriter, r *http.Request) {
