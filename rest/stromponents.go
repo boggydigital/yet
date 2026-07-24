@@ -93,7 +93,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 			durSpan := strom.CreateText("span", formatSeconds(duri)).
 				SetStyle(styles.Decl("font-size", font_sizes.XSmall))
 
-			if remaining > 0 {
+			if remaining > 0 && !ended {
 				remSpan := strom.CreateText("span", formatSeconds(remaining), atoms.FontWeightBold)
 				durationItems.Append(remSpan)
 				durSpan.SetStyle(styles.Decl("color", colors.Gray))
