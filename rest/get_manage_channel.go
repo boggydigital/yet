@@ -41,8 +41,9 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 	topRow := strom.Create("ul", atoms.FlexRow(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
 	body.Append(topRow)
 
-	topRow.Append(navButton("Home", "/"))
-	topRow.Append(strom.CreateText("h2", "Manage channel"))
+	topRow.Append(
+		navButton("Home", "/"),
+		strom.CreateText("h2", "Manage channel"))
 
 	body.Append(channelTile(channelId, rdx))
 

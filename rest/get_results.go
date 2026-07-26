@@ -10,17 +10,8 @@ import (
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
-	"github.com/boggydigital/yet/rest/view_models"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
-
-type ResultsViewModel struct {
-	SearchQuery string
-	Refinements []string
-	Channels    []*view_models.ChannelViewModel
-	Playlists   []*view_models.PlaylistViewModel
-	Videos      []*view_models.VideoViewModel
-}
 
 var propertyTitles = map[string]string{
 	data.VideoOwnerChannelNameProperty:  "Channel",
