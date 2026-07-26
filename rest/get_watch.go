@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/boggydigital/camino"
 	"github.com/boggydigital/redux"
@@ -104,7 +105,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	var mediaElement strom.Element
 	mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 
-	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
+	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
+		AddAtom(atoms.AlignItemsCenter)
 	videoNavButtonsRow.Append(
 		navButton("Manage", path.Join("/manage_video", videoId)),
 		navButton("Seen enough", path.Join("/end", videoId, "seen-enough")),
@@ -133,11 +135,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 			topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
-			videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
+			addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 		}
 	} else {
 		topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
-		videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
+		addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 	}
 
 	topRow.Append(strom.CreateText("h2", videoTitle))
@@ -235,4 +237,27 @@ func getVideoTimings(videoId string, rdx redux.Readable) *videoTimings {
 	vt.remaining = vt.duration - vt.currentTime
 
 	return vt
+}
+
+func addQueueDownloadAction(videoId string, container strom.Element, rdx redux.Readable) {
+	if dqs, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, videoId); ok && dqs != "" {
+		downloadQueued := true
+		if dcs, sure := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); sure {
+			if dqs < dcs {
+				downloadQueued = false
+			}
+		}
+		if downloadQueued {
+			dqDateTime := dqs
+			if dqt, err := time.Parse(time.RFC3339, dqs); err == nil {
+				dqDateTime = dqt.Format(time.DateTime)
+			}
+
+			container.Append(strom.CreateText("span", "Download queued: "+dqDateTime).
+				SetStyle(styles.Decl("color", colors.Gray)))
+		}
+	} else {
+		container.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
+	}
+
 }
