@@ -213,6 +213,8 @@ func channelTile(channelId string, rdx redux.Readable) strom.Element {
 	var channelTitle string
 	if tp, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && tp != "" {
 		channelTitle = tp
+	} else {
+		channelTitle = "Unknown channel - open to refresh"
 	}
 
 	newVideos := len(yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx))

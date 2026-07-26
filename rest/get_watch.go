@@ -136,9 +136,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
 		}
 	} else {
-		topRow.Append(
-			navButton("Refresh", path.Join("/refresh_video", videoId)),
-			navButton("Download", path.Join("/download_video", videoId)))
+		topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
 		videoNavButtonsRow.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
 	}
 
@@ -155,9 +153,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(videoNavButtonsRow)
 
+	body.Append(strom.CreateText("h3", "Description"))
+	body.Append(navButton("Refresh", path.Join("/refresh_video", videoId)))
+
 	if vd, ok := rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId); ok && vd != "" {
 		body.Append(
-			strom.CreateText("h3", "Description"),
 			strom.CreateText("pre", vd).
 				SetStyle(
 					"white-space:pre-wrap",
