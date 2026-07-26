@@ -68,8 +68,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var videoTitle string
-	if vt, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vt != "" {
-		videoTitle = vt
+	if vtp, ok := rdx.GetLastVal(data.VideoTitleProperty, videoId); ok && vtp != "" {
+		videoTitle = vtp
 	}
 
 	root, body := strom.RootBody(videoTitle, atoms.FlexCol(sizes.Normal)...)
@@ -143,6 +143,15 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	topRow.Append(strom.CreateText("h2", videoTitle))
+
+	if veds, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && veds != "" {
+		endedDateTime := veds
+		var et time.Time
+		if et, err = time.Parse(time.RFC3339, veds); err == nil {
+			endedDateTime = et.Local().Format(time.DateTime)
+		}
+		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime).SetStyle(styles.Decl("color", colors.Gray)))
+	}
 
 	mediaElement.SetStyle(
 		styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4)),
@@ -250,7 +259,7 @@ func addQueueDownloadAction(videoId string, container strom.Element, rdx redux.R
 		if downloadQueued {
 			dqDateTime := dqs
 			if dqt, err := time.Parse(time.RFC3339, dqs); err == nil {
-				dqDateTime = dqt.Format(time.DateTime)
+				dqDateTime = dqt.Local().Format(time.DateTime)
 			}
 
 			container.Append(strom.CreateText("span", "Download queued: "+dqDateTime).
