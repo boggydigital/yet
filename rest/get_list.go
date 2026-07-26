@@ -6,11 +6,14 @@ import (
 	"math"
 	"net/http"
 	"slices"
+	"strings"
 
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
+	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -43,10 +46,15 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		navButton("Search", "/search"),
 		navButton("Paste", "/paste"))
 
-	body.Append(strom.CreateText("h2", "Jump to"))
+	jumpToRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	body.Append(jumpToRow)
+
+	body.Append(strom.Create("hr"))
+
+	jumpToRow.Append(strom.CreateText("h2", "Jump to"))
 
 	jumpContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
-	body.Append(jumpContainer)
+	jumpToRow.Append(jumpContainer)
 
 	for _, section := range jumpToSections {
 		jumpContainer.Append(navButton(jumpToSectionTitles[section], "#"+section))
@@ -110,8 +118,7 @@ func (cvs *continueVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(continueVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Continue").
-				SetAttribute("id", "continue")) {
+			if !yield(strom.CreateText("h2", "Continue")) {
 				return
 			}
 
@@ -121,6 +128,10 @@ func (cvs *continueVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			videosContainer.Append(strom.OnDemand(vl.getVideoTiles))
 
 			if !yield(videosContainer) {
+				return
+			}
+
+			if !yield(strom.Create("hr")) {
 				return
 			}
 		}
@@ -141,8 +152,7 @@ func (dvs *downloadedVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(downloadedVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Videos").
-				SetAttribute("id", "videos")) {
+			if !yield(highVisibilityAnchor("Videos")) {
 				return
 			}
 
@@ -154,6 +164,11 @@ func (dvs *downloadedVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			if !yield(videosContainer) {
 				return
 			}
+
+			if !yield(strom.Create("hr")) {
+				return
+			}
+
 		}
 	}
 }
@@ -183,6 +198,10 @@ func (qvs *queueudVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			videosContainer.Append(strom.OnDemand(vl.getVideoTiles))
 
 			if !yield(videosContainer) {
+				return
+			}
+
+			if !yield(strom.Create("hr")) {
 				return
 			}
 		}
@@ -247,18 +266,19 @@ func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 			}
 		}
 
-		sectionTitle := "Channels"
-		sectionId := "channels"
-		if ended {
-			sectionTitle = "Completed channels"
-			sectionId = "completed_channels"
+		var channelsHeading strom.Element
+		switch ended {
+		case false:
+			channelsHeading = highVisibilityAnchor("Channels")
+		case true:
+			channelsHeading = strom.CreateText("h2", "Completed channels")
+		}
+
+		if !yield(channelsHeading) {
+			return
 		}
 
 		if len(channelIds) > 0 {
-			if !yield(strom.CreateText("h2", sectionTitle).
-				SetAttribute("id", sectionId)) {
-				return
-			}
 
 			channelsContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
 
@@ -270,6 +290,24 @@ func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 			if !yield(channelsContainer) {
 				return
 			}
+		} else {
+
+			var noChannelsText string
+			switch ended {
+			case false:
+				noChannelsText = "No channels with new videos"
+			case true:
+				noChannelsText = "No completed channels"
+			}
+
+			if !yield(strom.CreateText("span", noChannelsText).
+				SetStyle(styles.Decl("color", colors.Gray))) {
+				return
+			}
+		}
+
+		if !yield(strom.Create("hr")) {
+			return
 		}
 	}
 }
@@ -310,18 +348,19 @@ func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 			}
 		}
 
-		sectionTitle := "Playlists"
-		sectionId := "playlists"
-		if ended {
-			sectionTitle = "Completed playlists"
-			sectionId = "completed_playlists"
+		var playlistsHeading strom.Element
+		switch ended {
+		case false:
+			playlistsHeading = highVisibilityAnchor("Playlists")
+		case true:
+			playlistsHeading = strom.CreateText("h2", "Completed playlists")
+		}
+
+		if !yield(playlistsHeading) {
+			return
 		}
 
 		if len(playlistIds) > 0 {
-			if !yield(strom.CreateText("h2", sectionTitle).
-				SetAttribute("id", sectionId)) {
-				return
-			}
 
 			playlistsContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
 
@@ -333,6 +372,24 @@ func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 			if !yield(playlistsContainer) {
 				return
 			}
+		} else {
+
+			var noPlaylistsText string
+			switch ended {
+			case false:
+				noPlaylistsText = "No playlists with new videos"
+			case true:
+				noPlaylistsText = "No playlists channels"
+			}
+
+			if !yield(strom.CreateText("span", noPlaylistsText).
+				SetStyle(styles.Decl("color", colors.Gray))) {
+				return
+			}
+		}
+
+		if !yield(strom.Create("hr")) {
+			return
 		}
 	}
 }
@@ -464,4 +521,20 @@ func getQueuedDownloads(rdx redux.Readable) ([]string, error) {
 	} else {
 		return nil, err
 	}
+}
+
+func highVisibilityAnchor(title string) strom.Element {
+
+	id := strings.ToLower(title)
+	id = strings.Replace(id, " ", "_", -1)
+
+	return strom.CreateText("h2", title).
+		SetAttribute("id", id).
+		AddAtom(atoms.BorderRadiusSmall).
+		SetStyle(
+			styles.Decl("padding-block", sizes.Small),
+			styles.Decl("padding-inline", sizes.Normal),
+			styles.Decl("background-color", colors.Foreground),
+			styles.Decl("color", colors.Background),
+			"width:max-content")
 }
