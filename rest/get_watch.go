@@ -27,6 +27,12 @@ import (
 //go:embed "scripts/watch.js"
 var scriptWatch string
 
+type videoTimings struct {
+	duration    int64
+	remaining   int64
+	currentTime int64
+}
+
 func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	// GET /watch/{videoId}?t
@@ -40,34 +46,16 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	videoId := r.PathValue("videoId")
 
-	t := r.URL.Query().Get("t")
-
-	if t == "" {
-
-		var rem, dur int64
-
-		if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
-			var duri int64
-			if duri, err = strconv.ParseInt(durs, 10, 64); err == nil {
-				dur = duri
-			}
-		}
-
-		var ct int64
-		if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
-			var cti int64
-			if cti, err = strconv.ParseInt(cts, 10, 64); err == nil {
-				ct = cti
-			}
-		}
-		rem = dur - ct
-
-		t = strconv.FormatInt(dur-rem, 10)
-	}
-
 	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 		return
+	}
+
+	vt := getVideoTimings(videoId, rdx)
+
+	t := r.URL.Query().Get("t")
+	if t == "" {
+		t = strconv.FormatInt(vt.currentTime, 10)
 	}
 
 	// iOS insists on inserting a space on paste
@@ -226,4 +214,25 @@ func (pct *playlistChannelTile) getPlaylistChannelTile() iter.Seq[strom.Element]
 			}
 		}
 	}
+}
+
+func getVideoTimings(videoId string, rdx redux.Readable) *videoTimings {
+
+	vt := new(videoTimings)
+
+	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" {
+		if duri, err := strconv.ParseInt(durs, 10, 64); err == nil {
+			vt.duration = duri
+		}
+	}
+
+	if cts, ok := rdx.GetLastVal(data.VideoProgressProperty, videoId); ok && cts != "" {
+		if cti, err := strconv.ParseInt(cts, 10, 64); err == nil {
+			vt.currentTime = cti
+		}
+	}
+
+	vt.remaining = vt.duration - vt.currentTime
+
+	return vt
 }
