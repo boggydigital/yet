@@ -37,7 +37,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	// check if the channel has no videos and refresh automatically
 	if videos, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); !ok || len(videos) == 0 {
-		http.Redirect(w, r, path.Join("/refresh_channel_videos", channelId), http.StatusPermanentRedirect)
+		http.Redirect(w, r, path.Join("/refresh_channel", channelId), http.StatusPermanentRedirect)
 		return
 	}
 
@@ -65,8 +65,8 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
-		Append(navButton("Refresh", path.Join("/refresh_channel_videos", channelId))).
-		Append(navButton("Playlists", path.Join("/channel_playlists", channelId))).
+		Append(navButton("Refresh", path.Join("/refresh_channel", channelId))).
+		Append(navButton("Playlists", "#channel_playlists")).
 		Append(navButton("Manage", path.Join("/manage_channel", channelId)))
 
 	body.Append(channelMgmtRow)
@@ -75,6 +75,21 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(strom.OnDemand(cv.getNewVideos))
 	body.Append(strom.OnDemand(cv.getEndedVideos))
+
+	body.Append(strom.Create("hr"))
+
+	body.Append(highVisibilityAnchor("Channel playlists"))
+
+	if playlistIds, ok := rdx.GetAllValues(data.ChannelPlaylistsProperty, channelId); ok && len(playlistIds) > 0 {
+		channelPlaylists := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...)
+		body.Append(channelPlaylists)
+
+		pl := new(playlistsList{playlistIds: playlistIds, rdx: rdx})
+		channelPlaylists.Append(strom.OnDemand(pl.getPlaylistTiles))
+	} else {
+		body.Append(strom.CreateText("span", "Channel has no playlists").
+			SetStyle(styles.Decl("color", colors.Gray)))
+	}
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

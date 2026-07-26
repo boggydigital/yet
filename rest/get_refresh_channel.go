@@ -8,9 +8,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetRefreshChannelVideos(w http.ResponseWriter, r *http.Request) {
+func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_channel_videos/{channelId}
+	// GET /refresh_channel/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -32,6 +32,11 @@ func GetRefreshChannelVideos(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = yeti.GetChannelVideosMetadata(nil, channelId, expand, rdx); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err = yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
