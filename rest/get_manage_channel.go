@@ -5,7 +5,6 @@ import (
 	"path"
 
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/font_sizes"
@@ -136,8 +135,8 @@ func titleSubtitle(name, title, subTitle string) strom.Element {
 		AddAtom(atoms.FontWeightBold))
 	titleStack.Append(strom.CreateText("span", subTitle).
 		SetStyle(
-			styles.Decl("font-size", font_sizes.Small),
-			styles.Decl("color", colors.Gray)))
+			"font-size:"+font_sizes.Small,
+			"color:"+colors.Gray))
 
 	return titleStack
 }

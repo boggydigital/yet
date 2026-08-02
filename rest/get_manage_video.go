@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
@@ -46,7 +45,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body.Append(strom.Create("span").Append(
-		strom.CreateText("span", "VideoId: ").SetStyle(styles.Decl("color", colors.Gray)),
+		strom.CreateText("span", "VideoId: ").SetStyle("color:"+colors.Gray),
 		strom.CreateText("span", videoId)))
 
 	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).

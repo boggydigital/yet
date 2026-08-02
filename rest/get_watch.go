@@ -15,7 +15,6 @@ import (
 	"github.com/boggydigital/camino"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
@@ -150,12 +149,12 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		if et, err = time.Parse(time.RFC3339, veds); err == nil {
 			endedDateTime = et.Local().Format(time.DateTime)
 		}
-		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime).SetStyle(styles.Decl("color", colors.Gray)))
+		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime).SetStyle("color:" + colors.Gray))
 	}
 
 	mediaElement.SetStyle(
-		styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4)),
-		styles.Decl("border-radius", sizes.XSmall))
+		"max-width:"+calc.Mult(sizes.XXXLarge, 4),
+		"border-radius:"+sizes.XSmall)
 
 	body.Append(mediaElement)
 
@@ -173,8 +172,8 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				SetStyle(
 					"white-space:pre-wrap",
 					"word-break:break-word",
-					styles.Decl("color", colors.Gray),
-					styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 4))))
+					"color:"+colors.Gray,
+					"max-width:"+calc.Mult(sizes.XXXLarge, 4)))
 	}
 
 	// must be a new string per video otherwise global will be rewritten for all
@@ -263,7 +262,7 @@ func addQueueDownloadAction(videoId string, container strom.Element, rdx redux.R
 			}
 
 			container.Append(strom.CreateText("span", "Download queued: "+dqDateTime).
-				SetStyle(styles.Decl("color", colors.Gray)))
+				SetStyle("color:" + colors.Gray))
 		}
 	} else {
 		container.Append(navButton("Queue download", path.Join("/queue_download", videoId)))

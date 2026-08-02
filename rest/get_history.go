@@ -12,7 +12,6 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
@@ -77,7 +76,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 
 	hs := new(historyStats{rdx: rdx})
 	body.Append(strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...).
-		SetStyle(styles.Decl("color", colors.Gray)).
+		SetStyle("color:" + colors.Gray).
 		Append(strom.OnDemand(hs.getStats)))
 
 	egv := new(endedGroupsVideos{endedGroups: endedGroups, showAll: showAll, rdx: rdx})
@@ -86,7 +85,7 @@ func GetHistory(w http.ResponseWriter, r *http.Request) {
 	if !showAll {
 		body.Append(strom.Create("br"))
 		body.Append(strom.CreateText("span", "To load this page faster, yet is limiting displayed videos.").
-			SetStyle(styles.Decl("color", colors.Gray)))
+			SetStyle("color:" + colors.Gray))
 		body.Append(navButton("Show all", "/history?showAll"))
 	}
 

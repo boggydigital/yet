@@ -8,7 +8,6 @@ import (
 
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
@@ -31,7 +30,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 		SetAttribute("href", path.Join("/watch", videoId)).
 		SetStyle(
 			"position:relative",
-			styles.Decl("width", calc.Mult(sizes.XXXLarge, 1.5)))
+			"width:"+calc.Mult(sizes.XXXLarge, 1.5))
 
 	var ended bool
 	if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
@@ -45,7 +44,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 			"aspect-ratio:16/9",
 			"width:100%",
 			"object-fit:cover",
-			styles.Decl("border-radius", sizes.XSmall))
+			"border-radius:"+sizes.XSmall)
 
 	tileContainer.Append(poster)
 
@@ -62,10 +61,10 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 				"position:absolute",
 				"top:0",
 				"right:0",
-				styles.Decl("font-size", font_sizes.XSmall),
-				styles.Decl("padding", sizes.Small),
-				styles.Decl("border-bottom-left-radius", sizes.Small),
-				styles.Decl("background-color", colors.Background)))
+				"font-size:"+font_sizes.XSmall,
+				"padding:"+sizes.Small,
+				"border-bottom-left-radius:"+sizes.Small,
+				"background-color:"+colors.Background))
 	}
 
 	if durs, sure := rdx.GetLastVal(data.VideoDurationProperty, videoId); sure && durs != "" && durs != "0" {
@@ -85,18 +84,18 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 					"position:absolute",
 					"top:0",
 					"left:0",
-					styles.Decl("font-size", font_sizes.XSmall),
-					styles.Decl("padding", sizes.Small),
-					styles.Decl("border-bottom-right-radius", sizes.Small),
-					styles.Decl("background-color", colors.Background))
+					"font-size:"+font_sizes.XSmall,
+					"padding:"+sizes.Small,
+					"border-bottom-right-radius:"+sizes.Small,
+					"background-color:"+colors.Background)
 
 			durSpan := strom.CreateText("span", formatSeconds(duri)).
-				SetStyle(styles.Decl("font-size", font_sizes.XSmall))
+				SetStyle("font-size:" + font_sizes.XSmall)
 
 			if remaining > 0 && !ended {
 				remSpan := strom.CreateText("span", formatSeconds(remaining), atoms.FontWeightBold)
 				durationItems.Append(remSpan)
-				durSpan.SetStyle(styles.Decl("color", colors.Gray))
+				durSpan.SetStyle("color:" + colors.Gray)
 			} else {
 				if !ended {
 					durSpan.AddAtom(atoms.FontWeightBold)
@@ -118,7 +117,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 	vsp := videoSummaryProperties(videoId, rdx)
 
 	propertiesStack := strom.Create("ul", atoms.DisplayFlex, atoms.FlexDirColumn).
-		SetStyle(styles.Decl("row-gap", sizes.XSmall))
+		SetStyle("row-gap:" + sizes.XSmall)
 	titlePropertiesStack.Append(propertiesStack)
 
 	for _, p := range propertiesOrder {
@@ -131,8 +130,8 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 
 		propertyRow := strom.CreateText("span", ptv).
 			SetStyle(
-				styles.Decl("color", colors.Gray),
-				styles.Decl("font-size", font_sizes.XSmall))
+				"color:"+colors.Gray,
+				"font-size:"+font_sizes.XSmall)
 
 		propertiesStack.Append(propertyRow)
 	}
@@ -247,19 +246,19 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 		SetStyle(
 			"flow-shrink:0",
 			"width:fit-content",
-			styles.Decl("padding-inline", sizes.Normal),
-			styles.Decl("background", colors.Highlight))
+			"padding-inline:"+sizes.Normal,
+			"background:"+colors.Highlight)
 
 	if count > 0 {
-		tileContainer.SetStyle(styles.Decl("padding-inline-start", sizes.Small))
+		tileContainer.SetStyle("padding-inline-start:" + sizes.Small)
 
 		tileContainer.Append(strom.CreateText("span", strconv.Itoa(count)).
 			SetStyle(
-				styles.Decl("border-radius", sizes.Small),
-				styles.Decl("padding", sizes.Small),
-				styles.Decl("background-color", colors.Background),
-				styles.Decl("font-weight", font_weights.Bold),
-				styles.Decl("font-size", font_sizes.XXSmall)))
+				"border-radius:"+sizes.Small,
+				"padding:"+sizes.Small,
+				"background-color:"+colors.Background,
+				"font-weight:"+font_weights.Bold,
+				"font-size:"+font_sizes.XXSmall))
 	}
 
 	titlesStack := strom.Create("ul", atoms.FlexCol(sizes.XSmall)...)
@@ -272,8 +271,8 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 	if len(titles) > 1 {
 		titlesStack.Append(strom.CreateText("span", titles[1]).
 			SetStyle(
-				styles.Decl("font-size", font_sizes.XSmall),
-				styles.Decl("color", colors.Gray)))
+				"font-size:"+font_sizes.XSmall,
+				"color:"+colors.Gray))
 	}
 
 	return tileContainer
@@ -299,12 +298,12 @@ func buttonStyles() []string {
 	return []string{
 		"border:none",
 		"width:fit-content",
-		styles.Decl("padding-block", sizes.Small),
-		styles.Decl("padding-inline", sizes.Normal),
-		styles.Decl("background-color", colors.Highlight),
-		styles.Decl("border-radius", sizes.Normal),
-		styles.Decl("color", colors.Foreground),
-		styles.Decl("font-size", font_sizes.Normal),
+		"padding-block:" + sizes.Small,
+		"padding-inline:" + sizes.Normal,
+		"background-color:" + colors.Highlight,
+		"border-radius:" + sizes.Normal,
+		"color:" + colors.Foreground,
+		"font-size:" + font_sizes.Normal,
 	}
 }
 
@@ -312,9 +311,9 @@ func textInputStyles() []string {
 	return []string{
 		"appearance:none",
 		"border:none",
-		styles.Decl("border-radius", sizes.Small),
-		styles.Decl("max-width", calc.Mult(sizes.XXXLarge, 1.5)),
-		styles.Decl("padding", sizes.Small),
-		styles.Decl("font-size", font_sizes.Normal),
+		"border-radius:" + sizes.Small,
+		"max-width:" + calc.Mult(sizes.XXXLarge, 1.5),
+		"padding:" + sizes.Small,
+		"font-size:" + font_sizes.Normal,
 	}
 }

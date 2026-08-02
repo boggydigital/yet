@@ -11,7 +11,6 @@ import (
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
-	"github.com/boggydigital/strom/styles"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
@@ -301,7 +300,7 @@ func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 			}
 
 			if !yield(strom.CreateText("span", noChannelsText).
-				SetStyle(styles.Decl("color", colors.Gray))) {
+				SetStyle("color:" + colors.Gray)) {
 				return
 			}
 		}
@@ -383,7 +382,7 @@ func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 			}
 
 			if !yield(strom.CreateText("span", noPlaylistsText).
-				SetStyle(styles.Decl("color", colors.Gray))) {
+				SetStyle("color:" + colors.Gray)) {
 				return
 			}
 		}
@@ -532,9 +531,9 @@ func highVisibilityAnchor(title string) strom.Element {
 		SetAttribute("id", id).
 		AddAtom(atoms.BorderRadiusSmall).
 		SetStyle(
-			styles.Decl("padding-block", sizes.Small),
-			styles.Decl("padding-inline", sizes.Normal),
-			styles.Decl("background-color", colors.Foreground),
-			styles.Decl("color", colors.Background),
+			"padding-block:", sizes.Small,
+			"padding-inline:"+sizes.Normal,
+			"background-color:"+colors.Foreground,
+			"color:"+colors.Background,
 			"width:max-content")
 }
