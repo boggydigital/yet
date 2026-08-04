@@ -531,7 +531,7 @@ func highVisibilityAnchor(title string) strom.Element {
 		SetAttribute("id", id).
 		AddAtom(atoms.BorderRadiusSmall).
 		SetStyle(
-			"padding-block:", sizes.Small,
+			"padding-block:"+sizes.Small,
 			"padding-inline:"+sizes.Normal,
 			"background-color:"+colors.Foreground,
 			"color:"+colors.Background,
