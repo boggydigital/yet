@@ -253,12 +253,14 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 		tileContainer.SetStyle("padding-inline-start:" + sizes.Small)
 
 		tileContainer.Append(strom.CreateText("span", strconv.Itoa(count)).
+			AddAtom(atoms.DisplayFlex, atoms.AlignItemsCenter, atoms.JustifyContentCenter).
 			SetStyle(
-				"border-radius:"+sizes.Small,
-				"padding:"+sizes.Small,
+				"border-radius:"+sizes.Large,
+				"width:"+calc.Mult(sizes.Normal, 1.5),
+				"height:"+calc.Mult(sizes.Normal, 1.5),
 				"background-color:"+colors.Background,
 				"font-weight:"+font_weights.Bold,
-				"font-size:"+font_sizes.XXSmall))
+				"font-size:"+font_sizes.XSmall))
 	}
 
 	titlesStack := strom.Create("ul", atoms.FlexCol(sizes.XSmall)...)
