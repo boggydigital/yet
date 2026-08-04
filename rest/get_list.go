@@ -443,8 +443,23 @@ func getDownloadedVideos(rdx redux.Readable) ([]string, error) {
 
 	for id := range rdx.Keys(data.VideoDownloadCompletedProperty) {
 
-		if rdx.HasKey(data.VideoEndedDateProperty, id) {
-			continue
+		var videoDownloadCompleted string
+		if vdcp, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, id); ok && vdcp != "" {
+			videoDownloadCompleted = vdcp
+		}
+
+		if vedp, ok := rdx.GetLastVal(data.VideoEndedDateProperty, id); ok && vedp != "" {
+			switch videoDownloadCompleted {
+			case "":
+				continue
+			default:
+				switch vedp > videoDownloadCompleted {
+				case true:
+					continue
+				case false:
+					// do nothing
+				}
+			}
 		}
 		if rdx.HasKey(data.VideoProgressProperty, id) {
 			continue

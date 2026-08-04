@@ -124,7 +124,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 			}
 
 			videoUrl := "/video?file=" + url.QueryEscape(relLocalVideoFilename)
-			//videoDescription, _ = rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId)
 
 			mediaElement = strom.Create("video").
 				SetAttribute("src", videoUrl).

@@ -4,10 +4,12 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/colors"
+	"github.com/boggydigital/strom/vars/font_sizes"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 )
@@ -80,6 +82,16 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 	ended := rdx.HasKey(data.VideoEndedDateProperty, videoId)
 	form.Append(switchTitleSubtitle(ended, "ended", "Ended", "On: mark as ended. Off: mark as new."))
 
+	if videoEndedDate, ok := rdx.GetLastVal(data.VideoEndedDateProperty, videoId); ok && videoEndedDate != "" {
+		endedDateTime := videoEndedDate
+		var et time.Time
+		if et, err = time.Parse(time.RFC3339, videoEndedDate); err == nil {
+			endedDateTime = et.Local().Format(time.DateTime)
+		}
+		form.Append(strom.CreateText("span", "Last ended: "+endedDateTime).
+			SetStyle("color:"+colors.Gray, "font-size:"+font_sizes.Small))
+	}
+
 	var videoEndedReason data.VideoEndedReason
 	if vers, ok := rdx.GetLastVal(data.VideoEndedReasonProperty, videoId); ok && vers != "" {
 		videoEndedReason = data.ParseVideoEndedReason(vers)
@@ -95,7 +107,31 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+
 	form.Append(switchTitleSubtitle(downloadQueued, "download-queued", "Download queued", "On: add to download queue. Off: remove from download queue."))
+
+	if dqs, ok := rdx.GetLastVal(data.VideoDownloadQueuedProperty, videoId); ok {
+
+		dqDateTime := dqs
+		var dqt time.Time
+		if dqt, err = time.Parse(time.RFC3339, dqs); err == nil {
+			dqDateTime = dqt.Local().Format(time.DateTime)
+		}
+
+		form.Append(strom.CreateText("span", "Last download queued: "+dqDateTime).
+			SetStyle("color:"+colors.Gray, "font-size:"+font_sizes.Small))
+
+	}
+
+	if videoDownloadCompleted, ok := rdx.GetLastVal(data.VideoDownloadCompletedProperty, videoId); ok && videoDownloadCompleted != "" {
+		downloadCompletedTime := videoDownloadCompleted
+		var dct time.Time
+		if dct, err = time.Parse(time.RFC3339, videoDownloadCompleted); err == nil {
+			downloadCompletedTime = dct.Local().Format(time.DateTime)
+		}
+		form.Append(strom.CreateText("span", "Last download completed: "+downloadCompletedTime).
+			SetStyle("color:"+colors.Gray, "font-size:"+font_sizes.Small))
+	}
 
 	forcedDownload := rdx.HasKey(data.VideoForcedDownloadProperty, videoId)
 	form.Append(switchTitleSubtitle(forcedDownload, "forced-download", "Forced download", "On: re-download if file exists. Off: skip re-downloading."))
