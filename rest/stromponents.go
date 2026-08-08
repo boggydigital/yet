@@ -18,6 +18,8 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
+const unknownChannel = "Tap to load..."
+
 var reasonTitles = map[data.VideoEndedReason]string{
 	data.Completed:  "Completed",
 	data.SeenEnough: "Seen enough",
@@ -213,12 +215,18 @@ func channelTile(channelId string, rdx redux.Readable) strom.Element {
 	if tp, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && tp != "" {
 		channelTitle = tp
 	} else {
-		channelTitle = "Unknown channel - open to refresh"
+		channelTitle = unknownChannel
 	}
 
 	newVideos := len(yeti.ChannelNotEndedVideos(channelId, math.MaxInt, rdx))
 
-	return linkTile(path.Join("/channel", channelId), newVideos, channelTitle)
+	ct := linkTile(path.Join("/channel", channelId), newVideos, channelTitle)
+
+	if channelTitle == unknownChannel {
+		ct.SetStyle("outline:" + sizes.XXXSmall + " dashed " + colors.Gray)
+	}
+
+	return ct
 }
 
 func playlistTile(playlistId string, rdx redux.Readable) strom.Element {
