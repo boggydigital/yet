@@ -1,9 +1,9 @@
 module github.com/boggydigital/yet
 
-go 1.26.5
+go 1.27.0
 
 require (
-	github.com/arelate/southern_light v0.5.24
+	github.com/arelate/southern_light v0.5.30
 	github.com/boggydigital/backups v0.1.7
 	github.com/boggydigital/busan v0.1.1
 	github.com/boggydigital/camino v0.2.19
@@ -18,5 +18,5 @@ require (
 require (
 	github.com/boggydigital/kevlar v0.6.13 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
-	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/net v0.58.0 // indirect
 )
