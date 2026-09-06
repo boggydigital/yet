@@ -131,11 +131,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				SetAttribute("preload", "none")
 
 		} else {
-			topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
+			topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Red))
 			addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 		}
 	} else {
-		topRow.Append(navButton("Download", path.Join("/download_video", videoId)))
+		topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Red))
 		addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 	}
 
