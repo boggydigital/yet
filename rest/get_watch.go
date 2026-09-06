@@ -77,8 +77,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	body.Append(topRow)
 
 	topRow.Append(
-		navButton("Home", "/"),
-		navButton("Paste", "/paste"))
+		navButton("Home", "/"))
 
 	var absLocalVideoFilename string
 
@@ -107,7 +106,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		AddAtom(atoms.AlignItemsCenter)
 	videoNavButtonsRow.Append(
-		navButton("Manage", path.Join("/manage_video", videoId)),
+		navButton("Manage", path.Join("/manage_video", videoId), colors.Red),
 		navButton("Seen enough", path.Join("/end", videoId, "seen-enough")),
 		navButton("Skip", path.Join("/end", videoId, "skipped")),
 	)

@@ -9,6 +9,7 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -55,7 +56,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	playlistMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		Append(navButton("Refresh", path.Join("/refresh_playlist", playlistId))).
-		Append(navButton("Manage", path.Join("/manage_playlist", playlistId)))
+		Append(navButton("Manage", path.Join("/manage_playlist", playlistId), colors.Red))
 
 	body.Append(playlistMgmtRow)
 

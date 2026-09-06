@@ -288,11 +288,13 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 	return tileContainer
 }
 
-func navButton(title, href string) strom.Element {
-	return strom.Create("a").
+func navButton(title, href string, cls ...colors.Color) strom.Element {
+	nb := strom.Create("a").
 		SetTextContent(title).
 		SetAttribute("href", href).
-		SetStyle(buttonStyles()...)
+		SetStyle(buttonStyles(cls...)...)
+
+	return nb
 }
 
 func submitButton(value, form string) strom.Element {
@@ -304,17 +306,26 @@ func submitButton(value, form string) strom.Element {
 		SetStyle(buttonStyles()...)
 }
 
-func buttonStyles() []string {
-	return []string{
+func buttonStyles(cls ...colors.Color) []string {
+	bs := []string{
 		"border:none",
 		"width:fit-content",
 		"padding-block:" + sizes.Small,
 		"padding-inline:" + sizes.Normal,
 		"background-color:" + colors.Highlight,
 		"border-radius:" + sizes.Normal,
-		"color:" + colors.Foreground,
 		"font-size:" + font_sizes.Normal,
 	}
+
+	if len(cls) > 0 {
+		for _, c := range cls {
+			bs = append(bs, "color:"+c)
+		}
+	} else {
+		bs = append(bs, "color:"+colors.Foreground)
+	}
+
+	return bs
 }
 
 func textInputStyles() []string {

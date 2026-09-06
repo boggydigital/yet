@@ -3,7 +3,7 @@ module github.com/boggydigital/yet
 go 1.27.0
 
 require (
-	github.com/arelate/southern_light v0.5.30
+	github.com/arelate/southern_light v0.5.31
 	github.com/boggydigital/backups v0.1.7
 	github.com/boggydigital/busan v0.1.1
 	github.com/boggydigital/camino v0.2.19
