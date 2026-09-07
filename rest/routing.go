@@ -18,14 +18,14 @@ func HandleFuncs() {
 
 		"GET /watch/{videoId}":         Log(http.HandlerFunc(GetWatch)),
 		"GET /refresh_video/{videoId}": Log(http.HandlerFunc(GetRefreshVideo)),
-		"GET /manage_video/{videoId}":  http.HandlerFunc(GetManageVideo),
-		"GET /update_video/{videoId}":  http.HandlerFunc(GetUpdateVideo),
-		"GET /video_error/{videoId}":   http.HandlerFunc(GetVideoError),
+		"GET /manage_video/{videoId}":  Log(http.HandlerFunc(GetManageVideo)),
+		"GET /update_video/{videoId}":  Log(http.HandlerFunc(GetUpdateVideo)),
+		"GET /video_error/{videoId}":   Log(http.HandlerFunc(GetVideoError)),
 
 		"GET /list": Log(http.HandlerFunc(GetList)),
 
-		"GET /paste":       Log(http.HandlerFunc(GetPaste)),
-		"GET /paste_video": Log(http.HandlerFunc(GetPasteVideo)),
+		"GET /paste":  Log(http.HandlerFunc(GetPaste)),
+		"POST /paste": Log(http.HandlerFunc(PostPaste)),
 
 		"GET /history": Log(http.HandlerFunc(GetHistory)),
 
@@ -44,8 +44,8 @@ func HandleFuncs() {
 
 		"GET /channel/{channelId}":         Log(http.HandlerFunc(GetChannel)),
 		"GET /refresh_channel/{channelId}": Log(http.HandlerFunc(GetRefreshChannel)),
-		"GET /manage_channel/{channelId}":  http.HandlerFunc(GetManageChannel),
-		"GET /update_channel/{channelId}":  http.HandlerFunc(GetUpdateChannel),
+		"GET /manage_channel/{channelId}":  Log(http.HandlerFunc(GetManageChannel)),
+		"GET /update_channel/{channelId}":  Log(http.HandlerFunc(GetUpdateChannel)),
 
 		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}

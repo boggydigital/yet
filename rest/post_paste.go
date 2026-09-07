@@ -8,9 +8,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetPasteVideo(w http.ResponseWriter, r *http.Request) {
+func PostPaste(w http.ResponseWriter, r *http.Request) {
 
-	// GET /paste_video/?videoId&download-video&queue-download
+	// POST /paste
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -19,9 +19,12 @@ func GetPasteVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q := r.URL.Query()
+	if err = r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	videoId := q.Get("video-id")
+	videoId := r.FormValue("video-id")
 
 	// resolve full YouTube URL to just video-id, as needed
 	if strings.Contains(videoId, "?") {
@@ -41,20 +44,25 @@ func GetPasteVideo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	downloadVideo := q.Has("download-video")
-	queueDownload := q.Has("queue-download")
+	downloadVideo := r.FormValue("download-video") == "on"
+	queueDownload := r.FormValue("queue-download") == "on"
 
 	if downloadVideo {
-		http.Redirect(w, r, path.Join("/download_video", videoId), http.StatusTemporaryRedirect)
+		w.Header().Set("Location", path.Join("/download_video", videoId))
+		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
 
 	if queueDownload {
-		http.Redirect(w, r, path.Join("/queue_download", videoId), http.StatusTemporaryRedirect)
+		w.Header().Set("Location", path.Join("/queue_download", videoId))
+		w.WriteHeader(http.StatusSeeOther)
 		return
 	}
 
-	//if !downloadVideo && !queueDownload {
-	http.Redirect(w, r, "/video_error?v="+videoId+"&err=Paste+requires+Download+now+or+Queue+download", http.StatusTemporaryRedirect)
+	// when neither download nor queue download are requested - redirect to watch page
+
+	w.Header().Set("Location", path.Join("/watch", videoId))
+	w.WriteHeader(http.StatusSeeOther)
+
 	return
 }

@@ -21,8 +21,8 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "paste-form").
-		SetAttribute("method", "get").
-		SetAttribute("action", "/paste_video")
+		SetAttribute("method", "post").
+		SetAttribute("action", "/paste")
 	body.Append(form)
 
 	form.Append(
