@@ -53,5 +53,5 @@ func InitYetCamino() error {
 
 	resolvedYetAbsPaths := camino.ResolveAbsPaths(yetRootDir, absDirNames, overrides)
 
-	return camino.Register(resolvedYetAbsPaths, relDirNames, relAbsParents)
+	return camino.Register(resolvedYetAbsPaths, relDirNames, relAbsParents, len(overrides) == 0)
 }
