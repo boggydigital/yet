@@ -24,7 +24,7 @@ func PostPaste(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	videoId := r.FormValue("video-id")
+	videoId := r.FormValue(paramVideoId)
 
 	// resolve full YouTube URL to just video-id, as needed
 	if strings.Contains(videoId, "?") {
@@ -44,8 +44,8 @@ func PostPaste(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	downloadVideo := r.FormValue("download-video") == "on"
-	queueDownload := r.FormValue("queue-download") == "on"
+	queueDownload := r.FormValue(paramQueueDownload) == "on"
+	downloadVideo := r.FormValue(paramDownloadVideo) == "on"
 
 	if downloadVideo {
 		w.Header().Set("Location", path.Join("/download_video", videoId))

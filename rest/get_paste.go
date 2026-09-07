@@ -8,6 +8,12 @@ import (
 	"github.com/boggydigital/strom/vars/sizes"
 )
 
+const (
+	paramVideoId       = "video-id"
+	paramQueueDownload = "queue-download"
+	paramDownloadVideo = "download-video"
+)
+
 func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody("Paste", atoms.FlexCol(sizes.Normal)...)
@@ -27,7 +33,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	form.Append(
 		strom.Create("input").
-			SetAttribute("id", "name", "video-id").
+			SetAttribute("id", "name", paramVideoId).
 			SetAttribute("type", "text").
 			SetAttribute("placeholder", "YouTube link or video-id").
 			SetAttribute("autofocus").
@@ -42,25 +48,25 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	queueDownload.Append(
 		strom.Create("input").
-			SetAttribute("id", "name", "queue-download").
+			SetAttribute("id", "name", paramQueueDownload).
 			SetAttribute("type", "checkbox").
 			SetAttribute("switch").
 			SetAttribute("checked"))
 
 	queueDownload.Append(
 		strom.CreateText("label", "Queue download").
-			SetAttribute("for", "queue-download"))
+			SetAttribute("for", paramQueueDownload))
 
 	downloadNow := strom.Create("li", atoms.FlexRow(sizes.Normal)...)
 	downloadParameters.Append(downloadNow)
 
 	downloadNow.Append(strom.Create("input").
-		SetAttribute("id", "name", "download-video").
+		SetAttribute("id", "name", paramDownloadVideo).
 		SetAttribute("type", "checkbox").
 		SetAttribute("switch"))
 
 	downloadNow.Append(strom.CreateText("label", "Download now").
-		SetAttribute("for", "download-now"))
+		SetAttribute("for", paramDownloadVideo))
 
 	body.Append(submitButton("Paste", form.GetAttribute("id")))
 
