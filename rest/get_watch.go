@@ -131,11 +131,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				SetAttribute("preload", "none")
 
 		} else {
-			topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Red))
+			topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Green))
 			addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 		}
 	} else {
-		topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Red))
+		topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Green))
 		addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 	}
 
@@ -147,7 +147,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		if et, err = time.Parse(time.RFC3339, veds); err == nil {
 			endedDateTime = et.Local().Format(time.DateTime)
 		}
-		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime).SetStyle("color:" + colors.Gray))
+		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime).SetStyle("color:" + colors.Yellow))
 	}
 
 	mediaElement.SetStyle(

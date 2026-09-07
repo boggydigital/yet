@@ -9,7 +9,7 @@ import (
 
 func PostProgress(w http.ResponseWriter, r *http.Request) {
 
-	// POST /progress/{videoId}/{time}
+	// POST /progress/{videoId}/{currentTime}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
