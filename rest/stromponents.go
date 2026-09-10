@@ -319,7 +319,7 @@ func buttonStyles(cls ...colors.Color) []string {
 	if len(cls) > 0 {
 		for _, c := range cls {
 			bs = append(bs, "color:"+c)
-			bs = append(bs, "background-color:color-mix(in display-p3,"+c+" 15%,"+colors.Highlight+")")
+			bs = append(bs, "background-color:color-mix(in display-p3,"+c+" 10%,"+colors.Highlight+")")
 		}
 	} else {
 		bs = append(bs, "color:"+colors.Foreground, "background-color:"+colors.Highlight)
