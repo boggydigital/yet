@@ -55,7 +55,7 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 	body.Append(playlistTile(playlistId, rdx))
 
 	playlistMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
-		Append(navButton("Refresh", path.Join("/refresh_playlist", playlistId))).
+		Append(navButton("Refresh", path.Join("/refresh_playlist", playlistId), colors.Green)).
 		Append(navButton("Manage", path.Join("/manage_playlist", playlistId), colors.Red))
 
 	body.Append(playlistMgmtRow)

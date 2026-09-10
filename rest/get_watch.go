@@ -170,7 +170,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	body.Append(videoNavButtonsRow)
 
 	body.Append(strom.CreateText("h3", "Description"))
-	body.Append(navButton("Refresh", path.Join("/refresh_video", videoId)))
+	body.Append(navButton("Refresh", path.Join("/refresh_video", videoId), colors.Green))
 
 	if vd, ok := rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId); ok && vd != "" {
 		body.Append(
