@@ -56,11 +56,20 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 	body.Append(channelTile(channelId, rdx))
 
 	if cd, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && cd != "" {
-		body.Append(strom.CreateText("span", cd).
+
+		channelDescDetails := strom.Create("details").SetStyle(
+			"color:"+colors.Gray,
+			"cursor:pointer")
+		channelDescDetails.Append(strom.CreateText("summary", "Channel description"))
+		channelDescDetails.Append(strom.CreateText("span", cd).
 			SetStyle(
-				"color:"+colors.Gray,
+				"display:inline-block",
+
+				"padding-block-start:"+sizes.Normal,
 				"max-width:"+calc.Mult(sizes.XXXLarge, 4),
 				"word-break:break-word"))
+
+		body.Append(channelDescDetails)
 	}
 
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
