@@ -107,8 +107,9 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		AddAtom(atoms.AlignItemsCenter)
 	videoNavButtonsRow.Append(
+		navButton("Refresh", path.Join("/refresh_video", videoId), colors.Green),
 		navButton("Manage", path.Join("/manage_video", videoId), colors.Red),
-		navButton("Seen enough", path.Join("/end", videoId, "seen-enough")),
+		navButton("Enough", path.Join("/end", videoId, "seen-enough")),
 		navButton("Skip", path.Join("/end", videoId, "skipped")),
 	)
 
@@ -170,7 +171,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	body.Append(videoNavButtonsRow)
 
 	body.Append(strom.CreateText("h3", "Description"))
-	body.Append(navButton("Refresh", path.Join("/refresh_video", videoId), colors.Green))
 
 	if vd, ok := rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId); ok && vd != "" {
 		body.Append(
