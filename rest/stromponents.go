@@ -223,7 +223,10 @@ func channelTile(channelId string, rdx redux.Readable) strom.Element {
 	ct := linkTile(path.Join("/channel", channelId), newVideos, channelTitle)
 
 	if channelTitle == unknownChannel {
-		ct.SetStyle("outline:" + sizes.XXXSmall + " dashed " + colors.Gray)
+		for link := range ct.GetElementsByTagName("a") {
+			link.SetStyle("outline:" + sizes.XXXSmall + " dashed " + colors.Gray)
+			break
+		}
 	}
 
 	return ct
