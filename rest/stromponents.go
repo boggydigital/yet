@@ -28,11 +28,11 @@ var reasonTitles = map[data.VideoEndedReason]string{
 
 func videoTile(videoId string, rdx redux.Readable) strom.Element {
 
-	tileContainer := strom.Create("a", atoms.FlexColWrap(sizes.Normal)...).
+	tileContainer := strom.Create("a", append(atoms.FlexColWrap(sizes.Normal), atoms.ResponsiveWidth)...).
 		SetAttribute("href", path.Join("/watch", videoId)).
 		SetStyle(
 			"position:relative",
-			"width:"+calc.Mult(sizes.XXXLarge, 1.5))
+			"--rw-n:"+calc.Mult(sizes.XXXLarge, 1.5))
 
 	var ended bool
 	if rdx.HasKey(data.VideoEndedDateProperty, videoId) {
@@ -248,19 +248,18 @@ func playlistTile(playlistId string, rdx redux.Readable) strom.Element {
 
 func linkTile(href string, count int, titles ...string) strom.Element {
 
-	tileContainer := strom.Create("a", atoms.FlexRow(sizes.Small)...).
+	tileLink := strom.Create("a", atoms.FlexRow(sizes.Small)...).
 		SetAttribute("href", href).
 		AddAtom(atoms.AlignItemsCenter, atoms.BorderRadiusSmall, atoms.PaddingSmall).
 		SetStyle(
-			"flow-shrink:0",
-			"width:fit-content",
 			"padding-inline:"+sizes.Normal,
+			"width:100%",
 			"background:"+colors.Highlight)
 
 	if count > 0 {
-		tileContainer.SetStyle("padding-inline-start:" + sizes.Small)
+		tileLink.SetStyle("padding-inline-start:" + sizes.Small)
 
-		tileContainer.Append(strom.CreateText("span", strconv.Itoa(count)).
+		tileLink.Append(strom.CreateText("span", strconv.Itoa(count)).
 			AddAtom(atoms.DisplayFlex, atoms.AlignItemsCenter, atoms.JustifyContentCenter).
 			SetStyle(
 				"border-radius:"+sizes.Large,
@@ -272,7 +271,7 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 	}
 
 	titlesStack := strom.Create("ul", atoms.FlexCol(sizes.XSmall)...)
-	tileContainer.Append(titlesStack)
+	tileLink.Append(titlesStack)
 
 	if len(titles) > 0 {
 		titlesStack.Append(strom.CreateText("span", titles[0], atoms.FontWeightBold))
@@ -284,6 +283,9 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 				"font-size:"+font_sizes.XSmall,
 				"color:"+colors.Gray))
 	}
+
+	tileContainer := strom.Create("div", append(atoms.FlexRowWrap(sizes.Small), atoms.ResponsiveWidth)...)
+	tileContainer.Append(tileLink)
 
 	return tileContainer
 }

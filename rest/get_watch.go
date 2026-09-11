@@ -225,7 +225,7 @@ func (pct *playlistChannelTile) getPlaylistChannelTile() iter.Seq[strom.Element]
 		}
 
 		if channelId, ok := rdx.GetLastVal(data.VideoExternalChannelIdProperty, pct.videoId); ok && channelId != "" {
-			if !yield(channelTile(channelId, rdx)) {
+			if !yield(channelTile(channelId, pct.rdx)) {
 				return
 			}
 		}
