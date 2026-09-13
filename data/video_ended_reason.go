@@ -11,6 +11,7 @@ const (
 	Completed VideoEndedReason = iota
 	Skipped
 	SeenEnough
+	Auto
 
 	DefaultEndedReason = Completed
 )
@@ -19,6 +20,7 @@ var videoEndedReasonNames = map[VideoEndedReason]string{
 	Completed:  "completed",
 	Skipped:    "skipped",
 	SeenEnough: "seen-enough",
+	Auto:       "auto",
 }
 
 func ParseVideoEndedReason(s string) VideoEndedReason {

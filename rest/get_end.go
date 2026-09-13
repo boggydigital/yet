@@ -10,7 +10,7 @@ import (
 
 func GetEnded(w http.ResponseWriter, r *http.Request) {
 
-	// GET /ended/{video}/{reason}
+	// GET /end/{video}/{reason}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -32,6 +32,15 @@ func GetEnded(w http.ResponseWriter, r *http.Request) {
 
 		// store ended reason if not-default
 		if reason != data.DefaultEndedReason {
+
+			if reason == data.Auto {
+				if rdx.HasKey(data.VideoProgressProperty, videoId) {
+					reason = data.SeenEnough
+				} else {
+					reason = data.Skipped
+				}
+			}
+
 			if err = rdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, reason.String()); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return

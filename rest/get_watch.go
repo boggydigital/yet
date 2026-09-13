@@ -109,8 +109,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	videoNavButtonsRow.Append(
 		navButton("Refresh", path.Join("/refresh_video", videoId), colors.Green),
 		navButton("Manage", path.Join("/manage_video", videoId), colors.Red),
-		navButton("End", path.Join("/end", videoId, "seen-enough")),
-		navButton("Skip", path.Join("/end", videoId, "skipped")),
+		navButton("End", path.Join("/end", videoId, "auto")),
 	)
 
 	if absLocalVideoFilename != "" {
