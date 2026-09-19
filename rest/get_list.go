@@ -43,7 +43,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 
 	topRow.Append(
 		navButton("Search", "/search"),
-		navButton("Paste", "/paste"))
+		navButton("Paste", "/paste", colors.Green))
 
 	for _, section := range jumpToSections {
 		topRow.Append(navButton(jumpToSectionTitles[section], "#"+section, colors.Blue))
