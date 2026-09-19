@@ -45,16 +45,8 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		navButton("Search", "/search"),
 		navButton("Paste", "/paste"))
 
-	//jumpToRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
-	//body.Append(jumpToRow)
-
-	topRow.Append(strom.CreateText("h2", "Jump to"))
-
-	jumpContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
-	topRow.Append(jumpContainer)
-
 	for _, section := range jumpToSections {
-		jumpContainer.Append(navButton(jumpToSectionTitles[section], "#"+section, colors.Blue))
+		topRow.Append(navButton(jumpToSectionTitles[section], "#"+section, colors.Blue))
 	}
 
 	cvs := new(continueVideosSection{rdx: rdx})
