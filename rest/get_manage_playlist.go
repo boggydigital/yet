@@ -6,6 +6,7 @@ import (
 
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 )
@@ -48,7 +49,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 	body.Append(originRow)
 
 	originRow.Append(
-		navButton("Origin", "https://www.youtube.com/playlist?list="+playlistId),
+		navButton("Origin", "https://www.youtube.com/playlist?list="+playlistId, colors.Blue),
 		navButton("RSS", "https://www.youtube.com/feeds/videos.xml?playlist_id="+playlistId))
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
@@ -72,7 +73,7 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 	}
 	form.Append(downloadPolicySelect(downloadPolicy))
 
-	body.Append(submitButton("Update", "manage-playlist"))
+	body.Append(submitButton("Update", "manage-playlist", colors.Green))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

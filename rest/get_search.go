@@ -5,6 +5,7 @@ import (
 
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 )
 
@@ -33,7 +34,7 @@ func GetSearch(w http.ResponseWriter, r *http.Request) {
 		SetAttribute("required").
 		SetStyle(textInputStyles()...))
 
-	body.Append(submitButton("Search", form.GetAttribute("id")))
+	body.Append(submitButton("Search", form.GetAttribute("id"), colors.Green))
 
 	if err := strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -51,7 +51,7 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 	body.Append(originRow)
 
 	originRow.Append(
-		navButton("Origin", path.Join("https://www.youtube.com/channel", channelId)),
+		navButton("Origin", path.Join("https://www.youtube.com/channel", channelId), colors.Blue),
 		navButton("RSS", "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId))
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
@@ -75,7 +75,7 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 	}
 	form.Append(downloadPolicySelect(downloadPolicy))
 
-	body.Append(submitButton("Update", "manage-channel"))
+	body.Append(submitButton("Update", "manage-channel", colors.Green))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

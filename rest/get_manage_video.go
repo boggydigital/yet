@@ -67,7 +67,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 
 	originRow.Append(
 		navButton("Refresh", path.Join("/refresh_video", videoId), colors.Green),
-		navButton(originTitle, originUrl))
+		navButton(originTitle, originUrl, colors.Blue))
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "manage-video").
@@ -138,7 +138,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 	forcedDownload := rdx.HasKey(data.VideoForcedDownloadProperty, videoId)
 	form.Append(switchTitleSubtitle(forcedDownload, "forced-download", "Forced download", "On: re-download if file exists. Off: skip re-downloading."))
 
-	body.Append(submitButton("Update", "manage-video"))
+	body.Append(submitButton("Update", "manage-video", colors.Green))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

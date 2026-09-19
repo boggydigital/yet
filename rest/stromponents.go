@@ -294,21 +294,19 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 }
 
 func navButton(title, href string, cls ...colors.Color) strom.Element {
-	nb := strom.Create("a").
+	return strom.Create("a").
 		SetTextContent(title).
 		SetAttribute("href", href).
 		SetStyle(buttonStyles(cls...)...)
-
-	return nb
 }
 
-func submitButton(value, form string) strom.Element {
+func submitButton(value, form string, cls ...colors.Color) strom.Element {
 	return strom.Create("input").
 		SetAttribute("type", "submit").
 		SetAttribute("form", form).
 		SetAttribute("value", value).
 		SetStyle("appearance:none").
-		SetStyle(buttonStyles()...)
+		SetStyle(buttonStyles(cls...)...)
 }
 
 func buttonStyles(cls ...colors.Color) []string {
