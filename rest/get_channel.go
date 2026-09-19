@@ -60,7 +60,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		channelDescDetails := strom.Create("details").SetStyle(
 			"color:"+colors.Gray,
 			"cursor:pointer")
-		channelDescDetails.Append(strom.CreateText("summary", "Channel description"))
+		channelDescDetails.Append(strom.CreateText("summary", "Channel description").SetStyle("padding-inline-start:" + sizes.XSmall))
 		channelDescDetails.Append(strom.CreateText("span", cd).
 			SetStyle(
 				"display:inline-block",
