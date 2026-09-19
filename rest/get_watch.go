@@ -170,15 +170,21 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(strom.CreateText("h3", "Description"))
 
+	var videoDescription string
+
 	if vd, ok := rdx.GetLastVal(data.VideoShortDescriptionProperty, videoId); ok && vd != "" {
-		body.Append(
-			strom.CreateText("pre", vd).
-				SetStyle(
-					"white-space:pre-wrap",
-					"word-break:break-word",
-					"color:"+colors.Gray,
-					"max-width:"+calc.Mult(sizes.XXXLarge, 4)))
+		videoDescription = vd
+	} else {
+		videoDescription = "Use Manage > Refresh to update video description..."
 	}
+
+	body.Append(
+		strom.CreateText("pre", videoDescription).
+			SetStyle(
+				"white-space:pre-wrap",
+				"word-break:break-word",
+				"color:"+colors.Gray,
+				"max-width:"+calc.Mult(sizes.XXXLarge, 4)))
 
 	// must be a new string per video otherwise global will be rewritten for all
 	videoScriptWatch := strings.Replace(scriptWatch, "{currentTime}", t, -1)
