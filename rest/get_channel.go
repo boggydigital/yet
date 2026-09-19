@@ -84,8 +84,6 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 	body.Append(strom.OnDemand(cv.getNewVideos))
 	body.Append(strom.OnDemand(cv.getEndedVideos))
 
-	body.Append(strom.Create("hr"))
-
 	body.Append(highVisibilityAnchor("Channel playlists"))
 
 	if playlistIds, ok := rdx.GetAllValues(data.ChannelPlaylistsProperty, channelId); ok && len(playlistIds) > 0 {
@@ -132,7 +130,7 @@ func (necv *newEndedChannelVideos) getVideos(ended bool) iter.Seq[strom.Element]
 			nev := new(newEndedVideos{ended: ended, videoIds: chvs, rdx: rdx})
 
 			if ended {
-				if !yield(strom.CreateText("h2", "Ended videos")) {
+				if !yield(highVisibilityAnchor("Ended videos")) {
 					return
 				}
 			}

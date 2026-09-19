@@ -45,18 +45,16 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 		navButton("Search", "/search"),
 		navButton("Paste", "/paste"))
 
-	jumpToRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
-	body.Append(jumpToRow)
+	//jumpToRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	//body.Append(jumpToRow)
 
-	body.Append(strom.Create("hr"))
-
-	jumpToRow.Append(strom.CreateText("h2", "Jump to"))
+	topRow.Append(strom.CreateText("h2", "Jump to"))
 
 	jumpContainer := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...)
-	jumpToRow.Append(jumpContainer)
+	topRow.Append(jumpContainer)
 
 	for _, section := range jumpToSections {
-		jumpContainer.Append(navButton(jumpToSectionTitles[section], "#"+section))
+		jumpContainer.Append(navButton(jumpToSectionTitles[section], "#"+section, colors.Blue))
 	}
 
 	cvs := new(continueVideosSection{rdx: rdx})
@@ -78,7 +76,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	qvs := new(queueudVideosSection{rdx: rdx})
 	body.Append(strom.OnDemand(qvs.getSectionVideos))
 
-	body.Append(strom.CreateText("h2", "History").
+	body.Append(highVisibilityAnchor("History").
 		SetAttribute("id", "history"))
 
 	body.Append(navButton("See full watch history", "/history"))
@@ -117,7 +115,7 @@ func (cvs *continueVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(continueVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Continue")) {
+			if !yield(highVisibilityAnchor("Continue")) {
 				return
 			}
 
@@ -127,10 +125,6 @@ func (cvs *continueVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			videosContainer.Append(strom.OnDemand(vl.getVideoTiles))
 
 			if !yield(videosContainer) {
-				return
-			}
-
-			if !yield(strom.Create("hr")) {
 				return
 			}
 		}
@@ -163,11 +157,6 @@ func (dvs *downloadedVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			if !yield(videosContainer) {
 				return
 			}
-
-			if !yield(strom.Create("hr")) {
-				return
-			}
-
 		}
 	}
 }
@@ -186,7 +175,7 @@ func (qvs *queueudVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 		}
 
 		if len(queuedVideoIds) > 0 {
-			if !yield(strom.CreateText("h2", "Queued downloads").
+			if !yield(highVisibilityAnchor("Queued downloads").
 				SetAttribute("id", "downloads")) {
 				return
 			}
@@ -197,10 +186,6 @@ func (qvs *queueudVideosSection) getSectionVideos() iter.Seq[strom.Element] {
 			videosContainer.Append(strom.OnDemand(vl.getVideoTiles))
 
 			if !yield(videosContainer) {
-				return
-			}
-
-			if !yield(strom.Create("hr")) {
 				return
 			}
 		}
@@ -270,7 +255,7 @@ func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 		case false:
 			channelsHeading = highVisibilityAnchor("Channels")
 		case true:
-			channelsHeading = strom.CreateText("h2", "Completed channels")
+			channelsHeading = highVisibilityAnchor("Completed channels")
 		}
 
 		if !yield(channelsHeading) {
@@ -303,10 +288,6 @@ func (cs *channelsSection) getChannels(ended bool) iter.Seq[strom.Element] {
 				SetStyle("color:" + colors.Gray)) {
 				return
 			}
-		}
-
-		if !yield(strom.Create("hr")) {
-			return
 		}
 	}
 }
@@ -352,7 +333,7 @@ func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 		case false:
 			playlistsHeading = highVisibilityAnchor("Playlists")
 		case true:
-			playlistsHeading = strom.CreateText("h2", "Completed playlists")
+			playlistsHeading = highVisibilityAnchor("Completed playlists")
 		}
 
 		if !yield(playlistsHeading) {
@@ -385,10 +366,6 @@ func (ps *playlistsSection) getPlaylists(ended bool) iter.Seq[strom.Element] {
 				SetStyle("color:" + colors.Gray)) {
 				return
 			}
-		}
-
-		if !yield(strom.Create("hr")) {
-			return
 		}
 	}
 }
@@ -542,7 +519,9 @@ func highVisibilityAnchor(title string) strom.Element {
 	id := strings.ToLower(title)
 	id = strings.Replace(id, " ", "_", -1)
 
-	return strom.CreateText("h2", title).
+	headingContainer := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.AlignItemsCenter, atoms.ColGapSmall)
+
+	heading := strom.CreateText("h2", title).
 		SetAttribute("id", id).
 		AddAtom(atoms.BorderRadiusSmall).
 		SetStyle(
@@ -551,4 +530,11 @@ func highVisibilityAnchor(title string) strom.Element {
 			"background-color:"+colors.Foreground,
 			"color:"+colors.Background,
 			"width:max-content")
+
+	horizontalRule := strom.Create("hr").
+		SetStyle("flex-grow:1")
+
+	headingContainer.Append(heading, horizontalRule)
+
+	return headingContainer
 }

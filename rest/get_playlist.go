@@ -96,7 +96,7 @@ func (nepv *newEndedPlaylistVideos) getVideos(ended bool) iter.Seq[strom.Element
 		if plvs, ok := nepv.rdx.GetAllValues(data.PlaylistVideosProperty, nepv.playlistId); ok && len(plvs) > 0 {
 			nev := new(newEndedVideos{ended: ended, videoIds: plvs, rdx: rdx})
 			if ended {
-				if !yield(strom.CreateText("h2", "Ended videos")) {
+				if !yield(highVisibilityAnchor("Ended videos")) {
 					return
 				}
 			}
