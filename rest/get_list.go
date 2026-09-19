@@ -71,7 +71,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 	body.Append(highVisibilityAnchor("History").
 		SetAttribute("id", "history"))
 
-	body.Append(navButton("See full watch history", "/history"))
+	body.Append(navButton("See full watch history", "/history", colors.Blue))
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
