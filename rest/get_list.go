@@ -12,6 +12,7 @@ import (
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
@@ -517,6 +518,7 @@ func highVisibilityAnchor(title string) strom.Element {
 		SetAttribute("id", id).
 		AddAtom(atoms.BorderRadiusSmall).
 		SetStyle(
+			"font-size:"+calc.Mult(sizes.Normal, 1.25),
 			"padding-block:"+sizes.Small,
 			"padding-inline:"+sizes.Normal,
 			"background-color:"+colors.Foreground,

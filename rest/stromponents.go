@@ -12,7 +12,6 @@ import (
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/font_sizes"
-	"github.com/boggydigital/strom/vars/font_weights"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -46,7 +45,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 			"aspect-ratio:16/9",
 			"width:100%",
 			"object-fit:cover",
-			"border-radius:"+sizes.XSmall)
+			"border-radius:"+sizes.Small)
 
 	tileContainer.Append(poster)
 
@@ -263,13 +262,11 @@ func linkTile(href string, count int, titles ...string) strom.Element {
 		tileLink.SetStyle("padding-inline-start:" + sizes.Small)
 
 		tileLink.Append(strom.CreateText("span", strconv.Itoa(count)).
-			AddAtom(atoms.DisplayFlex, atoms.AlignItemsCenter, atoms.JustifyContentCenter).
+			AddAtom(atoms.DisplayFlex, atoms.AlignItemsCenter, atoms.JustifyContentCenter, atoms.BorderRadiusLarge, atoms.FontWeightBold).
 			SetStyle(
-				"border-radius:"+sizes.Large,
 				"width:"+calc.Mult(sizes.Normal, 1.5),
 				"height:"+calc.Mult(sizes.Normal, 1.5),
 				"background-color:"+colors.Background,
-				"font-weight:"+font_weights.Bold,
 				"font-size:"+font_sizes.XSmall))
 	}
 
@@ -315,7 +312,7 @@ func buttonStyles(cls ...colors.Color) []string {
 		"width:fit-content",
 		"padding-block:" + sizes.Small,
 		"padding-inline:" + sizes.Normal,
-		"border-radius:" + sizes.Normal,
+		"border-radius:" + sizes.Small,
 		"font-size:" + font_sizes.Normal,
 	}
 
