@@ -11,6 +11,7 @@ import (
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
+	"github.com/boggydigital/strom/vars/font_sizes"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -60,7 +61,11 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		channelDescDetails := strom.Create("details").SetStyle(
 			"color:"+colors.Gray,
 			"cursor:pointer")
-		channelDescDetails.Append(strom.CreateText("summary", "Channel description").SetStyle("padding-inline-start:" + sizes.XSmall))
+		channelDescDetails.Append(strom.CreateText("summary", "Channel description").
+			SetStyle(
+				"padding-inline-start:"+sizes.XSmall,
+				"font-size:"+font_sizes.Small,
+			))
 		channelDescDetails.Append(strom.CreateText("span", cd).
 			SetStyle(
 				"display:inline-block",
