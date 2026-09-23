@@ -150,16 +150,15 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime, atoms.PaddingSmall).
 			SetStyle(
 				"width:max-content",
-				"border-radius:"+sizes.XSmall,
+				"border-radius:"+sizes.Small,
 				"font-size:"+font_sizes.XSmall,
-				"padding-block:"+sizes.XSmall,
 				"color:"+colors.Background,
 				"background-color:"+colors.Orange))
 	}
 
 	mediaElement.SetStyle(
 		"max-width:"+calc.Mult(sizes.XXXLarge, 4),
-		"border-radius:"+sizes.XSmall)
+		"border-radius:"+sizes.Small)
 
 	body.Append(mediaElement)
 
