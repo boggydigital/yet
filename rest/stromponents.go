@@ -4,6 +4,7 @@ import (
 	"math"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/boggydigital/redux"
@@ -338,4 +339,27 @@ func textInputStyles() []string {
 		"padding:" + sizes.Small,
 		"font-size:" + font_sizes.Normal,
 	}
+}
+
+func highVisibilityAnchor(title string) strom.Element {
+
+	id := strings.ToLower(title)
+	id = strings.Replace(id, " ", "_", -1)
+
+	headingContainer := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.AlignItemsCenter, atoms.ColGapSmall)
+
+	heading := strom.CreateText("h2", title, atoms.FontSizeNormal, atoms.PaddingSmall, atoms.BorderRadiusSmall, atoms.FontWeightNormal).
+		SetAttribute("id", id).
+		SetStyle(
+			"padding-inline:"+font_sizes.Normal,
+			"background-color:"+colors.Foreground,
+			"color:"+colors.Background,
+			"width:max-content")
+
+	horizontalRule := strom.Create("hr").
+		SetStyle("flex-grow:1")
+
+	headingContainer.Append(heading, horizontalRule)
+
+	return headingContainer
 }

@@ -6,7 +6,6 @@ import (
 	"math"
 	"net/http"
 	"slices"
-	"strings"
 
 	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
@@ -504,30 +503,4 @@ func getQueuedDownloads(rdx redux.Readable) ([]string, error) {
 	} else {
 		return nil, err
 	}
-}
-
-func highVisibilityAnchor(title string) strom.Element {
-
-	id := strings.ToLower(title)
-	id = strings.Replace(id, " ", "_", -1)
-
-	headingContainer := strom.Create("ul", atoms.DisplayFlex, atoms.FlexFlowRowWrap, atoms.AlignItemsCenter, atoms.ColGapSmall)
-
-	heading := strom.CreateText("h2", title).
-		SetAttribute("id", id).
-		AddAtom(atoms.BorderRadiusSmall).
-		SetStyle(
-			"font-size:"+sizes.Normal,
-			"padding-block:"+sizes.Small,
-			"padding-inline:"+sizes.Normal,
-			"background-color:"+colors.Foreground,
-			"color:"+colors.Background,
-			"width:max-content")
-
-	horizontalRule := strom.Create("hr").
-		SetStyle("flex-grow:1")
-
-	headingContainer.Append(heading, horizontalRule)
-
-	return headingContainer
 }
