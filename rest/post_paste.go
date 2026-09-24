@@ -3,7 +3,6 @@ package rest
 import (
 	"net/http"
 	"path"
-	"strings"
 
 	"github.com/boggydigital/yet/yeti"
 )
@@ -27,21 +26,19 @@ func PostPaste(w http.ResponseWriter, r *http.Request) {
 	videoId := r.FormValue(paramVideoId)
 
 	// resolve full YouTube URL to just video-id, as needed
-	if strings.Contains(videoId, "?") {
-		var videoIds []string
-		if videoIds, err = yeti.ParseVideoIds(videoId); err != nil {
+	var videoIds []string
+	if videoIds, err = yeti.ParseVideoIds(videoId); err != nil {
 
-			// one more attempt - redirect to playlist page if we've got a valid playlist
-			var playlistIds []string
-			if playlistIds, err = yeti.ParsePlaylistIds(videoId); err == nil && len(playlistIds) > 0 {
-				http.Redirect(w, r, path.Join("/playlist", playlistIds[0]), http.StatusPermanentRedirect)
-				return
-			}
-
+		// one more attempt - redirect to playlist page if we've got a valid playlist
+		var playlistIds []string
+		if playlistIds, err = yeti.ParsePlaylistIds(videoId); err == nil && len(playlistIds) > 0 {
+			http.Redirect(w, r, path.Join("/playlist", playlistIds[0]), http.StatusPermanentRedirect)
 			return
-		} else if len(videoIds) > 0 {
-			videoId = videoIds[0]
 		}
+
+		return
+	} else if len(videoIds) > 0 {
+		videoId = videoIds[0]
 	}
 
 	queueDownload := r.FormValue(paramQueueDownload) == "on"
