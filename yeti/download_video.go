@@ -16,7 +16,6 @@ import (
 const ytDlpCookiesFilename = "cookies.txt"
 
 const bgutilBaseUrlParam = "youtubepot-bgutilhttp:base_url"
-const partExt = ".part"
 
 var defaultYtDlpOptions = map[string]string{
 	//"-S": "vcodec:h264,res:1080,acodec:m4a",
@@ -94,7 +93,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 		arguments = append(arguments, videoId)
 	}
 
-	arguments = append(arguments, "-o", absFilename+partExt)
+	arguments = append(arguments, "-o", absFilename)
 
 	if options.Ended {
 		arguments = append(arguments, "--mark-watched")
@@ -129,5 +128,5 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 		return err
 	}
 
-	return os.Rename(absFilename+partExt, absFilename)
+	return nil
 }
