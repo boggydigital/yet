@@ -1,6 +1,7 @@
 package yeti
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"path"
@@ -8,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/boggydigital/camino"
-	"github.com/boggydigital/nod"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
@@ -16,9 +16,11 @@ import (
 const ytDlpCookiesFilename = "cookies.txt"
 
 const bgutilBaseUrlParam = "youtubepot-bgutilhttp:base_url"
+const partExt = ".part"
 
 var defaultYtDlpOptions = map[string]string{
-	"-S": "vcodec:h264,res:1080,acodec:m4a",
+	//"-S": "vcodec:h264,res:1080,acodec:m4a",
+	"-t": "mp4",
 }
 
 func DownloadVideo(
@@ -30,6 +32,8 @@ func DownloadVideo(
 	if videoPage != nil {
 		title = videoPage.VideoDetails.Title
 		channel = videoPage.VideoDetails.Author
+	} else {
+		return errors.New("video page is nil")
 	}
 
 	relFilename := RelLocalVideoFilename(channel, title, videoId)
@@ -69,9 +73,6 @@ func DownloadVideo(
 
 func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error {
 
-	dyda := nod.Begin(" downloading %s with yt-dlp, please wait...", videoId)
-	defer dyda.Done()
-
 	absDir, _ := path.Split(absFilename)
 	if _, err := os.Stat(absDir); os.IsNotExist(err) {
 		if err = os.MkdirAll(absDir, 0755); err != nil {
@@ -93,7 +94,7 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 		arguments = append(arguments, videoId)
 	}
 
-	arguments = append(arguments, "-o", absFilename)
+	arguments = append(arguments, "-o", absFilename+partExt)
 
 	if options.Ended {
 		arguments = append(arguments, "--mark-watched")
@@ -124,5 +125,9 @@ func downloadWithYtDlp(videoId, absFilename string, options *VideoOptions) error
 		cmd.Stderr = os.Stderr
 	}
 
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	return os.Rename(absFilename+partExt, absFilename)
 }
