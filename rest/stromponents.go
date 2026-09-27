@@ -44,6 +44,7 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 		SetAttribute("loading", "lazy").
 		SetStyle(
 			"aspect-ratio:16/9",
+			"content-visibility:auto",
 			"width:100%",
 			"object-fit:cover",
 			"border-radius:"+sizes.Small)
