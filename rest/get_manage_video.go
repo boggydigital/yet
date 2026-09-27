@@ -78,7 +78,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "manage-video").
-		SetAttribute("method", "get").
+		SetAttribute("method", "post").
 		SetAttribute("action", path.Join("/update_video", videoId))
 	body.Append(form)
 

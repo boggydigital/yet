@@ -18,7 +18,6 @@ func HandleFuncs() {
 
 		"GET /watch/{videoId}":        Log(http.HandlerFunc(GetWatch)),
 		"GET /manage_video/{videoId}": Log(http.HandlerFunc(GetManageVideo)),
-		"GET /update_video/{videoId}": Log(http.HandlerFunc(GetUpdateVideo)),
 		"GET /video_error/{videoId}":  Log(http.HandlerFunc(GetVideoError)),
 
 		"GET /list": Log(http.HandlerFunc(GetList)),
@@ -43,6 +42,7 @@ func HandleFuncs() {
 		"POST /end/{videoId}/{reason}":           Log(http.HandlerFunc(PostEnd)),
 		"POST /queue_download/{videoId}":         Log(http.HandlerFunc(PostQueueDownload)),
 		"POST /download_video/{videoId}":         Log(http.HandlerFunc(PostDownloadVideo)),
+		"POST /update_video/{videoId}":           Log(http.HandlerFunc(PostUpdateVideo)),
 		"POST /refresh_video/{videoId}":          Log(http.HandlerFunc(PostRefreshVideo)),
 		"POST /refresh_playlist/{playlistId}":    Log(http.HandlerFunc(PostRefreshPlaylist)),
 		"POST /refresh_channel/{channelId}":      Log(http.HandlerFunc(PostRefreshChannel)),

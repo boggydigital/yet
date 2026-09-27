@@ -11,9 +11,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
+func PostUpdateVideo(w http.ResponseWriter, r *http.Request) {
 
-	// GET /update_video/{videoId}
+	// POST /update_video/{videoId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -22,9 +22,12 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q := r.URL.Query()
-
 	videoId := r.PathValue("videoId")
+
+	if err = r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	if videoId == "" {
 		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
@@ -51,14 +54,14 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
-		if err = toggleProperty(videoId, property, q.Has(input), rdx); err != nil {
+		if err = toggleProperty(videoId, property, r.Form.Get(input) == "on", rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}
 
 	for property, input := range timePropertyInputs {
-		if err = toggleTimeProperty(videoId, property, q.Has(input), rdx); err != nil {
+		if err = toggleTimeProperty(videoId, property, r.Form.Get(input) == "on", rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -68,7 +71,7 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		switch property {
 		case data.VideoProgressProperty:
 			// progress is cleared (condition: false) when flag IS NOT present in input
-			if !q.Has(input) {
+			if r.Form.Get(input) != "on" {
 				if err = toggleProperty(videoId, property, false, rdx); err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
@@ -76,11 +79,11 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 			}
 		case data.VideoEndedReasonProperty:
 			// don't set ended reason unless the video has ended
-			if !q.Has("ended") {
+			if !r.Form.Has("ended") {
 				break
 			}
 			reason := data.DefaultEndedReason
-			if er := q.Get(input); er != "" {
+			if er := r.Form.Get(input); er != "" {
 				reason = data.ParseVideoEndedReason(er)
 			}
 			if err = rdx.ReplaceValues(data.VideoEndedReasonProperty, videoId, string(reason)); err != nil {
@@ -90,7 +93,9 @@ func GetUpdateVideo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, path.Join("/watch", videoId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/watch", videoId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }
 
 func toggleTimeProperty(id, property string, condition bool, rdx redux.Writeable) error {
