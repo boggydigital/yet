@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }});
 
         video.addEventListener('ended', (e) => {
-            fetch('/end/{videoId}/completed', {method: 'get'}).
+            fetch('/end/{videoId}/completed', {method: 'post'}).
             then((resp) => { if (resp && !resp.ok) {console.log(resp)}});
         });
     }

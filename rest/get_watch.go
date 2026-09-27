@@ -104,17 +104,24 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 	var mediaElement strom.Element
 	mediaElement = strom.Create("img").SetAttribute("src", videoPosterUrl)
 
+	endVideoForm := strom.Create("form").
+		SetAttribute("id", "end-video").
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/end", videoId, "auto")).
+		SetStyle("display:none")
+	body.Append(endVideoForm)
+
 	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
 		AddAtom(atoms.AlignItemsCenter)
 	videoNavButtonsRow.Append(
-		navButton("Manage", path.Join("/manage_video", videoId), colors.Red),
-		navButton("End", path.Join("/end", videoId, "auto")),
+		navButton("Manage", path.Join("/manage_video", videoId), colors.Blue),
+		submitButton("End", "end-video", colors.Red),
 	)
 
 	downloadVideoForm := strom.Create("form").
 		SetAttribute("id", "dowload-video").
 		SetAttribute("method", "post").
-		SetAttribute("action", path.Join("/download_video/", videoId)).
+		SetAttribute("action", path.Join("/download_video", videoId)).
 		SetStyle("display:none")
 	body.Append(downloadVideoForm)
 

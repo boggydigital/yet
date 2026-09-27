@@ -8,9 +8,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetEnded(w http.ResponseWriter, r *http.Request) {
+func PostEnd(w http.ResponseWriter, r *http.Request) {
 
-	// GET /end/{video}/{reason}
+	// POST /end/{video}/{reason}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -48,5 +48,7 @@ func GetEnded(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, path.Join("/watch", videoId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/watch", videoId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }

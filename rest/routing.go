@@ -31,21 +31,21 @@ func HandleFuncs() {
 		"GET /search":  Log(http.HandlerFunc(GetSearch)),
 		"GET /results": Log(http.HandlerFunc(GetResults)),
 
-		"POST /refresh_video/{videoId}":          Log(http.HandlerFunc(PostRefreshVideo)),
+		"GET /playlist/{playlistId}":        Log(http.HandlerFunc(GetPlaylist)),
+		"GET /manage_playlist/{playlistId}": Log(http.HandlerFunc(GetManagePlaylist)),
+		"GET /update_playlist/{playlistId}": Log(http.HandlerFunc(GetUpdatePlaylist)),
+
+		"GET /channel/{channelId}":        Log(http.HandlerFunc(GetChannel)),
+		"GET /manage_channel/{channelId}": Log(http.HandlerFunc(GetManageChannel)),
+		"GET /update_channel/{channelId}": Log(http.HandlerFunc(GetUpdateChannel)),
+
 		"POST /progress/{videoId}/{currentTime}": Log(http.HandlerFunc(PostProgress)),
-		"GET /end/{videoId}/{reason}":            Log(http.HandlerFunc(GetEnded)),
+		"POST /end/{videoId}/{reason}":           Log(http.HandlerFunc(PostEnd)),
 		"POST /queue_download/{videoId}":         Log(http.HandlerFunc(PostQueueDownload)),
 		"POST /download_video/{videoId}":         Log(http.HandlerFunc(PostDownloadVideo)),
-
-		"GET /playlist/{playlistId}":          Log(http.HandlerFunc(GetPlaylist)),
-		"GET /manage_playlist/{playlistId}":   Log(http.HandlerFunc(GetManagePlaylist)),
-		"GET /update_playlist/{playlistId}":   Log(http.HandlerFunc(GetUpdatePlaylist)),
-		"POST /refresh_playlist/{playlistId}": Log(http.HandlerFunc(PostRefreshPlaylist)),
-
-		"GET /channel/{channelId}":          Log(http.HandlerFunc(GetChannel)),
-		"GET /manage_channel/{channelId}":   Log(http.HandlerFunc(GetManageChannel)),
-		"GET /update_channel/{channelId}":   Log(http.HandlerFunc(GetUpdateChannel)),
-		"POST /refresh_channel/{channelId}": Log(http.HandlerFunc(PostRefreshChannel)),
+		"POST /refresh_video/{videoId}":          Log(http.HandlerFunc(PostRefreshVideo)),
+		"POST /refresh_playlist/{playlistId}":    Log(http.HandlerFunc(PostRefreshPlaylist)),
+		"POST /refresh_channel/{channelId}":      Log(http.HandlerFunc(PostRefreshChannel)),
 
 		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}
