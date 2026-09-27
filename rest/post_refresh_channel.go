@@ -8,9 +8,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
+func PostRefreshChannel(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_channel/{channelId}
+	// POST /refresh_channel/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -41,5 +41,7 @@ func GetRefreshChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, path.Join("/channel", channelId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/channel", channelId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }

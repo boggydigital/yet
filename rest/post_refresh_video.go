@@ -7,9 +7,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetRefreshVideo(w http.ResponseWriter, r *http.Request) {
+func PostRefreshVideo(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_video/{videoId}
+	// POST /refresh_video/{videoId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -40,5 +40,7 @@ func GetRefreshVideo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, path.Join("/watch", videoId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/watch", videoId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }

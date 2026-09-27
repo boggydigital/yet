@@ -33,12 +33,6 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check if the playlist has no videos and refresh automatically
-	if videos, ok := rdx.GetAllValues(data.PlaylistVideosProperty, playlistId); !ok || len(videos) == 0 {
-		http.Redirect(w, r, path.Join("/refresh_playlist", playlistId), http.StatusPermanentRedirect)
-		return
-	}
-
 	var playlistTitle string
 	if pt, ok := rdx.GetLastVal(data.PlaylistTitleProperty, playlistId); ok && pt != "" {
 		playlistTitle = pt
@@ -54,9 +48,16 @@ func GetPlaylist(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(playlistTile(playlistId, rdx))
 
+	refreshPlaylistForm := strom.Create("form").
+		SetAttribute("id", "refresh-playlist").
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/refresh_playlist/", playlistId)).
+		SetStyle("display:none")
+	body.Append(refreshPlaylistForm)
+
 	playlistMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).Append(
 		navButton("Manage", path.Join("/manage_playlist", playlistId), colors.Red),
-		navButton("Refresh", path.Join("/refresh_playlist", playlistId), colors.Green))
+		submitButton("Refresh", "refresh-playlist", colors.Green))
 
 	body.Append(playlistMgmtRow)
 

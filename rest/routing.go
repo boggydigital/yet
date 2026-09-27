@@ -16,11 +16,10 @@ func HandleFuncs() {
 		"GET /video":  Log(http.HandlerFunc(GetVideo)),
 		"GET /poster": Log(http.HandlerFunc(GetPoster)),
 
-		"GET /watch/{videoId}":         Log(http.HandlerFunc(GetWatch)),
-		"GET /refresh_video/{videoId}": Log(http.HandlerFunc(GetRefreshVideo)),
-		"GET /manage_video/{videoId}":  Log(http.HandlerFunc(GetManageVideo)),
-		"GET /update_video/{videoId}":  Log(http.HandlerFunc(GetUpdateVideo)),
-		"GET /video_error/{videoId}":   Log(http.HandlerFunc(GetVideoError)),
+		"GET /watch/{videoId}":        Log(http.HandlerFunc(GetWatch)),
+		"GET /manage_video/{videoId}": Log(http.HandlerFunc(GetManageVideo)),
+		"GET /update_video/{videoId}": Log(http.HandlerFunc(GetUpdateVideo)),
+		"GET /video_error/{videoId}":  Log(http.HandlerFunc(GetVideoError)),
 
 		"GET /list": Log(http.HandlerFunc(GetList)),
 
@@ -32,20 +31,21 @@ func HandleFuncs() {
 		"GET /search":  Log(http.HandlerFunc(GetSearch)),
 		"GET /results": Log(http.HandlerFunc(GetResults)),
 
+		"POST /refresh_video/{videoId}":          Log(http.HandlerFunc(PostRefreshVideo)),
 		"POST /progress/{videoId}/{currentTime}": Log(http.HandlerFunc(PostProgress)),
 		"GET /end/{videoId}/{reason}":            Log(http.HandlerFunc(GetEnded)),
 		"POST /queue_download/{videoId}":         Log(http.HandlerFunc(PostQueueDownload)),
 		"POST /download_video/{videoId}":         Log(http.HandlerFunc(PostDownloadVideo)),
 
-		"GET /playlist/{playlistId}":         Log(http.HandlerFunc(GetPlaylist)),
-		"GET /refresh_playlist/{playlistId}": Log(http.HandlerFunc(GetRefreshPlaylist)),
-		"GET /manage_playlist/{playlistId}":  Log(http.HandlerFunc(GetManagePlaylist)),
-		"GET /update_playlist/{playlistId}":  Log(http.HandlerFunc(GetUpdatePlaylist)),
+		"GET /playlist/{playlistId}":          Log(http.HandlerFunc(GetPlaylist)),
+		"GET /manage_playlist/{playlistId}":   Log(http.HandlerFunc(GetManagePlaylist)),
+		"GET /update_playlist/{playlistId}":   Log(http.HandlerFunc(GetUpdatePlaylist)),
+		"POST /refresh_playlist/{playlistId}": Log(http.HandlerFunc(PostRefreshPlaylist)),
 
-		"GET /channel/{channelId}":         Log(http.HandlerFunc(GetChannel)),
-		"GET /refresh_channel/{channelId}": Log(http.HandlerFunc(GetRefreshChannel)),
-		"GET /manage_channel/{channelId}":  Log(http.HandlerFunc(GetManageChannel)),
-		"GET /update_channel/{channelId}":  Log(http.HandlerFunc(GetUpdateChannel)),
+		"GET /channel/{channelId}":          Log(http.HandlerFunc(GetChannel)),
+		"GET /manage_channel/{channelId}":   Log(http.HandlerFunc(GetManageChannel)),
+		"GET /update_channel/{channelId}":   Log(http.HandlerFunc(GetUpdateChannel)),
+		"POST /refresh_channel/{channelId}": Log(http.HandlerFunc(PostRefreshChannel)),
 
 		"GET /": Log(http.RedirectHandler("/list", http.StatusPermanentRedirect)),
 	}

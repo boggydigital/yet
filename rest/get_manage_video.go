@@ -65,8 +65,15 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 		originUrl = "https://www.youtube.com/watch?v=" + videoId + "&t=" + strconv.FormatInt(vt.currentTime, 10)
 	}
 
+	refreshVideoForm := strom.Create("form").
+		SetAttribute("id", "refresh-video").
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/refresh_video/", videoId)).
+		SetStyle("display:none")
+	body.Append(refreshVideoForm)
+
 	originRow.Append(
-		navButton("Refresh", path.Join("/refresh_video", videoId), colors.Green),
+		submitButton("Refresh", "refresh-video", colors.Green),
 		navButton(originTitle, originUrl, colors.Blue))
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).

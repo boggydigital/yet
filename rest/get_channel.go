@@ -35,12 +35,6 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check if the channel has no videos and refresh automatically
-	if videos, ok := rdx.GetAllValues(data.ChannelVideosProperty, channelId); !ok || len(videos) == 0 {
-		http.Redirect(w, r, path.Join("/refresh_channel", channelId), http.StatusPermanentRedirect)
-		return
-	}
-
 	var channelTitle string
 	if ct, ok := rdx.GetLastVal(data.ChannelTitleProperty, channelId); ok && ct != "" {
 		channelTitle = ct
@@ -77,10 +71,17 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		body.Append(channelDescDetails)
 	}
 
+	refreshChannelForm := strom.Create("form").
+		SetAttribute("id", "refresh-channel").
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/refresh_channel/", channelId)).
+		SetStyle("display:none")
+	body.Append(refreshChannelForm)
+
 	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).Append(
 		navButton("Manage", path.Join("/manage_channel", channelId), colors.Red),
 		navButton("Playlists", "#channel_playlists"),
-		navButton("Refresh", path.Join("/refresh_channel", channelId), colors.Green))
+		submitButton("Refresh", "refresh-channel", colors.Green))
 
 	body.Append(channelMgmtRow)
 

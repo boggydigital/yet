@@ -8,9 +8,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
+func PostRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 
-	// GET /refresh_playlist/{playlistId}
+	// POST /refresh_playlist/{playlistId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -36,5 +36,7 @@ func GetRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, path.Join("/playlist", playlistId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/playlist", playlistId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }
