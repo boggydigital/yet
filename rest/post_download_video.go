@@ -9,7 +9,7 @@ import (
 
 func PostDownloadVideo(w http.ResponseWriter, r *http.Request) {
 
-	// Get /download_video/{videoId}
+	// POST /download_video/{videoId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -28,5 +28,4 @@ func PostDownloadVideo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Location", path.Join("/watch", videoId))
 	w.WriteHeader(http.StatusSeeOther)
 	return
-
 }

@@ -8,9 +8,9 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetQueueDownload(w http.ResponseWriter, r *http.Request) {
+func PostQueueDownload(w http.ResponseWriter, r *http.Request) {
 
-	// Get /queue_download/{videoId}
+	// POST /queue_download/{videoId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -27,5 +27,7 @@ func GetQueueDownload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, path.Join("/watch", videoId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/watch", videoId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }

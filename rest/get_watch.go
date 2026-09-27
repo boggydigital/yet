@@ -111,12 +111,19 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		navButton("End", path.Join("/end", videoId, "auto")),
 	)
 
-	downloadForm := strom.Create("form").
+	downloadVideoForm := strom.Create("form").
 		SetAttribute("id", "dowload-video").
 		SetAttribute("method", "post").
 		SetAttribute("action", path.Join("/download_video/", videoId)).
 		SetStyle("display:none")
-	body.Append(downloadForm)
+	body.Append(downloadVideoForm)
+
+	queueDownloadForm := strom.Create("form").
+		SetAttribute("id", "queue-download").
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/queue_download/", videoId)).
+		SetStyle("display:none")
+	body.Append(queueDownloadForm)
 
 	if absLocalVideoFilename != "" {
 		if _, err = os.Stat(absLocalVideoFilename); err == nil {
@@ -281,7 +288,7 @@ func addQueueDownloadAction(videoId string, container strom.Element, rdx redux.R
 				SetStyle("color:" + colors.Gray))
 		}
 	} else {
-		container.Append(navButton("Queue download", path.Join("/queue_download", videoId)))
+		container.Append(submitButton("Queue download", "queue-download"))
 	}
 
 }
