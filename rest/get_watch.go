@@ -111,6 +111,13 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		navButton("End", path.Join("/end", videoId, "auto")),
 	)
 
+	downloadForm := strom.Create("form").
+		SetAttribute("id", "dowload-video").
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/download_video/", videoId)).
+		SetStyle("display:none")
+	body.Append(downloadForm)
+
 	if absLocalVideoFilename != "" {
 		if _, err = os.Stat(absLocalVideoFilename); err == nil {
 			videosDir := camino.GetAbs(data.Videos)
@@ -131,11 +138,11 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 				SetAttribute("preload", "none")
 
 		} else {
-			topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Green))
+			topRow.Append(submitButton("Download", "dowload-video", colors.Green))
 			addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 		}
 	} else {
-		topRow.Append(navButton("Download", path.Join("/download_video", videoId), colors.Green))
+		topRow.Append(submitButton("Download", "dowload-video", colors.Green))
 		addQueueDownloadAction(videoId, videoNavButtonsRow, rdx)
 	}
 

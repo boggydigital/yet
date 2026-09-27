@@ -1,15 +1,11 @@
 package yeti
 
 import (
-	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 func GetVideoPageMetadata(videoPage *youtube_urls.InitialPlayerResponse, videoId string, rdx redux.Writeable) error {
-
-	gvpma := nod.Begin(" metadata for %s", videoId)
-	defer gvpma.Done()
 
 	var err error
 	if videoPage == nil {

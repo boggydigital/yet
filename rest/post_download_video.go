@@ -7,7 +7,7 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func GetDownloadVideo(w http.ResponseWriter, r *http.Request) {
+func PostDownloadVideo(w http.ResponseWriter, r *http.Request) {
 
 	// Get /download_video/{videoId}
 
@@ -25,5 +25,8 @@ func GetDownloadVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, path.Join("/watch", videoId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/watch", videoId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
+
 }
