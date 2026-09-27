@@ -4,16 +4,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 func GetPlaylistMetadata(playlistPage *youtube_urls.PlaylistInitialData, playlistId string, expand bool, rdx redux.Writeable) error {
-
-	gppma := nod.Begin(" metadata for %s", playlistId)
-	defer gppma.Done()
 
 	if err := rdx.MustHave(
 		data.PlaylistTitleProperty,
