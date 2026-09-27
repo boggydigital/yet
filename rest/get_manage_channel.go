@@ -56,8 +56,8 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "manage-channel").
-		SetAttribute("method", "get").
-		SetAttribute("action", path.Join("/update_channel/", channelId))
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/update_channel", channelId))
 	body.Append(form)
 
 	autoRefresh := rdx.HasKey(data.ChannelAutoRefreshProperty, channelId)

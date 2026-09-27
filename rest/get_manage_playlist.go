@@ -54,8 +54,8 @@ func GetManagePlaylist(w http.ResponseWriter, r *http.Request) {
 
 	form := strom.Create("form", atoms.FlexColWrap(sizes.Normal)...).
 		SetAttribute("id", "manage-playlist").
-		SetAttribute("method", "get").
-		SetAttribute("action", path.Join("/update_playlist/", playlistId))
+		SetAttribute("method", "post").
+		SetAttribute("action", path.Join("/update_playlist", playlistId))
 	body.Append(form)
 
 	autoRefresh := rdx.HasKey(data.PlaylistAutoRefreshProperty, playlistId)

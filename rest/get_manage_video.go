@@ -68,7 +68,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 	refreshVideoForm := strom.Create("form").
 		SetAttribute("id", "refresh-video").
 		SetAttribute("method", "post").
-		SetAttribute("action", path.Join("/refresh_video/", videoId)).
+		SetAttribute("action", path.Join("/refresh_video", videoId)).
 		SetStyle("display:none")
 	body.Append(refreshVideoForm)
 

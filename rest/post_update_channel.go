@@ -9,9 +9,9 @@ import (
 	"github.com/boggydigital/yet/data"
 )
 
-func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
+func PostUpdateChannel(w http.ResponseWriter, r *http.Request) {
 
-	// GET /update_channel/{channelId}
+	// POST /update_channel/{channelId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -20,7 +20,10 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q := r.URL.Query()
+	if err = r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	channelId := r.PathValue("channelId")
 
@@ -43,7 +46,7 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
-		if err = toggleProperty(channelId, property, q.Has(input), rdx); err != nil {
+		if err = toggleProperty(channelId, property, r.Form.Get(input) == "on", rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -53,7 +56,7 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 		switch property {
 		case data.ChannelDownloadPolicyProperty:
 			policy := data.DefaultDownloadPolicy
-			if dp := q.Get(input); dp != "" {
+			if dp := r.Form.Get(input); dp != "" {
 				policy = data.ParseDownloadPolicy(dp)
 			}
 			if err = rdx.ReplaceValues(data.ChannelDownloadPolicyProperty, channelId, string(policy)); err != nil {
@@ -63,5 +66,7 @@ func GetUpdateChannel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, path.Join("/channel", channelId), http.StatusTemporaryRedirect)
+	w.Header().Set("Location", path.Join("/channel", channelId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }

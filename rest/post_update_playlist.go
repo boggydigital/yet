@@ -10,9 +10,9 @@ import (
 	"github.com/boggydigital/yet/data"
 )
 
-func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
+func PostUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 
-	// GET /update_playlist/{playlistId}
+	// POST /update_playlist/{playlistId}
 
 	var err error
 	rdx, err = rdx.RefreshWriter()
@@ -21,7 +21,10 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q := r.URL.Query()
+	if err = r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	playlistId := r.PathValue("playlistId")
 
@@ -44,7 +47,7 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 	properties = append(properties, slices.Collect(maps.Keys(specialProperties))...)
 
 	for property, input := range boolPropertyInputs {
-		if err = toggleProperty(playlistId, property, q.Has(input), rdx); err != nil {
+		if err = toggleProperty(playlistId, property, r.Form.Get(input) == "on", rdx); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -54,18 +57,19 @@ func GetUpdatePlaylist(w http.ResponseWriter, r *http.Request) {
 		switch property {
 		case data.PlaylistDownloadPolicyProperty:
 			policy := data.DefaultDownloadPolicy
-			if dp := q.Get(input); dp != "" {
+			if dp := r.Form.Get(input); dp != "" {
 				policy = data.ParseDownloadPolicy(dp)
 			}
-			if err := rdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
+			if err = rdx.ReplaceValues(data.PlaylistDownloadPolicyProperty, playlistId, string(policy)); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 		}
 	}
 
-	http.Redirect(w, r, path.Join("/playlist", playlistId), http.StatusTemporaryRedirect)
-
+	w.Header().Set("Location", path.Join("/playlist", playlistId))
+	w.WriteHeader(http.StatusSeeOther)
+	return
 }
 
 func toggleProperty(id, property string, condition bool, rdx redux.Writeable) error {
