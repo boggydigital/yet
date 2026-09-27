@@ -45,14 +45,12 @@ func PostPaste(w http.ResponseWriter, r *http.Request) {
 	downloadVideo := r.FormValue(paramDownloadVideo) == "on"
 
 	if downloadVideo {
-		w.Header().Set("Location", path.Join("/download_video", videoId))
-		w.WriteHeader(http.StatusSeeOther)
+		http.Redirect(w, r, path.Join("/download_video", videoId), http.StatusTemporaryRedirect)
 		return
 	}
 
 	if queueDownload {
-		w.Header().Set("Location", path.Join("/queue_download", videoId))
-		w.WriteHeader(http.StatusSeeOther)
+		http.Redirect(w, r, path.Join("/queue_download", videoId), http.StatusTemporaryRedirect)
 		return
 	}
 
