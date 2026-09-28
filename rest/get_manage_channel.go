@@ -6,6 +6,7 @@ import (
 
 	"github.com/boggydigital/strom"
 	"github.com/boggydigital/strom/vars/atoms"
+	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
 	"github.com/boggydigital/strom/vars/font_sizes"
 	"github.com/boggydigital/strom/vars/sizes"
@@ -76,6 +77,18 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 	form.Append(downloadPolicySelect(downloadPolicy))
 
 	body.Append(submitButton("Update", "manage-channel", colors.Green))
+
+	if channelDescription, ok := rdx.GetLastVal(data.ChannelDescriptionProperty, channelId); ok && channelDescription != "" {
+		body.Append(strom.CreateText("h3", "Description"))
+
+		body.Append(
+			strom.CreateText("pre", channelDescription).
+				SetStyle(
+					"white-space:pre-wrap",
+					"word-break:break-word",
+					"color:"+colors.Gray,
+					"max-width:"+calc.Mult(sizes.XXXLarge, 4)))
+	}
 
 	if err = strom.WriteResponse(w, root); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
