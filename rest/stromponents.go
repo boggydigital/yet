@@ -47,7 +47,6 @@ func videoTile(videoId string, rdx redux.Readable) strom.Element {
 			"content-visibility:auto",
 			"width:100%",
 			"object-fit:cover",
-			"view-transition-name:video-poster-"+videoId,
 			"border-radius:"+sizes.Small)
 
 	tileContainer.Append(poster)

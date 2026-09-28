@@ -179,7 +179,6 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	mediaElement.SetStyle(
 		"max-width:"+calc.Mult(sizes.XXXLarge, 4),
-		"view-transition-name:video-poster-"+videoId,
 		"border-radius:"+sizes.Small)
 
 	body.Append(mediaElement)
