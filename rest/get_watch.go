@@ -74,7 +74,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 
 	root, body := strom.RootBody(videoTitle, atoms.FlexCol(sizes.Normal)...)
 
-	topRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).AddAtom(atoms.AlignItemsCenter)
+	topRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...).AddAtom(atoms.AlignItemsCenter)
 	body.Append(topRow)
 
 	topRow.Append(
