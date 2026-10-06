@@ -111,7 +111,7 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		SetStyle("display:none")
 	body.Append(endVideoForm)
 
-	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
+	videoNavButtonsRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...).
 		AddAtom(atoms.AlignItemsCenter)
 	videoNavButtonsRow.Append(
 		navButton("Manage", path.Join("/manage_video", videoId), colors.Blue),
