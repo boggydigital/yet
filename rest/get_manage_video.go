@@ -98,7 +98,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 			endedDateTime = et.Local().Format(time.DateTime)
 		}
 		form.Append(strom.CreateText("span", "Last ended: "+endedDateTime).
-			SetStyle("color:"+colors.Gray, "font-size:"+font_sizes.Small))
+			SetStyle("color:"+colors.Orange, "font-size:"+font_sizes.Small))
 	}
 
 	var videoEndedReason data.VideoEndedReason
@@ -128,7 +128,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 		}
 
 		form.Append(strom.CreateText("span", "Last download queued: "+dqDateTime).
-			SetStyle("color:"+colors.Gray, "font-size:"+font_sizes.Small))
+			SetStyle("color:"+colors.Orange, "font-size:"+font_sizes.Small))
 
 	}
 
@@ -139,7 +139,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 			downloadCompletedTime = dct.Local().Format(time.DateTime)
 		}
 		form.Append(strom.CreateText("span", "Last download completed: "+downloadCompletedTime).
-			SetStyle("color:"+colors.Gray, "font-size:"+font_sizes.Small))
+			SetStyle("color:"+colors.Orange, "font-size:"+font_sizes.Small))
 	}
 
 	forcedDownload := rdx.HasKey(data.VideoForcedDownloadProperty, videoId)

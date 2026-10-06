@@ -18,7 +18,6 @@ import (
 	"github.com/boggydigital/strom/vars/atoms"
 	"github.com/boggydigital/strom/vars/calc"
 	"github.com/boggydigital/strom/vars/colors"
-	"github.com/boggydigital/strom/vars/font_sizes"
 	"github.com/boggydigital/strom/vars/sizes"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
@@ -168,13 +167,10 @@ func GetWatch(w http.ResponseWriter, r *http.Request) {
 		if et, err = time.Parse(time.RFC3339, veds); err == nil {
 			endedDateTime = et.Local().Format(time.DateTime)
 		}
-		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime, atoms.PaddingSmall).
+		body.Append(strom.CreateText("span", "Last ended: "+endedDateTime).
 			SetStyle(
 				"width:max-content",
-				"border-radius:"+sizes.Small,
-				"font-size:"+font_sizes.XSmall,
-				"color:"+colors.Background,
-				"background-color:"+colors.Orange))
+				"color:"+colors.Orange))
 	}
 
 	mediaElement.SetStyle(
@@ -292,7 +288,7 @@ func addQueueDownloadAction(videoId string, container strom.Element, rdx redux.R
 			}
 
 			container.Append(strom.CreateText("span", "Download queued: "+dqDateTime).
-				SetStyle("color:" + colors.Gray))
+				SetStyle("color:" + colors.Orange))
 		}
 	} else {
 		container.Append(submitButton("Queue download", "queue-download"))
