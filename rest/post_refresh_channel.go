@@ -36,6 +36,13 @@ func PostRefreshChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if rdx.HasKey(data.ChannelAutoDownloadProperty, channelId) {
+		if err = yeti.QueueChannelDownloads(rdx, channelId); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	if err = yeti.GetChannelPlaylistsMetadata(nil, channelId, rdx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

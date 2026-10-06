@@ -9,7 +9,7 @@ import (
 	"github.com/boggydigital/yet/yeti"
 )
 
-func QueueChannelsDownloadsHandler(u *url.URL) error {
+func QueueChannelsDownloadsHandler(_ *url.URL) error {
 	return QueueChannelsDownloads(nil)
 }
 
@@ -28,7 +28,7 @@ func QueueChannelsDownloads(rdx redux.Writeable) error {
 
 	for channelId := range rdx.Keys(data.ChannelAutoDownloadProperty) {
 
-		if err = queueChannelDownloads(rdx, channelId); err != nil {
+		if err = yeti.QueueChannelDownloads(rdx, channelId); err != nil {
 			return err
 		}
 
@@ -36,20 +36,4 @@ func QueueChannelsDownloads(rdx redux.Writeable) error {
 	}
 
 	return nil
-}
-
-// queueChannelDownloads goes through channel videos according to the download policy,
-// skips ended and previously queued videos and queues the rest
-func queueChannelDownloads(rdx redux.Writeable, channelId string) error {
-
-	queue := make(map[string][]string)
-
-	for _, videoId := range yeti.ChannelNotEndedVideos(channelId, data.RecentDownloadsLimit, rdx) {
-		if rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
-			continue
-		}
-		queue[videoId] = []string{yeti.FmtNow()}
-	}
-
-	return rdx.BatchAddValues(data.VideoDownloadQueuedProperty, queue)
 }

@@ -28,7 +28,7 @@ func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 
 	for playlistId := range rdx.Keys(data.PlaylistAutoDownloadProperty) {
 
-		if err := queuePlaylistDownloads(rdx, playlistId); err != nil {
+		if err = yeti.QueuePlaylistDownloads(rdx, playlistId); err != nil {
 			return err
 		}
 
@@ -36,20 +36,4 @@ func QueuePlaylistsDownloads(rdx redux.Writeable) error {
 	}
 
 	return nil
-}
-
-// queuePlaylistDownloads goes through playlist videos according to the download policy,
-// skips ended and previously queued videos and queues the rest
-func queuePlaylistDownloads(rdx redux.Writeable, playlistId string) error {
-
-	queue := make(map[string][]string)
-
-	for _, videoId := range yeti.PlaylistNotEndedVideos(playlistId, data.RecentDownloadsLimit, rdx) {
-		if rdx.HasKey(data.VideoDownloadQueuedProperty, videoId) {
-			continue
-		}
-		queue[videoId] = []string{yeti.FmtNow()}
-	}
-
-	return rdx.BatchAddValues(data.VideoDownloadQueuedProperty, queue)
 }

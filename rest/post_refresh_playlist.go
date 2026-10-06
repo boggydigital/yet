@@ -36,6 +36,13 @@ func PostRefreshPlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if rdx.HasKey(data.PlaylistAutoDownloadProperty, playlistId) {
+		if err = yeti.QueuePlaylistDownloads(rdx, playlistId); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	w.Header().Set("Location", path.Join("/playlist", playlistId))
 	w.WriteHeader(http.StatusSeeOther)
 	return

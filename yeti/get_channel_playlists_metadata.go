@@ -3,16 +3,12 @@ package yeti
 import (
 	"net/http"
 
-	"github.com/boggydigital/nod"
 	"github.com/boggydigital/redux"
 	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet_urls/youtube_urls"
 )
 
 func GetChannelPlaylistsMetadata(channelPlaylistsPage *youtube_urls.ChannelPlaylistsInitialData, channelId string, rdx redux.Writeable) error {
-
-	gcpma := nod.Begin(" channel playlists metadata for %s", channelId)
-	defer gcpma.Done()
 
 	if err := rdx.MustHave(
 		data.ChannelTitleProperty,
