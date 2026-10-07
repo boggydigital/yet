@@ -47,7 +47,7 @@ func GetManageChannel(w http.ResponseWriter, r *http.Request) {
 
 	body.Append(channelTile(channelId, rdx))
 
-	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
+	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...).
 		AddAtom(atoms.AlignItemsCenter)
 	body.Append(originRow)
 

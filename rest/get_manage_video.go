@@ -50,7 +50,7 @@ func GetManageVideo(w http.ResponseWriter, r *http.Request) {
 		strom.CreateText("span", "VideoId: ").SetStyle("color:"+colors.Gray),
 		strom.CreateText("span", videoId)))
 
-	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).
+	originRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...).
 		AddAtom(atoms.AlignItemsCenter)
 	body.Append(originRow)
 

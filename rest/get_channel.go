@@ -55,7 +55,7 @@ func GetChannel(w http.ResponseWriter, r *http.Request) {
 		SetStyle("display:none")
 	body.Append(refreshChannelForm)
 
-	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Small)...).Append(
+	channelMgmtRow := strom.Create("ul", atoms.FlexRowWrap(sizes.Normal)...).Append(
 		navButton("Manage", path.Join("/manage_channel", channelId), colors.Blue),
 		navButton("Playlists", "#channel_playlists"),
 		submitButton("Refresh", "refresh-channel", colors.Green))
