@@ -13,6 +13,7 @@ const (
 	paramVideoId       = "video-id"
 	paramQueueDownload = "queue-download"
 	paramDownloadVideo = "download-video"
+	paramWithProgress  = "with-progress"
 )
 
 func GetPaste(w http.ResponseWriter, r *http.Request) {
@@ -41,11 +42,11 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 			SetAttribute("required").
 			SetStyle(textInputStyles()...))
 
-	downloadParameters := strom.Create("ul", atoms.FlexColWrap(sizes.Normal)...)
-	form.Append(downloadParameters)
+	pasteParameters := strom.Create("ul", atoms.FlexColWrap(sizes.Normal)...)
+	form.Append(pasteParameters)
 
 	queueDownload := strom.Create("li", atoms.FlexRowWrap(sizes.Normal)...)
-	downloadParameters.Append(queueDownload)
+	pasteParameters.Append(queueDownload)
 
 	queueDownload.Append(
 		strom.Create("input").
@@ -59,7 +60,7 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 			SetAttribute("for", paramQueueDownload))
 
 	downloadNow := strom.Create("li", atoms.FlexRow(sizes.Normal)...)
-	downloadParameters.Append(downloadNow)
+	pasteParameters.Append(downloadNow)
 
 	downloadNow.Append(strom.Create("input").
 		SetAttribute("id", "name", paramDownloadVideo).
@@ -68,6 +69,18 @@ func GetPaste(w http.ResponseWriter, r *http.Request) {
 
 	downloadNow.Append(strom.CreateText("label", "Download now").
 		SetAttribute("for", paramDownloadVideo))
+
+	saveProgress := strom.Create("li", atoms.FlexRow(sizes.Normal)...)
+	pasteParameters.Append(saveProgress)
+
+	saveProgress.Append(strom.Create("input").
+		SetAttribute("id", "name", paramWithProgress).
+		SetAttribute("type", "checkbox").
+		SetAttribute("switch").
+		SetAttribute("checked"))
+
+	saveProgress.Append(strom.CreateText("label", "With progress (when provided)").
+		SetAttribute("for", paramWithProgress))
 
 	body.Append(submitButton("Paste", form.GetAttribute("id"), colors.Green))
 

@@ -2,8 +2,10 @@ package rest
 
 import (
 	"net/http"
+	"net/url"
 	"path"
 
+	"github.com/boggydigital/yet/data"
 	"github.com/boggydigital/yet/yeti"
 )
 
@@ -25,6 +27,13 @@ func PostPaste(w http.ResponseWriter, r *http.Request) {
 
 	videoId := r.FormValue(paramVideoId)
 
+	var t string
+
+	var videoUrl *url.URL
+	if videoUrl, err = url.Parse(videoId); err == nil {
+		t = videoUrl.Query().Get("t")
+	}
+
 	// resolve full YouTube URL to just video-id, as needed
 	var videoIds []string
 	if videoIds, err = yeti.ParseVideoIds(videoId); err != nil {
@@ -43,6 +52,14 @@ func PostPaste(w http.ResponseWriter, r *http.Request) {
 
 	queueDownload := r.FormValue(paramQueueDownload) == "on"
 	downloadVideo := r.FormValue(paramDownloadVideo) == "on"
+	withProgress := r.FormValue(paramWithProgress) == "on"
+
+	if withProgress && t != "" {
+		if err = rdx.ReplaceValues(data.VideoProgressProperty, videoId, t); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
 
 	if downloadVideo {
 		http.Redirect(w, r, path.Join("/download_video", videoId), http.StatusTemporaryRedirect)
