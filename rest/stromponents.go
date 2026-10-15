@@ -311,6 +311,7 @@ func submitButton(value, form string, cls ...colors.Color) strom.Element {
 func buttonStyles(cls ...colors.Color) []string {
 	bs := []string{
 		"border:none",
+		"cursor:pointer",
 		"width:fit-content",
 		"padding-block:" + sizes.Small,
 		"padding-inline:" + sizes.Normal,
