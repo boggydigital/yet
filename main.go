@@ -49,7 +49,6 @@ func main() {
 		"get-channels-metadata":       cli.GetChannelsMetadataHandler,
 		"get-playlists-metadata":      cli.GetPlaylistsMetadataHandler,
 		"get-poster":                  cli.GetPosterHandler,
-		"get-rutube-video":            cli.GetRuTubeVideoHandler,
 		"get-video-metadata":          cli.GetVideoMetadataHandler,
 		"process-queue":               cli.ProcessQueueHandler,
 		"queue-channels-downloads":    cli.QueueChannelsDownloadsHandler,

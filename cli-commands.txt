@@ -57,10 +57,6 @@ get-poster
     video-id&^
     force
 
-get-rutube-video
-    url&^
-    force
-
 get-video-metadata
     video-id&^
     force
