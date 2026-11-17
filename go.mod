@@ -18,5 +18,5 @@ require (
 require (
 	github.com/boggydigital/kevlar v0.6.13 // indirect
 	github.com/boggydigital/wits v0.2.3 // indirect
-	golang.org/x/net v0.61.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
 )
